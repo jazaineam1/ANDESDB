@@ -1,5 +1,5 @@
 Cadena de conexión:
 
-postgresql://postgres.oxdglsvngekydibxzgqd:cjf9JXV7zqf_mja0nfe@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+postgresql://postgres.spjeywnvsqifqbkjyzmv:123qwe_*@aws-1-us-east-2.pooler.supabase.com:5432/postgres
 
 Dataset public
