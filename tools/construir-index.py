@@ -74,6 +74,19 @@ def construir():
 
     modulos = ''.join(tarjeta_modulo(m) for m in c['modulos'])
 
+    # la sesión marcada como «hoy» manda: es la acción principal de la página
+    hoy = next((s for m in c['modulos'] for s in m.get('sesiones', [])
+                if s.get('estado') == 'hoy' and s.get('href')), None)
+    if hoy:
+        cta = ('<a class="btn-main" href="%s">▶ Abrir la sesión de hoy'
+               '<small>%s · %s</small></a>'
+               '<a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a>'
+               % (e(hoy['href']), 'Sesión %s' % hoy['n'], e(hoy['titulo'])))
+        cta_nav = '<a class="cta" href="%s">▶ Sesión de hoy</a>' % e(hoy['href'])
+    else:
+        cta = '<a class="btn-main" href="#sesiones">Ver las sesiones</a>'
+        cta_nav = '<a class="cta" href="#sesiones">Sesiones</a>' 
+
     herr = ''.join(
         '<a class="mat" href="%s"%s%s><span class="ico">%s</span>'
         '<strong>%s</strong><span>%s</span></a>'
@@ -104,28 +117,26 @@ def construir():
     <a href="#recorrido">Recorrido</a>
     <a href="#sesiones">Sesiones</a>
     <a href="#herramientas">Herramientas</a>
-    <a class="cta" href="Presentaciones/M2/referencia-modulo-2.html">Guía de referencia</a>
+    {cta_nav}
   </nav>
 </div></div>
 
-<header class="hero" id="top"><div class="wrap">
-  <div class="eyebrow">{e(c['institucion'])}</div>
-  <h1>{e(c['titulo'])}</h1>
-  <p class="sub">{e(c['subtitulo'])}</p>
-  <div class="facts">{datos}</div>
-  <div class="progress-card">
+<header class="hero" id="top"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">{e(c['institucion'])}</div>
+    <h1>{e(c['titulo'])}</h1>
+    <p class="sub">{e(c['subtitulo'])}</p>
+    <div class="cta-row">{cta}</div>
+    <div class="facts">{datos}</div>
+  </div>
+  <aside class="progress-card">
     <div class="progress-head">
-      <b>Tu avance en el curso</b>
+      <b>Tu avance</b>
       <em>Sesión {c['sesionActual']} de {c['totalSesiones']}</em>
     </div>
     <div class="track"><div class="fill" style="width:{pct}%"></div></div>
     <div class="pips">{pips}</div>
-    <div class="legend">
-      <span><i style="background:#146c43"></i>Completada</span>
-      <span><i style="background:#ffd600"></i>Hoy</span>
-      <span><i style="background:rgba(255,255,255,.18)"></i>Por venir</span>
-    </div>
-  </div>
+  </aside>
 </div></header>
 
 <section class="road-sec" id="recorrido"><div class="wrap">
