@@ -1,0 +1,360 @@
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%; transform:translateY(-50%);
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;width:2em;height:2em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{font-size:1.9em;line-height:1;display:block}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{max-width:14em;max-height:4.5em;object-fit:contain}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}

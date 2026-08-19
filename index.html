@@ -1,323 +1,200 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Uniandes-Educación continua</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap Icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
-        <!-- SimpleLightbox plugin CSS-->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body id="page-top">
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#page-top"> Diseño y Gestión de Bases de Datos con SQL </a>
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">Temáticas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#ejercicios">Ejercicios</a></li> 
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Masthead-->
-        <header class="masthead">
-            <div class="container px-4 px-lg-5 h-100">
-                <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
-                    <div class="col-lg-8 align-self-end">
-                        <h1 class="text-white font-weight-bold">Curso de Diseño y Gestión de Bases de Datos con SQL</h1>
-                        <hr class="divider" />
-                    </div>
-                    <div class="col-lg-8 align-self-baseline">
-                        <a class="btn btn-primary btn-xl" href="#portfolio">Temáticas</a>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!-- About-->
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diseño y Gestión de Bases de Datos con SQL</title>
+<meta name="description" content="Materiales del curso Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio">
+<link rel="icon" href="assets/favicon.ico">
+<style>
+:root{
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43;
+  --paper:#fff; --s:#f5f3ee; --bl:#e9f4ff; --yl:#fff6c9;
+  --ink:#1a1a1a; --ink-soft:#5a5a5a;
+  --dark:#0e1a24; --dark-2:#16293a;
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.12);
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --pill:999px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+img{max-width:100%;height:auto}
+a{color:var(--b)}
+.wrap{width:min(1150px,92vw);margin:0 auto}
 
-        <!-- Services-->
-        
-        <!-- Portfolio-->
-         <div id="portfolio">
-            <div class="container-fluid p-0">
-                <div class="row g-0">
-                    <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectToGoogle();" title="Presentaciones">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/carpeta.png" alt="..." style="width: 50%; height: auto; display: block; margin: auto;" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Presentaciones</div>
-                                <div class="project-name">1. Presentaciones</div>
-                            </div>
-                        </a>
-                    </div>
-                
-            
-                  
-                    <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="reglas();" title="Reglas de Negocio">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/3.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50"></div>
-                                <div class="project-name">2. Algunas definiciones</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>  
-                    <!-- <div class="col-lg-4 col-sm-6"> 
-                        <a class="portfolio-box" href="#" onclick="redirect3();" title="Fundamentos de Programación">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/condicionalesciclos.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Fundamentos de Programación</div>
-                                <div class="project-name">3. Condicionales y ciclos</div>
-                            </div>
-                        </a>
-                     </div>
+/* ---------- encabezado ---------- */
+.hero{background:var(--dark);background-image:linear-gradient(155deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff;padding:clamp(2.5rem,7vw,5.5rem) 0 clamp(2.5rem,6vw,4.5rem);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:0;bottom:0;width:40%;height:70%;background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.16),transparent 70%);pointer-events:none}
+.eyebrow{color:var(--y);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(.72rem,1.5vw,.85rem);margin-bottom:1rem}
+.hero h1{font-size:clamp(2rem,5.4vw,3.6rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 1rem;max-width:18ch}
+.hero p{font-size:clamp(1rem,2vw,1.3rem);max-width:56ch;color:#dce7ef;margin:0 0 1.8rem}
+.facts{display:flex;flex-wrap:wrap;gap:.6rem;position:relative;z-index:2}
+.facts span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:.45em 1em;border-radius:var(--pill);font-size:.86rem;font-weight:600}
 
+/* ---------- secciones ---------- */
+section{padding:clamp(2.5rem,6vw,4.5rem) 0}
+.sec-head{margin-bottom:2rem}
+.sec-head h2{font-size:clamp(1.5rem,3.4vw,2.3rem);letter-spacing:-.02em;margin:.2rem 0 .5rem}
+.sec-head p{color:var(--ink-soft);max-width:62ch;margin:0}
+.kicker{color:#8a7300;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
 
+/* ---------- sesiones ---------- */
+.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.4rem}
+.session{background:var(--s);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.6rem 1.5rem;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s}
+.session:nth-child(2n){background:var(--bl);border-left-color:var(--b)}
+.session.soon{background:#fafafa;border-left-color:#d6d6d6;box-shadow:none}
+a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+a.session{text-decoration:none;color:inherit}
+.session .num{display:inline-grid;place-items:center;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.9rem}
+.session.soon .num{background:#d6d6d6;color:#fff}
+.session h3{margin:0 0 .4rem;font-size:1.18rem;line-height:1.25}
+.session p{margin:0 0 1rem;color:var(--ink-soft);font-size:.95rem;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:.35rem}
+.tags code{background:var(--ink);color:#fff;padding:.28em .6em;border-radius:var(--pill);font-size:.74rem;font-family:Consolas,monospace}
+.session.soon .tags code{background:#c9c9c9}
+.go{font-weight:800;color:var(--b);margin-top:1rem;font-size:.95rem}
+.session.soon .go{color:#9a9a9a}
 
+/* ---------- materiales ---------- */
+.mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.2rem}
+.mat{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid #e6e6e6;border-radius:var(--r-md);padding:1.3rem;box-shadow:var(--sh);transition:transform .18s,box-shadow .18s}
+.mat:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);border-color:var(--b)}
+.mat .ico{font-size:1.7rem;line-height:1;display:block;margin-bottom:.6rem}
+.mat strong{display:block;font-size:1.02rem;margin-bottom:.25rem}
+.mat span{color:var(--ink-soft);font-size:.88rem}
 
-                     <div class="col-lg-4 col-sm-6">
-                        <div class="portfolio-box" id="data-manipulation-box">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/pandas.jpg" alt="Manipulación de Datos" />
-                    
-                            <a href="https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion4/M1_Clase_4_Manipulaci%C3%B3n_de_datos_en_Python.ipynb" class="overlay-half left-half" title="Manipulación de Datos (Colab)">
-                                <img src="assets/img/icons/colab_icon.png" alt="Colab Icon" class="icon-overlay" />
-                            </a>
-                    
-                            <a href="https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion4/M1_Clase_4_Manipulaci%C3%B3n_de_datos_en_Python_vscode.ipynb" class="overlay-half right-half" title="Manipulación de Datos (VSCode)">
-                                <img src="assets/img/icons/vscode_icon.png" alt="VSCode Icon" class="icon-overlay" />
-                            </a>
-                    
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Fundamentos de Programación</div>
-                                <div class="project-name">4. Manipulación de Datos</div>
-                            </div>
-                        </div>
-                    </div>
+/* ---------- ruta ---------- */
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:1rem}
+.mod{background:var(--s);border-radius:var(--r-md);padding:1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh)}
+.mod:nth-child(2n){background:var(--bl);border-top-color:var(--b)}
+.mod b{display:block;color:var(--b);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem}
+.mod h4{margin:0 0 .3rem;font-size:1rem;line-height:1.25}
+.mod p{margin:0;font-size:.86rem;color:var(--ink-soft)}
 
+/* ---------- aviso ---------- */
+.note{background:var(--yl);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.3rem 1.5rem;margin-top:2rem}
+.note strong{display:block;margin-bottom:.3rem}
+.note p{margin:0;font-size:.95rem}
 
-                  <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectpractica();" title="Actividad de refuerzo">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/practica.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Fundamentos de Programación</div>
-                                <div class="project-name">5.Actividad de Refuerzo</div>
-                            </div>
-                        </a>
-                    </div>
-                     <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirect5();" title="Workbench">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/EDA.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">EDA</div>
-                                <div class="project-name">6.Introducción al análisis exploratorio de datos (Actividad de refuerzo)</div>
-                            </div>
-                        </a>
-                    </div>
-                       <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectmissing();" title="Missing & Outliers">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/missing.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">EDA</div>
-                                <div class="project-name">6. Missing & Outliers</div>
-                            </div>
-                        </a>
-                    </div>
-                  <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectvisualizacion();" title="Visualización univariados">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/visualizacion.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">EDA</div>
-                                <div class="project-name">7. Visualización univariados </div>
-                            </div>
-                        </a>
-                    </div>
+/* ---------- pie ---------- */
+footer{background:var(--dark);color:#c3d1dc;padding:2.5rem 0;font-size:.88rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center}
+footer a{color:var(--y)}
+.alt{background:var(--s)}
+</style></head>
+<body>
 
-                      <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectedamultivariado();" title="Eda Multivariado">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/edamultivariado.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">EDA</div>
-                                <div class="project-name">8. Eda Multivariado </div>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="ejercicios2();" title="Ejercicios 2">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/ejercicios2.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">EDA</div>
-                                <div class="project-name">9. Ejercicios 2</div>
-                            </div>
-                        </a>
-                    </div>
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Universidad de los Andes · Colsubsidio</div>
+  <h1>Diseño y Gestión de Bases de Datos con SQL</h1>
+  <p>Modelar información, crear esquemas robustos y responder preguntas de negocio con SQL. De los fundamentos a la práctica con herramientas profesionales.</p>
+  <div class="facts">
+    <span>48 horas · 16 sesiones</span>
+    <span>Virtual sincrónica</span>
+    <span>Ejercicio cada 10–15 min</span>
+    <span>Prepara la certificación DP-900</span>
+  </div>
+</div></header>
 
-                    
+<section><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Módulo 2 · Explorando bases de datos con SQL</div>
+    <h2>Sesiones</h2>
+    <p>Cada sesión es un archivo único que funciona sin conexión. Ábrelo en el navegador y navega con las flechas del teclado, o con <b>F</b> para pantalla completa y <b>T</b> para el cronómetro.</p>
+  </div>
+  <div class="sessions">
 
-                    <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectregresion();" title="Regresión Lineal">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/regresion.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Modelos</div>
-                                <div class="project-name">10. Regresión Lineal</div>
-                            </div>
-                        </a>
-                 </div>
-                     <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectml();" title="Machine Learning">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/ml.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Modelos</div>
-                                <div class="project-name">11. Introducción Machine Learning</div>
-                            </div>
-                        </a>
-                    </div>
+    <a class="session" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas-estudiante.html">
+      <span class="num">2</span>
+      <h3>De la decisión a la primera consulta</h3>
+      <p>Qué es una base de datos y en qué se diferencia de un SGBD. Por qué Excel a veces no alcanza. Relacional y NoSQL. Y tus primeras consultas sobre una base real.</p>
+      <div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div>
+      <div class="go">Abrir la sesión →</div>
+    </a>
 
-                   <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectlogis();" title="Machine Learning">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/logis.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Modelos</div>
-                                <div class="project-name">12. Regresión Logística</div>
-                            </div>
-                        </a>
-                    </div>
+    <a class="session" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones-estudiante.html">
+      <span class="num">3</span>
+      <h3>Filtrar mejor y resumir</h3>
+      <p>Filtros finos por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para empezar a resumirlas. El equivalente en SQL de una tabla dinámica.</p>
+      <div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div>
+      <div class="go">Abrir la sesión →</div>
+    </a>
 
-               <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectarboles();" title="Machine Learning">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/arboles.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Modelos</div>
-                                <div class="project-name">13. Árboles de decisión y Bosques aleatorios
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    
-                     <div class="col-lg-4 col-sm-6">
-                        <a class="portfolio-box" href="#" onclick="redirectnosuper();" title="Machine Learning">
-                            <img class="img-fluid" src="assets/img/portfolio/thumbnails/nosuper.jpg" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Modelos</div>
-                                <div class="project-name">14. Aprendizaje no supervisado
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                
-        </div> -->
+    <div class="session soon">
+      <span class="num">4</span>
+      <h3>Uniones de tablas</h3>
+      <p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p>
+      <div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div>
+      <div class="go">Próximamente</div>
+    </div>
 
+  </div>
 
-       
-         
+  <div class="note">
+    <strong>La base de datos se trabaja en local</strong>
+    <p>Descarga <code>dvdrental.db</code> una sola vez y ábrela en Beekeeper Studio eligiendo el tipo de conexión <b>SQLite</b>. No hay servidor, ni contraseñas, ni límite de conexiones — y funciona aunque se te caiga el internet.</p>
+  </div>
+</div></section>
 
-        
-        <script>
+<section class="alt"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Descargas</div>
+    <h2>Materiales</h2>
+    <p>Todo lo que necesitas para seguir las sesiones y practicar por tu cuenta.</p>
+  </div>
+  <div class="mats">
+    <a class="mat" href="Presentaciones/M2/base-datos/dvdrental.db" download>
+      <span class="ico">🗄️</span><strong>Base de datos dvdrental</strong>
+      <span>Archivo SQLite · 3,3 MB · 15 tablas</span>
+    </a>
+    <a class="mat" href="Scripts/S2.sql" download>
+      <span class="ico">📄</span><strong>Consultas de la sesión 2</strong>
+      <span>S2.sql · con el resultado esperado de cada consulta</span>
+    </a>
+    <a class="mat" href="Scripts/S3.sql" download>
+      <span class="ico">📄</span><strong>Consultas de la sesión 3</strong>
+      <span>S3.sql · filtros, agregación, GROUP BY y HAVING</span>
+    </a>
+    <a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">
+      <span class="ico">💻</span><strong>Beekeeper Studio</strong>
+      <span>El cliente con el que abrimos la base ↗</span>
+    </a>
+    <a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf" target="_blank" rel="noopener">
+      <span class="ico">📋</span><strong>Chuleta de SQL</strong>
+      <span>Una página con lo esencial · PDF</span>
+    </a>
+    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>
+      <span class="ico">🪟</span><strong>Guía de instalación · Windows</strong>
+      <span>Paso a paso con capturas</span>
+    </a>
+    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>
+      <span class="ico">🍎</span><strong>Guía de instalación · macOS</strong>
+      <span>Paso a paso con capturas</span>
+    </a>
+    <a class="mat" href="Presentaciones/M2/ALTERNATIVAS-BASE-DE-DATOS.md">
+      <span class="ico">🔌</span><strong>Notas técnicas</strong>
+      <span>Por qué trabajamos en local y qué alternativas hay</span>
+    </a>
+  </div>
+</div></section>
 
-            function redirecttarea1() {
-                window.location.href = 'https://forms.gle/KajB5hgonGisG5yu7';
-            }
-            
-            function redirecttarea2() {
-                window.location.href = 'https://forms.gle/mVYY1hEKGzz8q8xQA';
-            }
+<section><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Recorrido</div>
+    <h2>Los seis módulos</h2>
+    <p>El curso avanza desde el valor de los datos hasta un desafío final integrador.</p>
+  </div>
+  <div class="road">
+    <div class="mod"><b>Módulo 1</b><h4>¿Cómo generamos valor con datos?</h4><p>Contexto, actores, decisiones y el ecosistema de datos.</p></div>
+    <div class="mod"><b>Módulo 2</b><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p></div>
+    <div class="mod"><b>Módulo 3</b><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado relacional y normalización.</p></div>
+    <div class="mod"><b>Módulo 4</b><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo usarlos.</p></div>
+    <div class="mod"><b>Módulo 5</b><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div>
+    <div class="mod"><b>Módulo 6</b><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div>
+  </div>
+</div></section>
 
+<footer><div class="wrap">
+  <div>Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio</div>
+  <div><a href="https://github.com/jazaineam1/ANDESDB">Repositorio del curso ↗</a></div>
+</div></footer>
 
-
-            function redirectToGoogle() {
-                window.location.href = 'https://github.com/jazaineam1/ANDESDB/tree/main/Presentaciones';
-            }
-            function reglas() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/ANDESDB/blob/main/Cuadernos/Reglas.ipynb';
-            }
-            function redirect3() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion3/M1_Clase_3_Colab_Estructuras_de_algoritmos.ipynb';
-            }
-            function redirect4() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion4/M1_Clase_4_Manipulaci%C3%B3n_de_datos_en_Python.ipynb';
-            }
-            function redirectpractica() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion5/M1_Clase_5_Practica_estructuras.ipynb';
-            }
-            function redirect5() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion6/Exploratory%20Data%20Analysis%20(EDA).ipynb';
-            }
-            function redirectmissing() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion7/M3%20Clase%207%20-%20Missing%20Outliers.ipynb';
-            }
-            function redirectvisualizacion() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion8/Clase_7_An%C3%A1lisis_Gr%C3%A1fico_Univariado.ipynb';
-            }
-            function redirectedamultivariado  () {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion9/Clase_9_EDA_Bivariado_y_Multivariado.ipynb';
-            }
-                        function ejercicios2() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion10/Clase_10_Ejercicios2.ipynb';
-            }
-            function redirectregresion() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion11/Clase_11_Regresio%CC%81n_lineal.ipynb';
-            }
-            function redirectml() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion12/Clase_12_Introducci%C3%B3n_al_ML_Modelo_Lineal.ipynb';
-            }
-            function redirectlogis() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion13/Clase_13_Regresión_Logística_y_metricas_VERSION2.ipynb';
-            }
-            function redirectarboles() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion14/Clase_14-Random_Forest.ipynb';
-            }
-            function redirectnosuper() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion15/15_Aprendizaje_no_supervisado-agrupación.ipynb';
-            }
-            function redirectbig() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Cuadernos/Clase16-BigData.ipynb';
-            }
-            function redirectia() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion17/Sesion17Mediumdata_etica.ipynb';
-            }
-            function redirectmuti() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion18/Clase16_multiprocessing.ipynb';
-            }
-            function redirectspark1() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion19/Sesion18 Computacion_distribuida_Hadoop_Spark_intro.ipynb';
-            }
-            function redirectspark2() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/Sesion20/Clase_20_Clasificacion_Databricks_es_resuelto.ipynb';
-            }
-            function ejercicios3() {
-                window.location.href = 'https://colab.research.google.com/github/jazaineam1/Andes_ADDBD/blob/main/SesionTallerSNS/Sesion_Taller.ipynb';
-            }
-        </script>
-        <!-- Footer-->
-        <footer class="bg-light py-5">
-            <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Antonino Zainea &copy; 2024 </div></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- SimpleLightbox plugin JS-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
-</html>
+</body></html>
