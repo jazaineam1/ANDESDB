@@ -48,9 +48,14 @@
       "desc": "Dato ≠ valor, actores, decisiones y el ecosistema de datos.",
       "recursos": [
         {
-          "txt": "📊 Presentación del módulo",
-          "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx",
-          "download": true
+          "txt": "📊 Introducción al curso",
+          "download": true,
+          "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"
+        },
+        {
+          "txt": "📊 Introducción a las bases de datos",
+          "download": true,
+          "href": "Presentaciones/M1/M1C1P2%20V1%20-%20Introduccion%20a%20las%20Bases%20de%20Datos.pptx"
         }
       ],
       "sesiones": []

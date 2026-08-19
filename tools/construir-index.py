@@ -48,13 +48,14 @@ def tarjeta_sesion(s):
             '<div class="go">Próximamente</div></div>%s</div>' % (cuerpo, bloque_recs))
 
 
-def tarjeta_modulo(m):
+def paso_ruta(m):
+    """Un módulo dentro de la ruta del curso."""
     est, cls = ESTADO[m.get('estado', 'pendiente')]
     recs = ''.join(enlace(r) for r in m.get('recursos', []))
     bloque = '<div class="row mini">%s</div>' % recs if recs else ''
-    return ('<div class="mod"><div class="mh"><b>Módulo %s</b>'
-            '<span class="st %s">%s</span></div><h4>%s</h4><p>%s</p>%s</div>'
-            % (m['n'], cls, e(est), e(m['titulo']), e(m['desc']), bloque))
+    return ('<li class="hito %s"><b>%s</b><div><h4>%s</h4><p>%s</p>%s</div>'
+            '<span class="st %s">%s</span></li>'
+            % (cls, m['n'], e(m['titulo']), e(m['desc']), bloque, cls, e(est)))
 
 
 def materiales_hoy(c):
@@ -83,7 +84,7 @@ def construir():
     sesiones = ''.join(tarjeta_sesion(s) for s in (activo or {}).get('sesiones', []))
     tit_ses = 'Módulo %s · %s' % (activo['n'], e(activo['titulo'])) if activo else 'Sesiones'
 
-    modulos = ''.join(tarjeta_modulo(m) for m in c['modulos'])
+    modulos = ''.join(paso_ruta(m) for m in c['modulos'])
 
     # la sesión marcada como «hoy» manda: es la acción principal de la página
     hoy = next((s for m in c['modulos'] for s in m.get('sesiones', [])
@@ -133,9 +134,9 @@ def construir():
 <div class="topbar"><div class="wrap">
   <a class="brandmark" href="#top">Bases de Datos con <span>SQL</span></a>
   <nav class="toc">
-    <a href="#recorrido">Recorrido</a>
     <a href="#sesiones">Sesiones</a>
     <a href="#herramientas">Herramientas</a>
+    <a href="#recorrido">Recorrido</a>
     {cta_nav}
   </nav>
 </div></div>
@@ -159,15 +160,6 @@ def construir():
   </aside>
 </div></header>
 
-<section class="road-sec" id="recorrido"><div class="wrap">
-  <div class="sec-head">
-    <div class="kicker">Los seis módulos</div>
-    <h2>Recorrido del curso</h2>
-    <p>{glos} Cada módulo trae sus propios materiales.</p>
-  </div>
-  <div class="road">{modulos}</div>
-</div></section>
-
 <section id="sesiones"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">{tit_ses}</div>
@@ -178,7 +170,7 @@ def construir():
   <div class="sessions">{sesiones}</div>
 </div></section>
 
-<section class="alt" id="herramientas"><div class="wrap">
+<section id="herramientas"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
@@ -187,6 +179,15 @@ def construir():
   <div class="mats">{herr}</div>
   <h3 class="grp">Instalación paso a paso</h3>
   <div class="row">{inst}</div>
+</div></section>
+
+<section class="road-sec" id="recorrido"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Los seis módulos</div>
+    <h2>Recorrido del curso</h2>
+    <p>{glos}</p>
+  </div>
+  <ol class="ruta">{modulos}</ol>
 </div></section>
 
 <footer><div class="wrap">

@@ -75,7 +75,7 @@ section{padding:clamp(2rem,3.6vw,3rem) 0;scroll-margin-top:66px}
 .kicker{color:#8a7300;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.74rem}
 
 /* ===== sesiones ===== */
-.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:1.3rem}
+.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:1.3rem;align-items:stretch}
 .session{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.5rem 1.4rem;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative}
 a.session{text-decoration:none;color:inherit}
 a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
@@ -114,7 +114,7 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 
 /* ===== recorrido ===== */
 .road-sec{background-color:var(--s);background-image:linear-gradient(180deg,rgba(245,243,238,.90),rgba(245,243,238,.95)),url("assets/img/bg-masthead.jpg");background-size:cover;background-position:center;background-repeat:no-repeat}
-.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem}
+
 .mod{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:1.15rem 1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh);text-decoration:none;color:inherit;display:block}
 .mod:nth-child(2n){border-top-color:var(--b)}
 a.mod:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
@@ -129,7 +129,7 @@ a.mod:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
 footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 
 /* ===== recursos colgados de su sesión / módulo ===== */
-.sesion-wrap{display:flex;flex-direction:column;gap:.6rem}
+.sesion-wrap{display:flex;flex-direction:column;gap:.5rem}
 .sesion-wrap .session{flex:1}
 .row.mini{gap:.4rem}
 .row.mini a{padding:.42em .85em;font-size:.8rem;box-shadow:none;background:transparent}
@@ -171,15 +171,34 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   color:#eaf1f6;text-decoration:none;font-size:.84rem;font-weight:600}
 .hoy-mats a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
 
+/* ===== la ruta del curso: consulta, no uso diario ===== */
+.ruta{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;counter-reset:h}
+.hito{display:grid;grid-template-columns:2.4rem 1fr auto;gap:1rem;align-items:start;
+  background:var(--paper);border:1px solid var(--line);border-left:5px solid #dfe6ec;
+  border-radius:var(--r-md);padding:.9rem 1.1rem;box-shadow:var(--sh)}
+.hito>b{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:50%;
+  background:#eef2f5;color:#7b8896;font-weight:800;font-size:.95rem}
+.hito h4{margin:0 0 .15rem;font-size:1rem;line-height:1.25}
+.hito p{margin:0;font-size:.86rem;color:var(--ink-soft)}
+.hito .st{align-self:center;white-space:nowrap}
+.hito.done{border-left-color:var(--g)}
+.hito.done>b{background:var(--gl);color:var(--g)}
+.hito.now{border-left-color:var(--o);background:linear-gradient(180deg,#fffaf2,#fff)}
+.hito.now>b{background:var(--y);color:#3a2f00}
+@media(max-width:700px){
+  .hito{grid-template-columns:2rem 1fr;gap:.7rem}
+  .hito .st{grid-column:2;justify-self:start;margin-top:.3rem}
+}
+
 </style></head>
 <body>
 
 <div class="topbar"><div class="wrap">
   <a class="brandmark" href="#top">Bases de Datos con <span>SQL</span></a>
   <nav class="toc">
-    <a href="#recorrido">Recorrido</a>
     <a href="#sesiones">Sesiones</a>
     <a href="#herramientas">Herramientas</a>
+    <a href="#recorrido">Recorrido</a>
     <a class="cta" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">▶ Sesión de hoy</a>
   </nav>
 </div></div>
@@ -203,15 +222,6 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   </aside>
 </div></header>
 
-<section class="road-sec" id="recorrido"><div class="wrap">
-  <div class="sec-head">
-    <div class="kicker">Los seis módulos</div>
-    <h2>Recorrido del curso</h2>
-    <p>Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4. Cada módulo trae sus propios materiales.</p>
-  </div>
-  <div class="road"><div class="mod"><div class="mh"><b>Módulo 1</b><span class="st done">Completado</span></div><h4>¿Cómo generamos valor con datos?</h4><p>Dato ≠ valor, actores, decisiones y el ecosistema de datos.</p><div class="row mini"><a href="Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx" download>📊 Presentación del módulo</a></div></div><div class="mod"><div class="mh"><b>Módulo 2</b><span class="st now">En curso</span></div><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p><div class="row mini"><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos (archivo)</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda para los ejercicios</a><a href="Presentaciones/M2/referencia-modulo-2.html">📘 Guía para repasar en casa</a></div></div><div class="mod"><div class="mh"><b>Módulo 3</b><span class="st ">Por venir</span></div><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado entidad-relación y normalización.</p></div><div class="mod"><div class="mh"><b>Módulo 4</b><span class="st ">Por venir</span></div><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo conviene cada uno.</p></div><div class="mod"><div class="mh"><b>Módulo 5</b><span class="st ">Por venir</span></div><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div><div class="mod"><div class="mh"><b>Módulo 6</b><span class="st ">Por venir</span></div><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div></div>
-</div></section>
-
 <section id="sesiones"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Módulo 2 · Explorando bases de datos con SQL</div>
@@ -222,7 +232,7 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div class="sessions"><div class="sesion-wrap"><a class="session hoy" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><span class="chip hoy">Hoy</span><span class="num">2</span><h3>De la decisión a la primera consulta</h3><p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p><div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S2.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><a class="session prox" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html"><span class="chip prox">Próxima clase</span><span class="num">3</span><h3>Filtrar mejor y resumir</h3><p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p><div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S3.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><div class="session soon"><span class="num">4</span><h3>Uniones de tablas</h3><p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p><div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div><div class="go">Próximamente</div></div></div></div>
 </div></section>
 
-<section class="alt" id="herramientas"><div class="wrap">
+<section id="herramientas"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
@@ -231,6 +241,15 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div class="mats"><a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><span class="ico">💻</span><strong>Beekeeper Studio</strong><span>El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.</span></a><a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf"><span class="ico">📋</span><strong>Chuleta de SQL en PDF</strong><span>Una página con lo esencial del lenguaje. Se abre en el navegador y se puede imprimir.</span></a></div>
   <h3 class="grp">Instalación paso a paso</h3>
   <div class="row"><a href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>🪟 Windows</a><a href="Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html">🐧 Ubuntu</a><a href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>🍎 macOS</a></div>
+</div></section>
+
+<section class="road-sec" id="recorrido"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Los seis módulos</div>
+    <h2>Recorrido del curso</h2>
+    <p>Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4.</p>
+  </div>
+  <ol class="ruta"><li class="hito done"><b>1</b><div><h4>¿Cómo generamos valor con datos?</h4><p>Dato ≠ valor, actores, decisiones y el ecosistema de datos.</p><div class="row mini"><a href="Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx" download>📊 Introducción al curso</a><a href="Presentaciones/M1/M1C1P2%20V1%20-%20Introduccion%20a%20las%20Bases%20de%20Datos.pptx" download>📊 Introducción a las bases de datos</a></div></div><span class="st done">Completado</span></li><li class="hito now"><b>2</b><div><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p><div class="row mini"><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos (archivo)</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda para los ejercicios</a><a href="Presentaciones/M2/referencia-modulo-2.html">📘 Guía para repasar en casa</a></div></div><span class="st now">En curso</span></li><li class="hito "><b>3</b><div><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado entidad-relación y normalización.</p></div><span class="st ">Por venir</span></li><li class="hito "><b>4</b><div><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo conviene cada uno.</p></div><span class="st ">Por venir</span></li><li class="hito "><b>5</b><div><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div><span class="st ">Por venir</span></li><li class="hito "><b>6</b><div><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div><span class="st ">Por venir</span></li></ol>
 </div></section>
 
 <footer><div class="wrap">

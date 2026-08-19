@@ -62,7 +62,7 @@ section{padding:clamp(2rem,3.6vw,3rem) 0;scroll-margin-top:66px}
 .kicker{color:#8a7300;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.74rem}
 
 /* ===== sesiones ===== */
-.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:1.3rem}
+.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:1.3rem;align-items:stretch}
 .session{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.5rem 1.4rem;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative}
 a.session{text-decoration:none;color:inherit}
 a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
@@ -101,7 +101,7 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 
 /* ===== recorrido ===== */
 .road-sec{background-color:var(--s);background-image:linear-gradient(180deg,rgba(245,243,238,.90),rgba(245,243,238,.95)),url("assets/img/bg-masthead.jpg");background-size:cover;background-position:center;background-repeat:no-repeat}
-.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem}
+
 .mod{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:1.15rem 1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh);text-decoration:none;color:inherit;display:block}
 .mod:nth-child(2n){border-top-color:var(--b)}
 a.mod:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
@@ -116,7 +116,7 @@ a.mod:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
 footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 
 /* ===== recursos colgados de su sesión / módulo ===== */
-.sesion-wrap{display:flex;flex-direction:column;gap:.6rem}
+.sesion-wrap{display:flex;flex-direction:column;gap:.5rem}
 .sesion-wrap .session{flex:1}
 .row.mini{gap:.4rem}
 .row.mini a{padding:.42em .85em;font-size:.8rem;box-shadow:none;background:transparent}
@@ -157,3 +157,22 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .hoy-mats a{padding:.5em 1em;border-radius:var(--pill);border:1px solid rgba(255,255,255,.24);
   color:#eaf1f6;text-decoration:none;font-size:.84rem;font-weight:600}
 .hoy-mats a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+
+/* ===== la ruta del curso: consulta, no uso diario ===== */
+.ruta{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;counter-reset:h}
+.hito{display:grid;grid-template-columns:2.4rem 1fr auto;gap:1rem;align-items:start;
+  background:var(--paper);border:1px solid var(--line);border-left:5px solid #dfe6ec;
+  border-radius:var(--r-md);padding:.9rem 1.1rem;box-shadow:var(--sh)}
+.hito>b{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:50%;
+  background:#eef2f5;color:#7b8896;font-weight:800;font-size:.95rem}
+.hito h4{margin:0 0 .15rem;font-size:1rem;line-height:1.25}
+.hito p{margin:0;font-size:.86rem;color:var(--ink-soft)}
+.hito .st{align-self:center;white-space:nowrap}
+.hito.done{border-left-color:var(--g)}
+.hito.done>b{background:var(--gl);color:var(--g)}
+.hito.now{border-left-color:var(--o);background:linear-gradient(180deg,#fffaf2,#fff)}
+.hito.now>b{background:var(--y);color:#3a2f00}
+@media(max-width:700px){
+  .hito{grid-template-columns:2rem 1fr;gap:.7rem}
+  .hito .st{grid-column:2;justify-self:start;margin-top:.3rem}
+}
