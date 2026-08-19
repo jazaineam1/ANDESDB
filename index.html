@@ -93,10 +93,15 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 .mat span{color:var(--ink-soft);font-size:.86rem}
 .mat.star{border-color:var(--o);background:linear-gradient(180deg,#fffaf2,#fff)}
 
+.grp{font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:2rem 0 .8rem;font-weight:800}
+.grp:first-of-type{margin-top:0}
+.mats.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.row{display:flex;flex-wrap:wrap;gap:.6rem}
+.row a{display:inline-flex;align-items:center;gap:.45em;padding:.6em 1.1em;border:1px solid var(--line);border-radius:var(--pill);background:var(--paper);text-decoration:none;color:var(--ink);font-size:.9rem;font-weight:600;box-shadow:var(--sh)}
+.row a:hover{border-color:var(--b);color:var(--b)}
+
 /* ===== recorrido ===== */
-.road-sec{position:relative;isolation:isolate;background:var(--s)}
-.road-sec:before{content:"";position:absolute;inset:0;z-index:-1;background:url("assets/img/bg-masthead.jpg") center/cover no-repeat;opacity:.10}
-.road-sec:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(245,243,238,.72),rgba(245,243,238,.92))}
+.road-sec{background-color:var(--s);background-image:linear-gradient(180deg,rgba(245,243,238,.90),rgba(245,243,238,.95)),url("assets/img/bg-masthead.jpg");background-size:cover;background-position:center;background-repeat:no-repeat}
 .road{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem}
 .mod{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:1.15rem 1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh);text-decoration:none;color:inherit;display:block}
 .mod:nth-child(2n){border-top-color:var(--b)}
@@ -238,49 +243,46 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div class="sec-head">
     <div class="kicker">Descargas</div>
     <h2>Materiales</h2>
-    <p>Todo lo que necesitas para seguir las sesiones y practicar por tu cuenta.</p>
+    <p>Lo esencial primero. Lo que necesitas <em>durante</em> cada sesión está también dentro de la propia presentación, para que no tengas que venir aquí a buscarlo.</p>
   </div>
+
+  <h3 class="grp">Para la clase</h3>
   <div class="mats">
+    <a class="mat star" href="Presentaciones/M2/base-datos/dvdrental.db" download>
+      <span class="ico">🗄️</span><strong>La base de datos</strong>
+      <span>dvdrental.db · SQLite · 3,3 MB. Se descarga una sola vez.</span>
+    </a>
+    <a class="mat star" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">
+      <span class="ico">💻</span><strong>Beekeeper Studio</strong>
+      <span>El programa con el que abrimos la base ↗</span>
+    </a>
     <a class="mat star" href="Presentaciones/M2/chuleta-taller.html">
       <span class="ico">📄</span><strong>Hoja de taller</strong>
-      <span>Una página: forma de la consulta y las tablas con sus columnas. Imprimible.</span>
+      <span>Una página con la forma de la consulta y las tablas. Ténla al lado.</span>
     </a>
-    <a class="mat star" href="Presentaciones/M2/referencia-modulo-2.html">
+  </div>
+
+  <h3 class="grp">Instalación paso a paso</h3>
+  <div class="row">
+    <a href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>🪟 Windows</a>
+    <a href="Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html">🐧 Ubuntu</a>
+    <a href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>🍎 macOS</a>
+  </div>
+
+  <h3 class="grp">Para repasar después</h3>
+  <div class="mats two">
+    <a class="mat" href="Presentaciones/M2/referencia-modulo-2.html">
       <span class="ico">📘</span><strong>Guía de referencia</strong>
-      <span>Motores, Beekeeper, tipos de dato y el diccionario completo de la base</span>
-    </a>
-    <a class="mat star" href="Presentaciones/M2/base-datos/dvdrental.db" download>
-      <span class="ico">🗄️</span><strong>Base de datos dvdrental</strong>
-      <span>Archivo SQLite · 3,3 MB · 15 tablas</span>
-    </a>
-    <a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">
-      <span class="ico">💻</span><strong>Descargar Beekeeper Studio</strong>
-      <span>Windows · macOS · Ubuntu/Linux ↗</span>
-    </a>
-    <a class="mat" href="Scripts/S2.sql" download>
-      <span class="ico">📄</span><strong>Consultas de la sesión 2</strong>
-      <span>S2.sql · con el resultado esperado de cada consulta</span>
-    </a>
-    <a class="mat" href="Scripts/S3.sql" download>
-      <span class="ico">📄</span><strong>Consultas de la sesión 3</strong>
-      <span>S3.sql · filtros, agregación, GROUP BY y HAVING</span>
+      <span>Motores del mercado, Beekeeper, tipos de dato, el diccionario completo de la base y la equivalencia con Excel.</span>
     </a>
     <a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf" target="_blank" rel="noopener">
-      <span class="ico">📋</span><strong>Chuleta de SQL</strong>
-      <span>Una página con lo esencial · PDF</span>
+      <span class="ico">📋</span><strong>Chuleta de SQL en PDF</strong>
+      <span>Una página con lo esencial del lenguaje, para imprimir.</span>
     </a>
-    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>
-      <span class="ico">🪟</span><strong>Instalación · Windows</strong>
-      <span>Paso a paso con capturas</span>
-    </a>
-    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html">
-      <span class="ico">🐧</span><strong>Instalación · Ubuntu</strong>
-      <span>AppImage y paquete .deb</span>
-    </a>
-    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>
-      <span class="ico">🍎</span><strong>Instalación · macOS</strong>
-      <span>Apple Silicon e Intel</span>
-    </a>
+  </div>
+  <div class="row">
+    <a href="Scripts/S2.sql" download>📄 Consultas de la sesión 2</a>
+    <a href="Scripts/S3.sql" download>📄 Consultas de la sesión 3</a>
   </div>
 </div></section>
 

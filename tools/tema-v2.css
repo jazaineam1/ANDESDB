@@ -263,6 +263,11 @@ pre{
 .fb.good{background:var(--gl);color:#0d5533}
 .fb.bad{background:var(--rl);color:#8d2020}
 
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
 /* --- botones --------------------------------------------------------- */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;
