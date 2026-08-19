@@ -8,7 +8,8 @@
   --r-sm:10px; --r-md:16px; --r-lg:24px; --pill:999px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
+html.listo{scroll-behavior:smooth}
 body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
 img{max-width:100%;height:auto}
 a{color:var(--b)}
@@ -52,6 +53,8 @@ code{font-family:Consolas,"Cascadia Mono",monospace}
 
 /* ===== secciones ===== */
 section{padding:clamp(2rem,3.6vw,3rem) 0;scroll-margin-top:66px}
+.hero{scroll-margin-top:0}
+[id]{scroll-margin-top:70px}
 .alt{background:var(--s)}
 .sec-head{margin-bottom:1.3rem;max-width:64ch}
 .sec-head h2{font-size:clamp(1.5rem,3.2vw,2.2rem);letter-spacing:-.022em;margin:.25rem 0 .5rem}
@@ -68,6 +71,8 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 .chip{position:absolute;top:1rem;right:1rem;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3em .7em;border-radius:var(--pill)}
 .chip.hoy{background:var(--o);color:#fff}
 .chip.lista{background:var(--gl);color:var(--g)}
+.chip.prox{background:var(--bl);color:var(--b)}
+.session.prox{border-left-color:var(--b)}
 .session .num{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.85rem}
 .session.soon .num{background:#dcdcdc;color:#fff}
 .session h3{margin:0 0 .35rem;font-size:1.14rem;line-height:1.25}
@@ -120,7 +125,8 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .mod .row.mini a{font-size:.76rem;padding:.36em .75em}
 
 /* ===== portada compacta: la acción principal sin hacer scroll ===== */
-.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:2.2rem;align-items:center}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
+.prep-col{display:grid;gap:1rem}
 .cta-row{display:flex;flex-wrap:wrap;gap:.7rem;margin:0 0 1rem}
 .btn-main{display:inline-flex;flex-direction:column;gap:.1rem;padding:.7em 1.5em;border-radius:var(--pill);
   background:var(--y);color:#3a2f00;text-decoration:none;font-weight:800;font-size:1rem;
@@ -131,3 +137,17 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;font-weight:700;font-size:.88rem}
 .btn-ghost:hover{background:rgba(255,255,255,.1)}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:1.4rem}}
+
+/* ===== antes de la clase: los tres pasos, sin buscar nada ===== */
+.prep{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r-lg);padding:1rem 1.1rem}
+.prep-tit{display:block;font-size:.92rem;margin-bottom:.7rem;color:#fff}
+.prep-pasos{display:grid;gap:.4rem}
+.paso{display:flex;gap:.7rem;align-items:flex-start;padding:.5rem .6rem;border-radius:12px;
+  text-decoration:none;color:#dce7ef;transition:background .15s}
+.paso:hover{background:rgba(255,255,255,.09)}
+.paso b{flex:0 0 auto;display:grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;
+  background:var(--y);color:#3a2f00;font-size:.76rem;font-weight:800}
+.paso span{font-size:.78rem;line-height:1.35}
+.paso strong{display:block;color:#fff;font-size:.86rem;margin-bottom:.05rem}
+@media(max-width:900px){.prep-col{gap:.8rem}}

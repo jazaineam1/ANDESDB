@@ -16,6 +16,7 @@ SAL = RAIZ / 'index.html'
 ESTADO = {'completado': ('Completado', 'done'),
           'curso': ('En curso', 'now'),
           'pendiente': ('Por venir', ''),
+          'proxima': ('Próxima clase', 'prox'),
           'hoy': ('Hoy', 'hoy')}
 
 
@@ -42,7 +43,7 @@ def tarjeta_sesion(s):
     if activa:
         return ('<div class="sesion-wrap"><a class="session%s" href="%s">%s'
                 '<div class="go">Abrir la sesión →</div></a>%s</div>'
-                % (' ' + cls if cls == 'hoy' else '', e(s['href']), cuerpo, bloque_recs))
+                % (' ' + cls if cls in ('hoy', 'prox') else '', e(s['href']), cuerpo, bloque_recs))
     return ('<div class="sesion-wrap"><div class="session soon">%s'
             '<div class="go">Próximamente</div></div>%s</div>' % (cuerpo, bloque_recs))
 
@@ -56,9 +57,25 @@ def tarjeta_modulo(m):
             % (m['n'], cls, e(est), e(m['titulo']), e(m['desc']), bloque))
 
 
+def pasos_preparacion(c):
+    """La casilla «antes de la clase»: los tres pasos, con sus enlaces."""
+    p = c.get('preparacion')
+    if not p:
+        return ''
+    filas = ''.join(
+        '<a class="paso" href="%s"%s%s><b>%s</b><span><strong>%s</strong>%s</span></a>'
+        % (e(x['href']),
+           ' download' if x.get('download') else '',
+           ' target="_blank" rel="noopener"' if x.get('externo') else '',
+           x['n'], e(x['txt']), e(x['detalle']))
+        for x in p['pasos'])
+    return '<div class="prep"><b class="prep-tit">%s</b><div class="prep-pasos">%s</div></div>' % (
+        e(p['titulo']), filas)
+
+
 def construir():
     c = json.loads(MAN.read_text(encoding='utf-8'))
-    pct = round(c['sesionActual'] / c['totalSesiones'] * 100, 1)
+    pct = round((c['sesionActual'] - 1) / c['totalSesiones'] * 100, 1)  # -1: la de hoy aún no se cursa
 
     pips = ''
     for i in range(1, c['totalSesiones'] + 1):
@@ -97,6 +114,8 @@ def construir():
         for h in c['herramientas'])
 
     inst = ''.join(enlace(x) for x in c['instalacion'])
+    prep = pasos_preparacion(c)
+    glos = c.get('glosario', '')
 
     css = (RAIZ / 'tools' / 'estilo-portada.css').read_text(encoding='utf-8')
 
@@ -105,6 +124,12 @@ def construir():
 <title>{e(c['titulo'])}</title>
 <meta name="description" content="Materiales del curso {e(c['titulo'])} · {e(c['institucion'])}">
 <link rel="icon" href="assets/favicon.ico">
+<script>
+  /* Al recargar, volver siempre arriba: la restauración de scroll del
+     navegador hacía que la página apareciera desplazada y se perdiera de
+     vista el encabezado. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
 <!-- GENERADO por tools/construir-index.py desde tools/curso.json · no editar a mano -->
 <style>
 {css}
@@ -129,6 +154,8 @@ def construir():
     <div class="cta-row">{cta}</div>
     <div class="facts">{datos}</div>
   </div>
+  <div class="prep-col">{prep}
+  </div>
   <aside class="progress-card">
     <div class="progress-head">
       <b>Tu avance</b>
@@ -143,7 +170,7 @@ def construir():
   <div class="sec-head">
     <div class="kicker">Los seis módulos</div>
     <h2>Recorrido del curso</h2>
-    <p>Cada módulo trae sus propios materiales. Los que ya están publicados aparecen como enlaces.</p>
+    <p>{glos} Cada módulo trae sus propios materiales.</p>
   </div>
   <div class="road">{modulos}</div>
 </div></section>
@@ -153,7 +180,7 @@ def construir():
     <div class="kicker">{tit_ses}</div>
     <h2>Sesiones</h2>
     <p>Cada sesión es un archivo único que funciona sin conexión, y trae dentro lo que necesitas ese día.
-       Navega con las flechas; <b>F</b> pantalla completa, <b>T</b> cronómetro, <b>↓</b> descargar.</p>
+       Navega con ← y →; <b>F</b> pantalla completa, <b>T</b> cronómetro. El botón ↓ de la barra la descarga.</p>
   </div>
   <div class="sessions">{sesiones}</div>
 </div></section>
@@ -162,7 +189,7 @@ def construir():
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
-    <p>Esto se instala una vez y sirve para las 16 sesiones. Los materiales de cada sesión están en su propia tarjeta, arriba.</p>
+    <p>Esto se instala una vez y sirve para las 16 sesiones. Lo que necesitas hoy está arriba, en «Antes de que empiece la clase».</p>
   </div>
   <div class="mats">{herr}</div>
   <h3 class="grp">Instalación paso a paso</h3>
@@ -172,6 +199,14 @@ def construir():
 <footer><div class="wrap">
   {e(c['titulo'])} · {e(c['institucion'])}
 </div></footer>
+<script>
+  /* El desplazamiento suave se activa una vez cargada la pagina, para que
+     ningun salto inicial se vea animado. */
+  addEventListener('load', function () {{
+    document.documentElement.classList.add('listo');
+    if (!location.hash) window.scrollTo(0, 0);
+  }});
+</script>
 </body></html>
 '''
     SAL.write_text(doc, encoding='utf-8')

@@ -3,6 +3,12 @@
 <title>Diseño y Gestión de Bases de Datos con SQL</title>
 <meta name="description" content="Materiales del curso Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio">
 <link rel="icon" href="assets/favicon.ico">
+<script>
+  /* Al recargar, volver siempre arriba: la restauración de scroll del
+     navegador hacía que la página apareciera desplazada y se perdiera de
+     vista el encabezado. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
 <!-- GENERADO por tools/construir-index.py desde tools/curso.json · no editar a mano -->
 <style>
 :root{
@@ -15,7 +21,8 @@
   --r-sm:10px; --r-md:16px; --r-lg:24px; --pill:999px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
+html.listo{scroll-behavior:smooth}
 body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
 img{max-width:100%;height:auto}
 a{color:var(--b)}
@@ -59,6 +66,8 @@ code{font-family:Consolas,"Cascadia Mono",monospace}
 
 /* ===== secciones ===== */
 section{padding:clamp(2rem,3.6vw,3rem) 0;scroll-margin-top:66px}
+.hero{scroll-margin-top:0}
+[id]{scroll-margin-top:70px}
 .alt{background:var(--s)}
 .sec-head{margin-bottom:1.3rem;max-width:64ch}
 .sec-head h2{font-size:clamp(1.5rem,3.2vw,2.2rem);letter-spacing:-.022em;margin:.25rem 0 .5rem}
@@ -75,6 +84,8 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 .chip{position:absolute;top:1rem;right:1rem;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3em .7em;border-radius:var(--pill)}
 .chip.hoy{background:var(--o);color:#fff}
 .chip.lista{background:var(--gl);color:var(--g)}
+.chip.prox{background:var(--bl);color:var(--b)}
+.session.prox{border-left-color:var(--b)}
 .session .num{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.85rem}
 .session.soon .num{background:#dcdcdc;color:#fff}
 .session h3{margin:0 0 .35rem;font-size:1.14rem;line-height:1.25}
@@ -127,7 +138,8 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .mod .row.mini a{font-size:.76rem;padding:.36em .75em}
 
 /* ===== portada compacta: la acción principal sin hacer scroll ===== */
-.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:2.2rem;align-items:center}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
+.prep-col{display:grid;gap:1rem}
 .cta-row{display:flex;flex-wrap:wrap;gap:.7rem;margin:0 0 1rem}
 .btn-main{display:inline-flex;flex-direction:column;gap:.1rem;padding:.7em 1.5em;border-radius:var(--pill);
   background:var(--y);color:#3a2f00;text-decoration:none;font-weight:800;font-size:1rem;
@@ -138,6 +150,20 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;font-weight:700;font-size:.88rem}
 .btn-ghost:hover{background:rgba(255,255,255,.1)}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:1.4rem}}
+
+/* ===== antes de la clase: los tres pasos, sin buscar nada ===== */
+.prep{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r-lg);padding:1rem 1.1rem}
+.prep-tit{display:block;font-size:.92rem;margin-bottom:.7rem;color:#fff}
+.prep-pasos{display:grid;gap:.4rem}
+.paso{display:flex;gap:.7rem;align-items:flex-start;padding:.5rem .6rem;border-radius:12px;
+  text-decoration:none;color:#dce7ef;transition:background .15s}
+.paso:hover{background:rgba(255,255,255,.09)}
+.paso b{flex:0 0 auto;display:grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;
+  background:var(--y);color:#3a2f00;font-size:.76rem;font-weight:800}
+.paso span{font-size:.78rem;line-height:1.35}
+.paso strong{display:block;color:#fff;font-size:.86rem;margin-bottom:.05rem}
+@media(max-width:900px){.prep-col{gap:.8rem}}
 
 </style></head>
 <body>
@@ -156,16 +182,18 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div>
     <div class="eyebrow">Universidad de los Andes · Colsubsidio</div>
     <h1>Diseño y Gestión de Bases de Datos con SQL</h1>
-    <p class="sub">Modelar información, crear esquemas robustos y responder preguntas de negocio con SQL. De los fundamentos a la práctica con herramientas profesionales.</p>
+    <p class="sub">Aprende a hacerle preguntas a una base de datos y a obtener respuestas. Empezamos desde cero y practicamos con datos reales en cada clase.</p>
     <div class="cta-row"><a class="btn-main" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">▶ Abrir la sesión de hoy<small>Sesión 2 · De la decisión a la primera consulta</small></a><a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a></div>
-    <div class="facts"><span>48 horas · 16 sesiones</span><span>Virtual sincrónica</span></div>
+    <div class="facts"><span>48 horas · 16 sesiones</span><span>Clases en vivo por videollamada</span></div>
+  </div>
+  <div class="prep-col"><div class="prep"><b class="prep-tit">Antes de que empiece la clase</b><div class="prep-pasos"><a class="paso" href="Presentaciones/M2/base-datos/dvdrental.db" download><b>1</b><span><strong>Descarga la base de datos</strong>Es un archivo. Guárdalo en Descargas y no lo abras: lo abriremos juntos en clase.</span></a><a class="paso" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><b>2</b><span><strong>Instala Beekeeper Studio</strong>Es el programa con el que se abre esa base. Gratis, para Windows, Mac y Ubuntu.</span></a><a class="paso" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><b>3</b><span><strong>Abre la presentación de hoy</strong>Se ve en el navegador. No hay que instalar nada.</span></a></div></div>
   </div>
   <aside class="progress-card">
     <div class="progress-head">
       <b>Tu avance</b>
       <em>Sesión 2 de 16</em>
     </div>
-    <div class="track"><div class="fill" style="width:12.5%"></div></div>
+    <div class="track"><div class="fill" style="width:6.2%"></div></div>
     <div class="pips"><span class="pip done" title="Sesión 1">1</span><span class="pip now" title="Sesión 2">2</span><span class="pip " title="Sesión 3">3</span><span class="pip " title="Sesión 4">4</span><span class="pip " title="Sesión 5">5</span><span class="pip " title="Sesión 6">6</span><span class="pip " title="Sesión 7">7</span><span class="pip " title="Sesión 8">8</span><span class="pip " title="Sesión 9">9</span><span class="pip " title="Sesión 10">10</span><span class="pip " title="Sesión 11">11</span><span class="pip " title="Sesión 12">12</span><span class="pip " title="Sesión 13">13</span><span class="pip " title="Sesión 14">14</span><span class="pip " title="Sesión 15">15</span><span class="pip " title="Sesión 16">16</span></div>
   </aside>
 </div></header>
@@ -174,9 +202,9 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div class="sec-head">
     <div class="kicker">Los seis módulos</div>
     <h2>Recorrido del curso</h2>
-    <p>Cada módulo trae sus propios materiales. Los que ya están publicados aparecen como enlaces.</p>
+    <p>Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4. Cada módulo trae sus propios materiales.</p>
   </div>
-  <div class="road"><div class="mod"><div class="mh"><b>Módulo 1</b><span class="st done">Completado</span></div><h4>¿Cómo generamos valor con datos?</h4><p>Dato ≠ valor, actores, decisiones y el ecosistema de datos.</p><div class="row mini"><a href="Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx" download>📊 Presentación del módulo</a></div></div><div class="mod"><div class="mh"><b>Módulo 2</b><span class="st now">En curso</span></div><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p><div class="row mini"><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ Base dvdrental.db · 3,3 MB</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de taller</a><a href="Presentaciones/M2/referencia-modulo-2.html">📘 Guía de referencia</a></div></div><div class="mod"><div class="mh"><b>Módulo 3</b><span class="st ">Por venir</span></div><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado entidad-relación y normalización.</p></div><div class="mod"><div class="mh"><b>Módulo 4</b><span class="st ">Por venir</span></div><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo conviene cada uno.</p></div><div class="mod"><div class="mh"><b>Módulo 5</b><span class="st ">Por venir</span></div><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div><div class="mod"><div class="mh"><b>Módulo 6</b><span class="st ">Por venir</span></div><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div></div>
+  <div class="road"><div class="mod"><div class="mh"><b>Módulo 1</b><span class="st done">Completado</span></div><h4>¿Cómo generamos valor con datos?</h4><p>Dato ≠ valor, actores, decisiones y el ecosistema de datos.</p><div class="row mini"><a href="Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx" download>📊 Presentación del módulo</a></div></div><div class="mod"><div class="mh"><b>Módulo 2</b><span class="st now">En curso</span></div><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p><div class="row mini"><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos (archivo)</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda para los ejercicios</a><a href="Presentaciones/M2/referencia-modulo-2.html">📘 Guía para repasar en casa</a></div></div><div class="mod"><div class="mh"><b>Módulo 3</b><span class="st ">Por venir</span></div><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado entidad-relación y normalización.</p></div><div class="mod"><div class="mh"><b>Módulo 4</b><span class="st ">Por venir</span></div><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo conviene cada uno.</p></div><div class="mod"><div class="mh"><b>Módulo 5</b><span class="st ">Por venir</span></div><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div><div class="mod"><div class="mh"><b>Módulo 6</b><span class="st ">Por venir</span></div><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div></div>
 </div></section>
 
 <section id="sesiones"><div class="wrap">
@@ -184,18 +212,18 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     <div class="kicker">Módulo 2 · Explorando bases de datos con SQL</div>
     <h2>Sesiones</h2>
     <p>Cada sesión es un archivo único que funciona sin conexión, y trae dentro lo que necesitas ese día.
-       Navega con las flechas; <b>F</b> pantalla completa, <b>T</b> cronómetro, <b>↓</b> descargar.</p>
+       Navega con ← y →; <b>F</b> pantalla completa, <b>T</b> cronómetro. El botón ↓ de la barra la descarga.</p>
   </div>
-  <div class="sessions"><div class="sesion-wrap"><a class="session hoy" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><span class="chip hoy">Hoy</span><span class="num">2</span><h3>De la decisión a la primera consulta</h3><p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p><div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S2.sql" download>📄 Consultas · S2.sql</a></div></div><div class="sesion-wrap"><a class="session" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html"><span class="num">3</span><h3>Filtrar mejor y resumir</h3><p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p><div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S3.sql" download>📄 Consultas · S3.sql</a></div></div><div class="sesion-wrap"><div class="session soon"><span class="num">4</span><h3>Uniones de tablas</h3><p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p><div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div><div class="go">Próximamente</div></div></div></div>
+  <div class="sessions"><div class="sesion-wrap"><a class="session hoy" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><span class="chip hoy">Hoy</span><span class="num">2</span><h3>De la decisión a la primera consulta</h3><p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p><div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S2.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><a class="session prox" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html"><span class="chip prox">Próxima clase</span><span class="num">3</span><h3>Filtrar mejor y resumir</h3><p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p><div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S3.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><div class="session soon"><span class="num">4</span><h3>Uniones de tablas</h3><p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p><div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div><div class="go">Próximamente</div></div></div></div>
 </div></section>
 
 <section class="alt" id="herramientas"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
-    <p>Esto se instala una vez y sirve para las 16 sesiones. Los materiales de cada sesión están en su propia tarjeta, arriba.</p>
+    <p>Esto se instala una vez y sirve para las 16 sesiones. Lo que necesitas hoy está arriba, en «Antes de que empiece la clase».</p>
   </div>
-  <div class="mats"><a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><span class="ico">💻</span><strong>Beekeeper Studio</strong><span>El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.</span></a><a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf" target="_blank" rel="noopener"><span class="ico">📋</span><strong>Chuleta de SQL en PDF</strong><span>Una página con lo esencial del lenguaje, para imprimir.</span></a></div>
+  <div class="mats"><a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><span class="ico">💻</span><strong>Beekeeper Studio</strong><span>El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.</span></a><a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf"><span class="ico">📋</span><strong>Chuleta de SQL en PDF</strong><span>Una página con lo esencial del lenguaje. Se abre en el navegador y se puede imprimir.</span></a></div>
   <h3 class="grp">Instalación paso a paso</h3>
   <div class="row"><a href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>🪟 Windows</a><a href="Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html">🐧 Ubuntu</a><a href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>🍎 macOS</a></div>
 </div></section>
@@ -203,4 +231,12 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 <footer><div class="wrap">
   Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio
 </div></footer>
+<script>
+  /* El desplazamiento suave se activa una vez cargada la pagina, para que
+     ningun salto inicial se vea animado. */
+  addEventListener('load', function () {
+    document.documentElement.classList.add('listo');
+    if (!location.hash) window.scrollTo(0, 0);
+  });
+</script>
 </body></html>
