@@ -57,20 +57,14 @@ def tarjeta_modulo(m):
             % (m['n'], cls, e(est), e(m['titulo']), e(m['desc']), bloque))
 
 
-def pasos_preparacion(c):
-    """La casilla «antes de la clase»: los tres pasos, con sus enlaces."""
-    p = c.get('preparacion')
-    if not p:
+def materiales_hoy(c):
+    """Los archivos que se usan hoy, como enlaces. Sin instrucciones:
+    de eso se encarga el docente en clase."""
+    ms = c.get('materialesHoy') or []
+    if not ms:
         return ''
-    filas = ''.join(
-        '<a class="paso" href="%s"%s%s><b>%s</b><span><strong>%s</strong>%s</span></a>'
-        % (e(x['href']),
-           ' download' if x.get('download') else '',
-           ' target="_blank" rel="noopener"' if x.get('externo') else '',
-           x['n'], e(x['txt']), e(x['detalle']))
-        for x in p['pasos'])
-    return '<div class="prep"><b class="prep-tit">%s</b><div class="prep-pasos">%s</div></div>' % (
-        e(p['titulo']), filas)
+    return ('<div class="hoy-mats"><span>Materiales de hoy</span>%s</div>'
+            % ''.join(enlace(x) for x in ms))
 
 
 def construir():
@@ -114,7 +108,7 @@ def construir():
         for h in c['herramientas'])
 
     inst = ''.join(enlace(x) for x in c['instalacion'])
-    prep = pasos_preparacion(c)
+    prep = materiales_hoy(c)
     glos = c.get('glosario', '')
 
     css = (RAIZ / 'tools' / 'estilo-portada.css').read_text(encoding='utf-8')
@@ -152,9 +146,8 @@ def construir():
     <h1>{e(c['titulo'])}</h1>
     <p class="sub">{e(c['subtitulo'])}</p>
     <div class="cta-row">{cta}</div>
+    {prep}
     <div class="facts">{datos}</div>
-  </div>
-  <div class="prep-col">{prep}
   </div>
   <aside class="progress-card">
     <div class="progress-head">
@@ -189,7 +182,7 @@ def construir():
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
-    <p>Esto se instala una vez y sirve para las 16 sesiones. Lo que necesitas hoy está arriba, en «Antes de que empiece la clase».</p>
+    <p>Esto se instala una vez y sirve para las 16 sesiones. Los archivos de la clase de hoy están arriba, junto al botón.</p>
   </div>
   <div class="mats">{herr}</div>
   <h3 class="grp">Instalación paso a paso</h3>

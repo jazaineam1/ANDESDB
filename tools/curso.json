@@ -168,30 +168,21 @@
       "sesiones": []
     }
   ],
-  "preparacion": {
-    "titulo": "Antes de que empiece la clase",
-    "pasos": [
-      {
-        "n": 1,
-        "txt": "Descarga la base de datos",
-        "detalle": "Es un archivo. Guárdalo en Descargas y no lo abras: lo abriremos juntos en clase.",
-        "href": "Presentaciones/M2/base-datos/dvdrental.db",
-        "download": true
-      },
-      {
-        "n": 2,
-        "txt": "Instala Beekeeper Studio",
-        "detalle": "Es el programa con el que se abre esa base. Gratis, para Windows, Mac y Ubuntu.",
-        "href": "https://www.beekeeperstudio.io/get",
-        "externo": true
-      },
-      {
-        "n": 3,
-        "txt": "Abre la presentación de hoy",
-        "detalle": "Se ve en el navegador. No hay que instalar nada.",
-        "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"
-      }
-    ]
-  },
-  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4."
+  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4.",
+  "materialesHoy": [
+    {
+      "txt": "🗄️ La base de datos",
+      "href": "Presentaciones/M2/base-datos/dvdrental.db",
+      "download": true
+    },
+    {
+      "txt": "💻 Beekeeper Studio",
+      "href": "https://www.beekeeperstudio.io/get",
+      "externo": true
+    },
+    {
+      "txt": "📄 Hoja de ayuda",
+      "href": "Presentaciones/M2/chuleta-taller.html"
+    }
+  ]
 }

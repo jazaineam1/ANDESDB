@@ -138,8 +138,7 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .mod .row.mini a{font-size:.76rem;padding:.36em .75em}
 
 /* ===== portada compacta: la acción principal sin hacer scroll ===== */
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
-.prep-col{display:grid;gap:1rem}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2.2rem;align-items:center}
 .cta-row{display:flex;flex-wrap:wrap;gap:.7rem;margin:0 0 1rem}
 .btn-main{display:inline-flex;flex-direction:column;gap:.1rem;padding:.7em 1.5em;border-radius:var(--pill);
   background:var(--y);color:#3a2f00;text-decoration:none;font-weight:800;font-size:1rem;
@@ -163,7 +162,14 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   background:var(--y);color:#3a2f00;font-size:.76rem;font-weight:800}
 .paso span{font-size:.78rem;line-height:1.35}
 .paso strong{display:block;color:#fff;font-size:.86rem;margin-bottom:.05rem}
-@media(max-width:900px){.prep-col{gap:.8rem}}
+
+/* ===== los archivos de hoy, a un clic y sin sermón ===== */
+.hoy-mats{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0 0 1rem}
+.hoy-mats>span{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--y);font-weight:800;margin-right:.2rem}
+.hoy-mats a{padding:.5em 1em;border-radius:var(--pill);border:1px solid rgba(255,255,255,.24);
+  color:#eaf1f6;text-decoration:none;font-size:.84rem;font-weight:600}
+.hoy-mats a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
 
 </style></head>
 <body>
@@ -184,9 +190,8 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     <h1>Diseño y Gestión de Bases de Datos con SQL</h1>
     <p class="sub">Aprende a hacerle preguntas a una base de datos y a obtener respuestas. Empezamos desde cero y practicamos con datos reales en cada clase.</p>
     <div class="cta-row"><a class="btn-main" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">▶ Abrir la sesión de hoy<small>Sesión 2 · De la decisión a la primera consulta</small></a><a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a></div>
+    <div class="hoy-mats"><span>Materiales de hoy</span><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos</a><a href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">💻 Beekeeper Studio</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda</a></div>
     <div class="facts"><span>48 horas · 16 sesiones</span><span>Clases en vivo por videollamada</span></div>
-  </div>
-  <div class="prep-col"><div class="prep"><b class="prep-tit">Antes de que empiece la clase</b><div class="prep-pasos"><a class="paso" href="Presentaciones/M2/base-datos/dvdrental.db" download><b>1</b><span><strong>Descarga la base de datos</strong>Es un archivo. Guárdalo en Descargas y no lo abras: lo abriremos juntos en clase.</span></a><a class="paso" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><b>2</b><span><strong>Instala Beekeeper Studio</strong>Es el programa con el que se abre esa base. Gratis, para Windows, Mac y Ubuntu.</span></a><a class="paso" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><b>3</b><span><strong>Abre la presentación de hoy</strong>Se ve en el navegador. No hay que instalar nada.</span></a></div></div>
   </div>
   <aside class="progress-card">
     <div class="progress-head">
@@ -221,7 +226,7 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
-    <p>Esto se instala una vez y sirve para las 16 sesiones. Lo que necesitas hoy está arriba, en «Antes de que empiece la clase».</p>
+    <p>Esto se instala una vez y sirve para las 16 sesiones. Los archivos de la clase de hoy están arriba, junto al botón.</p>
   </div>
   <div class="mats"><a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener"><span class="ico">💻</span><strong>Beekeeper Studio</strong><span>El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.</span></a><a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf"><span class="ico">📋</span><strong>Chuleta de SQL en PDF</strong><span>Una página con lo esencial del lenguaje. Se abre en el navegador y se puede imprimir.</span></a></div>
   <h3 class="grp">Instalación paso a paso</h3>
