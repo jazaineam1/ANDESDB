@@ -1,0 +1,88 @@
+{
+  "_comentario": "Manifiesto del curso. Para añadir una sesión o un recurso NO se toca index.html: se edita este archivo y se ejecuta 'py tools/construir-index.py'. Estados válidos: completado, curso, pendiente. En sesiones además: hoy.",
+
+  "titulo": "Diseño y Gestión de Bases de Datos con SQL",
+  "institucion": "Universidad de los Andes · Colsubsidio",
+  "subtitulo": "Modelar información, crear esquemas robustos y responder preguntas de negocio con SQL. De los fundamentos a la práctica con herramientas profesionales.",
+  "datos": ["48 horas · 16 sesiones", "Virtual sincrónica"],
+  "sesionActual": 2,
+  "totalSesiones": 16,
+
+  "herramientas": [
+    { "icono": "💻", "titulo": "Beekeeper Studio",
+      "desc": "El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.",
+      "href": "https://www.beekeeperstudio.io/get", "externo": true },
+    { "icono": "📋", "titulo": "Chuleta de SQL en PDF",
+      "desc": "Una página con lo esencial del lenguaje, para imprimir.",
+      "href": "Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf", "externo": true }
+  ],
+
+  "instalacion": [
+    { "txt": "🪟 Windows", "href": "Presentaciones/M1/guia-instalacion-beekeeper-windows.docx", "download": true },
+    { "txt": "🐧 Ubuntu", "href": "Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html" },
+    { "txt": "🍎 macOS", "href": "Presentaciones/M1/guia-instalacion-beekeeper-macos.docx", "download": true }
+  ],
+
+  "modulos": [
+    {
+      "n": 1, "titulo": "¿Cómo generamos valor con datos?", "estado": "completado",
+      "desc": "Dato ≠ valor, actores, decisiones y el ecosistema de datos.",
+      "recursos": [
+        { "txt": "📊 Presentación del módulo", "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx", "download": true }
+      ],
+      "sesiones": []
+    },
+    {
+      "n": 2, "titulo": "Explorando bases de datos con SQL", "estado": "curso",
+      "desc": "Consultar, filtrar, agrupar y unir tablas reales.",
+      "recursos": [
+        { "txt": "🗄️ Base dvdrental.db · 3,3 MB", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true },
+        { "txt": "📄 Hoja de taller", "href": "Presentaciones/M2/chuleta-taller.html" },
+        { "txt": "📘 Guía de referencia", "href": "Presentaciones/M2/referencia-modulo-2.html" }
+      ],
+      "sesiones": [
+        {
+          "n": 2, "titulo": "De la decisión a la primera consulta", "estado": "hoy",
+          "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
+          "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
+          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
+          "recursos": [ { "txt": "📄 Consultas · S2.sql", "href": "Scripts/S2.sql", "download": true } ]
+        },
+        {
+          "n": 3, "titulo": "Filtrar mejor y resumir", "estado": "pendiente",
+          "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
+          "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
+          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
+          "recursos": [ { "txt": "📄 Consultas · S3.sql", "href": "Scripts/S3.sql", "download": true } ]
+        },
+        {
+          "n": 4, "titulo": "Uniones de tablas", "estado": "pendiente",
+          "desc": "Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.",
+          "href": null,
+          "tags": ["UNION", "INNER JOIN", "LEFT JOIN", "FULL OUTER"],
+          "recursos": []
+        }
+      ]
+    },
+    {
+      "n": 3, "titulo": "Modelos de datos útiles", "estado": "pendiente",
+      "desc": "Reglas de negocio, modelado entidad-relación y normalización.",
+      "recursos": [], "sesiones": []
+    },
+    {
+      "n": 4, "titulo": "Más allá de las tablas: NoSQL", "estado": "pendiente",
+      "desc": "Documentos, colecciones y clave-valor. Cuándo conviene cada uno.",
+      "recursos": [], "sesiones": []
+    },
+    {
+      "n": 5, "titulo": "Ingesta y transformación", "estado": "pendiente",
+      "desc": "De la fuente a la tabla BI, con prácticas en la nube.",
+      "recursos": [], "sesiones": []
+    },
+    {
+      "n": 6, "titulo": "Desafío final", "estado": "pendiente",
+      "desc": "Diagnosticar, modelar y construir una solución completa.",
+      "recursos": [], "sesiones": []
+    }
+  ]
+}
