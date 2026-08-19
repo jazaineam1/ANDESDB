@@ -5,115 +5,220 @@
 <link rel="icon" href="assets/favicon.ico">
 <style>
 :root{
-  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43;
-  --paper:#fff; --s:#f5f3ee; --bl:#e9f4ff; --yl:#fff6c9;
-  --ink:#1a1a1a; --ink-soft:#5a5a5a;
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+  --paper:#fff; --s:#f5f3ee; --bl:#e9f4ff; --yl:#fff6c9; --gl:#e9f8ef;
+  --ink:#1a1a1a; --ink-soft:#5a5a5a; --line:#e6eaee;
   --dark:#0e1a24; --dark-2:#16293a;
   --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
-  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.12);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 20px 48px rgba(16,24,32,.13);
   --r-sm:10px; --r-md:16px; --r-lg:24px; --pill:999px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
 img{max-width:100%;height:auto}
 a{color:var(--b)}
-.wrap{width:min(1150px,92vw);margin:0 auto}
+code{font-family:Consolas,"Cascadia Mono",monospace}
+.wrap{width:min(1180px,92vw);margin:0 auto}
 
-/* ---------- encabezado ---------- */
-.hero{background:var(--dark);background-image:linear-gradient(155deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff;padding:clamp(2.5rem,7vw,5.5rem) 0 clamp(2.5rem,6vw,4.5rem);position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;right:0;bottom:0;width:40%;height:70%;background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.16),transparent 70%);pointer-events:none}
-.eyebrow{color:var(--y);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(.72rem,1.5vw,.85rem);margin-bottom:1rem}
-.hero h1{font-size:clamp(2rem,5.4vw,3.6rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 1rem;max-width:18ch}
-.hero p{font-size:clamp(1rem,2vw,1.3rem);max-width:56ch;color:#dce7ef;margin:0 0 1.8rem}
-.facts{display:flex;flex-wrap:wrap;gap:.6rem;position:relative;z-index:2}
-.facts span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:.45em 1em;border-radius:var(--pill);font-size:.86rem;font-weight:600}
+/* ===== barra superior con índice ===== */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:1.2rem;height:58px}
+.brandmark{font-weight:800;font-size:.95rem;letter-spacing:-.01em;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.brandmark span{color:var(--o)}
+.toc{display:flex;gap:.15rem;margin-left:auto;flex-wrap:wrap}
+.toc a{text-decoration:none;color:var(--ink-soft);font-size:.87rem;font-weight:600;padding:.38em .75em;border-radius:var(--pill)}
+.toc a:hover{background:var(--s);color:var(--ink)}
+.toc a.cta{background:var(--ink);color:#fff}
+.toc a.cta:hover{background:#000}
+@media(max-width:860px){.topbar .wrap{height:auto;padding:.6rem 0;flex-wrap:wrap;gap:.5rem}.toc{margin-left:0;width:100%}}
 
-/* ---------- secciones ---------- */
-section{padding:clamp(2.5rem,6vw,4.5rem) 0}
-.sec-head{margin-bottom:2rem}
-.sec-head h2{font-size:clamp(1.5rem,3.4vw,2.3rem);letter-spacing:-.02em;margin:.2rem 0 .5rem}
-.sec-head p{color:var(--ink-soft);max-width:62ch;margin:0}
-.kicker{color:#8a7300;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
+/* ===== hero ===== */
+.hero{background:var(--dark);background-image:linear-gradient(155deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff;padding:clamp(2.6rem,6vw,4.6rem) 0;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-4%;bottom:-30%;width:44%;height:100%;background:radial-gradient(closest-side,rgba(255,214,0,.20),transparent 72%);pointer-events:none}
+.eyebrow{color:var(--y);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.76rem;margin-bottom:.9rem}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 1rem;max-width:19ch}
+.hero p.sub{font-size:clamp(1rem,1.9vw,1.24rem);max-width:58ch;color:#d7e3ec;margin:0 0 1.8rem}
+.facts{display:flex;flex-wrap:wrap;gap:.55rem;position:relative;z-index:2}
+.facts span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:.42em 1em;border-radius:var(--pill);font-size:.85rem;font-weight:600}
 
-/* ---------- sesiones ---------- */
-.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.4rem}
-.session{background:var(--s);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.6rem 1.5rem;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s}
-.session:nth-child(2n){background:var(--bl);border-left-color:var(--b)}
-.session.soon{background:#fafafa;border-left-color:#d6d6d6;box-shadow:none}
-a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+/* ===== progreso ===== */
+.progress-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-lg);padding:1.4rem 1.5rem;margin-top:2rem;position:relative;z-index:2}
+.progress-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.6rem;margin-bottom:.9rem}
+.progress-head b{font-size:1.05rem}
+.progress-head em{font-style:normal;color:#bfd0dc;font-size:.87rem}
+.track{background:rgba(255,255,255,.14);border-radius:var(--pill);height:12px;overflow:hidden}
+.fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--y),var(--o));width:12.5%}
+.pips{display:flex;gap:.28rem;margin-top:.9rem;flex-wrap:wrap}
+.pip{width:1.65rem;height:1.65rem;border-radius:50%;display:grid;place-items:center;font-size:.7rem;font-weight:800;background:rgba(255,255,255,.10);color:#8fa3b3;border:1px solid rgba(255,255,255,.14)}
+.pip.done{background:var(--g);color:#fff;border-color:transparent}
+.pip.now{background:var(--y);color:#3a2f00;border-color:transparent;box-shadow:0 0 0 4px rgba(255,214,0,.22)}
+.legend{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:.9rem;font-size:.8rem;color:#bfd0dc}
+.legend i{font-style:normal;display:inline-block;width:.7rem;height:.7rem;border-radius:50%;margin-right:.35rem;vertical-align:middle}
+
+/* ===== secciones ===== */
+section{padding:clamp(2.6rem,5.5vw,4.4rem) 0;scroll-margin-top:66px}
+.alt{background:var(--s)}
+.sec-head{margin-bottom:2rem;max-width:64ch}
+.sec-head h2{font-size:clamp(1.5rem,3.2vw,2.2rem);letter-spacing:-.022em;margin:.25rem 0 .5rem}
+.sec-head p{color:var(--ink-soft);margin:0}
+.kicker{color:#8a7300;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.74rem}
+
+/* ===== sesiones ===== */
+.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:1.3rem}
+.session{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.5rem 1.4rem;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative}
 a.session{text-decoration:none;color:inherit}
-.session .num{display:inline-grid;place-items:center;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.9rem}
-.session.soon .num{background:#d6d6d6;color:#fff}
-.session h3{margin:0 0 .4rem;font-size:1.18rem;line-height:1.25}
-.session p{margin:0 0 1rem;color:var(--ink-soft);font-size:.95rem;flex:1}
-.tags{display:flex;flex-wrap:wrap;gap:.35rem}
-.tags code{background:var(--ink);color:#fff;padding:.28em .6em;border-radius:var(--pill);font-size:.74rem;font-family:Consolas,monospace}
-.session.soon .tags code{background:#c9c9c9}
-.go{font-weight:800;color:var(--b);margin-top:1rem;font-size:.95rem}
-.session.soon .go{color:#9a9a9a}
+a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+.session.hoy{border-left-color:var(--o);background:linear-gradient(180deg,#fffaf2,#fff)}
+.session.soon{background:#fbfbfb;border-left-color:#dcdcdc;box-shadow:none}
+.chip{position:absolute;top:1rem;right:1rem;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3em .7em;border-radius:var(--pill)}
+.chip.hoy{background:var(--o);color:#fff}
+.chip.lista{background:var(--gl);color:var(--g)}
+.session .num{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.85rem}
+.session.soon .num{background:#dcdcdc;color:#fff}
+.session h3{margin:0 0 .35rem;font-size:1.14rem;line-height:1.25}
+.session p{margin:0 0 1rem;color:var(--ink-soft);font-size:.93rem;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.tags code{background:var(--ink);color:#fff;padding:.26em .6em;border-radius:var(--pill);font-size:.72rem}
+.session.soon .tags code{background:#cfcfcf}
+.go{font-weight:800;color:var(--b);margin-top:.95rem;font-size:.92rem}
+.session.soon .go{color:#a5a5a5}
 
-/* ---------- materiales ---------- */
-.mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.2rem}
-.mat{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid #e6e6e6;border-radius:var(--r-md);padding:1.3rem;box-shadow:var(--sh);transition:transform .18s,box-shadow .18s}
+/* ===== materiales ===== */
+.mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:1.05rem}
+.mat{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:1.2rem;box-shadow:var(--sh);transition:transform .18s,box-shadow .18s,border-color .18s}
 .mat:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);border-color:var(--b)}
-.mat .ico{font-size:1.7rem;line-height:1;display:block;margin-bottom:.6rem}
-.mat strong{display:block;font-size:1.02rem;margin-bottom:.25rem}
-.mat span{color:var(--ink-soft);font-size:.88rem}
+.mat .ico{font-size:1.6rem;line-height:1;display:block;margin-bottom:.55rem}
+.mat strong{display:block;font-size:1rem;margin-bottom:.2rem}
+.mat span{color:var(--ink-soft);font-size:.86rem}
+.mat.star{border-color:var(--o);background:linear-gradient(180deg,#fffaf2,#fff)}
 
-/* ---------- ruta ---------- */
-.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:1rem}
-.mod{background:var(--s);border-radius:var(--r-md);padding:1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh)}
-.mod:nth-child(2n){background:var(--bl);border-top-color:var(--b)}
-.mod b{display:block;color:var(--b);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem}
+/* ===== recorrido ===== */
+.road-sec{position:relative;isolation:isolate;background:var(--s)}
+.road-sec:before{content:"";position:absolute;inset:0;z-index:-1;background:url("assets/img/bg-masthead.jpg") center/cover no-repeat;opacity:.10}
+.road-sec:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(245,243,238,.72),rgba(245,243,238,.92))}
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem}
+.mod{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:1.15rem 1.2rem;border-top:5px solid var(--y);box-shadow:var(--sh);text-decoration:none;color:inherit;display:block}
+.mod:nth-child(2n){border-top-color:var(--b)}
+a.mod:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.mod .mh{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.3rem}
+.mod b{color:var(--b);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase}
+.mod .st{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.22em .6em;border-radius:var(--pill);background:#eef1f4;color:#7b8896}
+.mod .st.done{background:var(--gl);color:var(--g)}
+.mod .st.now{background:#fff2df;color:#a85600}
 .mod h4{margin:0 0 .3rem;font-size:1rem;line-height:1.25}
 .mod p{margin:0;font-size:.86rem;color:var(--ink-soft)}
 
-/* ---------- aviso ---------- */
-.note{background:var(--yl);border-left:6px solid var(--y);border-radius:var(--r-md);padding:1.3rem 1.5rem;margin-top:2rem}
-.note strong{display:block;margin-bottom:.3rem}
-.note p{margin:0;font-size:.95rem}
-
-/* ---------- pie ---------- */
-footer{background:var(--dark);color:#c3d1dc;padding:2.5rem 0;font-size:.88rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center}
-footer a{color:var(--y)}
-.alt{background:var(--s)}
+footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 </style></head>
 <body>
 
-<header class="hero"><div class="wrap">
+<div class="topbar"><div class="wrap">
+  <a class="brandmark" href="#top">Bases de Datos con <span>SQL</span></a>
+  <nav class="toc">
+    <a href="#recorrido">Recorrido</a>
+    <a href="#sesiones">Sesiones</a>
+    <a href="#materiales">Materiales</a>
+    <a class="cta" href="Presentaciones/M2/referencia-modulo-2.html">Guía de referencia</a>
+  </nav>
+</div></div>
+
+<header class="hero" id="top"><div class="wrap">
   <div class="eyebrow">Universidad de los Andes · Colsubsidio</div>
   <h1>Diseño y Gestión de Bases de Datos con SQL</h1>
-  <p>Modelar información, crear esquemas robustos y responder preguntas de negocio con SQL. De los fundamentos a la práctica con herramientas profesionales.</p>
+  <p class="sub">Modelar información, crear esquemas robustos y responder preguntas de negocio con SQL. De los fundamentos a la práctica con herramientas profesionales.</p>
   <div class="facts">
     <span>48 horas · 16 sesiones</span>
     <span>Virtual sincrónica</span>
-    <span>Ejercicio cada 10–15 min</span>
-    <span>Prepara la certificación DP-900</span>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head">
+      <b>Tu avance en el curso</b>
+      <em>Sesión 2 de 16 · Módulo 2 en marcha</em>
+    </div>
+    <div class="track"><div class="fill"></div></div>
+    <div class="pips">
+      <span class="pip done" title="Sesión 1 · completada">1</span>
+      <span class="pip now" title="Sesión 2 · hoy">2</span>
+      <span class="pip" title="Sesión 3">3</span><span class="pip" title="Sesión 4">4</span>
+      <span class="pip" title="Sesión 5">5</span><span class="pip" title="Sesión 6">6</span>
+      <span class="pip" title="Sesión 7">7</span><span class="pip" title="Sesión 8">8</span>
+      <span class="pip" title="Sesión 9">9</span><span class="pip" title="Sesión 10">10</span>
+      <span class="pip" title="Sesión 11">11</span><span class="pip" title="Sesión 12">12</span>
+      <span class="pip" title="Sesión 13">13</span><span class="pip" title="Sesión 14">14</span>
+      <span class="pip" title="Sesión 15">15</span><span class="pip" title="Sesión 16">16</span>
+    </div>
+    <div class="legend">
+      <span><i style="background:#146c43"></i>Completada</span>
+      <span><i style="background:#ffd600"></i>Hoy</span>
+      <span><i style="background:rgba(255,255,255,.18)"></i>Por venir</span>
+    </div>
   </div>
 </div></header>
 
-<section><div class="wrap">
+<section class="road-sec" id="recorrido"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Los seis módulos</div>
+    <h2>Recorrido del curso</h2>
+    <p>El curso avanza desde el valor de los datos hasta un desafío final integrador. Los módulos con material publicado son enlaces.</p>
+  </div>
+  <div class="road">
+    <a class="mod" href="Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx" download>
+      <div class="mh"><b>Módulo 1</b><span class="st done">Completado</span></div>
+      <h4>¿Cómo generamos valor con datos?</h4>
+      <p>Dato ≠ valor, actores, decisiones y el ecosistema de datos. <b>Descargar presentación ↓</b></p>
+    </a>
+    <a class="mod" href="#sesiones">
+      <div class="mh"><b>Módulo 2</b><span class="st now">En curso</span></div>
+      <h4>Explorando bases de datos con SQL</h4>
+      <p>Consultar, filtrar, agrupar y unir tablas reales. Sesiones 2 a 4.</p>
+    </a>
+    <div class="mod">
+      <div class="mh"><b>Módulo 3</b><span class="st">Por venir</span></div>
+      <h4>Modelos de datos útiles</h4>
+      <p>Reglas de negocio, modelado entidad-relación y normalización.</p>
+    </div>
+    <div class="mod">
+      <div class="mh"><b>Módulo 4</b><span class="st">Por venir</span></div>
+      <h4>Más allá de las tablas: NoSQL</h4>
+      <p>Documentos, colecciones y clave-valor. Cuándo conviene cada uno.</p>
+    </div>
+    <div class="mod">
+      <div class="mh"><b>Módulo 5</b><span class="st">Por venir</span></div>
+      <h4>Ingesta y transformación</h4>
+      <p>De la fuente a la tabla BI, con prácticas en la nube.</p>
+    </div>
+    <div class="mod">
+      <div class="mh"><b>Módulo 6</b><span class="st">Por venir</span></div>
+      <h4>Desafío final</h4>
+      <p>Diagnosticar, modelar y construir una solución completa.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="sesiones"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Módulo 2 · Explorando bases de datos con SQL</div>
     <h2>Sesiones</h2>
-    <p>Cada sesión es un archivo único que funciona sin conexión. Ábrelo en el navegador y navega con las flechas del teclado, o con <b>F</b> para pantalla completa y <b>T</b> para el cronómetro.</p>
+    <p>Cada sesión es un archivo único que funciona sin conexión. Navega con las flechas del teclado; <b>F</b> pantalla completa, <b>T</b> cronómetro, <b>↓</b> descargar para usarla sin internet.</p>
   </div>
   <div class="sessions">
 
-    <a class="session" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas-estudiante.html">
+    <a class="session hoy" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">
+      <span class="chip hoy">Hoy</span>
       <span class="num">2</span>
       <h3>De la decisión a la primera consulta</h3>
-      <p>Qué es una base de datos y en qué se diferencia de un SGBD. Por qué Excel a veces no alcanza. Relacional y NoSQL. Y tus primeras consultas sobre una base real.</p>
+      <p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p>
       <div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div>
       <div class="go">Abrir la sesión →</div>
     </a>
 
-    <a class="session" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones-estudiante.html">
+    <a class="session" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html">
+      <span class="chip lista">Lista</span>
       <span class="num">3</span>
       <h3>Filtrar mejor y resumir</h3>
-      <p>Filtros finos por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para empezar a resumirlas. El equivalente en SQL de una tabla dinámica.</p>
+      <p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p>
       <div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div>
       <div class="go">Abrir la sesión →</div>
     </a>
@@ -127,23 +232,26 @@ footer a{color:var(--y)}
     </div>
 
   </div>
-
-  <div class="note">
-    <strong>La base de datos se trabaja en local</strong>
-    <p>Descarga <code>dvdrental.db</code> una sola vez y ábrela en Beekeeper Studio eligiendo el tipo de conexión <b>SQLite</b>. No hay servidor, ni contraseñas, ni límite de conexiones — y funciona aunque se te caiga el internet.</p>
-  </div>
 </div></section>
 
-<section class="alt"><div class="wrap">
+<section id="materiales"><div class="wrap">
   <div class="sec-head">
     <div class="kicker">Descargas</div>
     <h2>Materiales</h2>
     <p>Todo lo que necesitas para seguir las sesiones y practicar por tu cuenta.</p>
   </div>
   <div class="mats">
-    <a class="mat" href="Presentaciones/M2/base-datos/dvdrental.db" download>
+    <a class="mat star" href="Presentaciones/M2/referencia-modulo-2.html">
+      <span class="ico">📘</span><strong>Guía de referencia</strong>
+      <span>Motores, Beekeeper, tipos de dato y el diccionario completo de la base</span>
+    </a>
+    <a class="mat star" href="Presentaciones/M2/base-datos/dvdrental.db" download>
       <span class="ico">🗄️</span><strong>Base de datos dvdrental</strong>
       <span>Archivo SQLite · 3,3 MB · 15 tablas</span>
+    </a>
+    <a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">
+      <span class="ico">💻</span><strong>Descargar Beekeeper Studio</strong>
+      <span>Windows · macOS · Ubuntu/Linux ↗</span>
     </a>
     <a class="mat" href="Scripts/S2.sql" download>
       <span class="ico">📄</span><strong>Consultas de la sesión 2</strong>
@@ -153,48 +261,27 @@ footer a{color:var(--y)}
       <span class="ico">📄</span><strong>Consultas de la sesión 3</strong>
       <span>S3.sql · filtros, agregación, GROUP BY y HAVING</span>
     </a>
-    <a class="mat" href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">
-      <span class="ico">💻</span><strong>Beekeeper Studio</strong>
-      <span>El cliente con el que abrimos la base ↗</span>
-    </a>
     <a class="mat" href="Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf" target="_blank" rel="noopener">
       <span class="ico">📋</span><strong>Chuleta de SQL</strong>
       <span>Una página con lo esencial · PDF</span>
     </a>
     <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-windows.docx" download>
-      <span class="ico">🪟</span><strong>Guía de instalación · Windows</strong>
+      <span class="ico">🪟</span><strong>Instalación · Windows</strong>
       <span>Paso a paso con capturas</span>
+    </a>
+    <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html">
+      <span class="ico">🐧</span><strong>Instalación · Ubuntu</strong>
+      <span>AppImage y paquete .deb</span>
     </a>
     <a class="mat" href="Presentaciones/M1/guia-instalacion-beekeeper-macos.docx" download>
-      <span class="ico">🍎</span><strong>Guía de instalación · macOS</strong>
-      <span>Paso a paso con capturas</span>
-    </a>
-    <a class="mat" href="Presentaciones/M2/ALTERNATIVAS-BASE-DE-DATOS.md">
-      <span class="ico">🔌</span><strong>Notas técnicas</strong>
-      <span>Por qué trabajamos en local y qué alternativas hay</span>
+      <span class="ico">🍎</span><strong>Instalación · macOS</strong>
+      <span>Apple Silicon e Intel</span>
     </a>
   </div>
 </div></section>
 
-<section><div class="wrap">
-  <div class="sec-head">
-    <div class="kicker">Recorrido</div>
-    <h2>Los seis módulos</h2>
-    <p>El curso avanza desde el valor de los datos hasta un desafío final integrador.</p>
-  </div>
-  <div class="road">
-    <div class="mod"><b>Módulo 1</b><h4>¿Cómo generamos valor con datos?</h4><p>Contexto, actores, decisiones y el ecosistema de datos.</p></div>
-    <div class="mod"><b>Módulo 2</b><h4>Explorando bases de datos con SQL</h4><p>Consultar, filtrar, agrupar y unir tablas reales.</p></div>
-    <div class="mod"><b>Módulo 3</b><h4>Modelos de datos útiles</h4><p>Reglas de negocio, modelado relacional y normalización.</p></div>
-    <div class="mod"><b>Módulo 4</b><h4>Más allá de las tablas: NoSQL</h4><p>Documentos, colecciones y clave-valor. Cuándo usarlos.</p></div>
-    <div class="mod"><b>Módulo 5</b><h4>Ingesta y transformación</h4><p>De la fuente a la tabla BI, con prácticas en la nube.</p></div>
-    <div class="mod"><b>Módulo 6</b><h4>Desafío final</h4><p>Diagnosticar, modelar y construir una solución completa.</p></div>
-  </div>
-</div></section>
 
 <footer><div class="wrap">
-  <div>Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio</div>
-  <div><a href="https://github.com/jazaineam1/ANDESDB">Repositorio del curso ↗</a></div>
+  Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio
 </div></footer>
-
 </body></html>

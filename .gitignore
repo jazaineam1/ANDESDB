@@ -1,0 +1,43 @@
+# ---------------------------------------------------------------------
+# DATOS PERSONALES · no subir nunca
+# Este repositorio es PÚBLICO. La encuesta de conocimientos contiene
+# nombre completo y correo personal de los estudiantes.
+# ---------------------------------------------------------------------
+Encuesta*.xlsx
+*respuestas*.xlsx
+
+
+# ---------------------------------------------------------------------
+# VERSIONES DOCENTES · solo en el equipo del docente
+# Llevan el guion, las respuestas y las notas de clase. La versión de
+# estudiante SÍ se publica y se regenera con:
+#   .\tools\derivar-version-estudiante.ps1 <archivo docente>
+# ---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
+# MATERIAL DOCENTE generado por los agentes de evaluacion
+# Libretos: llevan el guion hablado completo y las respuestas.
+# Evaluacion: diagnostico interno de las sesiones.
+# Quitalos de aqui si prefieres versionarlos (el repo es publico).
+# ---------------------------------------------------------------------
+Presentaciones/**/libreto-*.md
+Presentaciones/**/ALTERNATIVAS-*.md
+Presentaciones/**/EVALUACION-*.md
+
+
+# ---------------------------------------------------------------------
+# Temporales de Office (se crean al abrir un .pptx o .docx)
+# ---------------------------------------------------------------------
+~$*
+
+
+# ---------------------------------------------------------------------
+# Varios
+# ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+__pycache__/
+*.pyc
+.session1_rewrite.ps1

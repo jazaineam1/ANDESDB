@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guía de referencia · Módulo 2 · Bases de datos con SQL</title>
+<meta name="description" content="Motores SQL, Beekeeper Studio, tipos de dato y diccionario completo de la base dvdrental">
+<style>
+:root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#146c43;--r:#a52a2a;
+--paper:#fff;--s:#f5f3ee;--bl:#e9f4ff;--yl:#fff6c9;--gl:#e9f8ef;--rl:#fff1f0;--ol:#fff3e7;
+--ink:#1a1a1a;--ink-soft:#5a5a5a;--dark:#0e1a24;--dark-2:#16293a;
+--sh:0 1px 2px rgba(16,24,32,.05),0 8px 24px rgba(16,24,32,.07);
+--r-sm:10px;--r-md:16px;--pill:999px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink);line-height:1.6;background:var(--paper)}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:#eef2f5;padding:.12em .4em;border-radius:5px;font-size:.92em}
+pre{background:#0d1b26;color:#eef6fb;padding:1em 1.2em;border-radius:var(--r-md);border-left:.35em solid var(--y);overflow:auto;font:.86rem/1.55 Consolas,monospace}
+pre code{background:none;color:inherit;padding:0}
+a{color:var(--b)}
+h2{font-size:clamp(1.4rem,3vw,2.05rem);letter-spacing:-.02em;margin:0 0 .2em;scroll-margin-top:1.5rem}
+h3{font-size:1.12rem;margin:1.8rem 0 .5rem;scroll-margin-top:1.5rem}
+h4{font-size:1rem;margin:1.3rem 0 .4rem;color:var(--b)}
+
+/* ---- estructura ---- */
+.top{background:var(--dark);background-image:linear-gradient(155deg,var(--dark),var(--dark-2));color:#fff;padding:2.6rem 0 2.2rem}
+.wrap{width:min(1220px,93vw);margin:0 auto}
+.top .kick{color:var(--y);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.76rem;margin-bottom:.5rem}
+.top h1{font-size:clamp(1.7rem,4.2vw,2.7rem);margin:0 0 .5rem;letter-spacing:-.03em}
+.top p{margin:0;color:#cfdce6;max-width:70ch}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:2.5rem;align-items:start;padding:2.2rem 0 4rem}
+nav.toc{position:sticky;top:1rem;background:var(--s);border-radius:var(--r-md);padding:1.1rem 1rem;box-shadow:var(--sh);max-height:calc(100vh - 2rem);overflow:auto}
+nav.toc b{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#8a7300;margin-bottom:.6rem}
+nav.toc a{display:block;padding:.34rem .5rem;border-radius:8px;text-decoration:none;color:var(--ink);font-size:.88rem;border-left:3px solid transparent}
+nav.toc a:hover{background:#fff;border-left-color:var(--y)}
+section.doc{scroll-margin-top:1rem;padding-bottom:2.4rem;border-bottom:1px solid #eee;margin-bottom:2.4rem}
+section.doc:last-child{border:0}
+.lede{font-size:1.06rem;color:var(--ink-soft);margin:.2rem 0 1.4rem;max-width:75ch}
+
+/* ---- bloques ---- */
+.note,.warn,.tip{border-radius:var(--r-md);padding:1rem 1.15rem;margin:1.1rem 0;font-size:.95rem}
+.note{background:var(--bl);border-left:.35em solid var(--b)}
+.warn{background:var(--ol);border-left:.35em solid var(--o)}
+.tip{background:var(--gl);border-left:.35em solid var(--g)}
+.note p,.warn p,.tip p{margin:.4em 0}
+.note :first-child,.warn :first-child,.tip :first-child{margin-top:0}
+
+table{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--sh);margin:1.1rem 0;font-size:.9rem;background:#fff}
+th{background:var(--b);color:#fff;text-align:left;padding:.6em .75em;font-weight:700;position:sticky;top:0}
+td{padding:.55em .75em;border-top:1px solid #e4ebf1;vertical-align:top}
+tr:nth-child(2n) td{background:#fafcfe}
+td code{background:#f0f4f7}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl-scroll{overflow-x:auto}
+
+.bars{margin:1.2rem 0}
+.bar{display:grid;grid-template-columns:150px 1fr 58px;gap:.7rem;align-items:center;margin:.42rem 0;font-size:.9rem}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#eef2f5;border-radius:var(--pill);height:15px;overflow:hidden}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#2f80b8)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;margin:1.2rem 0}
+.c{background:var(--s);border-left:.4em solid var(--y);border-radius:var(--r-md);padding:1.1rem 1.2rem;box-shadow:var(--sh)}
+.c:nth-child(2n){background:var(--bl);border-left-color:var(--b)}
+.c h4{margin:0 0 .45rem;color:inherit;font-size:1.02rem}
+.c ul{margin:.4rem 0 0;padding-left:1.15rem}
+.c li{margin:.25rem 0;font-size:.92rem}
+.pro{color:var(--g);font-weight:700}
+.con{color:var(--r);font-weight:700}
+
+.key{display:inline-block;background:var(--ink);color:var(--y);border-radius:var(--pill);padding:.1em .6em;font-size:.72rem;font-weight:800;letter-spacing:.04em;vertical-align:middle}
+.key.fk{background:var(--b);color:#fff}
+.key.imp{background:var(--o);color:#3a2200}
+
+footer{background:var(--dark);color:#b9c9d5;padding:2rem 0;font-size:.88rem}
+footer a{color:var(--y)}
+@media(max-width:900px){.layout{grid-template-columns:1fr;gap:1.2rem}nav.toc{position:static;max-height:none}}
+</style></head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="kick">Módulo 2 · Explorando bases de datos con SQL</div>
+  <h1>Guía de referencia</h1>
+  <p>Todo lo que no cabe en una diapositiva pero necesitas tener a mano: qué motores existen y cuál usa la industria, por qué trabajamos con SQLite y Beekeeper, cómo se escriben los distintos tipos de dato, y qué significa exactamente cada tabla y cada columna de nuestra base.</p>
+</div></header>
+
+<div class="wrap layout">
+
+<nav class="toc">
+  <b>Contenido</b>
+  <a href="#sql">1 · ¿Qué es SQL?</a>
+  <a href="#motores">2 · Los motores y el mercado</a>
+  <a href="#sqlite">3 · Por qué SQLite aquí</a>
+  <a href="#sintaxis">4 · Diferencias de sintaxis</a>
+  <a href="#beekeeper">5 · Por qué Beekeeper Studio</a>
+  <a href="#interfaz">6 · La interfaz, parte por parte</a>
+  <a href="#guardar">7 · Guardar tus consultas</a>
+  <a href="#tipos">8 · Tipos de dato y comillas</a>
+  <a href="#relaciones">9 · Las relaciones entre tablas</a>
+  <a href="#diccionario">10 · Diccionario de datos</a>
+  <a href="#trampas">11 · Trampas de esta base</a>
+  <a href="#chuleta">12 · Chuleta de cláusulas</a>
+  <a href="#excel">13 · Tu Excel en SQL</a>
+  <a href="#fuentes">14 · Fuentes y bibliografía</a>
+</nav>
+
+<main>
+
+<!-- ============================ 1 ============================ -->
+<section class="doc" id="sql">
+<h2>1 · ¿Qué es SQL?</h2>
+<p class="lede"><b>SQL</b> (Structured Query Language, «lenguaje de consulta estructurado») es el idioma con el que se le habla a una base de datos relacional. Se inventó en IBM en los años 70 y sigue vigente medio siglo después: es de las pocas habilidades técnicas que no se ha vuelto obsoleta.</p>
+
+<h3>Es un lenguaje declarativo</h3>
+<p>Esta es la diferencia más importante con la programación que quizá ya conoces. En Python o Java tú escribes <em>los pasos</em>: recorre la lista, compara, guarda. En SQL describes <em>el resultado que quieres</em> y el motor decide cómo obtenerlo.</p>
+<pre><code>-- No dices "recorre las 1.000 películas una por una y ve comparando".
+-- Dices "quiero los títulos que duran más de dos horas".
+SELECT title FROM film WHERE length &gt; 120;</code></pre>
+<div class="tip"><p><b>Por qué importa:</b> no tienes que preocuparte por la eficiencia del recorrido. El motor tiene un «planificador de consultas» que decide la mejor ruta. Tu trabajo es formular bien la pregunta.</p></div>
+
+<h3>SQL tiene varias familias de instrucciones</h3>
+<table><tr><th>Familia</th><th>Para qué</th><th>Instrucciones</th><th>¿En este curso?</th></tr>
+<tr><td><b>DQL</b> · consulta</td><td>Preguntar por datos existentes</td><td><code>SELECT</code></td><td>Módulo 2 — es el 90% de lo que hace un analista</td></tr>
+<tr><td><b>DML</b> · manipulación</td><td>Insertar, cambiar o borrar filas</td><td><code>INSERT</code> <code>UPDATE</code> <code>DELETE</code></td><td>Módulo 3</td></tr>
+<tr><td><b>DDL</b> · definición</td><td>Crear o cambiar la estructura</td><td><code>CREATE</code> <code>ALTER</code> <code>DROP</code></td><td>Módulo 3</td></tr>
+<tr><td><b>DCL</b> · control</td><td>Permisos y accesos</td><td><code>GRANT</code> <code>REVOKE</code></td><td>Mención breve</td></tr></table>
+<p>En las sesiones 2, 3 y 4 vivimos enteramente dentro de <code>SELECT</code>. Suena poco, pero <code>SELECT</code> es con diferencia la instrucción más rica del lenguaje.</p>
+
+<h3>SQL es un estándar… con dialectos</h3>
+<p>Existe un estándar ISO —<b>ISO/IEC 9075</b>, cuya revisión vigente es SQL:2023—, pero cada motor le añade cosas y omite otras. Lo que aprendes aquí funciona en todos; lo que cambia son los detalles. La sección <a href="#sintaxis">4</a> los lista.</p>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section class="doc" id="motores">
+<h2>2 · Los motores y el mercado</h2>
+<p class="lede">Un <b>SGBD</b> (sistema gestor de bases de datos) es el software que guarda y sirve los datos. Hay decenas; en la práctica cinco o seis se reparten casi todo el trabajo real.</p>
+
+<h3>Qué usan de verdad quienes programan</h3>
+<p>Porcentaje de profesionales que declararon <b>haber trabajado con cada motor durante el último año</b>. Una persona puede usar varios, por eso suman más de 100%. <a href="#fuentes" style="font-weight:700">[1]</a></p>
+<div class="bars">
+  <div class="bar hi"><i>PostgreSQL</i><div class="track"><div class="fill" style="width:100%"></div></div><b>55,6%</b></div>
+  <div class="bar"><i>MySQL</i><div class="track"><div class="fill" style="width:72.8%"></div></div><b>40,5%</b></div>
+  <div class="bar hi"><i>SQLite</i><div class="track"><div class="fill" style="width:67.4%"></div></div><b>37,5%</b></div>
+  <div class="bar"><i>Microsoft SQL Server</i><div class="track"><div class="fill" style="width:54.1%"></div></div><b>30,1%</b></div>
+  <div class="bar"><i>Redis</i><div class="track"><div class="fill" style="width:50.4%"></div></div><b>28,0%</b></div>
+  <div class="bar"><i>MongoDB</i><div class="track"><div class="fill" style="width:43.2%"></div></div><b>24,0%</b></div>
+  <div class="bar"><i>MariaDB</i><div class="track"><div class="fill" style="width:40.5%"></div></div><b>22,5%</b></div>
+  <div class="bar"><i>Oracle</i><div class="track"><div class="fill" style="width:19.1%"></div></div><b>10,6%</b></div>
+</div>
+<div class="note"><p><b>Dos lecturas, no una.</b> Esta encuesta mide a la comunidad de desarrolladores. El ranking <b>DB-Engines</b>, que mide menciones en ofertas de empleo, foros y perfiles profesionales, pone a <b>Oracle en el primer lugar</b> desde 2012, seguido de MySQL, SQL Server y PostgreSQL. <a href="#fuentes" style="font-weight:700">[2]</a> La diferencia no es un error: Oracle y SQL Server dominan la <em>gran empresa</em> —banca, gobierno, telecomunicaciones— mientras PostgreSQL y MySQL dominan la web y las startups. En Colombia vas a encontrarte los cuatro.</p></div>
+
+<h3>Fortalezas y debilidades, sin marketing</h3>
+<div class="cards2">
+  <div class="c"><h4>PostgreSQL</h4>
+    <p style="margin:0;font-size:.9rem"><b>Relacional, libre, servidor.</b> El más querido de la encuesta y el que más crece.</p>
+    <ul><li><span class="pro">+</span> Cumple el estándar como ninguno. Estricto: te avisa de tus errores.</li>
+    <li><span class="pro">+</span> Extensible (JSON, geoespacial con PostGIS, búsqueda de texto).</li>
+    <li><span class="con">−</span> Hay que instalar y administrar un servidor.</li>
+    <li><span class="con">−</span> Afinarlo para alto rendimiento exige oficio.</li></ul></div>
+
+  <div class="c"><h4>MySQL / MariaDB</h4>
+    <p style="margin:0;font-size:.9rem"><b>Relacional, libre, servidor.</b> El motor clásico de la web.</p>
+    <ul><li><span class="pro">+</span> Sencillo, rapidísimo en lecturas, documentación por todas partes.</li>
+    <li><span class="pro">+</span> Está en cualquier hosting barato.</li>
+    <li><span class="con">−</span> Históricamente permisivo: acepta cosas dudosas sin avisar.</li>
+    <li><span class="con">−</span> MariaDB nació como bifurcación tras la compra de MySQL por Oracle.</li></ul></div>
+
+  <div class="c"><h4>Microsoft SQL Server</h4>
+    <p style="margin:0;font-size:.9rem"><b>Relacional, comercial, servidor.</b> El estándar corporativo en entornos Microsoft.</p>
+    <ul><li><span class="pro">+</span> Integración total con Windows, Azure, Power BI y Excel.</li>
+    <li><span class="pro">+</span> Herramientas de administración muy maduras.</li>
+    <li><span class="con">−</span> Licencia costosa.</li>
+    <li><span class="con">−</span> Su dialecto (T-SQL) se aparta bastante del estándar.</li></ul></div>
+
+  <div class="c"><h4>Oracle Database</h4>
+    <p style="margin:0;font-size:.9rem"><b>Relacional, comercial, servidor.</b> Donde el fallo cuesta millones.</p>
+    <ul><li><span class="pro">+</span> Rendimiento y fiabilidad a escala extrema.</li>
+    <li><span class="pro">+</span> Omnipresente en banca, aerolíneas y sector público.</li>
+    <li><span class="con">−</span> El más caro y el más complejo de administrar.</li>
+    <li><span class="con">−</span> Dialecto propio (PL/SQL) y fuerte dependencia del proveedor.</li></ul></div>
+
+  <div class="c"><h4>SQLite</h4>
+    <p style="margin:0;font-size:.9rem"><b>Relacional, libre, <em>sin servidor</em>.</b> La base que usamos en el curso.</p>
+    <ul><li><span class="pro">+</span> Es un solo archivo. No hay servidor, ni puertos, ni contraseñas.</li>
+    <li><span class="pro">+</span> El motor más desplegado del planeta: sus autores estiman <b>más de un billón</b> de bases activas. <a href="#fuentes" style="font-weight:700">[3]</a></li>
+    <li><span class="con">−</span> Un solo escritor a la vez: no sirve para muchos usuarios escribiendo.</li>
+    <li><span class="con">−</span> Permisivo con los tipos y con <code>GROUP BY</code>. <a href="#fuentes" style="font-weight:700">[4]</a></li></ul></div>
+
+  <div class="c"><h4>MongoDB</h4>
+    <p style="margin:0;font-size:.9rem"><b>NoSQL de documentos.</b> Otra familia; aquí solo para ubicarlo.</p>
+    <ul><li><span class="pro">+</span> Estructura flexible: cada documento puede tener campos distintos.</li>
+    <li><span class="pro">+</span> Encaja con datos semiestructurados como el JSON que vimos.</li>
+    <li><span class="con">−</span> No usa SQL y las relaciones no son su fuerte.</li>
+    <li><span class="con">−</span> Lo veremos en el módulo 4.</li></ul></div>
+</div>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="doc" id="sqlite">
+<h2>3 · Por qué SQLite en este curso</h2>
+<p class="lede">No es una versión «de juguete» de las otras. Es una decisión pedagógica y logística deliberada.</p>
+<table><tr><th>Razón</th><th>Qué significa para ti</th></tr>
+<tr><td><b>Cero instalación de servidor</b></td><td>La base es un archivo, <code>dvdrental.db</code>. No hay que instalar PostgreSQL, ni abrir puertos, ni pedirle permisos a nadie.</td></tr>
+<tr><td><b>Cero conexiones compartidas</b></td><td>Somos 38. Un servidor gratuito se cae con esa cantidad de gente conectada a la vez. Con un archivo local, tu base es tuya y responde al instante.</td></tr>
+<tr><td><b>Funciona sin internet</b></td><td>Descargas el archivo una vez. Si se te cae la conexión a mitad de clase, sigues practicando.</td></tr>
+<tr><td><b>El SQL es el mismo</b></td><td>Todo lo de las sesiones 2, 3 y 4 —<code>SELECT</code>, <code>WHERE</code>, <code>ORDER BY</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>JOIN</code>— es SQL estándar y se escribe igual en los cinco motores.</td></tr>
+<tr><td><b>Es una herramienta profesional real</b></td><td>37,5% de los desarrolladores la usaron el último año. Está dentro de tu teléfono ahora mismo.</td></tr></table>
+<div class="warn"><p><b>Lo que SQLite no te va a enseñar.</b> Al ser permisivo, deja pasar dos cosas que PostgreSQL rechaza: <code>GROUP BY</code> incompleto y tipos mal usados. Lo señalamos cada vez que aparece, porque «que el motor no se queje» no significa «que la consulta esté bien». La sección <a href="#sintaxis">4</a> los detalla.</p></div>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section class="doc" id="sintaxis">
+<h2>4 · Diferencias de sintaxis entre motores</h2>
+<p class="lede">Lo que cambia al pasar de un motor a otro. Todo lo demás del curso es idéntico.</p>
+<div class="tbl-scroll"><table>
+<tr><th>Necesitas…</th><th>SQLite <small>(nuestro)</small></th><th>PostgreSQL</th><th>MySQL</th><th>SQL Server</th></tr>
+<tr><td>Limitar filas</td><td><code>LIMIT 5</code></td><td><code>LIMIT 5</code></td><td><code>LIMIT 5</code></td><td><code>TOP 5</code></td></tr>
+<tr><td>Buscar ignorando mayúsculas</td><td><code>LIKE</code> <small>(ya las ignora)</small></td><td><code>ILIKE</code></td><td><code>LIKE</code> <small>(según el cotejo)</small></td><td><code>LIKE</code> <small>(según el cotejo)</small></td></tr>
+<tr><td>Unir textos</td><td><code>||</code></td><td><code>||</code></td><td><code>CONCAT()</code></td><td><code>+</code></td></tr>
+<tr><td>Fecha y hora actual</td><td><code>datetime('now')</code></td><td><code>NOW()</code></td><td><code>NOW()</code></td><td><code>GETDATE()</code></td></tr>
+<tr><td>Si es nulo, usa otro valor</td><td><code>IFNULL()</code></td><td><code>COALESCE()</code></td><td><code>IFNULL()</code></td><td><code>ISNULL()</code></td></tr>
+<tr><td>Longitud de un texto</td><td><code>LENGTH()</code></td><td><code>LENGTH()</code></td><td><code>LENGTH()</code></td><td><code>LEN()</code></td></tr>
+<tr><td>Convertir de tipo</td><td><code>CAST(x AS INTEGER)</code></td><td><code>CAST</code> o <code>x::int</code></td><td><code>CAST</code></td><td><code>CAST</code> o <code>CONVERT</code></td></tr>
+<tr><td>Comentario de una línea</td><td colspan="4"><code>-- así</code> · igual en los cuatro</td></tr>
+</table></div>
+<p><code>COALESCE()</code> es la forma estándar y funciona en <b>todos</b>, incluido SQLite. Si dudas, usa esa.</p>
+
+<h3>Las dos permisividades de SQLite que importan</h3>
+<div class="warn"><p><b>1. <code>GROUP BY</code> incompleto.</b> PostgreSQL rechaza pedir una columna que no está agrupada ni agregada:</p>
+<pre><code>SELECT title, rating, COUNT(*) FROM film GROUP BY rating;
+
+-- PostgreSQL:  ERROR: column "film.title" must appear in the
+--              GROUP BY clause or be used in an aggregate function
+-- SQLite:      devuelve 5 filas con un titulo CUALQUIERA del grupo</code></pre>
+<p>El problema no es el error: es que <b>SQLite no avisa</b>. Te entrega un resultado con pinta de correcto —«Ace Goldfinger, G, 178»— que sugiere que esa película representa al grupo G, cuando en realidad el motor eligió una de las 178 al azar. Si eso llega a un informe, nadie lo detecta.</p></div>
+<div class="warn"><p><b>2. Tipos flexibles.</b> SQLite acepta operaciones sin sentido en vez de fallar:</p>
+<pre><code>SELECT SUM(title) FROM film;   -- SQLite: 0.0   ·   PostgreSQL: ERROR</code></pre>
+<p>Sumar textos da cero. Otra vez: silencio en lugar de aviso.</p></div>
+<p><b>La regla práctica:</b> escribe SQL como si estuvieras en PostgreSQL. Así tu consulta funciona en los cinco motores y no dependes de que el motor te perdone.</p>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section class="doc" id="beekeeper">
+<h2>5 · Por qué Beekeeper Studio</h2>
+<p class="lede">Beekeeper Studio no es una base de datos: es un <b>cliente</b>, la ventanilla desde la que le hablas al motor. Escribes SQL, él lo envía y te muestra el resultado.</p>
+<div class="note"><p><b>Ojo con la confusión más común:</b> si desinstalas Beekeeper no pierdes ningún dato. Los datos viven en el archivo <code>dvdrental.db</code>; el cliente solo los consulta. Podrías abrir el mismo archivo con otro cliente y verías exactamente lo mismo.</p></div>
+
+<h3>Qué clientes existen y por qué elegimos este</h3>
+<div class="tbl-scroll"><table>
+<tr><th>Cliente</th><th>Fortalezas</th><th>Debilidades</th><th>Motores</th></tr>
+<tr><td><b>Beekeeper Studio</b> ⭐</td><td>Interfaz limpia y en español, curva de aprendizaje casi plana, versión gratuita y de código abierto, funciona igual en Windows, macOS y Linux, versión portable sin instalación</td><td>Menos funciones avanzadas que DBeaver; algunas opciones son de pago</td><td>SQLite, PostgreSQL, MySQL, SQL&nbsp;Server, y más</td></tr>
+<tr><td>DBeaver</td><td>Gratuito, potentísimo, soporta casi cualquier motor. Muy usado en la industria</td><td>Interfaz densa y abrumadora para quien empieza; requiere Java</td><td>Prácticamente todos</td></tr>
+<tr><td>DataGrip</td><td>El mejor autocompletado del mercado; refactorización de SQL</td><td>De pago (suscripción JetBrains)</td><td>Muchos</td></tr>
+<tr><td>pgAdmin</td><td>El cliente oficial de PostgreSQL</td><td>Solo PostgreSQL; interfaz web algo tosca</td><td>PostgreSQL</td></tr>
+<tr><td>SSMS</td><td>El estándar de facto en empresas Microsoft</td><td>Solo Windows y prácticamente solo SQL Server</td><td>SQL Server</td></tr>
+<tr><td>TablePlus</td><td>Muy elegante y rápido</td><td>La versión gratuita limita pestañas y conexiones</td><td>Muchos</td></tr>
+</table></div>
+<p><b>La razón de la elección es pedagógica:</b> con 20 de 38 personas empezando SQL desde cero, la prioridad es que la herramienta <em>desaparezca</em> y no se convierta en un segundo tema de estudio. DBeaver es más potente, pero su interfaz consume atención que necesitamos para el SQL. Cuando domines las consultas, cambiar de cliente te tomará una tarde.</p>
+<div class="tip"><p><b>Descarga:</b> <a href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">beekeeperstudio.io/get</a> · <b>Windows:</b> Installer, o <b>Portable</b> si tu equipo está bloqueado · <b>macOS:</b> Apple Silicon o Intel · <b>Ubuntu/Linux:</b> AppImage (no instala nada) o paquete <code>.deb</code>.</p></div>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section class="doc" id="interfaz">
+<h2>6 · La interfaz, parte por parte</h2>
+<p class="lede">Beekeeper tiene muchas opciones. Estas son las que vamos a usar de verdad; el resto puedes ignorarlo por ahora.</p>
+<table><tr><th>Zona</th><th>Dónde está</th><th>Para qué la usaremos</th></tr>
+<tr><td><b>Selector de conexión</b></td><td>Pantalla inicial</td><td>Elegir <b>SQLite</b> y señalar el archivo <code>dvdrental.db</code>. Es el único paso de configuración del curso.</td></tr>
+<tr><td><b>Panel de tablas</b> <small>(Entities)</small></td><td>Barra izquierda</td><td>Ver las 15 tablas. Al desplegar una, aparecen sus columnas con el tipo de dato: es tu diccionario en vivo.</td></tr>
+<tr><td><b>Vista de datos</b></td><td>Doble clic en una tabla</td><td>Asomarse al contenido sin escribir SQL. Útil para explorar antes de consultar.</td></tr>
+<tr><td><b>Editor SQL</b> <small>(Query tab)</small></td><td>Botón <em>+</em> o <kbd>Ctrl</kbd>+<kbd>T</kbd></td><td>Donde escribes. Aquí pasas el 90% de la clase.</td></tr>
+<tr><td><b>Ejecutar</b></td><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd> o ▶</td><td>Corre la consulta donde está el cursor. Si seleccionas texto, ejecuta solo la selección: sirve para probar de a un pedazo.</td></tr>
+<tr><td><b>Panel de resultados</b></td><td>Debajo del editor</td><td>Las filas devueltas. Abajo a la izquierda dice <b>cuántas</b>: acostúmbrate a mirar ese número.</td></tr>
+<tr><td><b>Consultas guardadas</b> <small>(Saved Queries)</small></td><td>Barra izquierda</td><td>Tu cuaderno de consultas. Ver sección <a href="#guardar">7</a>.</td></tr>
+<tr><td><b>Exportar</b></td><td>Sobre el resultado</td><td>Bajar el resultado a CSV o Excel. Así conectas SQL con lo que ya sabes hacer.</td></tr></table>
+<div class="tip"><p><b>Atajos que valen la pena:</b> <kbd>Ctrl</kbd>+<kbd>Enter</kbd> ejecutar · <kbd>Ctrl</kbd>+<kbd>T</kbd> nueva pestaña · <kbd>Ctrl</kbd>+<kbd>S</kbd> guardar consulta · <kbd>Ctrl</kbd>+<kbd>/</kbd> comentar la línea.</p></div>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section class="doc" id="guardar">
+<h2>7 · Guardar tus consultas</h2>
+<p class="lede">Perder una consulta que costó veinte minutos es la frustración clásica del primer mes. Beekeeper tiene dos formas de evitarlo.</p>
+<h4>Dentro de Beekeeper</h4>
+<ol><li>Escribe la consulta en el editor y compruébala.</li>
+<li><kbd>Ctrl</kbd>+<kbd>S</kbd>, o el botón <em>Save</em> sobre el editor.</li>
+<li>Ponle un nombre <b>que describa la pregunta</b>, no la sintaxis: «Clientes de California» sirve; «consulta 3» no.</li>
+<li>Reaparece en <b>Saved Queries</b>, en la barra izquierda. Doble clic para volver a abrirla.</li></ol>
+<h4>Fuera de Beekeeper</h4>
+<p>Un archivo <code>.sql</code> es texto plano: se abre con cualquier editor, se envía por correo y se versiona. Los guiones del curso —<code>S2.sql</code> y <code>S3.sql</code>— son exactamente eso, y puedes abrirlos en Beekeeper con <em>Open</em>.</p>
+<div class="tip"><p><b>Hábito profesional:</b> comenta tus consultas con <code>--</code> explicando <em>qué pregunta responden</em>, no qué hace el SQL. Dentro de tres meses la sintaxis se relee sola; la intención no.</p>
+<pre><code>-- ¿Que clientes gastaron mas de $110 con el vendedor Jon (staff_id 2)?
+-- Se uso para la campana de fidelizacion de agosto.
+SELECT customer_id, SUM(amount) FROM payment
+WHERE staff_id = 2 GROUP BY customer_id HAVING SUM(amount) &gt; 110;</code></pre></div>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section class="doc" id="tipos">
+<h2>8 · Tipos de dato y comillas</h2>
+<p class="lede">La causa número uno de consultas que fallan el primer día: escribir un valor con la envoltura equivocada. La regla es corta.</p>
+<table><tr><th>Tipo</th><th>Cómo se escribe</th><th>Ejemplo correcto</th><th>Error típico</th></tr>
+<tr><td><b>Texto</b><br><small>TEXT, VARCHAR, CHAR</small></td><td>Entre <b>comillas simples</b></td><td><code>WHERE first_name = 'Nancy'</code></td><td><code>= "Nancy"</code> · las comillas dobles significan <em>nombre de columna</em>, no texto</td></tr>
+<tr><td><b>Número entero</b><br><small>INTEGER</small></td><td><b>Sin comillas</b></td><td><code>WHERE length &gt; 120</code></td><td><code>&gt; '120'</code> · lo compara como texto y ordena mal</td></tr>
+<tr><td><b>Número decimal</b><br><small>REAL, NUMERIC</small></td><td>Sin comillas, con <b>punto</b></td><td><code>WHERE amount &gt; 4.99</code></td><td><code>&gt; 4,99</code> · la coma separa argumentos, no decimales</td></tr>
+<tr><td><b>Fecha y hora</b><br><small>DATE, TIMESTAMP</small></td><td>Como texto, formato <b>AAAA-MM-DD</b></td><td><code>WHERE rental_date &gt; '2007-02-15'</code></td><td><code>'15/02/2007'</code> · no se ordena correctamente</td></tr>
+<tr><td><b>Booleano</b><br><small>en SQLite: 0 y 1</small></td><td>Sin comillas</td><td><code>WHERE active = 1</code></td><td><code>= 'true'</code> · en SQLite no existe ese valor</td></tr>
+<tr><td><b>Nulo</b><br><small>NULL = «no hay dato»</small></td><td>Con <code>IS</code>, nunca con <code>=</code></td><td><code>WHERE return_date IS NULL</code></td><td><code>= NULL</code> · nunca es verdadero, ni siquiera para los nulos</td></tr></table>
+
+<div class="warn"><p><b>NULL no es cero ni es cadena vacía.</b> Significa «no sabemos». Por eso <code>NULL = NULL</code> no da verdadero: no se puede afirmar que dos desconocidos sean iguales. En nuestra base, <code>rental.return_date</code> es <code>NULL</code> cuando la película <em>todavía no se ha devuelto</em>: es información valiosa, no un dato faltante por error.</p></div>
+
+<h3>Un texto con apóstrofo</h3>
+<p>Si el valor lleva un apóstrofo, se duplica:</p>
+<pre><code>WHERE title = 'Alice''s Adventures'   -- correcto
+WHERE title = 'Alice's Adventures'    -- error de sintaxis</code></pre>
+
+<h3>Cómo saber el tipo de una columna</h3>
+<p>Despliega la tabla en el panel izquierdo de Beekeeper: al lado de cada columna aparece su tipo. O consúltalo en el <a href="#diccionario">diccionario</a>.</p>
+</section>
+
+<!-- ============================ 9 ============================ -->
+<section class="doc" id="relaciones">
+<h2>9 · Las relaciones entre tablas</h2>
+<p class="lede">Las tablas no están sueltas: se apuntan entre sí mediante columnas llamadas <b>claves</b>. Entender esto es lo que permite, en la sesión 4, responder preguntas que necesitan varias tablas.</p>
+
+<h3>Los dos tipos de clave</h3>
+<table><tr><th>Clave</th><th>Qué es</th><th>Ejemplo en nuestra base</th></tr>
+<tr><td><span class="key">PK</span> <b>Primaria</b></td><td>Identifica de forma única cada fila. No se repite y no puede estar vacía.</td><td><code>film.film_id</code> — cada película tiene un número propio</td></tr>
+<tr><td><span class="key fk">FK</span> <b>Foránea</b></td><td>Apunta a la clave primaria de otra tabla. Así se conectan.</td><td><code>inventory.film_id</code> — dice de qué película es esa copia</td></tr></table>
+<p>La pista está en el nombre: si una columna se llama <code>algo_id</code> y no es la primaria de su propia tabla, casi siempre es una clave foránea.</p>
+
+<h3>Las cuatro cardinalidades</h3>
+<p>La «cardinalidad» responde a: <em>¿cuántas filas de un lado corresponden a cuántas del otro?</em></p>
+<table><tr><th>Notación</th><th>Se lee</th><th>Ejemplo real en dvdrental</th></tr>
+<tr><td><b>1:1</b></td><td>Uno a uno</td><td><code>store</code> ↔ <code>staff</code> como gerente: cada tienda tiene <b>un</b> gerente y cada gerente dirige <b>una</b> tienda. Es la más rara: si dos tablas tienen 1:1, a veces deberían ser una sola.</td></tr>
+<tr><td><b>1:N</b></td><td>Uno a muchos</td><td><code>film</code> → <code>inventory</code>: <b>una</b> película tiene <b>muchas</b> copias físicas. Es con diferencia la más común.</td></tr>
+<tr><td><b>N:1</b></td><td>Muchos a uno</td><td><code>inventory</code> → <code>film</code>: exactamente la misma relación de arriba, mirada desde el otro lado. No es un tipo nuevo: es cuestión de por dónde empieces a leer.</td></tr>
+<tr><td><b>N:N</b></td><td>Muchos a muchos</td><td><code>film</code> ↔ <code>actor</code>: una película tiene varios actores y un actor sale en varias películas. <b>No se puede representar directamente</b>: hace falta una tabla intermedia.</td></tr></table>
+
+<div class="note"><p><b>Por eso existe <code>film_actor</code>.</b> Es la pregunta que siempre aparece: «¿qué hace esa tabla que solo tiene dos números?». Es una <b>tabla puente</b>: cada fila dice «este actor sale en esta película». Con sus 5.462 filas resuelve una relación N:N que de otro modo sería imposible. <code>film_category</code> hace lo mismo entre películas y géneros.</p></div>
+
+<h3>La columna vertebral de esta base</h3>
+<pre><code>film  ──1:N──▶  inventory  ──1:N──▶  rental  ──1:N──▶  payment
+ │                                      │
+ │                                      ▼
+ └──N:N──▶ actor                     customer ──N:1──▶ address ──N:1──▶ city ──N:1──▶ country
+   (via film_actor)</code></pre>
+<p>Léelo así: <b>una película</b> tiene varias <b>copias</b>; cada copia se <b>alquila</b> muchas veces; cada alquiler genera uno o más <b>pagos</b>; y cada alquiler pertenece a un <b>cliente</b>, que vive en una <b>dirección</b>, en una <b>ciudad</b>, de un <b>país</b>.</p>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section class="doc" id="diccionario">
+<h2>10 · Diccionario de datos</h2>
+<p class="lede">Las 15 tablas de <code>dvdrental</code>, con el significado de cada columna y sus valores posibles. <span class="key">PK</span> clave primaria · <span class="key fk">FK</span> clave foránea · <span class="key imp">CLAVE</span> columna que vas a usar mucho en los ejercicios.</p>
+
+<h3>🎬 Catálogo</h3>
+<h4><code>film</code> — las películas · 1.000 filas</h4>
+<div class="tbl-scroll"><table>
+<tr><th>Columna</th><th>Tipo</th><th>Qué es</th><th>Valores</th></tr>
+<tr><td><code>film_id</code> <span class="key">PK</span></td><td>INTEGER</td><td>Identificador de la película</td><td>1 – 1000</td></tr>
+<tr><td><code>title</code> <span class="key imp">CLAVE</span></td><td>TEXT</td><td>Título. Siempre en mayúscula inicial</td><td>«Academy Dinosaur»…</td></tr>
+<tr><td><code>description</code></td><td>TEXT</td><td>Sinopsis corta</td><td>Texto libre</td></tr>
+<tr><td><code>release_year</code></td><td>INTEGER</td><td>Año de estreno</td><td>2006 en todas</td></tr>
+<tr><td><code>language_id</code> <span class="key fk">FK</span></td><td>INTEGER</td><td>Idioma → <code>language</code></td><td><b>siempre 1</b> (inglés)</td></tr>
+<tr><td><code>rental_duration</code></td><td>INTEGER</td><td>Días de préstamo permitidos</td><td>3, 4, 5, 6, 7</td></tr>
+<tr><td><code>rental_rate</code></td><td>REAL</td><td>Precio del alquiler en dólares</td><td>0.99 – 4.99</td></tr>
+<tr><td><code>length</code> <span class="key imp">CLAVE</span></td><td>INTEGER</td><td>Duración en minutos</td><td>46 – 185</td></tr>
+<tr><td><code>replacement_cost</code></td><td>REAL</td><td>Lo que cuesta reponerla si se pierde</td><td>9.99 – 29.99</td></tr>
+<tr><td><code>rating</code> <span class="key imp">CLAVE</span></td><td>TEXT</td><td>Clasificación por edades (sistema MPAA de EE.&nbsp;UU.)</td><td><code>G</code> apta · <code>PG</code> guía paterna · <code>PG-13</code> mayores de 13 · <code>R</code> restringida · <code>NC-17</code> solo adultos</td></tr>
+<tr><td><code>special_features</code></td><td>TEXT</td><td>Extras del disco</td><td>«Trailers», «Deleted Scenes»…</td></tr>
+<tr><td><code>fulltext</code></td><td>TEXT</td><td>Índice de búsqueda interno</td><td><b>ignórala</b></td></tr>
+<tr><td><code>last_update</code></td><td>TEXT</td><td>Cuándo se modificó la fila</td><td>Fecha técnica, no de negocio</td></tr>
+</table></div>
+
+<h4><code>actor</code> — 200 filas · <code>film_actor</code> — 5.462 filas · <code>category</code> — 16 filas · <code>film_category</code> — 1.000 filas</h4>
+<table>
+<tr><th>Tabla · columna</th><th>Qué es</th><th>Valores</th></tr>
+<tr><td><code>actor.actor_id</code> <span class="key">PK</span></td><td>Identificador del actor</td><td>1 – 200</td></tr>
+<tr><td><code>actor.first_name</code> / <code>last_name</code></td><td>Nombre y apellido</td><td>«Penelope Guiness»…</td></tr>
+<tr><td><code>film_actor.actor_id</code> + <code>film_id</code> <span class="key fk">FK</span></td><td><b>Tabla puente</b>: cada fila dice «este actor actúa en esta película»</td><td>Resuelve la relación N:N</td></tr>
+<tr><td><code>category.name</code></td><td>Género de la película</td><td>Action, Animation, Children, Classics, Comedy, Documentary, Drama, Family, Foreign, Games, Horror, Music, New, Sci-Fi, Sports, Travel</td></tr>
+<tr><td><code>language.name</code></td><td>Idioma</td><td>English, French, German, Italian, Japanese, Mandarin — <b>pero todas las películas son English</b></td></tr>
+</table>
+
+<h3>🏪 Operación</h3>
+<h4><code>inventory</code> — 4.581 · <code>rental</code> — 16.044 · <code>payment</code> — 14.596 · <code>staff</code> — 2 · <code>store</code> — 2</h4>
+<div class="tbl-scroll"><table>
+<tr><th>Columna</th><th>Qué es</th><th>Valores</th></tr>
+<tr><td><code>inventory.inventory_id</code> <span class="key">PK</span></td><td>Una <b>copia física</b> concreta. Ojo: no es la película, es el disco.</td><td>1 – 4581</td></tr>
+<tr><td><code>inventory.film_id</code> <span class="key fk">FK</span></td><td>De qué película es esta copia</td><td>→ <code>film</code></td></tr>
+<tr><td><code>inventory.store_id</code> <span class="key fk">FK</span></td><td>En qué tienda está</td><td>1 o 2</td></tr>
+<tr><td><code>rental.rental_id</code> <span class="key">PK</span></td><td>Un alquiler concreto</td><td>1 – 16049</td></tr>
+<tr><td><code>rental.rental_date</code></td><td>Cuándo se llevó la película</td><td>Fechas de 2005–2006</td></tr>
+<tr><td><code>rental.return_date</code></td><td>Cuándo la devolvió</td><td><b><code>NULL</code> = todavía no la ha devuelto</b></td></tr>
+<tr><td><code>rental.customer_id</code> <span class="key fk">FK</span></td><td>Quién alquiló</td><td>→ <code>customer</code></td></tr>
+<tr><td><code>rental.staff_id</code> <span class="key fk">FK</span> <span class="key imp">CLAVE</span></td><td>Qué empleado atendió</td><td><b>1 o 2</b> — ver abajo</td></tr>
+<tr><td><code>payment.payment_id</code> <span class="key">PK</span></td><td>Un pago concreto</td><td>1 – 32098</td></tr>
+<tr><td><code>payment.amount</code> <span class="key imp">CLAVE</span></td><td>Cuánto pagó, en dólares</td><td>0.00 – 11.99</td></tr>
+<tr><td><code>payment.staff_id</code> <span class="key fk">FK</span> <span class="key imp">CLAVE</span></td><td>Qué empleado cobró</td><td><b>1 o 2</b></td></tr>
+<tr><td><code>payment.customer_id</code> <span class="key fk">FK</span></td><td>Quién pagó</td><td>→ <code>customer</code></td></tr>
+<tr><td><code>payment.rental_id</code> <span class="key fk">FK</span></td><td>Por qué alquiler fue el pago</td><td>→ <code>rental</code></td></tr>
+</table></div>
+
+<div class="note"><p><b>¿Qué es exactamente <code>staff_id</code>?</b> Es la columna que más confunde, porque el número no dice nada por sí solo. Solo hay <b>dos empleados</b> en toda la empresa:</p>
+<table style="margin:.7rem 0 0"><tr><th>staff_id</th><th>Nombre</th><th>Tienda</th></tr>
+<tr><td><b>1</b></td><td>Mike Hillyer</td><td>Tienda 1</td></tr>
+<tr><td><b>2</b></td><td>Jon Stephens</td><td>Tienda 2</td></tr></table>
+<p style="margin-top:.7rem">Así que cuando un ejercicio dice «los clientes que gastaron más de $110 con el <b>vendedor 2</b>», está preguntando por <b>Jon Stephens</b>, el de la tienda 2. Y como solo hay dos valores posibles, <code>WHERE staff_id = 3</code> siempre devolverá cero filas.</p></div>
+
+<h3>🧑 Personas y lugares</h3>
+<div class="tbl-scroll"><table>
+<tr><th>Columna</th><th>Qué es</th><th>Valores</th></tr>
+<tr><td><code>customer.customer_id</code> <span class="key">PK</span></td><td>Identificador del cliente</td><td>1 – 599</td></tr>
+<tr><td><code>customer.first_name</code> / <code>last_name</code> <span class="key imp">CLAVE</span></td><td>Nombre y apellido</td><td>«Nancy Thomas»…</td></tr>
+<tr><td><code>customer.email</code></td><td>Correo</td><td><b>todos</b> terminan en <code>@sakilacustomer.org</code></td></tr>
+<tr><td><code>customer.store_id</code> <span class="key fk">FK</span></td><td>Tienda donde está registrado</td><td>1 o 2</td></tr>
+<tr><td><code>customer.address_id</code> <span class="key fk">FK</span></td><td>Dónde vive</td><td>→ <code>address</code></td></tr>
+<tr><td><code>customer.active</code></td><td>Si sigue siendo cliente</td><td><b>1</b> = activo · <b>0</b> = inactivo</td></tr>
+<tr><td><code>customer.create_date</code></td><td>Cuándo se registró</td><td>Fecha</td></tr>
+<tr><td><code>address.address_id</code> <span class="key">PK</span></td><td>Identificador de la dirección</td><td>1 – 605</td></tr>
+<tr><td><code>address.district</code> <span class="key imp">CLAVE</span></td><td>Departamento, estado o provincia. <b>No</b> es el barrio.</td><td>378 valores distintos: «California», «Texas», «Buenos Aires»…</td></tr>
+<tr><td><code>address.city_id</code> <span class="key fk">FK</span></td><td>Ciudad</td><td>→ <code>city</code></td></tr>
+<tr><td><code>city.city</code></td><td>Nombre de la ciudad</td><td>600 ciudades</td></tr>
+<tr><td><code>country.country</code></td><td>Nombre del país</td><td>109 países</td></tr>
+</table></div>
+<div class="tip"><p><b>¿Por qué <code>address</code>, <code>city</code> y <code>country</code> son tres tablas y no una?</b> Para no repetir. Si «Colombia» estuviera escrita en cada dirección, bastaría un error de dedo para tener «Colomiba» y romper cualquier conteo por país. Guardándola una sola vez, escrita una sola vez, el problema desaparece. Eso es <b>normalización</b>, y es el tema del módulo 3.</p></div>
+</section>
+
+<!-- ============================ 11 ============================ -->
+<section class="doc" id="trampas">
+<h2>11 · Trampas de esta base</h2>
+<p class="lede">Cosas verificadas que te van a hacer perder tiempo si no las sabes de antemano.</p>
+<table><tr><th>Trampa</th><th>Qué pasa</th><th>Qué hacer</th></tr>
+<tr><td><b>Todas las películas son en inglés</b></td><td><code>film.language_id</code> vale 1 en las 1.000 filas, aunque <code>language</code> liste seis idiomas. Buscar películas en italiano devuelve cero.</td><td>No es un error tuyo: la base es así.</td></tr>
+<tr><td><b><code>language.name</code> lleva espacios</b></td><td>El valor real es <code>'Italian&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'</code>, relleno hasta 20 caracteres. Por eso <code>WHERE name = 'Italian'</code> no encuentra nada.</td><td>Usar <code>WHERE TRIM(name) = 'Italian'</code> o <code>LIKE 'Italian%'</code></td></tr>
+<tr><td><b>Correos todos iguales</b></td><td>Buscar <code>LIKE '%@gmail.com'</code> devuelve cero filas.</td><td>Todos son <code>@sakilacustomer.org</code></td></tr>
+<tr><td><b><code>LIKE</code> ignora mayúsculas</b></td><td>En SQLite, <code>LIKE 'nancy'</code> sí encuentra a Nancy. En PostgreSQL no.</td><td>El <code>=</code> <b>sí</b> distingue en ambos: <code>= 'nancy'</code> devuelve cero.</td></tr>
+<tr><td><b><code>rental</code> tiene más filas que <code>payment</code></b></td><td>16.044 alquileres frente a 14.596 pagos: no todo alquiler generó pago registrado.</td><td>Tenlo en cuenta al comparar totales.</td></tr>
+<tr><td><b>Los <code>id</code> tienen huecos</b></td><td><code>rental_id</code> llega a 16049 pero solo hay 16.044 filas.</td><td>El identificador máximo no es el número de filas. Cuenta siempre con <code>COUNT(*)</code>.</td></tr>
+</table>
+</section>
+
+
+<section class="doc" id="chuleta">
+<h2>12 · Chuleta de cláusulas</h2>
+<p class="lede">Una página con todo lo que se escribe en las sesiones 2 y 3. Si solo vas a imprimir algo de esta guía, imprime esto.</p>
+
+<h3>El orden es obligatorio</h3>
+<pre><code>SELECT   columnas          -- qué quiero ver
+FROM     tabla             -- de dónde
+WHERE    condición         -- qué filas descarto     (antes de agrupar)
+GROUP BY columna           -- cómo reparto en grupos
+HAVING   condición         -- qué grupos descarto    (después de agregar)
+ORDER BY columna ASC|DESC  -- cómo ordeno
+LIMIT    n;                -- cuántas filas quiero</code></pre>
+<div class="warn"><p>Se <b>escribe</b> en ese orden, pero el motor lo <b>ejecuta</b> en otro:<br>
+<code>FROM → WHERE → GROUP BY → agregación → HAVING → SELECT → ORDER BY → LIMIT</code><br>
+Por eso <code>WHERE</code> no puede usar un <code>COUNT()</code>: cuando actúa, todavía no se ha calculado.</p></div>
+
+<h3>Cláusula por cláusula</h3>
+<div class="tbl-scroll"><table>
+<tr><th>Escribes</th><th>Hace</th><th>Ejemplo real</th></tr>
+<tr><td><code>SELECT *</code></td><td>Todas las columnas</td><td><code>SELECT * FROM actor;</code></td></tr>
+<tr><td><code>SELECT a, b</code></td><td>Solo esas columnas</td><td><code>SELECT title, length FROM film;</code></td></tr>
+<tr><td><code>DISTINCT</code></td><td>Quita repetidos</td><td><code>SELECT DISTINCT rating FROM film;</code></td></tr>
+<tr><td><code>AS</code></td><td>Renombra la columna del resultado</td><td><code>SELECT COUNT(*) AS peliculas FROM film;</code></td></tr>
+<tr><td><code>WHERE</code></td><td>Filtra filas</td><td><code>WHERE length &gt; 120</code></td></tr>
+<tr><td><code>AND</code> / <code>OR</code></td><td>Combina condiciones. <b>AND achica, OR agranda</b></td><td><code>WHERE rating='PG' AND length&gt;120</code></td></tr>
+<tr><td><code>BETWEEN</code></td><td>Rango, <b>extremos incluidos</b></td><td><code>WHERE length BETWEEN 60 AND 90</code></td></tr>
+<tr><td><code>IN</code></td><td>Lista de valores</td><td><code>WHERE rating IN ('G','PG')</code></td></tr>
+<tr><td><code>LIKE</code></td><td>Patrón. <code>%</code> = cualquier cosa · <code>_</code> = un carácter</td><td><code>WHERE title LIKE 'J%'</code></td></tr>
+<tr><td><code>IS NULL</code></td><td>Sin dato. <b>Nunca <code>= NULL</code></b></td><td><code>WHERE return_date IS NULL</code></td></tr>
+<tr><td><code>COUNT SUM AVG MIN MAX</code></td><td>Resumen: muchas filas → una</td><td><code>SELECT AVG(length) FROM film;</code></td></tr>
+<tr><td><code>GROUP BY</code></td><td>Reparte en grupos y calcula en cada uno</td><td><code>SELECT rating, COUNT(*) FROM film GROUP BY rating;</code></td></tr>
+<tr><td><code>HAVING</code></td><td>Filtra <b>grupos</b> ya calculados</td><td><code>HAVING COUNT(*) &gt; 200</code></td></tr>
+<tr><td><code>ORDER BY</code></td><td>Ordena. <code>ASC</code> menor→mayor, <code>DESC</code> al revés</td><td><code>ORDER BY length DESC</code></td></tr>
+<tr><td><code>LIMIT</code></td><td>Corta el resultado. Va de último</td><td><code>LIMIT 5</code></td></tr>
+</table></div>
+<div class="tip"><p><b>La regla de oro del <code>GROUP BY</code>:</b> cada columna del <code>SELECT</code> o está en el <code>GROUP BY</code>, o va dentro de una función de agregación. No hay tercera opción.</p></div>
+</section>
+
+<section class="doc" id="excel">
+<h2>13 · Tu Excel en SQL</h2>
+<p class="lede">El grupo se calificó <b>6,5/10 en Excel</b> y <b>3,2/10 en SQL</b>. No estás empezando de cero: estás traduciendo algo que ya sabes hacer.</p>
+<div class="tbl-scroll"><table>
+<tr><th>En Excel</th><th>En SQL</th><th>Cuidado con</th></tr>
+<tr><td>Filtro del encabezado</td><td><code>WHERE</code></td><td>—</td></tr>
+<tr><td>Filtro «entre»</td><td><code>BETWEEN</code></td><td>Incluye los dos extremos</td></tr>
+<tr><td>Marcar varias casillas</td><td><code>IN ('a','b')</code></td><td>Cada valor con sus propias comillas</td></tr>
+<tr><td>Comodines <code>*</code> y <code>?</code></td><td><code>%</code> y <code>_</code></td><td><b>Símbolos distintos.</b> <code>LIKE 'J*'</code> no da error: devuelve cero filas, que es peor</td></tr>
+<tr><td>Ordenar A→Z</td><td><code>ORDER BY … ASC</code></td><td>—</td></tr>
+<tr><td><code>CONTARA</code> (no vacíos)</td><td><code>COUNT(columna)</code></td><td><code>CONTAR</code> de Excel solo cuenta números. <code>COUNT(col)</code> ignora los <code>NULL</code>; <code>COUNT(*)</code> no</td></tr>
+<tr><td><code>SUMAR.SI</code></td><td><code>SUM(...)</code> + <code>WHERE</code></td><td>Primero filtras, después sumas</td></tr>
+<tr><td><code>SUMAR.SI.CONJUNTO</code>, repetido para cada categoría</td><td><code>GROUP BY</code></td><td><b>La mejor analogía:</b> <code>GROUP BY</code> hace todos los <code>SUMAR.SI</code> de una sola vez</td></tr>
+<tr><td>Tabla dinámica</td><td><code>GROUP BY</code> + agregación</td><td>Ver abajo</td></tr>
+<tr><td>Filtrar la dinámica ya hecha</td><td><code>HAVING</code></td><td>Equivalencia exacta</td></tr>
+<tr><td>Encabezado de la columna calculada</td><td><code>AS</code></td><td>Sin <code>AS</code> la columna se llama <code>COUNT(*)</code></td></tr>
+<tr><td><code>BUSCARV</code> / <code>CONSULTAV</code></td><td><code>JOIN</code></td><td>Llega en la <b>sesión 4</b></td></tr>
+</table></div>
+
+<h3>Dónde la tabla dinámica te miente</h3>
+<div class="warn"><ol style="margin:.3em 0 0;padding-left:1.2em">
+<li><b>No hay «Total general».</b> Si lo necesitas, va en una consulta aparte.</li>
+<li><b>No es una rejilla.</b> <code>GROUP BY a, b</code> devuelve una lista larga de combinaciones, no un cuadro de filas × columnas.</li>
+<li><b>El campo de fila no aparece solo.</b> En una dinámica basta arrastrarlo; en SQL hay que <em>repetirlo en el <code>SELECT</code></em>, o te salen números sin saber de quién son.</li>
+<li><b>Y la más importante:</b> en una dinámica arrastrar un campo de más nunca rompe nada, solo abre otro nivel de detalle. <b>En SQL sí rompe</b> — es la regla de oro del <code>GROUP BY</code>. El hábito que te sirve para todo lo demás, aquí te traiciona.</li>
+</ol></div>
+</section>
+
+<section class="doc" id="fuentes">
+<h2>14 · Fuentes y bibliografía</h2>
+<p class="lede">Todo dato numérico o afirmación técnica de esta guía procede de alguna de estas fuentes. Consultadas en <b>agosto de 2026</b>.</p>
+
+<h3>Cuotas de uso y popularidad</h3>
+<div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
+<tr><td><b>[1]</b></td><td>Stack Overflow. <i>Developer Survey 2025 — Technology: Databases</i>.<br><a href="https://survey.stackoverflow.co/2025/technology" target="_blank" rel="noopener">survey.stackoverflow.co/2025/technology</a></td><td>Las cifras del gráfico de barras de la sección 2: PostgreSQL 55,6% · MySQL 40,5% · SQLite 37,5% · SQL&nbsp;Server 30,1% · Redis 28,0% · MongoDB 24,0% · MariaDB 22,5% · Oracle 10,6%.</td></tr>
+<tr><td><b>[2]</b></td><td>DB-Engines. <i>DB-Engines Ranking</i>. Solid IT / Redgate.<br><a href="https://db-engines.com/en/ranking" target="_blank" rel="noopener">db-engines.com/en/ranking</a></td><td>Que Oracle encabeza el ranking desde 2012, y que la metodología cuenta menciones en webs, foros técnicos, ofertas de empleo y perfiles profesionales.</td></tr>
+</table></div>
+
+<h3>Documentación oficial de los motores</h3>
+<div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
+<tr><td><b>[3]</b></td><td>SQLite. <i>Most Widely Deployed and Used Database Engine</i>.<br><a href="https://www.sqlite.org/mostdeployed.html" target="_blank" rel="noopener">sqlite.org/mostdeployed.html</a></td><td>La estimación de más de un billón (10<sup>12</sup>) de bases SQLite activas y su presencia en Android, iOS, Windows&nbsp;10/11 y los navegadores Firefox, Chrome y Safari.</td></tr>
+<tr><td><b>[4]</b></td><td>SQLite. <i>Quirks, Caveats, and Gotchas In SQLite</i>.<br><a href="https://www.sqlite.org/quirks.html" target="_blank" rel="noopener">sqlite.org/quirks.html</a></td><td>Sección 3 «Flexible Typing» y sección 6 «Aggregate Queries Can Contain Non-Aggregate Result Columns That Are Not In The GROUP BY Clause». Sustentan todo lo que decimos sobre las dos permisividades de SQLite.</td></tr>
+<tr><td><b>[5]</b></td><td>SQLite. <i>Datatypes In SQLite</i>.<br><a href="https://www.sqlite.org/datatype3.html" target="_blank" rel="noopener">sqlite.org/datatype3.html</a></td><td>Que no existen tipos BOOLEAN ni DATETIME separados: los booleanos se guardan como 0 y 1, y las fechas como texto ISO-8601. Sustenta la tabla de la sección 8.</td></tr>
+<tr><td><b>[6]</b></td><td>PostgreSQL Global Development Group. <i>Pattern Matching</i>.<br><a href="https://www.postgresql.org/docs/current/functions-matching.html" target="_blank" rel="noopener">postgresql.org/docs/current/functions-matching.html</a></td><td>El comportamiento de <code>LIKE</code> e <code>ILIKE</code> en PostgreSQL y su sensibilidad a mayúsculas, contrastado en la sección 4.</td></tr>
+<tr><td><b>[7]</b></td><td>PostgreSQL Global Development Group. <i>SELECT — GROUP BY Clause</i>.<br><a href="https://www.postgresql.org/docs/current/sql-select.html" target="_blank" rel="noopener">postgresql.org/docs/current/sql-select.html</a></td><td>El error <code>column "…" must appear in the GROUP BY clause or be used in an aggregate function</code>.</td></tr>
+</table></div>
+
+<h3>Herramientas</h3>
+<div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
+<tr><td><b>[8]</b></td><td>Beekeeper Studio. <i>Download</i>.<br><a href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">beekeeperstudio.io/get</a></td><td>Las opciones de descarga por sistema operativo y la recomendación textual del propio proyecto: «Use the Installer if you have admin rights and want shortcuts and auto-updates. Use Portable on locked-down machines or a USB stick». También el AppImage y los paquetes <code>.deb</code> y <code>.rpm</code> de Linux.</td></tr>
+<tr><td><b>[9]</b></td><td>Beekeeper Studio. <i>Código fuente, licencia GPLv3</i>.<br><a href="https://github.com/beekeeper-studio/beekeeper-studio" target="_blank" rel="noopener">github.com/beekeeper-studio/beekeeper-studio</a></td><td>Que es software libre y qué motores soporta.</td></tr>
+</table></div>
+
+<h3>La base de datos de práctica</h3>
+<div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
+<tr><td><b>[10]</b></td><td>Oracle / MySQL. <i>Sakila Sample Database</i>.<br><a href="https://dev.mysql.com/doc/sakila/en/" target="_blank" rel="noopener">dev.mysql.com/doc/sakila/en</a></td><td>El modelo original del que desciende <code>dvdrental</code>: un negocio de alquiler de películas con tiendas, inventario, alquileres y pagos.</td></tr>
+<tr><td><b>[11]</b></td><td>PostgreSQL Tutorial. <i>PostgreSQL Sample Database (dvdrental)</i>.<br><a href="https://www.postgresqltutorial.com/postgresql-getting-started/postgresql-sample-database/" target="_blank" rel="noopener">postgresqltutorial.com</a></td><td>La adaptación a PostgreSQL de la que proviene el archivo <code>dvdrental.sql</code> del curso.</td></tr>
+<tr><td><b>[12]</b></td><td>Motion Picture Association. <i>Film Ratings</i>.<br><a href="https://www.motionpictures.org/film-ratings/" target="_blank" rel="noopener">motionpictures.org/film-ratings</a></td><td>El significado de los valores de <code>film.rating</code>: G, PG, PG-13, R y NC-17.</td></tr>
+</table></div>
+
+<div class="note"><p><b>Las cifras del diccionario (sección 10) y de las trampas (sección 11)</b> —número de filas, valores posibles, rangos, los nombres de los dos empleados— <b>no provienen de ninguna fuente externa</b>: se obtuvieron ejecutando consultas directamente sobre <code>dvdrental.db</code> y cualquiera puede reproducirlas con las consultas indicadas en cada caso.</p></div>
+
+<h3>Material del curso</h3>
+<p style="font-size:.93rem">Los contenidos conceptuales se apoyan en las presentaciones originales del programa: <i>M1C1 V5 · Introducción al Curso</i>, <i>M1C1P2 V1 · Introducción a las Bases de Datos</i> y <i>M2C1 V6 · Fundamentos de SQL</i> (Universidad de los Andes, Educación Ejecutiva). El diseño de la sesión —ritmo, ejercicios y nivel de entrada— se ajustó al diagnóstico de conocimientos respondido por los 38 estudiantes del grupo.</p>
+<p style="font-size:.93rem">Ficha oficial del programa: <a href="https://www.colsubsidio.com/productividad/cursos-tec-alianza" target="_blank" rel="noopener">Colsubsidio · Cursos TEC Alianza</a>.</p>
+</section>
+
+</main>
+</div>
+
+<footer><div class="wrap">
+  Guía de referencia · Módulo 2 · Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio
+</div></footer>
+</body></html>

@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesión 3 · Filtros avanzados y agregaciones en SQL · Diseño y Gestión de Bases de Datos con SQL"><title>Sesión 3 · Filtrar mejor y resumir</title>
+<style>
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%; transform:translateY(-50%);
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;width:2em;height:2em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{font-size:1.9em;line-height:1;display:block}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{max-width:14em;max-height:4.5em;object-fit:contain}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+
+</style></head>
+<body><main class="stage">
+
+<section class="slide active" data-title="Portada"><div class="ey">Sesión 3 de 16 · Módulo 2</div><h1>Filtrar mejor y <span class="accent">resumir</span></h1><p class="lead">Ayer listamos filas. Hoy aprendemos a encontrar exactamente lo que buscamos y a convertir miles de filas en un número que responde una pregunta.</p><p class="small">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio</p><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAADwCAYAAAD4pgDaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI2OUVGQkRFRDQ5MjExRTQ5QjcyQUNGMDEwN0ExMEU2IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI2OUVGQkRGRDQ5MjExRTQ5QjcyQUNGMDEwN0ExMEU2Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjY5RUZCRENENDkyMTFFNDlCNzJBQ0YwMTA3QTEwRTYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjY5RUZCRERENDkyMTFFNDlCNzJBQ0YwMTA3QTEwRTYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5qc4MeAABg6ElEQVR42uyd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" alt="Universidad de los Andes" style="margin-top:2%"><div class="brand"><span>Sesión 3 · Módulo 2</span><span>Con pausa de 15 minutos</span></div>
+</section>
+
+<section class="slide" data-title="Agenda"><div class="ey">Qué haremos hoy</div><h2>Dos bloques y un cambio de mentalidad</h2><div class="agenda-grid"><article><b>1</b><h3>Filtros finos</h3><p><code>BETWEEN</code> para rangos, <code>IN</code> para listas, <code>LIKE</code> para patrones de texto.</p></article><article><b>2</b><h3>Práctica combinada</h3><p>Tres consultas que mezclan todo lo de la sesión 2 con lo de hoy.</p></article><article><b>⏸</b><h3>Pausa</h3><p>15 minutos, a mitad de sesión.</p></article><article><b>3</b><h3>Agregar</h3><p>Contar, sumar, promediar. De muchas filas a un número.</p></article><article><b>4</b><h3>Agrupar</h3><p><code>GROUP BY</code>: el equivalente en SQL de una tabla dinámica.</p></article><article><b>5</b><h3>Filtrar lo agrupado</h3><p><code>HAVING</code>: filtrar <em>después</em> de haber calculado.</p></article></div><div class="brand"><span>Apertura</span><span>Los JOIN llegan en la sesión 4</span></div>
+</section>
+
+<section class="slide" data-title="Calentamiento"><div class="ey">Calentamiento · 6 minutos</div><h2>Antes de empezar: dos consultas de la sesión pasada</h2><p class="lead">Escríbelas tú, sin mirar apuntes. Es la mejor forma de saber qué quedó.</p><div class="chal"><article><h3>1. Las 10 películas más largas</h3><p>De la tabla <code>film</code>, muestra <code>title</code> y <code>length</code>, ordenadas de mayor a menor duración, y quédate solo con las 10 primeras.</p></article><article><h3>2. ¿Cuántos clientes hay?</h3><p>Cuenta cuántas filas tiene la tabla <code>customer</code>.</p></article></div><div style="margin-top:2.2%" data-r><pre>SELECT title, length FROM film ORDER BY length DESC LIMIT 10;
+
+SELECT COUNT(*) FROM customer;    -- 599</pre></div><div class="brand"><span>Apertura</span><span>Recordar escribiendo, no leyendo</span></div>
+</section>
+
+<section class="slide dense" data-title="Tipos de dato"><div class="ey">Antes de filtrar</div><h2>Tipos de dato: cuándo van comillas y cuándo no</h2><p class="question-purpose">Es la causa número uno de consultas que fallan el primer día. La regla es corta y no tiene excepciones.</p><table class="optbl"><tr><th>Tipo</th><th>Cómo se escribe</th><th>Correcto</th><th>Error típico</th></tr><tr><td>Texto</td><td>Entre <strong>comillas simples</strong></td><td><code>WHERE first_name = 'Nancy'</code></td><td><code>= "Nancy"</code> — en SQL estándar las comillas dobles son un <em>nombre de columna</em>. SQLite las acepta igual, pero PostgreSQL falla. <strong>Usa siempre simples.</strong></td></tr><tr><td>Entero</td><td><strong>Sin comillas</strong></td><td><code>WHERE length &gt; 120</code></td><td><code>&gt; '120'</code> — lo compara como texto y ordena mal</td></tr><tr><td>Decimal</td><td>Sin comillas, con <strong>punto</strong></td><td><code>WHERE amount &gt; 4.99</code></td><td><code>&gt; 4,99</code> — la coma separa argumentos, no decimales</td></tr><tr><td>Fecha</td><td>Como texto, <strong>AAAA-MM-DD</strong></td><td><code>WHERE rental_date &gt; '2005-06-01'</code></td><td><code>'01/06/2005'</code> — no se ordena bien</td></tr><tr><td>Booleano</td><td>En SQLite: <strong>0 y 1</strong></td><td><code>WHERE active = 1</code></td><td><code>= 'true'</code> — ese valor no existe aquí</td></tr><tr><td>Nulo</td><td>Con <code>IS</code>, <strong>nunca</strong> con <code>=</code></td><td><code>WHERE return_date IS NULL</code></td><td><code>= NULL</code> — nunca es verdadero, ni para los nulos</td></tr></table><p class="warn" style="margin-top:.9em"><strong><code>NULL</code> no es cero ni es texto vacío: significa «no sabemos».</strong> Por eso <code>NULL = NULL</code> tampoco es verdadero — no puedes afirmar que dos desconocidos sean iguales. En nuestra base, <code>rental.return_date</code> es <code>NULL</code> cuando la película <em>todavía no se ha devuelto</em>: son 183 casos y es información, no un error. &nbsp;·&nbsp; Si el texto lleva apóstrofo, se duplica: <code>'Alice''s'</code>.</p><div class="brand"><span>Apertura</span><span>Texto con comillas · números sin comillas</span></div></section>
+<section class="slide xxdense" data-title="Tu Excel en SQL"><div class="ey">El puente</div><h2>Lo que ya haces en Excel, escrito en SQL</h2><p class="question-purpose">En el diagnóstico el grupo se calificó <strong>6,5/10 en Excel</strong> y <strong>3,2/10 en SQL</strong>. No estás empezando de cero: estás traduciendo.</p><table class="optbl"><tr><th>En Excel</th><th>En SQL</th><th>Ojo con esto</th></tr><tr><td>Filtro del encabezado</td><td><code>WHERE</code></td><td>—</td></tr><tr><td>Filtro «entre»</td><td><code>BETWEEN</code></td><td>Incluye los dos extremos</td></tr><tr><td>Marcar varias casillas</td><td><code>IN ('a','b')</code></td><td>Cada valor con sus comillas</td></tr><tr><td>Comodines <code>*</code> y <code>?</code></td><td><code>%</code> y <code>_</code></td><td><strong>Distintos símbolos.</strong> <code>LIKE 'J*'</code> da cero filas sin avisar</td></tr><tr><td><code>CONTARA</code></td><td><code>COUNT(columna)</code></td><td><code>CONTAR</code> solo cuenta números; <code>COUNT(col)</code> ignora los nulos</td></tr><tr><td><code>SUMAR.SI</code></td><td><code>SUM(...) + WHERE</code></td><td>Primero filtras, después sumas</td></tr><tr><td><code>SUMAR.SI.CONJUNTO</code> repetido para cada categoría</td><td><code>GROUP BY</code></td><td><strong>Es la mejor analogía:</strong> GROUP BY hace todos los SUMAR.SI de una vez</td></tr><tr><td>Tabla dinámica</td><td><code>GROUP BY</code> + agregación</td><td>Ver la advertencia de abajo</td></tr><tr><td>Encabezado de la columna calculada</td><td><code>AS</code></td><td><code>COUNT(*) AS peliculas</code></td></tr><tr><td><code>BUSCARV</code></td><td><code>JOIN</code></td><td>Llega en la <strong>sesión 4</strong></td></tr></table><p class="warn" style="margin-top:.8em"><strong>Dónde la tabla dinámica te miente.</strong> No trae <em>Total general</em> automático. No es una rejilla de filas × columnas: <code>GROUP BY a, b</code> devuelve una lista larga, no un cuadro. Y sobre todo: en una dinámica <strong>arrastrar un campo de más nunca rompe nada</strong>; en SQL sí. Eso es la regla de oro que veremos después de la pausa.</p><div class="brand"><span>Apertura</span><span>No empiezas de cero: traduces</span></div></section>
+<section class="slide" data-title="BETWEEN"><div class="ey">Filtro fino 1</div><h2><code>BETWEEN</code>: quedarse con un rango</h2><div class="sqlgrid"><div><p>Sirve para preguntar si un valor está <strong>dentro de un rango</strong>, sin escribir dos condiciones.</p><pre>-- Con BETWEEN
+SELECT title, length
+FROM film
+WHERE length BETWEEN 60 AND 90;
+
+-- Es exactamente lo mismo que
+SELECT title, length
+FROM film
+WHERE length >= 60
+  AND length <= 90;</pre></div><div><p class="warn"><strong>La trampa:</strong> <code>BETWEEN</code> es <strong>inclusivo</strong> en los dos extremos. <code>BETWEEN 60 AND 90</code> incluye las de 60 y las de 90 minutos.<br><br>Si necesitas mayor o menor <em>estricto</em>, no uses <code>BETWEEN</code>: escribe la condición completa con <code>&gt;</code> y <code>&lt;</code>.</p><p class="small" style="margin-top:1em">También funciona con fechas y con texto, no solo con números.</p></div></div><div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: filtro “entre” <i aria-hidden="true">→</i> En SQL: <code>BETWEEN … AND …</code></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>Inclusivo en ambos extremos</span></div>
+</section>
+
+<section class="slide" data-title="IN"><div class="ey">Filtro fino 2</div><h2><code>IN</code>: quedarse con una lista de opciones</h2><div class="sqlgrid"><div><p>Cuando la condición es “que sea alguno de estos”, <code>IN</code> reemplaza una cadena larga de <code>OR</code>.</p><pre>-- Con OR: se vuelve ilegible rápido
+SELECT title, rating
+FROM film
+WHERE rating = 'G'
+   OR rating = 'PG'
+   OR rating = 'PG-13';
+
+-- Con IN: la misma consulta
+SELECT title, rating
+FROM film
+WHERE rating IN ('G','PG','PG-13');</pre></div><div><div class="card"><h3>Más corto</h3><p>Una línea en lugar de tres. Menos sitios donde equivocarse.</p></div><div class="card blue" style="margin-top:4%"><h3>Más legible</h3><p>Se lee como se piensa: “que el rating sea uno de estos tres”.</p></div><p class="small" style="margin-top:1.2em">Los valores van separados por comas y, si son texto, cada uno entre comillas simples.</p></div></div><div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: marcar varias casillas en el filtro <i aria-hidden="true">→</i> En SQL: <code>IN ('a','b','c')</code></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>IN es un OR ordenado</span></div>
+
+</section>
+
+<section class="slide" data-title="Desafío rápido"><div class="ey">Desafío rápido · 10 minutos</div><h2>Combina <code>BETWEEN</code> y <code>IN</code> en una sola consulta</h2><p class="lead">Estamos armando una sección de “clásicos cortos” para la vitrina de la tienda.</p><div class="hintbox"><strong>La pregunta</strong><p style="margin:.4em 0 0">Muestra el <strong>título</strong>, la <strong>calificación</strong> y la <strong>duración</strong> de las películas que tengan calificación <strong>G o NC-17</strong> y duren <strong>entre 60 y 90 minutos</strong>, ordenadas de más corta a más larga.</p><ul><li>Tabla <code>film</code>.</li><li><code>IN</code> para las dos calificaciones, <code>BETWEEN</code> para la duración.</li><li>Une las dos condiciones con <code>AND</code>.</li><li>Antes de ejecutar: ¿cuántas filas crees que van a salir?</li></ul></div><div style="margin-top:2%" data-r><pre>SELECT title, rating, length
+FROM film
+WHERE rating IN ('G','NC-17')
+  AND length BETWEEN 60 AND 90
+ORDER BY length ASC;</pre><p class="small" style="margin-top:.6em">97 filas. La primera: <em>Phantom Glory</em> (NC-17, 60 min) — y entra justo porque <code>BETWEEN</code> incluye el 60.</p></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>Dos filtros, una consulta</span></div>
+</section>
+
+<section class="slide dense" data-title="LIKE"><div class="ey">Filtro fino 3</div><h2><code>LIKE</code>: buscar por patrones de texto</h2><p class="lead">Cuando no sabes el valor exacto pero sí cómo empieza, cómo termina o qué contiene.</p><div class="sqlgrid"><div><pre>-- Nombres que empiezan por A
+WHERE first_name LIKE 'A%'
+
+-- Correos de gmail
+WHERE email LIKE '%@gmail.com'
+
+-- Títulos que contengan "LOVE"
+WHERE title LIKE '%LOVE%'
+
+-- Exactamente 4 letras, empieza por J
+WHERE first_name LIKE 'J___'</pre></div><div><table class="optbl" style="margin-top:0"><tr><th>Comodín</th><th>Qué representa</th></tr><tr><td>%</td><td>Cualquier secuencia de caracteres, <strong>incluida ninguna</strong>.</td></tr><tr><td>_</td><td>Exactamente <strong>un</strong> carácter, y tiene que haber uno.</td></tr></table><p class="warn" style="margin-top:1em"><strong>Si vienes de Excel, ojo:</strong> allí los comodines son <code>*</code> y <code>?</code>. En SQL son <code>%</code> y <code>_</code>. <code>LIKE 'J*'</code> no da error: devuelve <strong>cero filas</strong>, que es peor, porque parece que no hay datos.</p><p class="warn" style="margin-top:.6em"><strong>Tu primer dialecto de SQL.</strong> En <strong>PostgreSQL</strong>, <code>LIKE</code> distingue mayúsculas y existe <code>ILIKE</code> para ignorarlas. En <strong>SQLite</strong> —la base que usamos hoy— <code>LIKE</code> ya las ignora y <code>ILIKE</code> ni siquiera existe.<br><br>El 95% de SQL es igual en todos los motores. Este es uno de los detalles que cambian.</p></div></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>% es flexible · _ es exacto</span></div>
+</section>
+
+<section class="slide" data-title="LIKE combinado"><div class="ey">Filtro fino 3 (continuación)</div><h2>Los comodines se combinan</h2><p class="lead">Con dos símbolos se pueden construir búsquedas muy precisas.</p><div class="sqlgrid"><div><table class="res"><caption>Tres actores reales de la tabla <code>actor</code></caption><tr><th>Patrón</th><th>Jennifer</th><th>Johnny</th><th>Joe</th></tr><tr><td><code>'J%'</code></td><td class="hl">sí</td><td class="hl">sí</td><td class="hl">sí</td></tr><tr><td><code>'Jo%'</code></td><td>no</td><td class="hl">sí</td><td class="hl">sí</td></tr><tr><td><code>'J__'</code></td><td>no</td><td>no</td><td class="hl">sí</td></tr><tr><td><code>'%er'</code></td><td class="hl">sí</td><td>no</td><td>no</td></tr></table></div><div><p style="font-size:clamp(10px,1vw,16px)"><code>'J%'</code> → empieza por J, <em>siga lo que siga</em>.<br><code>'Jo%'</code> → ya exige dos letras concretas: Jennifer se cae.<br><code>'J__'</code> → J más <strong>exactamente</strong> dos caracteres: solo nombres de 3 letras.<br><code>'%er'</code> → tiene que <em>terminar</em> en “er”.</p><p class="warn" style="margin-top:1em"><strong>Hazlo así:</strong> proyecta la tabla vacía, que el grupo la complete, y <em>después</em> ejecuta <code>SELECT DISTINCT first_name FROM actor WHERE first_name LIKE 'J__';</code> para comprobarlo. El motor es mejor árbitro que el docente.</p></div></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>Combinar comodines multiplica la precisión</span></div>
+</section>
+
+<section class="slide" data-title="Práctica combinada"><div class="ey">Práctica combinada · 20 minutos</div><h2>Tres consultas, todo lo que sabes hasta ahora</h2><p class="question-purpose">Estas tres mezclan lo de la sesión 2 (<code>WHERE</code>, <code>COUNT</code>, <code>ORDER BY</code>, <code>LIMIT</code>) con los filtros de hoy. Trabaja de a dos si quieres.</p><div class="g3" style="margin-top:2%"><div class="card"><h3>1</h3><p>¿Cuántas transacciones de pago fueron de <strong>más de 5 dólares</strong>?<br><span class="small">Tabla <code>payment</code>. Pista: <code>COUNT</code> + <code>WHERE</code>.</span></p></div><div class="card blue"><h3>2</h3><p>¿Cuántas películas tienen calificación <strong>R</strong> y un costo de reemplazo <strong>entre $5 y $15</strong>?<br><span class="small">Tabla <code>film</code>. Pista: <code>BETWEEN</code> + <code>AND</code>.</span></p></div><div class="card"><h3>3</h3><p>¿Cuántas películas tienen títulos que <strong>empiezan por J</strong>?<br><span class="small">Tabla <code>film</code>. Pista: <code>LIKE</code>.</span></p></div></div><div style="margin-top:2.2%" data-r><pre>SELECT COUNT(amount) FROM payment WHERE amount > 5;
+
+SELECT COUNT(*) FROM film WHERE rating = 'R' AND replacement_cost BETWEEN 5 AND 15;
+
+SELECT COUNT(*) FROM film WHERE title LIKE 'J%';</pre></div><div class="brand"><span>Bloque 1 · Filtros finos</span><span>Trabajo en parejas · docente circula</span></div>
+</section>
+
+<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div><h2 style="margin-top:3%">Volvemos en 15 minutos</h2><p class="lead" style="margin:auto">Al volver cambia el chip: dejamos de listar filas y empezamos a resumirlas.</p><button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div><div class="brand"><span>Pausa</span><span>Segunda mitad: agregación</span></div>
+</section>
+
+<section class="slide dark" data-title="De filas a resúmenes"><div class="ey">Cambio de mentalidad</div><h2>Hasta ahora pedimos filas. Ahora vamos a pedir respuestas.</h2><div class="g2" style="margin-top:3%"><div><h3>Lo que hicimos hasta ahora</h3><p style="font-size:clamp(11px,1.1vw,18px)">“Muéstrame las películas que duran menos de 60 minutos.”<br><br>Resultado: <strong>una lista</strong>. Sigue tocando leerla e interpretarla.</p></div><div><h3>Lo que haremos ahora</h3><p style="font-size:clamp(11px,1.1vw,18px)">“¿Cuál es la duración <strong>promedio</strong> de las películas <strong>por cada</strong> calificación?”<br><br>Resultado: <strong>cinco números</strong>. La respuesta ya está masticada.</p></div></div><p class="lead" style="margin-top:3.5%" data-r>Eso que en Excel haces con una <strong>tabla dinámica</strong>, en SQL se hace con <code>GROUP BY</code> y una función de agregación.</p><div class="brand"><span>Bloque 2 · Agregar</span><span>De muchas filas a pocos números</span></div>
+</section>
+
+<section class="slide xdense" data-title="Funciones de agregación"><div class="ey">Herramientas</div><h2>Cinco funciones para resumir</h2><table class="optbl"><tr><th>Función</th><th>Qué recibe</th><th>Qué devuelve</th><th>Pruébala</th><th>Resultado</th></tr><tr><td>COUNT(*)</td><td>Nada. Cuenta <strong>filas</strong>.</td><td>Entero</td><td><code>SELECT COUNT(*) FROM film;</code></td><td><strong>1000</strong></td></tr><tr><td>COUNT(col)</td><td>Una columna. <strong>Ignora los NULL.</strong></td><td>Entero</td><td><code>SELECT COUNT(return_date) FROM rental;</code></td><td><strong>15861</strong> de 16044</td></tr><tr><td>SUM(col)</td><td>Columna <strong>numérica</strong></td><td>Número</td><td><code>SELECT SUM(amount) FROM payment;</code></td><td><strong>61312.04</strong></td></tr><tr><td>AVG(col)</td><td>Columna <strong>numérica</strong></td><td>Decimal</td><td><code>SELECT AVG(length) FROM film;</code></td><td><strong>115.272</strong></td></tr><tr><td>MIN / MAX</td><td>Número, texto <em>o</em> fecha</td><td>El mismo tipo que recibe</td><td><code>SELECT MIN(length), MAX(length) FROM film;</code></td><td><strong>46</strong> y <strong>185</strong></td></tr></table><p class="warn" style="margin-top:1em"><strong>Ejecuta las cinco.</strong> Todas devuelven <strong>una sola fila</strong>, sin importar el tamaño de la tabla: colapsan 1.000 películas en un número. Fíjate en la segunda: <code>COUNT(return_date)</code> da 15.861 y no 16.044 porque <strong>hay 183 alquileres sin devolver</strong>, y <code>COUNT</code> de una columna no cuenta los <code>NULL</code>. <code>COUNT(*)</code> sí los cuenta, porque cuenta filas.</p><p class="warn" style="margin-top:.7em"><strong>Ponle nombre al resultado con <code>AS</code>.</strong> Sin él la columna se llama <code>COUNT(*)</code>, que en un informe no dice nada:<br><code>SELECT rating, COUNT(*) AS peliculas FROM film GROUP BY rating;</code></p><p class="warn" style="margin-top:.7em"><strong>Ojo con el motor:</strong> <code>SELECT SUM(title) FROM film</code> —sumar texto— devuelve <strong>0.0</strong> en SQLite, sin avisar. PostgreSQL, en cambio, lanza un error. Es el mismo patrón que veremos en la regla de oro.</p><div class="excel-anchor"><span>Ya sabes hacerlo</span>Excel: <code>CONTARA</code> · <code>SUMA</code> · <code>PROMEDIO</code> · <code>MIN</code> · <code>MAX</code> <i aria-hidden="true">→</i> SQL: <code>COUNT</code> · <code>SUM</code> · <code>AVG</code> · <code>MIN</code> · <code>MAX</code></div><div class="brand"><span>Bloque 2 · Agregar</span><span>Colapsar muchas filas en una</span></div>
+</section>
+
+<section class="slide" data-title="Las canicas"><div class="ey">La idea de agrupar</div><h2>¿Cuál es el peso promedio de las canicas <em>por cada color</em>?</h2><svg class="marbles" viewBox="0 0 1180 330" role="img" aria-label="26 canicas mezcladas se reparten en cinco baldes por color; cada balde muestra cuántas canicas tiene, su peso total y su peso promedio">
+<g><rect x="15" y="25" width="290" height="290" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2.5"/><text x="160" y="52" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#171717">Todas las canicas (26)</text>
+<g stroke="#171717" stroke-width="1.5"><circle cx="55" cy="95" r="14" fill="#ffd600"/><circle cx="95" cy="95" r="14" fill="#ff8a24"/><circle cx="135" cy="95" r="14" fill="#146c43"/><circle cx="175" cy="95" r="14" fill="#ffd600"/><circle cx="215" cy="95" r="14" fill="#124e78"/><circle cx="255" cy="95" r="14" fill="#a52a2a"/>
+<circle cx="45" cy="140" r="14" fill="#ff8a24"/><circle cx="85" cy="140" r="14" fill="#ffd600"/><circle cx="125" cy="140" r="14" fill="#124e78"/><circle cx="165" cy="140" r="14" fill="#146c43"/><circle cx="205" cy="140" r="14" fill="#ffd600"/><circle cx="245" cy="140" r="14" fill="#ff8a24"/><circle cx="282" cy="140" r="14" fill="#ffd600"/>
+<circle cx="55" cy="185" r="14" fill="#146c43"/><circle cx="95" cy="185" r="14" fill="#ffd600"/><circle cx="135" cy="185" r="14" fill="#a52a2a"/><circle cx="175" cy="185" r="14" fill="#ff8a24"/><circle cx="215" cy="185" r="14" fill="#124e78"/><circle cx="255" cy="185" r="14" fill="#ffd600"/>
+<circle cx="75" cy="230" r="14" fill="#ffd600"/><circle cx="115" cy="230" r="14" fill="#146c43"/><circle cx="155" cy="230" r="14" fill="#ff8a24"/><circle cx="195" cy="230" r="14" fill="#124e78"/><circle cx="235" cy="230" r="14" fill="#ffd600"/>
+<circle cx="115" cy="275" r="14" fill="#a52a2a"/><circle cx="155" cy="275" r="14" fill="#146c43"/></g></g>
+<g font-family="Arial" font-weight="900"><text x="337" y="165" text-anchor="middle" font-size="34" fill="#ff8a24">→</text><text x="337" y="196" text-anchor="middle" font-size="10" fill="#a85600">GROUP BY</text><text x="337" y="210" text-anchor="middle" font-size="10" fill="#a85600">color</text></g>
+<g font-family="Arial">
+<g><rect x="375" y="40" width="150" height="255" rx="6" fill="#fff" stroke="#ff8a24" stroke-width="3"/><rect x="375" y="40" width="150" height="30" fill="#ff8a24"/><text x="450" y="61" text-anchor="middle" font-size="14" font-weight="900" fill="#171717">Anaranjadas</text><text x="450" y="110" text-anchor="middle" font-size="15" fill="#171717">5 canicas</text><text x="450" y="138" text-anchor="middle" font-size="15" fill="#171717">40 g en total</text><line x1="395" y1="160" x2="505" y2="160" stroke="#ddd" stroke-width="2"/><text x="450" y="205" text-anchor="middle" font-size="38" font-weight="900" fill="#a85600">8 g</text><text x="450" y="232" text-anchor="middle" font-size="13" fill="#646464">promedio</text><text x="450" y="272" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#124e78">AVG(peso)</text></g>
+<g><rect x="537" y="40" width="150" height="255" rx="6" fill="#fff" stroke="#ffd600" stroke-width="3"/><rect x="537" y="40" width="150" height="30" fill="#ffd600"/><text x="612" y="61" text-anchor="middle" font-size="14" font-weight="900" fill="#171717">Amarillas</text><text x="612" y="110" text-anchor="middle" font-size="15" fill="#171717">9 canicas</text><text x="612" y="138" text-anchor="middle" font-size="15" fill="#171717">54 g en total</text><line x1="557" y1="160" x2="667" y2="160" stroke="#ddd" stroke-width="2"/><text x="612" y="205" text-anchor="middle" font-size="38" font-weight="900" fill="#a85600">6 g</text><text x="612" y="232" text-anchor="middle" font-size="13" fill="#646464">promedio</text><text x="612" y="272" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#124e78">AVG(peso)</text></g>
+<g><rect x="699" y="40" width="150" height="255" rx="6" fill="#fff" stroke="#a52a2a" stroke-width="3"/><rect x="699" y="40" width="150" height="30" fill="#a52a2a"/><text x="774" y="61" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">Rojas</text><text x="774" y="110" text-anchor="middle" font-size="15" fill="#171717">3 canicas</text><text x="774" y="138" text-anchor="middle" font-size="15" fill="#171717">24 g en total</text><line x1="719" y1="160" x2="829" y2="160" stroke="#ddd" stroke-width="2"/><text x="774" y="205" text-anchor="middle" font-size="38" font-weight="900" fill="#a85600">8 g</text><text x="774" y="232" text-anchor="middle" font-size="13" fill="#646464">promedio</text><text x="774" y="272" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#124e78">AVG(peso)</text></g>
+<g><rect x="861" y="40" width="150" height="255" rx="6" fill="#fff" stroke="#146c43" stroke-width="3"/><rect x="861" y="40" width="150" height="30" fill="#146c43"/><text x="936" y="61" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">Verdes</text><text x="936" y="110" text-anchor="middle" font-size="15" fill="#171717">5 canicas</text><text x="936" y="138" text-anchor="middle" font-size="15" fill="#171717">50 g en total</text><line x1="881" y1="160" x2="991" y2="160" stroke="#ddd" stroke-width="2"/><text x="936" y="205" text-anchor="middle" font-size="38" font-weight="900" fill="#a85600">10 g</text><text x="936" y="232" text-anchor="middle" font-size="13" fill="#646464">promedio</text><text x="936" y="272" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#124e78">AVG(peso)</text></g>
+<g><rect x="1023" y="40" width="145" height="255" rx="6" fill="#fff" stroke="#124e78" stroke-width="3"/><rect x="1023" y="40" width="145" height="30" fill="#124e78"/><text x="1095" y="61" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">Azules</text><text x="1095" y="110" text-anchor="middle" font-size="15" fill="#171717">4 canicas</text><text x="1095" y="138" text-anchor="middle" font-size="15" fill="#171717">24 g en total</text><line x1="1043" y1="160" x2="1148" y2="160" stroke="#ddd" stroke-width="2"/><text x="1095" y="205" text-anchor="middle" font-size="38" font-weight="900" fill="#a85600">6 g</text><text x="1095" y="232" text-anchor="middle" font-size="13" fill="#646464">promedio</text><text x="1095" y="272" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#124e78">AVG(peso)</text></g>
+</g></svg>
+<p class="lead" style="margin-top:1.2%">Primero <strong>repartimos</strong> por color. Después <strong>calculamos</strong> dentro de cada balde.</p><div class="brand"><span>Bloque 3 · Agrupar</span><span>Agrupar primero, calcular después</span></div>
+</section>
+
+<section class="slide" data-title="GROUP BY paso a paso"><div class="ey">Lo mismo, con una tabla</div><h2>Tres pasos: la tabla, los grupos, el cálculo</h2><div class="pivot"><div><h3><span class="step">1</span>La tabla, fila por fila</h3><table class="res"><tr><th>nombre</th><th>curso</th><th>edad</th></tr><tr><td>Ana</td><td>Matemáticas</td><td>20</td></tr><tr><td>Luis</td><td>Historia</td><td>22</td></tr><tr><td>Sara</td><td>Matemáticas</td><td>21</td></tr><tr><td>Juan</td><td>Historia</td><td>23</td></tr><tr><td>Eva</td><td>Biología</td><td>20</td></tr><tr><td>Iván</td><td>Matemáticas</td><td>24</td></tr></table><p class="small" style="margin-top:.5em">6 filas.</p></div><div><h3><span class="step">2</span><code>GROUP BY curso</code></h3><table class="res"><tr><th>curso</th><th>filas que caen ahí</th></tr><tr><td class="hl">Matemáticas</td><td>Ana (20), Sara (21), Iván (24)</td></tr><tr><td class="hl">Historia</td><td>Luis (22), Juan (23)</td></tr><tr><td class="hl">Biología</td><td>Eva (20)</td></tr></table><p class="small" style="margin-top:.5em">Nadie se pierde: las 6 filas siguen ahí, repartidas en 3 baldes.</p></div><div><h3><span class="step">3</span><code>COUNT(edad)</code> por grupo</h3><table class="res"><tr><th>curso</th><th>COUNT(edad)</th></tr><tr><td>Matemáticas</td><td class="hl">3</td></tr><tr><td>Historia</td><td class="hl">2</td></tr><tr><td>Biología</td><td class="hl">1</td></tr></table><pre style="margin-top:.8em;font-size:clamp(8px,.82vw,13px)">SELECT curso, COUNT(edad)
+FROM estudiantes
+GROUP BY curso;</pre><p class="small" style="margin-top:.5em"><strong>Esta tabla es de ejemplo</strong>, no está en la base. Para ejecutarlo de verdad, el equivalente exacto sobre <code>film</code> es:</p><pre style="margin-top:.4em;font-size:clamp(8px,.82vw,13px)">SELECT rating, COUNT(length)
+FROM film
+GROUP BY rating;   -- 5 filas</pre></div></div><div class="brand"><span>Bloque 3 · Agrupar</span><span>3 filas de salida = 3 grupos</span></div>
+</section>
+
+<section class="slide tiny" data-title="La regla de oro"><div class="ey">Quiz · La regla que más se falla</div><h2>Todo lo que pidas debe estar agrupado o agregado</h2><div class="sqlgrid"><div><pre>-- ✅ Funciona
+SELECT rating, COUNT(*)
+FROM film
+GROUP BY rating;
+
+-- ❌ Falla
+SELECT title, rating, COUNT(*)
+FROM film
+GROUP BY rating;</pre><p class="warn" style="margin-top:1em"><strong>Y aquí viene lo peligroso:</strong> PostgreSQL <em>rechaza</em> esa consulta con un error claro (<em>column "film.title" must appear in the GROUP BY clause</em>). <strong>SQLite la acepta</strong> y te devuelve un título cualquiera del grupo, sin avisarte de nada.</p></div><div><p class="warn" style="margin:0 0 .7em"><strong>Si vienes de Excel, esta es tu trampa:</strong> en una tabla dinámica arrastrar un campo de más solo abre otro nivel de detalle, nunca rompe nada. En SQL sí rompe. El hábito que te sirve para todo lo demás aquí te traiciona.</p><p><strong>¿Por qué está mal, la rechace el motor o no?</strong></p><p style="font-size:clamp(10px,1vw,16px)">Cuando los datos están agrupados, SQL ya no trabaja con canicas: trabaja con <strong>baldes</strong>. Si le pides <code>title</code>, le estás pidiendo <em>un</em> título para un balde que contiene 194 películas distintas. No existe una respuesta correcta.</p><p style="font-size:clamp(10px,1vw,16px);margin-top:.7em">PostgreSQL prefiere avisarte. SQLite se inventa una. <strong>La segunda es peor:</strong> un error se ve; una respuesta silenciosamente equivocada se publica en un informe.</p><p style="font-size:clamp(10px,1vw,16px);margin-top:.7em"><strong>Los cuatro problemas concretos:</strong></p><ol style="font-size:.86em;margin:.35em 0 0;padding-left:1.2em"><li>El título que devuelve es <strong>arbitrario</strong>: puede cambiar entre ejecuciones.</li><li><strong>No hay aviso</strong>: el informe sale con pinta de correcto.</li><li>Si mañana migras a PostgreSQL, la consulta <strong>deja de funcionar</strong>.</li><li>Nadie puede <strong>auditar</strong> de dónde salió ese título.</li></ol><p class="small" style="margin-top:.6em">Por eso la regla no depende del motor: cada columna del <code>SELECT</code> o está en el <code>GROUP BY</code>, o va dentro de una función de agregación.</p></div></div><div class="q" data-answer="c" style="margin-top:1.6%"><div class="qt">Quieres saber cuántas películas hay por calificación. ¿Cuál consulta es correcta?</div><div class="opts"><button class="opt" data-o="a" data-f="Falla: title no está en el GROUP BY ni dentro de una función de agregación. Es exactamente el error de arriba.">A. <code>SELECT title, COUNT(*) FROM film GROUP BY rating;</code></button><button class="opt" data-o="b" data-f="Devuelve un solo número: el total de películas. No las separa por calificación.">B. <code>SELECT COUNT(*) FROM film;</code></button><button class="opt" data-o="c" data-f="Correcto: rating está en el GROUP BY y COUNT(*) es una función de agregación. Cumple la regla.">C. <code>SELECT rating, COUNT(*) FROM film GROUP BY rating;</code></button><button class="opt" data-o="d" data-f="Sin GROUP BY no hay grupos que contar por separado; además rating no podría acompañar al COUNT.">D. <code>SELECT rating, COUNT(*) FROM film;</code></button></div><button class="verify" type="button">Verificar respuesta</button><div class="fb"></div></div><div class="brand"><span>Bloque 3 · Agrupar</span><span>Agrupada o agregada. No hay tercera opción.</span></div>
+</section>
+
+<section class="slide" data-title="Desafíos GROUP BY"><div class="ey">Desafíos 1 y 2 · 10 minutos</div><h2>Ahora tú</h2><div class="chal"><article><h3>1. ¿Cuántas películas hay por calificación?</h3><p>Tabla <code>film</code>. Necesitas <code>COUNT</code> y <code>GROUP BY</code>.</p><p class="small" style="margin-top:.6em">Deberías obtener 5 filas: G, PG, PG-13, R y NC-17.</p></article><article><h3>2. ¿Cuál es el costo de reemplazo promedio por cada duración de préstamo?</h3><p>Tabla <code>film</code>. Necesitas <code>AVG</code> y <code>GROUP BY</code> sobre <code>rental_duration</code>.</p><p class="small" style="margin-top:.6em">Pista: <code>rental_duration</code> tiene pocos valores distintos. ¿Cuántas filas esperas?</p></article></div><div style="margin-top:2.2%" data-r><pre>SELECT rating, COUNT(rating) FROM film GROUP BY rating;
+
+SELECT rental_duration, AVG(replacement_cost) FROM film GROUP BY rental_duration;</pre></div><div class="brand"><span>Bloque 3 · Agrupar</span><span>Predecir cuántas filas saldrán</span></div>
+</section>
+
+<section class="slide" data-title="Desafío extra"><div class="ey">Desafío extra · 10 minutos</div><h2>Dos preguntas de negocio con lo de hoy</h2><p class="lead">Ya sabes agrupar y agregar. Estas dos las resuelve la gerencia todos los meses.</p><div class="chal"><article><h3>1. ¿Cuánto recaudó cada empleado?</h3><p>Tabla <code>payment</code>. Agrupa por <code>staff_id</code> y suma <code>amount</code>.</p><p class="small" style="margin-top:.5em">Recuerda: <strong>1</strong> es Mike Hillyer y <strong>2</strong> es Jon Stephens. Deben salir <strong>2 filas</strong>.</p></article><article><h3>2. ¿Cuántos clientes tiene cada tienda?</h3><p>Tabla <code>customer</code>. Agrupa por <code>store_id</code> y cuenta.</p><p class="small" style="margin-top:.5em">También <strong>2 filas</strong>. ¿Están equilibradas las tiendas?</p></article></div><div style="margin-top:1.2em" data-r><pre>SELECT staff_id, ROUND(SUM(amount), 2) FROM payment  GROUP BY staff_id;
+-- 1 → 30 252.12    ·    2 → 31 059.92     Jon recaudó un poco más
+
+SELECT store_id, COUNT(*) FROM customer GROUP BY store_id;
+-- 1 → 326 clientes ·    2 → 273 clientes  la tienda 1 tiene 53 más</pre></div><div class="brand"><span>Bloque 3 · Agrupar</span><span>Agrupar por la columna que define el grupo</span></div></section>
+<section class="slide" data-title="HAVING"><div class="ey">Última instrucción del día</div><h2><code>HAVING</code>: filtrar <em>después</em> de calcular</h2><div class="sqlgrid"><div><p>Ya sabes filtrar filas con <code>WHERE</code>. Pero ¿cómo filtras un <strong>resultado que aún no existe</strong> cuando <code>WHERE</code> actúa?</p><pre>-- Solo los grupos con más de 200 películas
+SELECT rating, COUNT(*)
+FROM film
+GROUP BY rating
+HAVING COUNT(*) > 200;</pre><p class="small" style="margin-top:.8em">La condición de un <code>HAVING</code> siempre depende del <strong>resultado agregado</strong>.</p></div><div><div class="card"><h3>WHERE filtra canicas</h3><p>Actúa sobre las filas originales, <strong>antes</strong> de repartirlas en baldes.</p></div><div class="card blue" style="margin-top:4%"><h3>HAVING filtra baldes</h3><p>Actúa sobre los grupos ya formados y calculados, <strong>después</strong>.</p></div></div></div><div class="excel-anchor"><span>Ya sabes hacerlo</span>Excel: filtrar la tabla dinámica <em>ya calculada</em> <i aria-hidden="true">→</i> En SQL: <code>HAVING</code></div><div class="brand"><span>Bloque 4 · Filtrar lo agrupado</span><span>WHERE: canicas · HAVING: baldes</span></div>
+</section>
+
+<section class="slide dense" data-title="Orden de ejecución"><div class="ey">Quiz · El orden real</div><h2>SQL no se ejecuta en el orden en que se escribe</h2><p class="lead">Escribes <code>SELECT</code> primero, pero el motor lo hace casi de último. Este es el orden real:</p><div class="flowline"><article><b>FROM</b><p>De qué tabla saco los datos.</p></article><i aria-hidden="true">→</i><article class="hi"><b>WHERE</b><p>Descarta filas.</p></article><i aria-hidden="true">→</i><article><b>GROUP BY</b><p>Reparte en baldes.</p></article><i aria-hidden="true">→</i><article><b>agregación</b><p>Calcula por balde.</p></article><i aria-hidden="true">→</i><article class="hi"><b>HAVING</b><p>Descarta baldes.</p></article><i aria-hidden="true">→</i><article><b>SELECT</b><p>Escoge columnas.</p></article><i aria-hidden="true">→</i><article><b>ORDER BY</b><p>Ordena.</p></article><i aria-hidden="true">→</i><article><b>LIMIT</b><p>Recorta.</p></article></div><div class="q" data-answer="b" style="margin-top:2%"><div class="ctx">Quieres el total pagado por cada cliente, pero <strong>solo de los pagos hechos con el vendedor 2</strong>, y <strong>solo de los clientes que en total superen $110</strong>.</div><div class="qt">¿Dónde va cada condición?</div><div class="opts"><button class="opt" data-o="a" data-f="Al revés. El vendedor es una condición sobre filas individuales, y el total solo existe después de agrupar.">A. El vendedor en HAVING, el total en WHERE</button><button class="opt" data-o="b" data-f="Correcto: staff_id = 2 filtra filas antes de agrupar (WHERE), y SUM(amount) > 110 filtra grupos ya calculados (HAVING).">B. El vendedor en WHERE, el total en HAVING</button><button class="opt" data-o="c" data-f="El total agregado no puede ir en WHERE: cuando WHERE actúa, la suma todavía no se ha calculado.">C. Las dos en WHERE</button><button class="opt" data-o="d" data-f="No funciona. staff_id no está en el GROUP BY ni dentro de una función de agregación: es exactamente la regla de oro. PostgreSQL lo rechaza; SQLite devuelve 92 filas equivocadas sin avisar (la respuesta correcta son 2).">D. Las dos en HAVING</button></div><button class="verify" type="button">Verificar respuesta</button><div class="fb"></div></div><div class="brand"><span>Bloque 4 · Filtrar lo agrupado</span><span>Se escribe en un orden, se ejecuta en otro</span></div>
+</section>
+
+<section class="slide" data-title="Desafío integrador"><div class="ey">Desafío integrador · 10 minutos</div><h2>¿Qué clientes han gastado más de $110 con el vendedor 2?</h2><p class="lead">Es la consulta más completa del curso hasta ahora: filtra filas, agrupa, calcula y filtra grupos.</p><div class="hintbox"><strong>Pistas</strong><ul><li>Tabla <code>payment</code>. Columnas: <code>customer_id</code>, <code>amount</code>, <code>staff_id</code>.</li><li><code>WHERE</code> para el vendedor (es una condición sobre cada pago).</li><li><code>GROUP BY customer_id</code> para juntar los pagos de cada cliente.</li><li><code>HAVING</code> para el total (es una condición sobre el resultado agregado).</li></ul></div><div style="margin-top:2%" data-r><pre>SELECT customer_id, SUM(amount)
+FROM payment
+WHERE staff_id = 2
+GROUP BY customer_id
+HAVING SUM(amount) > 110;</pre></div><div class="brand"><span>Bloque 4 · Filtrar lo agrupado</span><span>Filtrar → agrupar → calcular → filtrar</span></div>
+</section>
+
+<section class="slide yellow" data-title="Cierre"><div class="ey">Cierre · 6 minutos</div><h2>Pasaste de listar filas a responder preguntas</h2><div class="g2"><div><h3>Lo que te llevas</h3><ul class="checks"><li><code>BETWEEN</code> para rangos (¡inclusivo!).</li><li><code>IN</code> para listas de opciones.</li><li><code>LIKE</code> / <code>ILIKE</code> con <code>%</code> y <code>_</code>.</li><li><code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>.</li><li><code>GROUP BY</code>: la tabla dinámica de SQL.</li><li><code>HAVING</code>: filtrar lo ya calculado.</li></ul></div><div><h3>Para practicar</h3><p style="font-size:clamp(10px,1vw,16px)">Dos consultas más, con lo de hoy y lo de la sesión 2:</p><ol style="font-size:clamp(10px,1vw,16px)"><li>¿Cuántas películas tienen títulos que comienzan por <strong>J</strong>?<br><span class="small">Debe darte <strong>20</strong>.</span></li><li>De los clientes cuyo nombre empieza por <strong>E</strong> y con <code>address_id</code> menor que 500, ¿cuál tiene el <code>customer_id</code> más grande?<br><span class="small">Debe darte <strong>Eddie Tomlin</strong> (customer_id 434).</span></li></ol><p class="small" style="margin-top:.5em">Te doy el resultado a propósito: el reto es <strong>escribir la consulta</strong>, y así puedes comprobarte solo.</p><p class="warn" style="margin-top:1em"><strong>Próxima sesión:</strong> hasta hoy cada consulta usó <em>una</em> tabla. En la sesión 4 aprendemos a combinarlas con <code>JOIN</code> — y ahí la cadena <code>film → inventory → rental → customer</code> por fin se recorre completa.</p></div></div><p class="quote" style="margin-top:1.6%" data-r>Agrupar es decidir qué preguntas vale la pena responder.</p><div class="brand"><span>Cierre</span><span>Sesión 4: uniones de tablas</span><a href="../../index.html" style="color:inherit;font-weight:800">← Volver al curso</a></div>
+</section>
+
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 20</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador">T</button><a class="ctl" id="dlBtn" href="sesion-3-filtros-y-agregaciones.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
+</div>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="sr" id="announce" aria-live="assertive"></div>
+<script>
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),noteOv=document.getElementById('noteOv'),noteBody=document.getElementById('noteBody'),announce=document.getElementById('announce'),clock=document.querySelector('.clock'),noteBtn=document.getElementById('noteBtn');
+let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length;bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(noteOv&&noteOv.classList.contains('open'))fillNotes();if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
+function fillNotes(){if(!noteBody)return;const n=ss[i].querySelector('.notes');noteBody.innerHTML=n?n.innerHTML:'<p>Esta diapositiva no tiene notas.</p>'}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
+function closeAll(){timeOv.classList.remove('open');if(noteOv)noteOv.classList.remove('open')}
+function anyOpen(){return timeOv.classList.contains('open')||(noteOv&&noteOv.classList.contains('open'))}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
+if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
+let remain=900000,initial=remain,end=0,running=false,tick=null;
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){const v=fmt(cur());document.getElementById('timer').textContent=v;if(clock&&ss[i].dataset.break==='15')clock.textContent=v;if(running&&cur()<=0){pause();announce.textContent='Temporizador terminado'}}
+function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
+function setTimer(m,open=true){pause();initial=remain=m*60000;render();if(open)timeOv.classList.add('open')}
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);render()}
+function reset(){pause();remain=initial;render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>setTimer(Number(b.dataset.min),false));
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);start();timeOv.classList.add('open')};
+document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
+upd();render()})();
+</script></body></html>
