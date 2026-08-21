@@ -104,7 +104,9 @@ footer a{color:var(--y)}
   <a href="#trampas">11 · Trampas de esta base</a>
   <a href="#chuleta">12 · Chuleta de cláusulas</a>
   <a href="#excel">13 · Tu Excel en SQL</a>
-  <a href="#fuentes">14 · Fuentes y bibliografía</a>
+  <a href="#nube">14 · Snowflake, BigQuery y la nube</a>
+  <a href="#errores">15 · Errores y qué significan</a>
+  <a href="#fuentes">16 · Fuentes y bibliografía</a>
 </nav>
 
 <main>
@@ -508,8 +510,96 @@ Por eso <code>WHERE</code> no puede usar un <code>COUNT()</code>: cuando actúa,
 </ol></div>
 </section>
 
+<section class="doc" id="nube">
+<h2>14 · Snowflake, BigQuery y los almacenes en la nube</h2>
+<p class="lede">Surgió en clase y merece respuesta. Son la otra mitad del mundo SQL: no compiten con SQLite ni con PostgreSQL, resuelven un problema distinto. Y a BigQuery lo vas a usar tú mismo en el <b>módulo 5</b>.</p>
+
+<h3>El corte real no es «nube o no nube»: es OLTP contra OLAP</h3>
+<div class="tbl-scroll"><table>
+<tr><th></th><th>OLTP · sistemas operativos</th><th>OLAP · analítica</th></tr>
+<tr><td><b>Para qué</b></td><td>Sostener la operación del día: registrar una venta, un alquiler, un pago</td><td>Responder preguntas sobre millones de filas ya ocurridas</td></tr>
+<tr><td><b>Consulta típica</b></td><td>«Dame el pedido 48291» — una fila, ahora</td><td>«Ventas por región y mes en tres años» — millones de filas</td></tr>
+<tr><td><b>Se guarda</b></td><td>Por <b>filas</b>: leer una fila completa es barato</td><td>Por <b>columnas</b>: leer una columna de millones de filas es barato</td></tr>
+<tr><td><b>Quién</b></td><td>SQLite · PostgreSQL · MySQL · SQL&nbsp;Server · Oracle</td><td>BigQuery · Snowflake · Redshift · Databricks</td></tr>
+<tr><td><b>En el curso</b></td><td>Módulos 2 y 3</td><td>Módulo 5</td></tr>
+</table></div>
+<div class="tip"><p><b>La idea que hay que llevarse:</b> un almacén analítico guarda los datos <b>por columnas</b>. Si preguntas por el promedio de una columna sobre 400 millones de filas, solo lee esa columna. Por eso responde en segundos algo que en PostgreSQL tomaría minutos, y por eso es malísimo para «tráeme el pedido 48291».</p></div>
+
+<h3>Qué es cada uno</h3>
+<div class="cards2">
+  <div class="c"><h4>Google BigQuery</h4>
+    <p style="margin:0;font-size:.9rem"><b>Almacén analítico gestionado.</b> No administras nada: no hay servidor, ni versión, ni disco.</p>
+    <ul><li>Su dialecto se llama <b>GoogleSQL</b> y cumple el estándar ANSI.</li>
+    <li>Se paga por <b>bytes leídos</b> en cada consulta. Un <code>SELECT *</code> sobre una tabla enorme cuesta dinero de verdad.</li>
+    <li>Tiene <code>ARRAY</code> y <code>STRUCT</code>: una celda puede contener una lista o una estructura anidada.</li>
+    <li>Es el del <b>módulo 5</b>.</li></ul></div>
+  <div class="c"><h4>Snowflake</h4>
+    <p style="margin:0;font-size:.9rem"><b>Almacén analítico gestionado</b>, multinube (funciona sobre AWS, Azure o Google).</p>
+    <ul><li>Separa almacenamiento y cómputo: apagas el motor y sigues pagando solo los datos.</li>
+    <li>Se paga por <b>tiempo de cómputo encendido</b>, no por bytes leídos.</li>
+    <li>Fue el que más creció del sector en 2025.</li>
+    <li>Su trampa está en las mayúsculas — abajo.</li></ul></div>
+</div>
+
+<h3>Cómo cambia la escritura</h3>
+<p>Lo aprendido en el curso sigue valiendo: <code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code> y <code>JOIN</code> se escriben igual. Cambian dos cosas: <b>cómo se nombra la tabla</b> y <b>qué pasa con las mayúsculas</b>.</p>
+<div class="tbl-scroll"><table>
+<tr><th>Motor</th><th>La misma consulta</th></tr>
+<tr><td><b>SQLite</b> <small>(el nuestro)</small></td><td><code>SELECT title FROM film LIMIT 5;</code></td></tr>
+<tr><td><b>PostgreSQL</b></td><td><code>SELECT title FROM film LIMIT 5;</code></td></tr>
+<tr><td><b>MySQL</b></td><td><code>SELECT title FROM film LIMIT 5;</code></td></tr>
+<tr><td><b>SQL Server</b></td><td><code>SELECT TOP 5 title FROM film;</code></td></tr>
+<tr><td><b>BigQuery</b></td><td><code>SELECT title FROM `mi-proyecto.mi_dataset.film` LIMIT 5;</code></td></tr>
+<tr><td><b>Snowflake</b></td><td><code>SELECT title FROM MI_BD.PUBLIC.FILM LIMIT 5;</code></td></tr>
+</table></div>
+<p><b>En BigQuery</b> la tabla se nombra con tres partes —<code>proyecto.dataset.tabla</code>— y va entre <b>acentos graves</b> (<code>`</code>), no entre comillas. Es el carácter de la tecla junto al 1 en el teclado español.</p>
+<p><b>En Snowflake</b> también son tres partes —<code>base.esquema.tabla</code>—, pero además: <b>todo identificador sin comillas se convierte a MAYÚSCULAS</b>. Escribas <code>film</code>, <code>Film</code> o <code>FILM</code>, el motor busca <code>FILM</code>. Y si alguien creó la tabla con comillas dobles como <code>"film"</code>, entonces existen dos objetos distintos y tendrás que escribirla siempre entrecomillada.</p>
+<div class="warn"><p><b>Los tres motores hacen tres cosas distintas con las mayúsculas de los nombres:</b></p>
+<ul style="margin:.4em 0 0;padding-left:1.2em">
+<li><b>Snowflake</b> las sube a mayúsculas (es lo que dice el estándar SQL).</li>
+<li><b>PostgreSQL</b> las baja a minúsculas (se aparta del estándar).</li>
+<li><b>SQLite</b> le da igual: no distingue, ni siquiera entrecomillando.</li></ul>
+<p>Por eso una consulta que funciona en uno puede fallar en otro sin que cambies una sola cláusula. No es culpa tuya.</p></div>
+
+<h3>Lo que NO vas a encontrar en un almacén analítico</h3>
+<table>
+<tr><th>Se echa de menos</th><th>Por qué no está</th></tr>
+<tr><td><b>Índices</b></td><td>No hacen falta: al leer por columnas, el motor ya salta lo que no le pides. En su lugar hay <b>particionado</b> y <b>agrupamiento</b>.</td></tr>
+<tr><td><b>Claves foráneas que obliguen</b></td><td>Se pueden declarar, pero son una <b>pista para el optimizador</b>, no una regla que impida meter datos inconsistentes. La integridad se cuida antes de cargar.</td></tr>
+<tr><td><b>Transacciones al estilo banco</b></td><td>Existen, pero el diseño no está pensado para miles de escrituras por segundo, sino para cargas grandes y lecturas masivas.</td></tr>
+<tr><td><b>Borrar y actualizar fila a fila</b></td><td>Se puede, pero es caro y va contra el modelo. Se trabaja recargando o añadiendo.</td></tr>
+</table>
+<div class="tip"><p><b>Regla práctica para elegir:</b> si el sistema tiene que <em>anotar</em> lo que pasa ahora (una venta, un alquiler), es OLTP — PostgreSQL. Si tiene que <em>explicar</em> lo que ya pasó sobre millones de filas, es OLAP — BigQuery o Snowflake. Muchas empresas tienen los dos, y copian del primero al segundo cada noche. Eso es exactamente lo que construirás en el módulo 5.</p></div>
+</section>
+
+<section class="doc" id="errores">
+<h2>15 · Errores y qué significan</h2>
+<p class="lede">Los mensajes que vas a ver, en el texto exacto en que aparecen. Un error no es un castigo: es el motor diciéndote dónde mirar.</p>
+<div class="tbl-scroll"><table>
+<tr><th>Lo que dice</th><th>Qué pasó</th><th>Qué revisar</th></tr>
+<tr><td><code>no such column: titulo</code></td><td>Esa columna no existe con ese nombre</td><td>Casi siempre está en <b>inglés</b>: <code>title</code>, no <code>titulo</code>. Despliega la tabla en el panel izquierdo y míralo.</td></tr>
+<tr><td><code>no such column: district</code><br><small>y sabes que existe</small></td><td>Existe, pero <b>en otra tabla</b></td><td><code>district</code> vive en <code>address</code>, no en <code>customer</code>. Revisa el <code>FROM</code>.</td></tr>
+<tr><td><code>no such table: peliculas</code></td><td>La tabla no existe o está mal escrita</td><td>Son 15 y están en inglés. Míralas en el panel izquierdo.</td></tr>
+<tr><td><code>near "SELEC": syntax error</code></td><td>Una palabra mal escrita</td><td>El motor señala <b>dónde se atascó</b>. El error suele estar justo ahí o un poco antes.</td></tr>
+<tr><td><code>near "FROM": syntax error</code></td><td>Suele ser una <b>coma de más</b></td><td><code>SELECT title, FROM film</code> — sobra la coma antes del <code>FROM</code>.</td></tr>
+<tr><td><code>unrecognized token: "'Alice</code></td><td>Una comilla sin cerrar</td><td>Cuenta las comillas simples: siempre van en pareja.</td></tr>
+<tr><td><code>misuse of aggregate: COUNT()</code></td><td>Pusiste un <code>COUNT()</code> dentro de <code>WHERE</code></td><td>Va en <code>HAVING</code>. Cuando <code>WHERE</code> actúa, el conteo todavía no existe.</td></tr>
+<tr><td><code>near "ILIKE": syntax error</code></td><td><code>ILIKE</code> es de PostgreSQL</td><td>Aquí usa <code>LIKE</code>, que además ya ignora mayúsculas.</td></tr>
+</table></div>
+
+<h3>Los dos silencios peligrosos</h3>
+<div class="warn"><p>Peor que un error es que <b>no haya error</b>. Dos casos que no avisan:</p>
+<ol style="margin:.4em 0 0;padding-left:1.2em">
+<li><b>Cero filas no es un error.</b> <code>WHERE first_name = 'nancy'</code> devuelve cero porque el <code>=</code> distingue mayúsculas. La consulta está bien escrita; el dato no está así. Antes de darla por rota, prueba con <code>LIKE</code>.</li>
+<li><b>Las comillas dobles no fallan.</b> <code>WHERE rating = "XX"</code> no da error en SQLite —lo verificamos— pero tampoco encuentra nada. En PostgreSQL sí falla. Usa siempre comillas <b>simples</b> para texto.</li>
+</ol></div>
+
+<h3>Cómo pedir ayuda para que te la puedan dar</h3>
+<p>Pega en el chat <b>las dos cosas</b>: la consulta completa y el mensaje de error <b>tal cual</b>. Con «no me sirve» nadie puede ayudarte; con el texto exacto se resuelve en segundos, porque el mensaje ya dice dónde mirar.</p>
+</section>
+
 <section class="doc" id="fuentes">
-<h2>14 · Fuentes y bibliografía</h2>
+<h2>16 · Fuentes y bibliografía</h2>
 <p class="lede">Todo dato numérico o afirmación técnica de esta guía procede de alguna de estas fuentes. Consultadas en <b>agosto de 2026</b>.</p>
 
 <h3>Cuotas de uso y popularidad</h3>
@@ -527,6 +617,16 @@ Por eso <code>WHERE</code> no puede usar un <code>COUNT()</code>: cuando actúa,
 <tr><td><b>[7]</b></td><td>PostgreSQL Global Development Group. <i>SELECT — GROUP BY Clause</i>.<br><a href="https://www.postgresql.org/docs/current/sql-select.html" target="_blank" rel="noopener">postgresql.org/docs/current/sql-select.html</a></td><td>El error <code>column "…" must appear in the GROUP BY clause or be used in an aggregate function</code>.</td></tr>
 </table></div>
 
+<tr><td><b>[13]</b></td><td>Google Cloud. <i>Introduction to SQL in BigQuery</i>.<br><a href="https://docs.cloud.google.com/bigquery/docs/introduction-sql" target="_blank" rel="noopener">docs.cloud.google.com/bigquery/docs/introduction-sql</a></td><td>Que el dialecto se llama GoogleSQL y cumple ANSI; la notación <code>proyecto.dataset.tabla</code> entre acentos graves; y los tipos <code>ARRAY</code> y <code>STRUCT</code>.</td></tr>
+<tr><td><b>[14]</b></td><td>Snowflake. <i>Identifier requirements</i>.<br><a href="https://docs.snowflake.com/en/sql-reference/identifiers-syntax" target="_blank" rel="noopener">docs.snowflake.com/en/sql-reference/identifiers-syntax</a></td><td>Que un identificador sin comillas se resuelve en MAYÚSCULAS y uno entrecomillado conserva la caja exacta.</td></tr>
+<tr><td><b>[15]</b></td><td>PostgreSQL Global Development Group. <i>Lexical Structure</i>.<br><a href="https://www.postgresql.org/docs/current/sql-syntax-lexical.html" target="_blank" rel="noopener">postgresql.org/docs/current/sql-syntax-lexical.html</a></td><td>Que PostgreSQL pliega los identificadores sin comillas a minúsculas, apartándose del estándar SQL.</td></tr>
+</table></div>
+
+<h3>Almacenes de datos en la nube</h3>
+<div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
+<tr><th>#</th><th>Fuente</th><th>Qué sustenta</th></tr>
+</table></div>
+
 <h3>Herramientas</h3>
 <div class="tbl-scroll"><table><tr><th>#</th><th>Fuente</th><th>Qué sustenta aquí</th></tr>
 <tr><td><b>[8]</b></td><td>Beekeeper Studio. <i>Download</i>.<br><a href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">beekeeperstudio.io/get</a></td><td>Las opciones de descarga por sistema operativo y la recomendación textual del propio proyecto: «Use the Installer if you have admin rights and want shortcuts and auto-updates. Use Portable on locked-down machines or a USB stick». También el AppImage y los paquetes <code>.deb</code> y <code>.rpm</code> de Linux.</td></tr>
@@ -540,7 +640,7 @@ Por eso <code>WHERE</code> no puede usar un <code>COUNT()</code>: cuando actúa,
 <tr><td><b>[12]</b></td><td>Motion Picture Association. <i>Film Ratings</i>.<br><a href="https://www.motionpictures.org/film-ratings/" target="_blank" rel="noopener">motionpictures.org/film-ratings</a></td><td>El significado de los valores de <code>film.rating</code>: G, PG, PG-13, R y NC-17.</td></tr>
 </table></div>
 
-<div class="note"><p><b>Las cifras del diccionario (sección 10) y de las trampas (sección 11)</b> —número de filas, valores posibles, rangos, los nombres de los dos empleados— <b>no provienen de ninguna fuente externa</b>: se obtuvieron ejecutando consultas directamente sobre <code>dvdrental.db</code> y cualquiera puede reproducirlas con las consultas indicadas en cada caso.</p></div>
+<div class="note"><p><b>Las cifras del diccionario (sección 10), las trampas (sección 11) y los mensajes de error (sección 15)</b> —número de filas, valores posibles, rangos, los nombres de los dos empleados— <b>no provienen de ninguna fuente externa</b>: se obtuvieron ejecutando consultas directamente sobre <code>dvdrental.db</code> y cualquiera puede reproducirlas con las consultas indicadas en cada caso.</p></div>
 
 <h3>Material del curso</h3>
 <p style="font-size:.93rem">Los contenidos conceptuales se apoyan en las presentaciones originales del programa: <i>M1C1 V5 · Introducción al Curso</i>, <i>M1C1P2 V1 · Introducción a las Bases de Datos</i> y <i>M2C1 V6 · Fundamentos de SQL</i> (Universidad de los Andes, Educación Ejecutiva). El diseño de la sesión —ritmo, ejercicios y nivel de entrada— se ajustó al diagnóstico de conocimientos respondido por los 38 estudiantes del grupo.</p>
