@@ -7,7 +7,7 @@
     "48 horas · 16 sesiones",
     "Clases en vivo por videollamada"
   ],
-  "sesionActual": 2,
+  "sesionActual": 3,
   "totalSesiones": 16,
   "herramientas": [
     {
@@ -79,7 +79,7 @@
         {
           "n": 2,
           "titulo": "De la decisión a la primera consulta",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
           "tags": [
@@ -101,7 +101,7 @@
         {
           "n": 3,
           "titulo": "Filtrar mejor y resumir",
-          "estado": "proxima",
+          "estado": "hoy",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
           "tags": [
@@ -176,13 +176,12 @@
       "download": true
     },
     {
-      "txt": "💻 Beekeeper Studio",
-      "href": "https://www.beekeeperstudio.io/get",
-      "externo": true
-    },
-    {
       "txt": "📄 Hoja de ayuda",
       "href": "Presentaciones/M2/chuleta-taller.html"
+    },
+    {
+      "txt": "📘 Guía para repasar",
+      "href": "Presentaciones/M2/referencia-modulo-2.html"
     }
   ]
 }

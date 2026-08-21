@@ -85,6 +85,8 @@ a.session:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
 .chip.hoy{background:var(--o);color:#fff}
 .chip.lista{background:var(--gl);color:var(--g)}
 .chip.prox{background:var(--bl);color:var(--b)}
+.chip.done{background:var(--gl);color:var(--g)}
+.session.done{opacity:.85}
 .session.prox{border-left-color:var(--b)}
 .session .num{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--ink);color:var(--y);font-weight:800;margin-bottom:.85rem}
 .session.soon .num{background:#dcdcdc;color:#fff}
@@ -199,7 +201,7 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     <a href="#sesiones">Sesiones</a>
     <a href="#herramientas">Herramientas</a>
     <a href="#recorrido">Recorrido</a>
-    <a class="cta" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">▶ Sesión de hoy</a>
+    <a class="cta" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html">▶ Sesión de hoy</a>
   </nav>
 </div></div>
 
@@ -208,17 +210,17 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     <div class="eyebrow">Universidad de los Andes · Colsubsidio</div>
     <h1>Diseño y Gestión de Bases de Datos con SQL</h1>
     <p class="sub">Aprende a hacerle preguntas a una base de datos y a obtener respuestas. Empezamos desde cero y practicamos con datos reales en cada clase.</p>
-    <div class="cta-row"><a class="btn-main" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html">▶ Abrir la sesión de hoy<small>Sesión 2 · De la decisión a la primera consulta</small></a><a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a></div>
-    <div class="hoy-mats"><span>Materiales de hoy</span><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos</a><a href="https://www.beekeeperstudio.io/get" target="_blank" rel="noopener">💻 Beekeeper Studio</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda</a></div>
+    <div class="cta-row"><a class="btn-main" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html">▶ Abrir la sesión de hoy<small>Sesión 3 · Filtrar mejor y resumir</small></a><a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a></div>
+    <div class="hoy-mats"><span>Materiales de hoy</span><a href="Presentaciones/M2/base-datos/dvdrental.db" download>🗄️ La base de datos</a><a href="Presentaciones/M2/chuleta-taller.html">📄 Hoja de ayuda</a><a href="Presentaciones/M2/referencia-modulo-2.html">📘 Guía para repasar</a></div>
     <div class="facts"><span>48 horas · 16 sesiones</span><span>Clases en vivo por videollamada</span></div>
   </div>
   <aside class="progress-card">
     <div class="progress-head">
       <b>Tu avance</b>
-      <em>Sesión 2 de 16</em>
+      <em>Sesión 3 de 16</em>
     </div>
-    <div class="track"><div class="fill" style="width:6.2%"></div></div>
-    <div class="pips"><span class="pip done" title="Sesión 1">1</span><span class="pip now" title="Sesión 2">2</span><span class="pip " title="Sesión 3">3</span><span class="pip " title="Sesión 4">4</span><span class="pip " title="Sesión 5">5</span><span class="pip " title="Sesión 6">6</span><span class="pip " title="Sesión 7">7</span><span class="pip " title="Sesión 8">8</span><span class="pip " title="Sesión 9">9</span><span class="pip " title="Sesión 10">10</span><span class="pip " title="Sesión 11">11</span><span class="pip " title="Sesión 12">12</span><span class="pip " title="Sesión 13">13</span><span class="pip " title="Sesión 14">14</span><span class="pip " title="Sesión 15">15</span><span class="pip " title="Sesión 16">16</span></div>
+    <div class="track"><div class="fill" style="width:12.5%"></div></div>
+    <div class="pips"><span class="pip done" title="Sesión 1">1</span><span class="pip done" title="Sesión 2">2</span><span class="pip now" title="Sesión 3">3</span><span class="pip " title="Sesión 4">4</span><span class="pip " title="Sesión 5">5</span><span class="pip " title="Sesión 6">6</span><span class="pip " title="Sesión 7">7</span><span class="pip " title="Sesión 8">8</span><span class="pip " title="Sesión 9">9</span><span class="pip " title="Sesión 10">10</span><span class="pip " title="Sesión 11">11</span><span class="pip " title="Sesión 12">12</span><span class="pip " title="Sesión 13">13</span><span class="pip " title="Sesión 14">14</span><span class="pip " title="Sesión 15">15</span><span class="pip " title="Sesión 16">16</span></div>
   </aside>
 </div></header>
 
@@ -229,7 +231,7 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     <p>Cada sesión es un archivo único que funciona sin conexión, y trae dentro lo que necesitas ese día.
        Navega con ← y →; <b>F</b> pantalla completa, <b>T</b> cronómetro. El botón ↓ de la barra la descarga.</p>
   </div>
-  <div class="sessions"><div class="sesion-wrap"><a class="session hoy" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><span class="chip hoy">Hoy</span><span class="num">2</span><h3>De la decisión a la primera consulta</h3><p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p><div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S2.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><a class="session prox" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html"><span class="chip prox">Próxima clase</span><span class="num">3</span><h3>Filtrar mejor y resumir</h3><p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p><div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S3.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><div class="session soon"><span class="num">4</span><h3>Uniones de tablas</h3><p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p><div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div><div class="go">Próximamente</div></div></div></div>
+  <div class="sessions"><div class="sesion-wrap"><a class="session" href="Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html"><span class="chip done">Completado</span><span class="num">2</span><h3>De la decisión a la primera consulta</h3><p>Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.</p><div class="tags"><code>SELECT</code><code>DISTINCT</code><code>COUNT</code><code>WHERE</code><code>ORDER BY</code><code>LIMIT</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S2.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><a class="session hoy" href="Presentaciones/M2/sesion-3-filtros-y-agregaciones.html"><span class="chip hoy">Hoy</span><span class="num">3</span><h3>Filtrar mejor y resumir</h3><p>Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.</p><div class="tags"><code>BETWEEN</code><code>IN</code><code>LIKE</code><code>GROUP BY</code><code>HAVING</code></div><div class="go">Abrir la sesión →</div></a><div class="row mini"><a href="Scripts/S3.sql" download>📄 Las consultas de la clase (archivo de texto)</a></div></div><div class="sesion-wrap"><div class="session soon"><span class="num">4</span><h3>Uniones de tablas</h3><p>Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.</p><div class="tags"><code>UNION</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>FULL OUTER</code></div><div class="go">Próximamente</div></div></div></div>
 </div></section>
 
 <section id="herramientas"><div class="wrap">
