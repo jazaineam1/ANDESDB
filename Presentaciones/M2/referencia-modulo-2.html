@@ -561,6 +561,44 @@ Por eso <code>WHERE</code> no puede usar un <code>COUNT()</code>: cuando actúa,
 <li><b>SQLite</b> le da igual: no distingue, ni siquiera entrecomillando.</li></ul>
 <p>Por eso una consulta que funciona en uno puede fallar en otro sin que cambies una sola cláusula. No es culpa tuya.</p></div>
 
+<h3>Por qué a veces se nombra primero la base y luego la tabla</h3>
+<p>Es la pregunta que sale en clase al ver <code>proyecto.dataset.tabla</code>. La respuesta corta: <b>el nombre completo siempre existe; lo que cambia es cuánto puedes callar</b>.</p>
+<p>Tu tabla no se llama <code>film</code>: se llama <code>main.film</code>. Compruébalo ahora mismo en Beekeeper — las dos devuelven lo mismo:</p>
+<pre><code>SELECT COUNT(*) FROM film;        -- 1000
+SELECT COUNT(*) FROM main.film;   -- 1000  (el nombre completo)
+PRAGMA database_list;             -- dice que tu base se llama «main»</code></pre>
+<p><b>Beekeeper no te muestra el prefijo</b> porque al conectarte te sitúa <em>dentro</em> de una base: es el «contexto actual». Mientras no salgas de ahí, puedes omitir todo lo que esté por encima de la tabla.</p>
+
+<div class="tbl-scroll"><table>
+<tr><th>Motor</th><th>Nombre completo</th><th>Qué se omite normalmente</th></tr>
+<tr><td><b>SQLite</b></td><td><code>base.tabla</code></td><td><code>main.</code></td></tr>
+<tr><td><b>MySQL</b></td><td><code>base.tabla</code></td><td>La base de la conexión</td></tr>
+<tr><td><b>PostgreSQL</b></td><td><code>base.esquema.tabla</code></td><td><code>public.</code></td></tr>
+<tr><td><b>SQL Server</b></td><td><code>base.esquema.tabla</code></td><td><code>dbo.</code></td></tr>
+<tr><td><b>BigQuery</b></td><td><code>proyecto.dataset.tabla</code></td><td>Casi nunca se omite</td></tr>
+<tr><td><b>Snowflake</b></td><td><code>base.esquema.tabla</code></td><td>Las dos primeras, si fijas el contexto</td></tr>
+</table></div>
+<p>En <b>BigQuery</b> casi nunca se omite porque lo habitual es leer datos de proyectos ajenos —los públicos, los de otro equipo—: sin el proyecto delante no hay forma de saber a cuál te refieres.</p>
+
+<h3>Y sí, en SQLite también se puede</h3>
+<p>Con <code>ATTACH DATABASE</code> conectas un segundo archivo con un alias y consultas los dos a la vez. Verificado sobre esta misma base:</p>
+<pre><code>ATTACH DATABASE 'otra_base.db' AS otra;
+
+SELECT o.nombre, COUNT(*) AS pagos
+FROM otra.empleados o
+JOIN main.payment p ON p.staff_id = o.id
+GROUP BY o.nombre;
+-- Jon Stephens 7304  ·  Mike Hillyer 7292   (un JOIN entre dos archivos)</code></pre>
+
+<h4>Cuándo hace falta escribir el nombre completo</h4>
+<ol>
+<li><b>Cuando cruzas dos bases</b>, como arriba.</li>
+<li><b>Cuando el nombre se repite.</b> Si existe <code>film</code> en las dos, <code>FROM film</code> devuelve la de la base principal y no te enteras de que había otra. Solo el prefijo desambigua.</li>
+<li><b>En guiones que no deben depender del contexto.</b> Si alguien los ejecuta conectado a otra base, sin prefijo apuntan a donde no es.</li>
+<li><b>En BigQuery y Snowflake</b>, prácticamente siempre.</li>
+</ol>
+<div class="note"><p><b>Una asimetría que sorprende:</b> <b>PostgreSQL no puede</b> consultar dos bases en la misma sentencia — una conexión es a una sola base, y cruzar dos exige la extensión <code>postgres_fdw</code>. SQLite (con <code>ATTACH</code>) y SQL Server sí pueden. Es de los pocos sitios donde SQLite es <em>más</em> flexible que PostgreSQL.</p></div>
+
 <h3>Lo que NO vas a encontrar en un almacén analítico</h3>
 <table>
 <tr><th>Se echa de menos</th><th>Por qué no está</th></tr>
