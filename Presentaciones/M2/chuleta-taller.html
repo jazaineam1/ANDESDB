@@ -104,6 +104,33 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
     <tr><td><code>MIN</code> / <code>MAX</code></td><td>Menor / mayor</td></tr>
     <tr><td><code>… AS nombre</code></td><td>Renombra la columna</td></tr>
   </table>
+
+  <h2>Unir tablas</h2>
+<pre><span class="k">SELECT</span>   f.title, l.name      <span class="c">-- 3 · qué campos pongo</span>
+<span class="k">FROM</span>     film <span class="k">AS</span> f          <span class="c">-- 1 · con qué tabla inicio</span>
+<span class="k">INNER JOIN</span> language <span class="k">AS</span> l    <span class="c">-- 2 y 5 · cuál le pego, de qué tipo</span>
+  <span class="k">ON</span>     f.language_id = l.language_id;  <span class="c">-- 4 · con qué llaves</span></pre>
+  <div class="note"><b>Las cinco preguntas.</b> ¿Con qué tabla inicio? ¿Cuál le pego? ¿Qué campos pongo? ¿Qué campos me ayudan a pegar? ¿Con qué filas me quedo? Respóndelas antes de teclear y la consulta se escribe sola.</div>
+
+  <h3>Con qué filas te quedas</h3>
+  <table>
+    <tr><td><code>INNER JOIN</code></td><td>Solo lo que tiene pareja <b>en las dos</b></td></tr>
+    <tr><td><code>LEFT JOIN</code></td><td><b>Todo</b> lo de la primera tabla + lo que empareje</td></tr>
+    <tr><td><code>RIGHT JOIN</code></td><td><b>Todo</b> lo de la segunda + lo que empareje</td></tr>
+    <tr><td><code>FULL OUTER JOIN</code></td><td><b>Todo</b>, de los dos lados</td></tr>
+  </table>
+  <div class="note"><b>Para encontrar lo que falta:</b> <code>LEFT JOIN</code> + <code>WHERE otra.columna IS NULL</code>. Clientes que nunca compraron, películas sin copia, facturas sin pago. Un <code>INNER JOIN</code> no puede responder eso nunca: busca justo las filas que él descarta.</div>
+  <div class="note"><b>Cuidado con las filas.</b> Si la relación es 1:N, el resultado tiene <b>más</b> filas que la tabla de partida. <code>film</code> tiene 1.000; unida a <code>inventory</code> son 4.581, una por copia. Di en voz alta cuántas filas esperas <b>antes</b> de ejecutar.</div>
+
+  <h3>Apilar en vez de enganchar</h3>
+  <table>
+    <tr><td><code>UNION</code></td><td>Apila y <b>borra</b> las filas repetidas</td></tr>
+    <tr><td><code>UNION ALL</code></td><td>Apila y <b>conserva</b> todo (y es más rápido)</td></tr>
+  </table>
+  <div class="note">Mismo número de columnas, mismo orden, tipos compatibles. <code>UNION</code> compara la <b>fila entera</b>: una sola columna distinta y ya no borra nada.</div>
+
+  <h3>Alias</h3>
+  <div class="note">Con dos tablas puede haber <b>dos columnas que se llamen igual</b>. Ponle apodo a cada tabla (<code>film AS f</code>) y escribe siempre de quién es la columna: <code>f.title</code>, no <code>title</code>.</div>
 </div>
 
 <!-- ================= derecha ================= -->
@@ -154,7 +181,7 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
     <tr><td>first_name / last_name</td><td>Nombre y apellido</td></tr>
   </table></div>
 
-  <div class="warn"><b>Tres trampas de esta base.</b> Todas las películas son en inglés, así que buscar otro idioma da cero. Todos los correos son <code>@sakilacustomer.org</code>. Y <code>staff_id</code> solo vale 1 o 2: un 3 siempre devuelve cero filas.</div>
+  <div class="warn"><b>Tres trampas de esta base.</b> La columna <code>language.name</code> viene con espacios de relleno: usa <code>TRIM(name)</code> para compararla. Todos los correos son <code>@sakilacustomer.org</code>. Y <code>staff_id</code> solo vale 1 o 2: un 3 siempre devuelve cero filas.</div>
 </div>
 
 </div>
@@ -162,6 +189,49 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
 <div class="foot">
   <span>Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio</span>
   <span>Base <code>dvdrental</code> en SQLite · Módulo 2</span>
+
+  <div class="tb"><div class="cap">inventory <span>4.581 filas · las copias físicas</span></div><table>
+    <tr><td>inventory_id<span class="pk">PK</span></td><td>Identificador de la copia</td></tr>
+    <tr><td>film_id<span class="fk">FK</span></td><td>Qué película es · 42 películas no tienen ninguna</td></tr>
+    <tr><td>store_id<span class="fk">FK</span></td><td>En qué tienda está · 1 o 2</td></tr>
+  </table></div>
+
+  <div class="tb"><div class="cap">film_actor <span>5.462 filas · el puente actor ↔ película</span></div><table>
+    <tr><td>actor_id<span class="fk">FK</span></td><td>Quién actúa</td></tr>
+    <tr><td>film_id<span class="fk">FK</span></td><td>En qué película</td></tr>
+  </table></div>
+
+  <div class="tb"><div class="cap">language <span>6 filas · los idiomas</span></div><table>
+    <tr><td>language_id<span class="pk">PK</span></td><td>1 a 6</td></tr>
+    <tr><td>name</td><td><b>Ojo:</b> rellenado con espacios. Usa <code>TRIM(name)</code></td></tr>
+  </table></div>
+
+  <div class="tb"><div class="cap">staff <span>2 filas · los empleados</span></div><table>
+    <tr><td>staff_id<span class="pk">PK</span></td><td>1 = Mike Hillyer · 2 = Jon Stephens</td></tr>
+    <tr><td>first_name / last_name</td><td>Nombre y apellido</td></tr>
+    <tr><td>store_id<span class="fk">FK</span></td><td>En qué tienda trabaja</td></tr>
+  </table></div>
+
+  <div class="tb"><div class="cap">category · film_category <span>16 categorías</span></div><table>
+    <tr><td>category_id<span class="pk">PK</span></td><td>En <code>category</code>, con su <code>name</code></td></tr>
+    <tr><td>film_category</td><td>El puente: <code>film_id</code> + <code>category_id</code></td></tr>
+  </table></div>
+
+  <div class="tb"><div class="cap">city <span>600 filas · las ciudades</span></div><table>
+    <tr><td>city_id<span class="pk">PK</span></td><td>Identificador</td></tr>
+    <tr><td>city</td><td>Nombre · se llega desde <code>address.city_id</code></td></tr>
+  </table></div>
+
+  <div class="note" style="margin-top:1.1em"><b>Cómo se apuntan estas tablas.</b><br>
+  <code>customer.address_id</code> &rarr; <code>address.address_id</code> &nbsp;·&nbsp;
+  <code>address.city_id</code> &rarr; <code>city.city_id</code><br>
+  <code>film.language_id</code> &rarr; <code>language.language_id</code> &nbsp;·&nbsp;
+  <code>inventory.film_id</code> &rarr; <code>film.film_id</code><br>
+  <code>rental.inventory_id</code> &rarr; <code>inventory.inventory_id</code> &nbsp;·&nbsp;
+  <code>payment.rental_id</code> &rarr; <code>rental.rental_id</code><br>
+  <b>Puentes (N:N):</b> <code>film_actor</code> une <code>actor</code> con <code>film</code>;
+  <code>film_category</code> une <code>film</code> con <code>category</code>.<br>
+  <b>Ojo:</b> <code>address</code> <u>no</u> tiene <code>customer_id</code>. La flecha va de <code>customer</code> hacia <code>address</code>, nunca al revés.</div>
 </div>
 
 </div>

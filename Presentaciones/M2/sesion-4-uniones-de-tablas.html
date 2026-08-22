@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 4 - Uniones de tablas: UNION, UNION ALL e INNER, LEFT, RIGHT y FULL OUTER JOIN - Diseno y Gestion de Bases de Datos con SQL"><title>Sesi&oacute;n 4 &middot; Uniones de tablas</title>
+<style>/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%; transform:translateY(-50%);
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;width:2em;height:2em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{font-size:1.9em;line-height:1;display:block}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema-sm{max-height:18cqh}
+.tnode{cursor:pointer}
+.tnode rect{transition:fill .15s,stroke-width .15s}
+.tnode:hover rect{stroke-width:4.5}
+.tnode:focus{outline:none}
+.tnode:focus rect{stroke:#ff8a24;stroke-width:5}
+.tnode.sel rect{stroke:#ff8a24;stroke-width:5}
+.tinfo{height:15cqh;overflow:auto;margin-top:.5em;padding:.7em 1em;background:var(--bl);border-left:.4em solid var(--b);border-radius:var(--r-md);color:var(--ink)}
+.tinfo h3{margin:0 0 .4em;font-family:Consolas,monospace;color:var(--b)}
+.tinfo h3 small{font-family:"Segoe UI",Arial,sans-serif;font-weight:600;color:var(--ink-soft);font-size:.62em;margin-left:.6em}
+.tinfo .res td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;width:14em}
+.tinfo-hint{margin:0;color:var(--ink-soft);font-size:.92em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15em 1.6em}
+.dgrid div{display:flex;gap:.6em;align-items:baseline;border-bottom:1px solid rgba(18,78,120,.12);padding:.16em 0}
+.dgrid b{font-family:Consolas,monospace;color:var(--b);flex:0 0 10.5em;font-size:.92em}
+.dgrid span{font-size:.88em;line-height:1.3}
+.tdata{display:none}
+.k{border-radius:var(--pill);padding:.05em .5em;font-size:.72em;font-weight:800;font-family:"Segoe UI",Arial,sans-serif}
+.k.pk{background:var(--ink);color:var(--y)}
+.k.fk{background:var(--b);color:#fff}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{max-width:14em;max-height:4.5em;object-fit:contain}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+</style></head>
+<body><main class="stage">
+
+<section class="slide dark" data-title="Portada"><div class="logo">Universidad de los Andes &middot; Colsubsidio</div>
+<div class="ey">Sesi&oacute;n 4 &middot; M&oacute;dulo 2</div>
+<h1>Uniones de tablas</h1>
+<p class="lead">Hasta hoy cada consulta mir&oacute; <strong>una</strong> tabla. Hoy aprendemos a combinarlas: apilarlas con <code>UNION</code> y engancharlas con <code>JOIN</code>.</p>
+<div class="chips"><code>UNION</code><code>UNION ALL</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>RIGHT JOIN</code><code>FULL OUTER JOIN</code></div>
+<div class="dlrow"><a href="base-datos/dvdrental.db" download>&#128451; La base de datos<small>dvdrental.db &middot; 3,3 MB</small></a><a href="chuleta-taller.html">&#128196; Hoja de ayuda<small>tenla abierta al lado</small></a></div>
+<div class="brand"><span>Sesi&oacute;n 4 &middot; M&oacute;dulo 2</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
+</section>
+<section class="slide" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>De una tabla a varias</h2>
+<div class="agenda-grid">
+<article><b>1</b><h3>C&oacute;mo se apuntan</h3><p>Llaves primarias y for&aacute;neas: por qu&eacute; una tabla sabe de otra.</p></article>
+<article><b>2</b><h3>Apilar</h3><p><code>UNION</code> y <code>UNION ALL</code>: pegar un resultado <em>debajo</em> de otro.</p></article>
+<article><b>3</b><h3>Enganchar</h3><p><code>INNER JOIN</code>: las cinco preguntas que se hacen siempre.</p></article>
+<article><b>&#9208;</b><h3>Pausa</h3><p>15 minutos, a mitad de sesi&oacute;n.</p></article>
+<article><b>4</b><h3>Conservar</h3><p><code>LEFT</code>, <code>RIGHT</code> y <code>FULL OUTER</code>: qu&eacute; hacer con lo que no tiene pareja.</p></article>
+<article><b>5</b><h3>Encadenar</h3><p>Dos <code>JOIN</code> seguidos, y la trampa de las filas que se multiplican.</p></article>
+</div>
+<div class="brand"><span>Apertura</span><span>Cinco desaf&iacute;os y un reto integrador</span></div>
+</section>
+<section class="slide" data-title="Calentamiento"><div class="ey">Calentamiento &middot; 6 minutos</div>
+<h2>La pregunta que ninguna tabla responde sola</h2>
+<div class="g2">
+<div><p>Un cliente llama y pregunta: <strong>&laquo;&iquest;qu&eacute; pel&iacute;culas tienen de Nick Wahlberg?&raquo;</strong></p>
+<p style="margin-top:.7em">Con lo que sabes hasta hoy, int&eacute;ntalo. Abre Beekeeper y mira las dos tablas:</p>
+<pre>SELECT * FROM actor WHERE last_name = 'Wahlberg';
+SELECT * FROM film  LIMIT 5;</pre>
+<p class="warn" style="margin-top:.9em"><strong>No se puede.</strong> <code>actor</code> tiene los actores. <code>film</code> tiene las pel&iacute;culas. Y <strong>ninguna de las dos</strong> tiene una columna que diga qui&eacute;n act&uacute;a en qu&eacute;. Esa informaci&oacute;n vive en una tercera tabla: <code>film_actor</code>.</p></div>
+<div><p class="ctx"><strong>Esto no es un defecto de la base: es su dise&ntilde;o.</strong> Si cada pel&iacute;cula guardara el nombre de sus actores en una celda, tendr&iacute;as &laquo;Nick Wahlberg&raquo; escrito 25 veces. El d&iacute;a que se corrija un dedazo, hay que corregirlo 25 veces &mdash; y alguna se queda mal.</p>
+<p style="margin-top:.9em">Por eso el dato se guarda <strong>una sola vez</strong>, en su tabla, y las dem&aacute;s <strong>lo apuntan</strong>.</p>
+<div class="hintbox"><strong>El precio de ese dise&ntilde;o</strong><p style="margin:.4em 0 0">La informaci&oacute;n queda repartida. Para responder casi cualquier pregunta de negocio hay que <strong>volver a juntarla</strong>. Eso es lo que hacemos hoy, y es la habilidad que m&aacute;s se usa en el d&iacute;a a d&iacute;a de quien trabaja con datos.</p></div>
+<p class="small" style="margin-top:.9em">Al final de la sesi&oacute;n vas a responder esa misma pregunta en una sola consulta.</p></div></div>
+<div class="brand"><span>Apertura</span><span>El dato se guarda una vez y se apunta</span></div>
+</section>
+<section class="slide dense" data-title="Las llaves"><div class="ey">Bloque 1 &middot; C&oacute;mo se apuntan</div>
+<h2>Llave primaria y llave for&aacute;nea</h2>
+<div class="g2">
+<div><p>Toda tabla bien hecha tiene una columna &mdash;o un conjunto de columnas&mdash; que <strong>identifica cada fila sin repetirse</strong>. Es la <strong>llave primaria</strong> (<em>primary key</em>, <span class="k pk">PK</span>).</p>
+<p style="margin-top:.6em">Cuando otra tabla necesita referirse a esa fila, <strong>guarda ese identificador</strong>. Esa copia es la <strong>llave for&aacute;nea</strong> (<em>foreign key</em>, <span class="k fk">FK</span>).</p>
+<svg class="schema-sm" viewBox="0 0 560 215" role="img" aria-label="La tabla customer apunta a la tabla address mediante address_id">
+<defs><marker id="ar4" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#ff8a24"/></marker></defs>
+<rect x="8" y="14" width="222" height="186" rx="10" fill="#f3f1eb" stroke="#171717" stroke-width="2.5"/>
+<text x="119" y="39" text-anchor="middle" font-size="19" font-weight="700" fill="#171717">customer</text>
+<line x1="8" y1="50" x2="230" y2="50" stroke="#171717" stroke-width="2"/>
+<rect x="16" y="58" width="206" height="26" rx="5" fill="#ffd600"/>
+<text x="25" y="77" font-size="14" font-family="Consolas,monospace" fill="#171717">customer_id  PK</text>
+<text x="25" y="107" font-size="14" font-family="Consolas,monospace" fill="#646464">first_name</text>
+<text x="25" y="131" font-size="14" font-family="Consolas,monospace" fill="#646464">last_name</text>
+<rect x="16" y="145" width="206" height="26" rx="5" fill="#cfe8fa"/>
+<text x="25" y="164" font-size="14" font-family="Consolas,monospace" fill="#124e78">address_id  FK</text>
+<rect x="330" y="14" width="222" height="186" rx="10" fill="#f3f1eb" stroke="#171717" stroke-width="2.5"/>
+<text x="441" y="39" text-anchor="middle" font-size="19" font-weight="700" fill="#171717">address</text>
+<line x1="330" y1="50" x2="552" y2="50" stroke="#171717" stroke-width="2"/>
+<rect x="338" y="58" width="206" height="26" rx="5" fill="#ffd600"/>
+<text x="347" y="77" font-size="14" font-family="Consolas,monospace" fill="#171717">address_id  PK</text>
+<text x="347" y="107" font-size="14" font-family="Consolas,monospace" fill="#646464">address</text>
+<text x="347" y="131" font-size="14" font-family="Consolas,monospace" fill="#646464">district</text>
+<text x="347" y="155" font-size="14" font-family="Consolas,monospace" fill="#646464">city_id</text>
+<path d="M222 158 C278 158 278 71 338 71" fill="none" stroke="#ff8a24" stroke-width="3.5" marker-end="url(#ar4)"/>
+<text x="280" y="196" text-anchor="middle" font-size="13" fill="#ff8a24" font-weight="700">customer apunta a address</text>
+</svg></div>
+<div><p class="ctx"><strong>El sentido de la flecha importa, y se equivoca todo el mundo.</strong> Es <code>customer</code> quien guarda <code>address_id</code>. La tabla <code>address</code> <strong>no sabe</strong> qui&eacute;n vive ah&iacute;: no tiene ninguna columna <code>customer_id</code>.</p>
+<p style="margin-top:.8em">Compru&eacute;balo t&uacute; en Beekeeper antes de seguir:</p>
+<pre>SELECT * FROM address LIMIT 3;</pre>
+<p class="small" style="margin-top:.5em">Columnas: <code>address_id</code>, <code>address</code>, <code>address2</code>, <code>district</code>, <code>city_id</code>, <code>postal_code</code>, <code>phone</code>. Ni rastro de <code>customer_id</code>.</p>
+<p class="warn" style="margin-top:.9em"><strong>Y una advertencia sobre la herramienta.</strong> En este archivo las llaves for&aacute;neas <strong>no est&aacute;n declaradas</strong>: si haces <code>PRAGMA foreign_key_list(customer)</code> sale vac&iacute;o. Aqu&iacute; la FK es un <em>acuerdo de nombres</em>, no algo que la base te obligue a cumplir. Beekeeper no te va a avisar si unes por la columna equivocada &mdash; el &uacute;nico que revisa eres t&uacute;.</p></div></div>
+<div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: <code>BUSCARV</code> busca un c&oacute;digo en otra hoja <i aria-hidden="true">&rarr;</i> En SQL: la <span class="k fk">FK</span> es ese c&oacute;digo</div>
+<div class="brand"><span>Bloque 1 &middot; C&oacute;mo se apuntan</span><span>PK identifica &middot; FK apunta</span></div>
+</section>
+<section class="slide dense" data-title="Cardinalidades"><div class="ey">Bloque 1 &middot; C&oacute;mo se apuntan</div>
+<h2>&iquest;Cu&aacute;ntos de aqu&iacute; caben en uno de all&aacute;?</h2>
+<p class="lead">Eso es la <strong>cardinalidad</strong>, y decide cu&aacute;ntas filas te va a devolver la uni&oacute;n.</p>
+<div class="shapes">
+<article><h3>1:1 &mdash; uno a uno</h3><p>Cada fila de aqu&iacute; corresponde a <strong>una sola</strong> de all&aacute;, y al rev&eacute;s.</p><p class="small" style="margin-top:.5em">Una persona &harr; una c&eacute;dula. Es poco com&uacute;n: casi siempre se guarda todo en una misma tabla.</p></article>
+<article><h3>1:N &mdash; uno a muchos</h3><p>Una fila de aqu&iacute; puede tener <strong>muchas</strong> all&aacute;, pero no al rev&eacute;s.</p><p class="small" style="margin-top:.5em">Un cliente tiene muchos <code>rental</code>. Un alquiler pertenece a un solo cliente. <strong>Es el caso m&aacute;s frecuente.</strong></p></article>
+<article><h3>N:N &mdash; muchos a muchos</h3><p>Muchos de aqu&iacute; con muchos de all&aacute;, en los dos sentidos.</p><p class="small" style="margin-top:.5em">Una pel&iacute;cula tiene varios actores; un actor sale en varias pel&iacute;culas. <strong>Necesita una tabla puente.</strong></p></article>
+</div>
+<div class="g2" style="margin-top:1.2em;align-items:start">
+<div><p><strong>La tabla puente.</strong> Una relaci&oacute;n N:N no cabe en una sola columna: no hay d&oacute;nde meter &laquo;los 5 actores&raquo; en una celda. Por eso existe <code>film_actor</code>, con <strong>una fila por cada pareja</strong>. <strong>Ábrela t&uacute;:</strong> <code>SELECT * FROM film_actor LIMIT 10;</code> &mdash; y f&iacute;jate en por qu&eacute; el actor 1 aparece varias veces.</p>
+<pre>film_actor
+ actor_id | film_id
+ ---------+--------
+     1    |   23     &lt;- Penelope, en la pelicula 23
+     1    |   25     &lt;- la misma actriz, otra pelicula
+     2    |   23     &lt;- otro actor, la misma pelicula</pre></div>
+<div><p class="warn"><strong>Aqu&iacute; est&aacute; el porqu&eacute; de casi todo lo de hoy.</strong> Para ir de <code>actor</code> a <code>film</code> no hay camino directo: hay que <strong>pasar por el puente</strong>, en dos saltos. Cuando lleguemos a la pregunta de Nick Wahlberg vas a ver por qu&eacute; eso obliga a hacer el trabajo dos veces.</p>
+<p class="small" style="margin-top:.9em">Tambi&eacute;n son N:N en esta base: <code>film</code> &harr; <code>category</code>, con el puente <code>film_category</code>. Y son 1:N: <code>customer</code> &rarr; <code>rental</code> &rarr; <code>payment</code>, y <code>film</code> &rarr; <code>inventory</code>.</p>
+<p class="small" style="margin-top:.6em">C&oacute;mo se <em>dibujan</em> estas relaciones &mdash;el modelo entidad-relaci&oacute;n&mdash; lo veremos en el m&oacute;dulo 3.</p></div></div>
+<div class="brand"><span>Bloque 1 &middot; C&oacute;mo se apuntan</span><span>N:N siempre necesita puente</span></div>
+</section>
+<section class="slide" data-title="UNION"><div class="ey">Bloque 2 &middot; Apilar</div>
+<h2><code>UNION</code>: pegar un resultado <em>debajo</em> de otro</h2>
+<div class="g2">
+<div><p>Dos consultas con la <strong>misma estructura</strong> se pueden apilar en un solo resultado.</p>
+<svg class="schema-sm" viewBox="0 0 520 240" role="img" aria-label="Dos tablas de empleados se apilan en una sola">
+<rect x="6" y="6" width="205" height="88" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2"/>
+<text x="15" y="26" font-size="14" font-weight="700" fill="#171717">empleados_2023</text>
+<line x1="6" y1="34" x2="211" y2="34" stroke="#171717" stroke-width="1.5"/>
+<text x="15" y="55" font-size="12.5" font-family="Consolas,monospace" fill="#646464">Juan Hernandez     1502</text>
+<text x="15" y="79" font-size="12.5" font-family="Consolas,monospace" fill="#171717" font-weight="700">Mariana Fernandez  2803</text>
+<rect x="6" y="140" width="205" height="88" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2"/>
+<text x="15" y="160" font-size="14" font-weight="700" fill="#171717">empleados_2024</text>
+<line x1="6" y1="168" x2="211" y2="168" stroke="#171717" stroke-width="1.5"/>
+<text x="15" y="189" font-size="12.5" font-family="Consolas,monospace" fill="#646464">Camilo Contreras   1402</text>
+<text x="15" y="213" font-size="12.5" font-family="Consolas,monospace" fill="#171717" font-weight="700">Mariana Fernandez  2803</text>
+<text x="238" y="128" font-size="34" fill="#ff8a24">&#8746;</text>
+<rect x="288" y="48" width="226" height="140" rx="8" fill="#fff8cc" stroke="#171717" stroke-width="2.5"/>
+<text x="298" y="69" font-size="14" font-weight="700" fill="#171717">UNION</text>
+<line x1="288" y1="77" x2="514" y2="77" stroke="#171717" stroke-width="1.5"/>
+<text x="298" y="98" font-size="12.5" font-family="Consolas,monospace" fill="#171717">Juan Hernandez     1502</text>
+<text x="298" y="122" font-size="12.5" font-family="Consolas,monospace" fill="#171717" font-weight="700">Mariana Fernandez  2803</text>
+<text x="298" y="146" font-size="12.5" font-family="Consolas,monospace" fill="#171717">Camilo Contreras   1402</text>
+<text x="298" y="174" font-size="12.5" fill="#c1121f" font-weight="700">Mariana aparece UNA vez</text>
+</svg></div>
+<div><pre>SELECT nombre, codigo FROM empleados_2023
+UNION
+SELECT nombre, codigo FROM empleados_2024;</pre>
+<p class="warn" style="margin-top:1em"><strong>Por defecto, <code>UNION</code> elimina los duplicados.</strong> Mariana est&aacute; en las dos listas y sale una sola vez. Eso le cuesta trabajo al motor: para saber qu&eacute; se repite tiene que ordenar y comparar todo el resultado.</p>
+<div class="hintbox"><strong>Las tres reglas</strong><ul><li>Las dos consultas deben tener el <strong>mismo n&uacute;mero de columnas</strong>.</li><li>En el <strong>mismo orden</strong> y de tipos compatibles.</li><li>Los nombres de columna los pone la <strong>primera</strong> consulta.</li></ul></div>
+<p class="small" style="margin-top:.8em">Si hay <code>ORDER BY</code>, va <strong>una sola vez al final</strong> y aplica a todo el resultado apilado.</p></div></div>
+<div class="brand"><span>Bloque 2 &middot; Apilar</span><span>UNION apila &middot; JOIN engancha</span></div>
+</section>
+<section class="slide" data-title="UNION ALL"><div class="ey">Bloque 2 &middot; Apilar</div>
+<h2><code>UNION ALL</code>: cuando los repetidos <em>s&iacute;</em> importan</h2>
+<div class="g2">
+<div><p>La misma operaci&oacute;n, pero <strong>sin quitar duplicados</strong>. Mariana sale dos veces, porque estuvo en n&oacute;mina los dos a&ntilde;os.</p>
+<pre>SELECT nombre, codigo FROM empleados_2023
+UNION ALL
+SELECT nombre, codigo FROM empleados_2024;</pre>
+<p class="ctx" style="margin-top:1em"><strong>No es un descuido: casi siempre es lo que quieres.</strong> Si apilas las ventas de enero con las de febrero y usas <code>UNION</code> a secas, dos ventas del mismo valor, al mismo cliente, el mismo d&iacute;a <strong>se convierten en una</strong>. Y tu total sale mal, sin ning&uacute;n aviso.</p></div>
+<div><table class="res"><caption>Cu&aacute;l usar</caption>
+<tr><th>Quieres&hellip;</th><th>Usa</th></tr>
+<tr><td>Un cat&aacute;logo <strong>sin repetir</strong>: lista de ciudades, de c&oacute;digos</td><td><code>UNION</code></td></tr>
+<tr><td><strong>Todos los hechos</strong>, aunque coincidan: ventas, movimientos, registros</td><td><code>UNION ALL</code></td></tr>
+<tr><td>Que sea <strong>r&aacute;pido</strong> sobre muchas filas</td><td><code>UNION ALL</code></td></tr>
+</table>
+<p class="small" style="margin-top:.9em"><strong>Compru&eacute;balo en la base.</strong> Los nombres de pila de actores y de clientes:</p>
+<pre>SELECT first_name FROM actor
+UNION     SELECT first_name FROM customer;   -- 647
+
+SELECT first_name FROM actor
+UNION ALL SELECT first_name FROM customer;   -- 799</pre>
+<p class="small" style="margin-top:.5em">200 + 599 = 799. Con <code>UNION</code> bajan a 647: se borraron <strong>152 filas</strong>. Y no todas por la raz&oacute;n que uno se imagina: <strong>72</strong> son nombres repetidos <em>dentro</em> de <code>actor</code>, <strong>8</strong> repetidos dentro de <code>customer</code>, y solo <strong>72</strong> son nombres que aparecen en las dos tablas. <code>UNION</code> limpia los duplicados <em>de cada lado</em>, no solo los del cruce.</p></div></div>
+<div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: copiar una hoja y pegarla debajo de otra <i aria-hidden="true">&rarr;</i> En SQL: <code>UNION ALL</code></div>
+<div class="brand"><span>Bloque 2 &middot; Apilar</span><span>Por defecto UNION borra repetidos</span></div>
+</section>
+<section class="slide" data-title="Desaf&iacute;o 1"><div class="ey">Desaf&iacute;o 1 &middot; 6 minutos</div>
+<h2>Una sola lista con toda la gente del negocio</h2>
+<div class="g2">
+<div><div class="ctx">Recursos Humanos pide <strong>un &uacute;nico listado</strong> con todas las personas registradas &mdash;clientes y empleados&mdash;, con una columna que diga de qu&eacute; tipo es cada una.</div>
+<div class="hintbox"><strong>Pistas</strong><ul><li>Tablas <code>customer</code> y <code>staff</code>. Las dos tienen <code>first_name</code> y <code>last_name</code>.</li><li>Puedes inventarte una columna con un texto fijo: <code>'cliente' AS tipo</code>.</li><li>&iquest;<code>UNION</code> o <code>UNION ALL</code>? Piensa la respuesta <em>antes</em> de escribir.</li><li>Ordena por apellido al final.</li></ul></div>
+<p class="small" style="margin-top:.8em">Deben salir <strong>601 filas</strong>: 599 clientes y 2 empleados.</p></div>
+<div data-r><pre>SELECT first_name, last_name, 'cliente'  AS tipo
+FROM   customer
+UNION ALL
+SELECT first_name, last_name, 'empleado' AS tipo
+FROM   staff
+ORDER BY last_name;
+-- 601 filas</pre>
+<p class="warn" style="margin-top:1em"><strong>&iquest;Por qu&eacute; <code>UNION ALL</code>?</strong> Porque aqu&iacute; un repetido ser&iacute;a <em>otra persona con el mismo nombre</em>, no un error. Si dos clientes se llamaran igual, <code>UNION</code> borrar&iacute;a uno y el listado de RR. HH. saldr&iacute;a incompleto sin que nadie se entere.</p>
+<p class="small" style="margin-top:.7em"><strong>Pru&eacute;balo:</strong> con <code>UNION</code> a secas tambi&eacute;n salen <strong>601</strong>. El motivo es uno solo: <strong>en esta base no hay dos personas con el mismo nombre y apellido</strong>, as&iacute; que <code>UNION</code> no encuentra nada que borrar.</p>
+<p class="small" style="margin-top:.5em">Y ojo con un espejismo: la columna <code>tipo</code> <em>no</em> te salva. Vale <code>'cliente'</code> en las 599 filas de un lado y <code>'empleado'</code> en las 2 del otro, as&iacute; que separa clientes de empleados pero <strong>no distingue dos clientes entre s&iacute;</strong>. Si ma&ntilde;ana entran dos personas hom&oacute;nimas, <code>UNION</code> borrar&iacute;a una igual.</p>
+<p class="small" style="margin-top:.5em">Que hoy coincidan no valida <code>UNION</code>: significa que el resultado <strong>depende del azar de los datos</strong>. <code>UNION ALL</code> acierta pase lo que pase, y encima es m&aacute;s r&aacute;pido.</p></div></div>
+<div class="brand"><span>Bloque 2 &middot; Apilar</span><span>Al apilar hechos, UNION ALL</span></div>
+</section>
+<section class="slide" data-title="Las cinco preguntas"><div class="ey">Bloque 3 &middot; Enganchar</div>
+<h2>Las cinco preguntas del <code>JOIN</code></h2>
+<p class="lead">Antes de escribir una sola l&iacute;nea, respondelas en voz alta. Siempre son las mismas cinco, en este orden.</p>
+<div class="steps">
+<article><b>1</b><h3>&iquest;Con qu&eacute; tabla inicio?</h3><p>Esa es tu tabla <strong>izquierda</strong>. Va despu&eacute;s del <code>FROM</code>.</p></article>
+<article><b>2</b><h3>&iquest;Cu&aacute;l le pego?</h3><p>Esa es tu tabla <strong>derecha</strong>. Va despu&eacute;s del <code>JOIN</code>.</p></article>
+<article><b>3</b><h3>&iquest;Qu&eacute; campos pongo?</h3><p>De cada una de las tablas. Van en el <code>SELECT</code>.</p></article>
+<article><b>4</b><h3>&iquest;Qu&eacute; campos me ayudan a pegar?</h3><p>Esas son tus <strong>llaves</strong>. Van en el <code>ON</code>.</p></article>
+</div>
+<div class="g2" style="margin-top:1.2em;align-items:start">
+<div><div class="hintbox" style="margin-top:0"><strong>5 &middot; &iquest;Con qu&eacute; filas me quedo?</strong><p style="margin:.4em 0 0">Ese es el <strong>tipo de uni&oacute;n</strong>: <code>INNER</code>, <code>LEFT</code>, <code>RIGHT</code> o <code>FULL OUTER</code>. Es la &uacute;nica pregunta que cambia de un <code>JOIN</code> a otro &mdash; las otras cuatro son id&eacute;nticas siempre.</p></div>
+<p class="small" style="margin-top:.9em">Si respondes las cinco antes de teclear, la consulta se escribe sola. Si te trabas escribiendo, es que te saltaste una.</p></div>
+<div><pre>SELECT   film.title, language.name        <span style="color:#ff8a24">-- 3</span>
+FROM     film                             <span style="color:#ff8a24">-- 1</span>
+<span style="color:#ff8a24">INNER</span> JOIN language                   <span style="color:#ff8a24">-- 5 y 2</span>
+  ON     film.language_id = language.language_id;   <span style="color:#ff8a24">-- 4</span></pre>
+<p class="small" style="margin-top:.6em">Toda consulta con <code>JOIN</code> que escribas este semestre tiene exactamente esta forma. Lo dem&aacute;s son variaciones.</p>
+<p class="small" style="margin-top:.6em">S&iacute;, es largo de escribir. En la diapositiva siguiente lo acortamos.</p></div></div>
+<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Cuatro preguntas iguales, una que cambia</span></div>
+</section>
+<section class="slide" data-title="Alias"><div class="ey">Bloque 3 &middot; Enganchar</div>
+<h2>Por qu&eacute; ahora hay que escribir <code>f.title</code> y no <code>title</code></h2>
+<div class="g2">
+<div><p>Con una sola tabla, <code>SELECT title</code> era suficiente. Con dos, el motor puede tener <strong>dos columnas que se llaman igual</strong> y no sabe cu&aacute;l quieres.</p>
+<pre>-- Ambiguo: las dos tablas tienen language_id
+SELECT title, language_id, name
+FROM film JOIN language
+  ON film.language_id = language.language_id;</pre>
+<p class="warn" style="margin-top:.9em"><strong>Ejec&uacute;tala: falla.</strong> SQLite responde <em>ambiguous column name: language_id</em>, y PostgreSQL y SQL Server dicen lo mismo con otras palabras. Aqu&iacute; el motor <strong>te protege</strong>: prefiere pararte a inventarse cu&aacute;l de las dos columnas quer&iacute;as. <strong>Di siempre de qui&eacute;n es cada columna.</strong></p></div>
+<div><p>El <strong>alias</strong> es un apodo corto para la tabla. Se declara con <code>AS</code> (o sin nada) y se usa en todo el resto de la consulta.</p>
+<pre>SELECT   f.title, l.name
+FROM     film     AS f
+INNER JOIN language AS l
+  ON     f.language_id = l.language_id;</pre>
+<div class="hintbox"><strong>Tres cosas que ganas</strong><ul><li><strong>Sin ambig&uuml;edad</strong>: <code>f.language_id</code> no se confunde con <code>l.language_id</code>.</li><li><strong>Se lee mejor</strong>: <code>f.title</code> cabe donde <code>film.title</code> no.</li><li><strong>Es obligatorio</strong> cuando unes una tabla consigo misma (lo ver&aacute;s en el m&oacute;dulo 3).</li></ul></div>
+<p class="small" style="margin-top:.8em">Un buen alias es la inicial o dos letras: <code>f</code>, <code>c</code>, <code>fa</code>, <code>inv</code>. No uses <code>a</code>, <code>b</code>, <code>c</code>: dentro de un mes no vas a saber cu&aacute;l era cu&aacute;l.</p></div></div>
+<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Di siempre de qui&eacute;n es la columna</span></div>
+</section>
+<section class="slide dense" data-title="INNER JOIN"><div class="ey">Bloque 3 &middot; Enganchar</div>
+<h2><code>INNER JOIN</code>: solo lo que tiene pareja en las dos</h2>
+<svg class="schema-sm" viewBox="0 0 560 175" role="img" aria-label="Tablas empleados y proyectos"><rect x="4" y="6" width="262" height="162" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2"/><text x="14" y="26" font-size="14" font-weight="700" fill="#171717">empleados</text><line x1="4" y1="34" x2="266" y2="34" stroke="#171717" stroke-width="1.5"/><text x="14" y="53" font-size="12" font-family="Consolas,monospace" fill="#124e78" font-weight="700">id_empleado  nombre   departamento</text><text x="14" y="80" font-size="12.5" font-family="Consolas,monospace" fill="#646464">1            Laura    Marketing</text><text x="14" y="104" font-size="12.5" font-family="Consolas,monospace" fill="#646464">2            Andres   Finanzas</text><text x="14" y="128" font-size="12.5" font-family="Consolas,monospace" fill="#646464">3            Camila   Planeacion</text><text x="14" y="156" font-size="11.5" fill="#8a6d00">Andres no esta en ningun proyecto</text><rect x="294" y="6" width="262" height="162" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2"/><text x="304" y="26" font-size="14" font-weight="700" fill="#171717">proyectos</text><line x1="294" y1="34" x2="556" y2="34" stroke="#171717" stroke-width="1.5"/><text x="304" y="53" font-size="12" font-family="Consolas,monospace" fill="#124e78" font-weight="700">id_proy  id_empleado  nombre_proyecto</text><text x="304" y="80" font-size="12.5" font-family="Consolas,monospace" fill="#646464">101      3            Sistema control</text><text x="304" y="104" font-size="12.5" font-family="Consolas,monospace" fill="#646464">102      5            App movil</text><text x="304" y="128" font-size="12.5" font-family="Consolas,monospace" fill="#646464">103      1            Campana redes</text><text x="304" y="156" font-size="11.5" fill="#8a6d00">el empleado 5 no existe en la nomina</text></svg>
+<div class="g2" style="margin-top:1em">
+<div><p><strong>La pregunta:</strong> &laquo;&iquest;qu&eacute; empleados est&aacute;n asignados a alg&uacute;n proyecto?&raquo;</p>
+<pre>SELECT   e.nombre, p.nombre_proyecto
+FROM     empleados e
+INNER JOIN proyectos p
+  ON     e.id_empleado = p.id_empleado;</pre>
+<p class="warn" style="margin-top:.9em"><strong>Se cayeron dos filas, y ninguna dio error.</strong> <em>Andr&eacute;s</em> desaparece porque no tiene proyecto. <em>App m&oacute;vil</em> desaparece porque su responsable (el 5) no existe en la n&oacute;mina. El <code>INNER JOIN</code> descarta en silencio todo lo que no encuentra pareja.</p></div>
+<div><table class="res"><caption>Resultado: 2 filas de 3 empleados y 3 proyectos</caption><tr><th>nombre</th><th>nombre_proyecto</th></tr><tr><td>Camila</td><td>Sistema de control</td></tr><tr><td>Laura</td><td>Campa&ntilde;a redes</td></tr></table>
+<p class="ctx" style="margin-top:.9em"><strong>El <code>INNER JOIN</code> es sim&eacute;trico.</strong> Da igual cu&aacute;l pongas primero: <code>empleados JOIN proyectos</code> devuelve exactamente lo mismo que <code>proyectos JOIN empleados</code>. Con <code>LEFT</code> y <code>RIGHT</code> esto <strong>dejar&aacute; de ser cierto</strong>.</p>
+<p class="small" style="margin-top:.7em"><strong>Tecl&eacute;alo t&uacute;.</strong> Estas dos tablitas no vienen en la base: cr&eacute;alas pegando las cuatro l&iacute;neas del comienzo de <code>S4.sql</code> en Beekeeper. Todo el bloque de hoy se puede ejecutar, no solo mirar.</p><p class="small" style="margin-top:.7em">La palabra <code>INNER</code> es opcional: escribir <code>JOIN</code> a secas significa lo mismo. Yo la escribo completa para que quede claro cu&aacute;l de los cuatro estoy usando.</p></div></div>
+<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Descarta lo que no tiene pareja, sin avisar</span></div>
+</section>
+<section class="slide xdense" data-title="Desaf&iacute;o 2"><div class="ey">Desaf&iacute;o 2 &middot; 10 minutos</div>
+<h2>Un cliente solo habla italiano</h2>
+<div class="ctx">Un cliente entra a la tienda y <strong>solo habla italiano</strong>. Busca una pel&iacute;cula en su idioma. &mdash; <strong>a)</strong> &iquest;En qu&eacute; idioma est&aacute; cada pel&iacute;cula? &nbsp;<strong>b)</strong> &iquest;Hay alguna en italiano? &nbsp;&middot;&nbsp; Tablas <code>film</code> y <code>language</code>; columnas <code>title</code> y <code>name</code>.</div>
+<div class="g2" style="margin-top:1em">
+<div><pre>-- a)
+SELECT   f.title, l.name
+FROM     film AS f
+INNER JOIN language AS l
+  ON     f.language_id = l.language_id;   -- 1.000 filas
+
+-- b)
+...  WHERE l.name = 'Italian';            -- 0 filas</pre>
+<p class="warn" style="margin-top:.8em"><strong>Antes de creerte ese cero, compru&eacute;balo.</strong> Cambia <code>'Italian'</code> por <code>'English'</code>, que <em>s&iacute;</em> deber&iacute;a darte las 1.000:</p>
+<pre>...  WHERE l.name = 'English';            -- 0 filas</pre>
+<p class="small" style="margin-top:.6em"><strong>Tambi&eacute;n cero.</strong> Y eso es imposible. El cero de arriba no significaba lo que cre&iacute;as.</p></div>
+<div><p><strong>El diagn&oacute;stico.</strong> Mira lo que hay de verdad en esa columna:</p>
+<pre>SELECT '[' || name || ']', LENGTH(name)
+FROM   language;
+
+[English             ]   20
+[Italian             ]   20</pre>
+<p class="small" style="margin-top:.6em">El texto viene <strong>rellenado con espacios</strong> hasta 20 caracteres &mdash; una herencia de c&oacute;mo se guard&oacute; en la base original. <code>'English'</code> son 7 caracteres, as&iacute; que <code>=</code> no coincide <strong>nunca</strong>. <code>TRIM</code> quita esos espacios.</p>
+<pre data-r>...  WHERE TRIM(l.name) = 'English';   -- 1.000 ✔
+...  WHERE TRIM(l.name) = 'Italian';   --     0 ✔</pre>
+<p class="warn" style="margin-top:.7em" data-r><strong>Ahora s&iacute;: cero es la respuesta de verdad.</strong> Las 1.000 pel&iacute;culas son en ingl&eacute;s. La tabla <code>language</code> lista el italiano, pero no hay ni una pel&iacute;cula asociada &mdash; y eso es lo que le respondes al cliente, adem&aacute;s de una oportunidad de compra que el cat&aacute;logo no cubre.</p></div></div>
+<p class="quote" style="margin-top:.9em" data-r>Un cero puede ser un hallazgo o un error tuyo. La diferencia está en si lo comprobaste.</p>
+<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Comprueba tu cero antes de creerlo</span></div>
+</section>
+<section class="slide xdense" data-title="Desaf&iacute;o 3"><div class="ey">Desaf&iacute;o 3 &middot; 9 minutos &middot; lo hacemos juntos</div>
+<h2>Los clientes de California &mdash; y un error del material</h2>
+<div class="ctx">Cambiaron las condiciones de impuestos en California y hay que <strong>notificar por correo</strong> a los clientes que viven all&iacute;. &iquest;Cu&aacute;les son sus correos? &mdash; Tablas <code>customer</code> y <code>address</code>; la columna es <code>district</code>.</div>
+<div class="g2" style="margin-top:1em">
+<div><p><strong>Esta es la soluci&oacute;n tal como viene en el material del curso.</strong> C&oacute;pienla y ejec&uacute;tenla:</p>
+<pre>SELECT district, email
+FROM   address
+INNER JOIN customer
+  ON   address.customer_id = customer.customer_id
+WHERE  district = 'California';</pre>
+<p class="warn" style="margin-top:.9em"><strong>Error: <code>no such column: address.customer_id</code></strong></p>
+<p style="margin-top:.7em">No es un dedazo al copiar. La consulta est&aacute; mal <strong>de origen</strong>, y la dejo a prop&oacute;sito porque es <em>exactamente</em> el error que van a cometer solos la primera semana.</p></div>
+<div><p><strong>Diagn&oacute;stico en dos pasos.</strong> Cuando un <code>ON</code> falla, mira las columnas reales:</p>
+<pre>SELECT * FROM address  LIMIT 1;   -- no hay customer_id
+SELECT * FROM customer LIMIT 1;   -- si hay address_id</pre>
+<p style="margin-top:.7em">La relaci&oacute;n va <strong>al rev&eacute;s</strong> de lo que dice el ejercicio: es <code>customer</code> quien apunta a <code>address</code>, como vimos en <em>Llave primaria y llave for&aacute;nea</em>. Un cliente <em>tiene</em> una direcci&oacute;n; una direcci&oacute;n no &laquo;tiene&raquo; un cliente.</p>
+<pre data-r>SELECT   c.first_name, c.last_name, c.email, a.district
+FROM     customer AS c
+INNER JOIN address AS a
+  ON     c.address_id = a.address_id
+WHERE    a.district = 'California'
+ORDER BY c.last_name;
+-- 9 filas. La primera: Patricia Johnson</pre>
+<p class="small" style="margin-top:.5em">Sin <code>ORDER BY</code> el motor te las devuelve en el orden que le conviene. Si vas a prometer &laquo;la primera&raquo;, ord&eacute;nalas.</p></div></div>
+<p class="quote" style="margin-top:1.1em" data-r>El mensaje de error no es un regaño: es el motor diciéndote qué columna buscó y no encontró.</p>
+<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Ante un ON que falla, mira las columnas reales</span></div>
+</section>
+<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
+<h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
+<p class="lead" style="margin:auto">Ya sabes enganchar dos tablas y quedarte con lo que coincide. Al volver, la pregunta cambia: <strong>&iquest;y lo que <em>no</em> coincide?</strong></p>
+<button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
+<div class="brand"><span>Pausa</span><span>Segunda mitad: los JOIN externos</span></div>
+</section>
+<section class="slide" data-title="Tu Excel en SQL"><div class="ey">Bloque 4 &middot; Conservar</div>
+<h2>Si sabes <code>BUSCARV</code>, ya sabes esto</h2>
+<p class="lead">Lo que acabas de aprender tiene un nombre que quiz&aacute; ya usas todos los d&iacute;as. Y hay una diferencia que te puede costar un informe.</p>
+<table class="res"><caption>La misma operaci&oacute;n, dos idiomas</caption>
+<tr><th>En Excel</th><th>En SQL</th></tr>
+<tr><td>Mi hoja, la que quiero conservar</td><td><code>FROM</code></td></tr>
+<tr><td>La otra hoja (<em>matriz_buscar_en</em>)</td><td><code>JOIN</code></td></tr>
+<tr><td>Con qu&eacute; c&oacute;digo busco (<em>valor_buscado</em>)</td><td><code>ON</code></td></tr>
+<tr><td>Qu&eacute; columna me traigo</td><td><code>SELECT</code></td></tr>
+<tr><td class="hl"><code>#N/A</code> &mdash; no lo encontr&oacute;</td><td class="hl"><code>NULL</code></td></tr>
+<tr><td class="hl">Filtrar por <code>#N/A</code> para ver qu&eacute; falta</td><td class="hl"><code>WHERE ... IS NULL</code></td></tr>
+</table>
+<div class="g2" style="margin-top:1.1em">
+<div><p class="warn" style="margin:0"><strong>Y aqu&iacute; est&aacute; la trampa, porque tu instinto de Excel te va a traicionar dos veces.</strong></p>
+<p class="small" style="margin-top:.7em"><strong>Uno.</strong> <code>BUSCARV</code> nunca te borra una fila: si no encuentra, te deja <code>#N/A</code> y tu lista sigue completa. <strong><code>INNER JOIN</code> s&iacute; te la borra</strong>, y sin avisar. El que se porta como tu <code>BUSCARV</code> no es <code>INNER JOIN</code>: es <code>LEFT JOIN</code>, el de la diapositiva siguiente.</p></div>
+<div><p class="small" style="margin:0"><strong>Dos.</strong> <code>BUSCARV</code> devuelve <em>un</em> valor por fila: entran 100 filas, salen 100. Un <code>JOIN</code> devuelve <strong>todas</strong> las coincidencias, as&iacute; que puede devolverte m&aacute;s filas de las que ten&iacute;as. Eso lo vemos a fondo m&aacute;s adelante.</p>
+<p class="small" style="margin-top:.7em"><strong>Tres.</strong> En Excel t&uacute; decides el sentido: pones la f&oacute;rmula en la hoja que quieres conservar. En SQL el sentido lo fij&oacute; qui&eacute;n dise&ntilde;&oacute; la base &mdash; por eso <code>customer</code> apunta a <code>address</code> y no al rev&eacute;s.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Conservar</span><span>NULL es tu #N/A</span></div>
+</section>
+<section class="slide dense" data-title="LEFT JOIN"><div class="ey">Bloque 4 &middot; Conservar</div>
+<h2><code>LEFT JOIN</code>: el que m&aacute;s vas a usar</h2>
+<div class="g2">
+<div><p><strong>La pregunta:</strong> &laquo;&iquest;qu&eacute; empleados tengo en n&oacute;mina y, <em>si</em> est&aacute;n en un proyecto, cu&aacute;l es?&raquo;</p>
+<pre>SELECT   e.nombre, p.nombre_proyecto
+FROM     empleados e          <span style="color:#ff8a24">&lt;- la IZQUIERDA</span>
+LEFT JOIN proyectos p
+  ON     e.id_empleado = p.id_empleado;</pre>
+<p style="margin-top:.9em"><strong>Conserva todas las filas de la izquierda</strong>, tengan pareja o no. Andr&eacute;s sigue ah&iacute;, con <code>NULL</code> al lado. <em>App m&oacute;vil</em>, que est&aacute; a la derecha y no tiene due&ntilde;o, esta vez s&iacute; se cae.</p>
+<p class="warn" style="margin-top:.9em"><strong>El orden importa y aqu&iacute; s&iacute; cambia el resultado.</strong> &laquo;La izquierda&raquo; es literalmente <strong>la primera tabla que escribes</strong>, la del <code>FROM</code>. Con <code>INNER</code> pod&iacute;as intercambiarlas; a partir de aqu&iacute;, no.</p></div>
+<div><table class="res"><caption>Resultado: 3 filas &mdash; los 3 empleados</caption><tr><th>nombre</th><th>nombre_proyecto</th></tr><tr><td>Laura</td><td>Campa&ntilde;a redes</td></tr><tr><td class="hl">Andres</td><td class="hl"><em style="color:#c1121f">NULL</em></td></tr><tr><td>Camila</td><td>Sistema de control</td></tr></table>
+<div class="hintbox"><strong>El patr&oacute;n que hay que memorizar</strong><p style="margin:.4em 0 0"><code>LEFT JOIN</code> + <code>WHERE ... IS NULL</code> = <strong>&laquo;lo que est&aacute; aqu&iacute; y no est&aacute; all&aacute;&raquo;</strong>.</p><p style="margin:.5em 0 0"><strong>En Excel es esto:</strong> pegas un <code>BUSCARV</code>, filtras por <code>#N/A</code>, y esa es tu lista de los que faltan. Aqu&iacute; el <code>#N/A</code> se llama <code>NULL</code> &mdash; y sale en la columna que <em>traes de la otra tabla</em>, nunca en la tuya.</p><p style="margin:.5em 0 0">Clientes que nunca compraron. Productos sin ventas. Facturas sin pago. Estudiantes sin matr&iacute;cula. Es la forma de encontrar <strong>ausencias</strong>, y un <code>INNER JOIN</code> no puede hacerlo jam&aacute;s: busca precisamente las filas que &eacute;l descarta.</p></div>
+<p class="small" style="margin-top:.8em">La palabra <code>OUTER</code> es opcional: <code>LEFT JOIN</code> y <code>LEFT OUTER JOIN</code> son lo mismo.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Conservar</span><span>LEFT + IS NULL = encontrar ausencias</span></div>
+</section>
+<section class="slide" data-title="Desaf&iacute;o 4"><div class="ey">Desaf&iacute;o 4 &middot; 10 minutos</div>
+<h2>Pel&iacute;culas en cat&aacute;logo que no est&aacute;n en ninguna tienda</h2>
+<div class="g2">
+<div><div class="ctx">La gerente pregunta: <strong>&laquo;&iquest;qu&eacute; pel&iacute;culas tenemos en el cat&aacute;logo pero no tenemos ni una copia en ninguna tienda?&raquo;</strong> Son las que un cliente puede pedir y no le podemos entregar.</div>
+<div class="hintbox"><strong>Pistas</strong><ul><li>Tablas <code>film</code> y <code>inventory</code>. Cada fila de <code>inventory</code> es <strong>una copia f&iacute;sica</strong> de una pel&iacute;cula.</li><li>Quieres conservar <strong>todas</strong> las pel&iacute;culas, tengan copia o no. &iquest;Cu&aacute;l de los cuatro <code>JOIN</code> hace eso?</li><li>&iquest;C&oacute;mo se ve, en el resultado, una pel&iacute;cula que no tiene copia?</li><li><strong>La pieza clave:</strong> el hueco aparece en la columna que <em>traes de la otra tabla</em>, nunca en la tuya. Por eso se pregunta por <code>i.film_id</code> y no por <code>f.film_id</code>.</li></ul></div>
+<p class="small" style="margin-top:.8em">Antes de ejecutar, <strong>apuesta un n&uacute;mero</strong>. Hay 1.000 pel&iacute;culas.</p></div>
+<div data-r><pre>SELECT   f.film_id, f.title
+FROM     film AS f
+LEFT JOIN inventory AS i
+  ON     f.film_id = i.film_id
+WHERE    i.film_id IS NULL
+ORDER BY f.title;
+-- 42 filas. La primera: Alice Fantasia</pre>
+<p class="warn" style="margin-top:.9em"><strong>Este ejercicio no se puede resolver con <code>INNER JOIN</code>.</strong> Con <code>INNER</code> salen las 958 pel&iacute;culas que <em>s&iacute;</em> tienen copia. Las 42 que buscas son precisamente las que el <code>INNER JOIN</code> tira a la basura.</p>
+<p class="small" style="margin-top:.8em">958 + 42 = 1.000. Cuadra.</p><p class="warn" style="margin-top:.8em"><strong>El error que va a cometer medio sal&oacute;n:</strong> escribir <code>WHERE f.film_id IS NULL</code>. Eso devuelve <strong>0 filas y ning&uacute;n error</strong> &mdash; porque <code>f.film_id</code> nunca est&aacute; vac&iacute;o, es la columna de tu propia tabla. Y despu&eacute;s de la lecci&oacute;n del desaf&iacute;o 2 uno est&aacute; tentado a creerle al cero. <strong>Compru&eacute;balo siempre.</strong></p>
+<p class="small" style="margin-top:.6em">Y esto es plata: 42 pel&iacute;culas del cat&aacute;logo son inalquilables. O se compran copias, o se sacan del cat&aacute;logo para no prometer lo que no hay.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Conservar</span><span>Las ausencias solo se ven con LEFT JOIN</span></div>
+</section>
+<section class="slide dense" data-title="Los otros dos"><div class="ey">Bloque 4 &middot; Conservar</div>
+<h2>Los otros dos, en cinco minutos</h2>
+<p class="lead">Ya entendiste el mecanismo: donde no hay pareja, <code>NULL</code>. Los dos que faltan son variaciones de lo mismo, y ninguno cambia de sintaxis.</p>
+<div class="g2">
+<div><h3><code>RIGHT JOIN</code> &mdash; conserva la segunda</h3>
+<pre>FROM empleados e RIGHT JOIN proyectos p ON ...
+-- da EXACTAMENTE lo mismo que
+FROM proyectos p LEFT  JOIN empleados e ON ...</pre>
+<p class="small" style="margin-top:.6em">Es un <code>LEFT JOIN</code> con las tablas volteadas. No a&ntilde;ade ninguna capacidad nueva.</p>
+<p class="warn" style="margin-top:.7em"><strong>Usa siempre <code>LEFT</code>.</strong> Si escribes primero la tabla que quieres conservar entera, lees la consulta de arriba abajo sin devolverte. En equipos reales el <code>RIGHT JOIN</code> casi no se escribe; hay que <em>reconocerlo</em> porque aparece en c&oacute;digo heredado.</p></div>
+<div><h3><code>FULL OUTER JOIN</code> &mdash; conserva las dos</h3>
+<pre>FROM empleados e FULL OUTER JOIN proyectos p ON ...
+-- 4 filas: no se pierde nada de ningun lado</pre>
+<p class="small" style="margin-top:.6em">Sale Andr&eacute;s con <code>NULL</code> al lado, y <em>App m&oacute;vil</em> con <code>NULL</code> tambi&eacute;n. A&ntilde;ade <code>WHERE e.nombre IS NULL OR p.nombre_proyecto IS NULL</code> y te quedas <strong>solo con los hu&eacute;rfanos de los dos lados</strong>: as&iacute; se auditan dos sistemas que deber&iacute;an cuadrar y no cuadran.</p>
+<p class="small" style="margin-top:.7em"><strong>Ojo con el motor.</strong> SQLite entiende <code>RIGHT</code> y <code>FULL OUTER</code> desde la versi&oacute;n 3.39 (2022). <strong>MySQL no tiene <code>FULL OUTER JOIN</code></strong> en ninguna versi&oacute;n; PostgreSQL, SQL Server y Oracle s&iacute;.</p></div></div>
+<p class="small" style="margin-top:1em"><strong>Sim&eacute;tricos y no sim&eacute;tricos.</strong> Con <code>INNER</code> y con <code>FULL OUTER</code> da igual qu&eacute; tabla pongas primero. Con <code>LEFT</code> y <code>RIGHT</code> el orden <strong>cambia el resultado</strong> &mdash; por eso se llaman as&iacute;.</p>
+<div class="brand"><span>Bloque 4 &middot; Conservar</span><span>RIGHT = LEFT volteado &middot; FULL = los dos</span></div>
+</section>
+<section class="slide dense" data-title="Encadenar"><div class="ey">Bloque 5 &middot; Encadenar</div>
+<h2>Dos <code>JOIN</code> seguidos: cruzar el puente</h2>
+<div class="g2">
+<div><p>Volvemos a la pregunta del principio: <strong>&iquest;qu&eacute; pel&iacute;culas tiene Nick Wahlberg?</strong> No hay camino directo de <code>actor</code> a <code>film</code>. Hay que pasar por <code>film_actor</code>.</p>
+<svg class="schema-sm" viewBox="0 0 560 100" role="img" aria-label="actor se une a film_actor y film_actor a film">
+<defs><marker id="ar5" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#ff8a24"/></marker></defs>
+<rect x="6" y="26" width="140" height="52" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2.5"/>
+<text x="76" y="50" text-anchor="middle" font-size="17" font-weight="700" fill="#171717">actor</text>
+<text x="76" y="68" text-anchor="middle" font-size="11.5" fill="#646464">actor_id (PK)</text>
+<rect x="206" y="26" width="150" height="52" rx="8" fill="#fff8cc" stroke="#171717" stroke-width="2.5"/>
+<text x="281" y="50" text-anchor="middle" font-size="17" font-weight="700" fill="#171717">film_actor</text>
+<text x="281" y="68" text-anchor="middle" font-size="11.5" fill="#8a6d00">el puente</text>
+<rect x="416" y="26" width="140" height="52" rx="8" fill="#f3f1eb" stroke="#171717" stroke-width="2.5"/>
+<text x="486" y="50" text-anchor="middle" font-size="17" font-weight="700" fill="#171717">film</text>
+<text x="486" y="68" text-anchor="middle" font-size="11.5" fill="#646464">film_id (PK)</text>
+<line x1="146" y1="52" x2="200" y2="52" stroke="#ff8a24" stroke-width="3" marker-end="url(#ar5)"/>
+<text x="173" y="20" text-anchor="middle" font-size="11" fill="#ff8a24" font-weight="700">actor_id</text>
+<line x1="356" y1="52" x2="410" y2="52" stroke="#ff8a24" stroke-width="3" marker-end="url(#ar5)"/>
+<text x="383" y="20" text-anchor="middle" font-size="11" fill="#ff8a24" font-weight="700">film_id</text>
+</svg>
+<p class="small" style="margin-top:.9em">Cada <code>JOIN</code> trae <strong>su propio <code>ON</code></strong>. No hay l&iacute;mite de cu&aacute;ntos encadenes: cinco o seis en una consulta es normal en el trabajo real.</p></div>
+<div><pre>SELECT   f.title
+FROM     actor AS a
+INNER JOIN film_actor AS fa
+  ON     a.actor_id = fa.actor_id
+INNER JOIN film AS f
+  ON     fa.film_id = f.film_id
+WHERE    a.first_name = 'Nick'
+  AND    a.last_name  = 'Wahlberg';</pre>
+<div class="hintbox"><strong>C&oacute;mo se lee, paso a paso</strong><ul><li>Arranco en <code>actor</code>.</li><li>Le pego el puente por <code>actor_id</code>: ahora tengo una fila por cada pel&iacute;cula en la que sale cada actor.</li><li>Le pego <code>film</code> por <code>film_id</code>: ahora cada una de esas filas trae el t&iacute;tulo.</li><li>Y al final filtro por el actor que me interesa.</li></ul></div>
+<p class="small" style="margin-top:.8em">El <code>WHERE</code> podr&iacute;a ir tambi&eacute;n dentro del primer <code>ON</code>. En un <code>INNER JOIN</code> da lo mismo; en un <code>LEFT JOIN</code> <strong>no</strong>, y es una de las trampas cl&aacute;sicas de las entrevistas t&eacute;cnicas.</p></div></div>
+<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Cada JOIN trae su propio ON</span></div>
+</section>
+<section class="slide" data-title="Desaf&iacute;o 5"><div class="ey">Desaf&iacute;o 5 &middot; 8 minutos</div>
+<h2>El fan de Nick Wahlberg</h2>
+<div class="g2">
+<div><div class="ctx">Un cliente es <strong>fan aguerrido de Nick Wahlberg</strong> y quiere conocer todas las pel&iacute;culas en las que act&uacute;a. Adem&aacute;s de los t&iacute;tulos, pon la duraci&oacute;n y la calificaci&oacute;n, y ord&eacute;nalas alfab&eacute;ticamente.</div>
+<div class="hintbox"><strong>Pistas</strong><ul><li>Necesitas <strong>dos <code>JOIN</code></strong> en la misma consulta.</li><li>Las tablas son <code>actor</code>, <code>film_actor</code> y <code>film</code>.</li><li>Ya tienes el esqueleto en la diapositiva anterior: c&aacute;mbiale el <code>SELECT</code> y a&ntilde;ade el <code>ORDER BY</code>.</li></ul></div>
+<p class="small" style="margin-top:.8em"><strong>Cuando termines</strong>, prueba a cambiar el nombre por otro actor. &iquest;Cu&aacute;ntas pel&iacute;culas tiene <em>Penelope Guiness</em>?</p></div>
+<div data-r><pre>SELECT   f.title, f.length, f.rating
+FROM     actor AS a
+INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
+INNER JOIN film AS f        ON fa.film_id = f.film_id
+WHERE    a.first_name = 'Nick'
+  AND    a.last_name  = 'Wahlberg'
+ORDER BY f.title;
+-- 25 filas. La primera: Adaptation Holes (50 min, NC-17)</pre>
+<p class="small" style="margin-top:.9em">Penelope Guiness: <strong>19 pel&iacute;culas</strong>.</p>
+<p class="warn" style="margin-top:.8em"><strong>Fallo t&iacute;pico:</strong> escribir <code>WHERE first_name = 'Nick'</code> sin el <code>a.</code> delante. Aqu&iacute; funciona de casualidad, porque solo <code>actor</code> tiene esa columna. A&ntilde;ade <code>customer</code> a la consulta y la misma l&iacute;nea se vuelve ambigua. <strong>Escribe siempre el alias.</strong></p></div></div>
+<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Del puente salen los dos lados</span></div>
+</section>
+<section class="slide dense" data-title="Filas que se multiplican"><div class="ey">Bloque 5 &middot; Encadenar &middot; la trampa</div>
+<h2>Un <code>JOIN</code> puede <em>multiplicar</em> tus filas</h2>
+<div class="g2">
+<div><p>Ejecuten estas dos consultas, una detr&aacute;s de otra:</p>
+<pre>SELECT COUNT(*) FROM film;                 -- 1.000
+
+SELECT COUNT(*)
+FROM   film f
+JOIN   inventory i ON f.film_id = i.film_id;  -- 4.581</pre>
+<p class="warn" style="margin-top:.9em"><strong>No se rompi&oacute; nada.</strong> Es una relaci&oacute;n 1:N: <em>casi</em> cada pel&iacute;cula tiene varias copias en <code>inventory</code> &mdash; entre 2 y 8, salvo las 42 que no tienen ninguna. Si una pel&iacute;cula tiene 8 copias, aparece <strong>8 veces</strong> en el resultado. Es correcto&hellip; para la pregunta &laquo;&iquest;cu&aacute;ntas copias hay?&raquo;.</p>
+<p style="margin-top:.8em">Es <strong>equivocado</strong> para la pregunta &laquo;&iquest;cu&aacute;nto mide en promedio una pel&iacute;cula?&raquo;:</p><pre>AVG sobre las 1.000 peliculas          115,27
+AVG sobre las 958 que tienen copia     115,49
+AVG sobre las 4.581 filas del JOIN     114,93</pre><p class="small" style="margin-top:.6em"><strong>El <code>JOIN</code> le hizo dos cosas a tu promedio, y van en direcciones contrarias:</strong> bot&oacute; las <strong>42 pel&iacute;culas sin copia</strong> del desaf&iacute;o anterior (sube a 115,49) y luego dio a cada pel&iacute;cula <strong>tanto peso como copias tenga</strong> (baja a 114,93). Ya no es el promedio de las pel&iacute;culas: es el de <em>los DVD del almac&eacute;n</em>.</p><p class="small" style="margin-top:.5em">Y ah&iacute; est&aacute; el peligro: los dos efectos se cancelan en parte, as&iacute; que la diferencia final es de 34 cent&eacute;simas. <strong>Peque&ntilde;a justo lo suficiente para que nadie la note en un informe.</strong></p></div>
+<div><table class="res"><caption>Cu&aacute;ntas filas esperar</caption>
+<tr><th>Relaci&oacute;n</th><th>Filas del resultado</th></tr>
+<tr><td><strong>1:1</strong></td><td>Las mismas de la tabla izquierda</td></tr>
+<tr><td><strong>1:N</strong></td><td class="hl"><strong>M&aacute;s</strong>: una por cada hijo</td></tr>
+<tr><td><strong>N:N</strong></td><td class="hl"><strong>Muchas m&aacute;s</strong>: el producto de las coincidencias</td></tr>
+</table>
+<div class="hintbox"><strong>El h&aacute;bito que te salva</strong><p style="margin:.4em 0 0"><strong>Antes</strong> de ejecutar, di en voz alta cu&aacute;ntas filas esperas. <strong>Despu&eacute;s</strong>, mira el contador de Beekeeper. Si no cuadra, no sigas construyendo encima: entiende primero por qu&eacute;.</p></div>
+<p class="small" style="margin-top:.8em">Es el error m&aacute;s caro de este oficio, porque <strong>no da error</strong>: da un n&uacute;mero. Un informe con las ventas infladas al doble sale con la misma cara de correcto que uno bueno.</p>
+<p class="small" style="margin-top:.6em"><strong>Para contar</strong>, el ant&iacute;doto es <code>COUNT(DISTINCT f.film_id)</code> en vez de <code>COUNT(*)</code>. <strong>Para promediar y sumar no sirve:</strong> <code>AVG(DISTINCT length)</code> da 115,50, que tampoco es el n&uacute;mero que quer&iacute;as. Ah&iacute; hay que resumir <em>antes</em> de unir, y eso es justo lo que aprendemos en la sesi&oacute;n 5.</p></div></div>
+<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Predice las filas antes de ejecutar</span></div>
+</section>
+<section class="slide" data-title="Quiz"><div class="ey">Quiz &middot; 5 minutos</div>
+<h2>&iquest;Cu&aacute;l de estas responde la pregunta?</h2>
+<p class="question-purpose"><strong>La pregunta:</strong> &laquo;&iquest;cu&aacute;ntos clientes <em>nunca</em> han alquilado nada?&raquo; &mdash; Tablas <code>customer</code> (599 filas) y <code>rental</code>.</p>
+<div class="q" data-answer="c">
+<div class="opts">
+<button class="opt" data-o="a" data-f="No. El INNER JOIN se queda solo con los clientes que S&Iacute; alquilaron. Los que nunca alquilaron son exactamente los que esta consulta descarta: no pueden salir en el resultado.">
+<b>A</b><pre>SELECT COUNT(*) FROM customer c
+INNER JOIN rental r ON c.customer_id = r.customer_id;</pre></button>
+<button class="opt" data-o="b" data-f="No. El LEFT JOIN es el correcto, pero sin el WHERE cuentas TODAS las filas: 16.044, una por alquiler. Te falta quedarte solo con las que no tienen pareja.">
+<b>B</b><pre>SELECT COUNT(*) FROM customer c
+LEFT JOIN rental r ON c.customer_id = r.customer_id;</pre></button>
+<button class="opt" data-o="c" data-f="Correcto. El LEFT JOIN conserva a los 599 clientes; el WHERE ... IS NULL deja solo a los que no engancharon con ningun alquiler. En esta base la respuesta es 0: todos los clientes han alquilado al menos una vez. Cero tambien es una respuesta.">
+<b>C</b><pre>SELECT COUNT(*) FROM customer c
+LEFT JOIN rental r ON c.customer_id = r.customer_id
+WHERE r.rental_id IS NULL;</pre></button>
+<button class="opt" data-o="d" data-f="No. Ojo, esta SI se ejecuta: devuelve dos filas, 599 y 16.044, apiladas una encima de otra. Pero eso es apilar dos conteos, no enganchar clientes con alquileres. UNION pega resultados debajo; para relacionar filas entre tablas necesitas un JOIN.">
+<b>D</b><pre>SELECT COUNT(*) FROM customer
+UNION
+SELECT COUNT(*) FROM rental;</pre></button>
+</div>
+<button class="verify">Verificar</button><div class="fb"></div></div>
+<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Buscar ausencias: LEFT + IS NULL</span></div>
+</section>
+<section class="slide" data-title="Desaf&iacute;o integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
+<h2>Los cinco clientes que m&aacute;s han gastado</h2>
+<div class="g2">
+<div><div class="ctx">Marketing va a mandar un bono a los <strong>cinco mejores clientes</strong>. Necesitan <strong>nombre completo, correo y cu&aacute;nto han pagado en total</strong>, del que m&aacute;s gast&oacute; al que menos.</div>
+<div class="hintbox"><strong>Aqu&iacute; se junta todo el curso</strong><ul><li><code>JOIN</code> entre <code>customer</code> y <code>payment</code> &mdash; hoy.</li><li><code>SUM</code> y <code>GROUP BY</code> &mdash; sesi&oacute;n 3.</li><li><code>ORDER BY</code> y <code>LIMIT</code> &mdash; sesi&oacute;n 2.</li><li><code>ROUND</code> para que el total no salga con 17 decimales.</li></ul></div>
+<p class="small" style="margin-top:.8em"><strong>Pista sobre el <code>GROUP BY</code>:</strong> agrupa por <code>c.customer_id</code>, no por el nombre. Dos personas pueden llamarse igual; el identificador nunca se repite. Si agrupas por <code>first_name</code> te sale <em>Marion con 302,34</em> &mdash; no da error, simplemente est&aacute; mal.</p><p class="warn" style="margin-top:.7em"><strong>&laquo;&iquest;Y la regla de oro del martes?&raquo;</strong> Buena pregunta. Agrupar por la <strong>llave primaria</strong> es la excepci&oacute;n: si fijas <code>customer_id</code>, el nombre y el correo ya no pueden ser otra cosa &mdash; quedan determinados. Si prefieres ir sobre seguro, mete las tres en el <code>GROUP BY</code>: da exactamente el mismo resultado.</p><p class="small" style="margin-top:.7em"><strong>Y una pieza nueva:</strong> <code>||</code> pega dos textos. <code>first_name || ' ' || last_name</code> da <em>Eleanor Hunt</em> en una sola columna. Si te estorba, pide las dos columnas por separado.</p></div>
+<div data-r><pre>SELECT   c.first_name || ' ' || c.last_name AS cliente,
+         c.email,
+         ROUND(SUM(p.amount), 2) AS total
+FROM     customer AS c
+INNER JOIN payment AS p
+  ON     c.customer_id = p.customer_id
+GROUP BY c.customer_id
+ORDER BY total DESC
+LIMIT    5;</pre>
+<table class="res" style="margin-top:.8em"><caption>El resultado</caption>
+<tr><th>cliente</th><th>total</th></tr>
+<tr><td class="hl">Eleanor Hunt</td><td class="hl">211,55</td></tr>
+<tr><td>Karl Seal</td><td>208,58</td></tr>
+<tr><td>Marion Snyder</td><td>194,61</td></tr>
+<tr><td>Rhonda Kennedy</td><td>191,62</td></tr>
+<tr><td>Clara Shaw</td><td>189,60</td></tr>
+</table>
+<p class="small" style="margin-top:.7em">Te doy el resultado a prop&oacute;sito: el reto es <strong>escribir la consulta</strong> y poder comprobarte solo.</p></div></div>
+<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>JOIN + GROUP BY + ORDER BY + LIMIT</span></div>
+</section>
+<section class="slide" data-title="Los cuatro de un vistazo"><div class="ey">Resumen &middot; para la chuleta</div>
+<h2>Los cuatro <code>JOIN</code>, en una tabla</h2>
+<table class="res"><caption>Todos usan la misma sintaxis. Solo cambia con qu&eacute; filas te quedas.</caption>
+<tr><th>Tipo</th><th>Se queda con&hellip;</th><th>&iquest;Sim&eacute;trico?</th><th>La pregunta que responde</th></tr>
+<tr><td><code>INNER JOIN</code></td><td>Solo lo que tiene pareja en <strong>las dos</strong></td><td>S&iacute;</td><td>&laquo;&iquest;Qu&eacute; empleados <strong>est&aacute;n</strong> en un proyecto?&raquo;</td></tr>
+<tr><td class="hl"><code>LEFT JOIN</code></td><td class="hl"><strong>Todo</strong> lo de la izquierda + lo que empareje</td><td class="hl">No</td><td class="hl">&laquo;&iquest;Qu&eacute; empleados tengo, <strong>y si</strong> tienen proyecto, cu&aacute;l?&raquo;</td></tr>
+<tr><td><code>RIGHT JOIN</code></td><td><strong>Todo</strong> lo de la derecha + lo que empareje</td><td>No</td><td>&laquo;&iquest;Qu&eacute; proyectos hay, <strong>y si</strong> tienen due&ntilde;o, qui&eacute;n?&raquo;</td></tr>
+<tr><td><code>FULL OUTER</code></td><td><strong>Todo</strong>, de los dos lados</td><td>S&iacute;</td><td>&laquo;&iquest;Qu&eacute; tengo en total, <strong>cuadre o no</strong>?&raquo;</td></tr>
+</table>
+<div class="g2" style="margin-top:1.2em">
+<div><p class="warn" style="margin:0"><strong>La pregunta que decide cu&aacute;l usar es siempre la misma:</strong> &iquest;qu&eacute; hago con las filas que <em>no</em> encuentran pareja? Si te sobran, <code>INNER</code>. Si las necesitas, uno de los otros tres.</p></div>
+<div><p class="small" style="margin:0"><strong>Para cuando salgas de SQLite:</strong> <code>INNER</code> y <code>LEFT</code> funcionan igual en todos los motores. <code>MySQL</code> no tiene <code>FULL OUTER JOIN</code> (y MariaDB tampoco); PostgreSQL, SQL Server y Oracle s&iacute;. La palabra <code>OUTER</code> es opcional <strong>en todos</strong>: <code>FULL JOIN</code> y <code>FULL OUTER JOIN</code> son lo mismo, tambi&eacute;n aqu&iacute;.</p>
+<p class="small" style="margin-top:.7em">Los cuatro entran en el examen <strong>DP-900</strong>, y el que m&aacute;s aparece es <code>LEFT JOIN</code>.</p></div></div>
+<div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
+</section>
+<section class="slide yellow" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
+<h2>Ya puedes responder preguntas de verdad</h2>
+<div class="g2">
+<div><h3>Lo que te llevas</h3>
+<ul class="checks">
+<li><span class="k pk">PK</span> identifica; <span class="k fk">FK</span> apunta. El sentido importa.</li>
+<li>1:1, 1:N y N:N &mdash; y por qu&eacute; N:N necesita puente.</li>
+<li><code>UNION</code> apila y borra repetidos; <code>UNION ALL</code> los conserva.</li>
+<li>Las <strong>cinco preguntas</strong> del <code>JOIN</code>.</li>
+<li><code>INNER</code>, <code>LEFT</code>, <code>RIGHT</code> y <code>FULL OUTER</code>.</li>
+<li><code>LEFT</code> + <code>IS NULL</code> para encontrar <strong>ausencias</strong>.</li>
+<li>Que un <code>JOIN</code> puede multiplicar filas sin avisarte.</li>
+</ul></div>
+<div><h3>Para practicar</h3>
+<p class="small">Dos consultas con todo lo de hoy. Te doy el resultado para que te compruebes solo:</p>
+<ol style="font-size:.9em">
+<li>&iquest;Cu&aacute;ntas pel&iacute;culas hay <strong>por cada categor&iacute;a</strong>? Tablas <code>category</code>, <code>film_category</code>.<br><span class="small">Deben salir <strong>16 filas</strong>. La mayor: <em>Sports</em>, con 74.</span></li>
+<li>&iquest;Qu&eacute; <strong>ciudad</strong> tiene m&aacute;s clientes? Tablas <code>customer</code>, <code>address</code>, <code>city</code>.<br><span class="small">Necesitas <strong>dos <code>JOIN</code></strong>, <code>GROUP BY</code>, <code>ORDER BY</code> y <code>LIMIT</code>. <strong>Cuidado con el <code>LIMIT 1</code>:</strong> hay un empate. Aurora y London tienen 2 clientes cada una, y todas las dem&aacute;s tienen 1. Si pides una sola fila, el motor escoge por ti &mdash; y no siempre la misma.</span></li>
+</ol>
+<p class="warn" style="margin-top:1em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> ya sabes las piezas. En la sesi&oacute;n 5 aprendemos a <strong>pensar la consulta antes de escribirla</strong>: dibujar la tabla que quieres, decidir qu&eacute; unir y en qu&eacute; orden. Se llama <em>algor&iacute;tmica de tablas</em>, y es lo que separa a quien copia consultas de quien las dise&ntilde;a.</p></div></div>
+<p class="quote" style="margin-top:1.2em" data-r>Unir tablas no es un truco técnico: es volver a armar la realidad que la base separó para poder cuidarla.</p>
+<div class="brand"><span>Cierre</span><span>Sesi&oacute;n 5: algor&iacute;tmica de tablas</span><a href="../../index.html" style="color:inherit;font-weight:800">&larr; Volver al curso</a></div>
+</section>
+
+
+
+
+
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 25</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador">T</button><a class="ctl" id="dlBtn" href="sesion-4-uniones-de-tablas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
+</div>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="sr" id="announce" aria-live="assertive"></div>
+<script>
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),noteOv=document.getElementById('noteOv'),noteBody=document.getElementById('noteBody'),announce=document.getElementById('announce'),clock=document.querySelector('.clock'),noteBtn=document.getElementById('noteBtn');
+let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length;bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(noteOv&&noteOv.classList.contains('open'))fillNotes();if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
+function fillNotes(){if(!noteBody)return;const n=ss[i].querySelector('.notes');noteBody.innerHTML=n?n.innerHTML:'<p>Esta diapositiva no tiene notas.</p>'}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
+function closeAll(){timeOv.classList.remove('open');if(noteOv)noteOv.classList.remove('open')}
+function anyOpen(){return timeOv.classList.contains('open')||(noteOv&&noteOv.classList.contains('open'))}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
+if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
+let remain=900000,initial=remain,end=0,running=false,tick=null;
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){const v=fmt(cur());document.getElementById('timer').textContent=v;if(clock&&ss[i].dataset.break==='15')clock.textContent=v;if(running&&cur()<=0){pause();announce.textContent='Temporizador terminado'}}
+function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
+function setTimer(m,open=true){pause();initial=remain=m*60000;render();if(open)timeOv.classList.add('open')}
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);render()}
+function reset(){pause();remain=initial;render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>setTimer(Number(b.dataset.min),false));
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);start();timeOv.classList.add('open')};
+document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
+upd();render()})();
+</script></body></html>

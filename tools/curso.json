@@ -122,16 +122,24 @@
         {
           "n": 4,
           "titulo": "Uniones de tablas",
-          "estado": "pendiente",
-          "desc": "Responder preguntas que necesitan más de una tabla. Las cinco preguntas del JOIN y los cuatro tipos de unión.",
-          "href": null,
+          "estado": "proxima",
+          "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
+          "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
           "tags": [
             "UNION",
+            "UNION ALL",
             "INNER JOIN",
             "LEFT JOIN",
+            "RIGHT JOIN",
             "FULL OUTER"
           ],
-          "recursos": []
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S4.sql",
+              "download": true
+            }
+          ]
         }
       ]
     },
