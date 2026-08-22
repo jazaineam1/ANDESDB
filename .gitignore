@@ -22,6 +22,7 @@ Encuesta*.xlsx
 # Quitalos de aqui si prefieres versionarlos (el repo es publico).
 # ---------------------------------------------------------------------
 Presentaciones/**/libreto-*.md
+Presentaciones/**/PLAN-*.md
 Presentaciones/**/ALTERNATIVAS-*.md
 Presentaciones/**/EVALUACION-*.md
 
