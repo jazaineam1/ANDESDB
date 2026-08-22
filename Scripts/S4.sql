@@ -550,3 +550,42 @@ WHERE    r.rental_id IS NULL;
 -- crees: pasa a referirse a la tabla del medio. Antes de escribir el
 -- WHERE, pregúntate siempre: ¿qué representa UNA FILA de mi resultado?
 -- En la sesión 5 le ponemos nombre y método a esto.
+
+
+-- =====================================================================
+--  EXTRA · EL FILTRO EN EL «ON» NO ES LO MISMO QUE EN EL «WHERE»
+--
+--  Se menciona en la diapositiva «Encadenar». Aquí está la prueba.
+--  Pregunta: ¿qué películas tienen copia EN LA TIENDA 1, y cuáles no
+--  tienen ninguna allí?
+-- =====================================================================
+
+-- El filtro DENTRO del ON: se aplica al emparejar.
+-- Las películas sin copia en la tienda 1 siguen saliendo, con NULL.
+SELECT   COUNT(*)
+FROM     film AS f
+LEFT JOIN inventory AS i
+  ON     f.film_id = i.film_id AND i.store_id = 1;
+-- 2511 filas
+
+-- El filtro en el WHERE: se aplica DESPUÉS de emparejar.
+-- Como NULL no cumple "store_id = 1", esas filas se caen.
+SELECT   COUNT(*)
+FROM     film AS f
+LEFT JOIN inventory AS i
+  ON     f.film_id = i.film_id
+WHERE    i.store_id = 1;
+-- 2270 filas
+--
+-- El segundo convirtió tu LEFT JOIN en un INNER JOIN sin decirte nada.
+-- Es el mismo tipo de error que el promedio inflado: no da error,
+-- da un número.
+--
+-- LA REGLA:
+--   condición sobre la tabla de la DERECHA  -> va en el ON
+--   condición sobre la tabla de la IZQUIERDA -> va en el WHERE
+--
+-- Y la razón está en el orden de ejecución que vimos en la sesión 3:
+--   FROM/JOIN -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT
+-- El ON trabaja mientras se arma la unión; el WHERE llega cuando ya
+-- está armada y solo ve el resultado.

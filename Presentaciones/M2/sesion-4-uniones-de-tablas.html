@@ -569,7 +569,7 @@ ORDER BY last_name;
 </section>
 <section class="slide" data-title="Las cinco preguntas"><div class="ey">Bloque 3 &middot; Enganchar</div>
 <h2>Las cinco preguntas del <code>JOIN</code></h2>
-<p class="lead">Antes de escribir una sola l&iacute;nea, respondelas en voz alta. Siempre son las mismas cinco, en este orden.</p>
+<p class="lead">Antes de escribir una sola l&iacute;nea, respondelas en voz alta. Siempre son las mismas cinco, en este orden &mdash; las cuatro de arriba y <strong>la quinta, abajo a la izquierda</strong>, que es la &uacute;nica que cambia.</p>
 <div class="steps">
 <article><b>1</b><h3>&iquest;Con qu&eacute; tabla inicio?</h3><p>Esa es tu tabla <strong>izquierda</strong>. Va despu&eacute;s del <code>FROM</code>.</p></article>
 <article><b>2</b><h3>&iquest;Cu&aacute;l le pego?</h3><p>Esa es tu tabla <strong>derecha</strong>. Va despu&eacute;s del <code>JOIN</code>.</p></article>
@@ -577,7 +577,7 @@ ORDER BY last_name;
 <article><b>4</b><h3>&iquest;Qu&eacute; campos me ayudan a pegar?</h3><p>Esas son tus <strong>llaves</strong>. Van en el <code>ON</code>.</p></article>
 </div>
 <div class="g2" style="margin-top:1.2em;align-items:start">
-<div><div class="hintbox" style="margin-top:0"><strong>5 &middot; &iquest;Con qu&eacute; filas me quedo?</strong><p style="margin:.4em 0 0">Ese es el <strong>tipo de uni&oacute;n</strong>: <code>INNER</code>, <code>LEFT</code>, <code>RIGHT</code> o <code>FULL OUTER</code>. Es la &uacute;nica pregunta que cambia de un <code>JOIN</code> a otro &mdash; las otras cuatro son id&eacute;nticas siempre.</p></div>
+<div><div class="hintbox" style="margin-top:0"><strong><span class="k pk" style="font-size:.95em;margin-right:.5em">5</span>&iquest;Con qu&eacute; filas me quedo?</strong><p style="margin:.4em 0 0">Ese es el <strong>tipo de uni&oacute;n</strong>: <code>INNER</code>, <code>LEFT</code>, <code>RIGHT</code> o <code>FULL OUTER</code>. Es la &uacute;nica pregunta que cambia de un <code>JOIN</code> a otro &mdash; las otras cuatro son id&eacute;nticas siempre.</p></div>
 <p class="small" style="margin-top:.9em">Si respondes las cinco antes de teclear, la consulta se escribe sola. Si te trabas escribiendo, es que te saltaste una.</p></div>
 <div><pre>SELECT   film.title, language.name        <span style="color:#ff8a24">-- 3</span>
 FROM     film                             <span style="color:#ff8a24">-- 1</span>
@@ -652,7 +652,7 @@ FROM   language;
 <h2>Los clientes de California &mdash; y un error del material</h2>
 <div class="ctx">Cambiaron las condiciones de impuestos en California y hay que <strong>notificar por correo</strong> a los clientes que viven all&iacute;. &iquest;Cu&aacute;les son sus correos? &mdash; Tablas <code>customer</code> y <code>address</code>; la columna es <code>district</code>.</div>
 <div class="g2" style="margin-top:1em">
-<div><p><strong>Esta es la soluci&oacute;n tal como viene en el material del curso.</strong> C&oacute;pienla y ejec&uacute;tenla:</p>
+<div><p class="warn" style="margin:0 0 .7em"><strong>&#9888; ESTA CONSULTA EST&Aacute; MAL A PROP&Oacute;SITO.</strong> Viene tal cual del material original del curso y <strong>no funciona</strong>. La dejamos a la vista porque cazar el error ense&ntilde;a m&aacute;s que copiar la respuesta &mdash; es lo &uacute;nico roto de la sesi&oacute;n, y es intencional.</p><p>C&oacute;pienla y ejec&uacute;tenla:</p>
 <pre>SELECT district, email
 FROM   address
 INNER JOIN customer
@@ -696,7 +696,7 @@ ORDER BY c.last_name;
 <div class="g2" style="margin-top:1.1em">
 <div><p class="warn" style="margin:0"><strong>Y aqu&iacute; est&aacute; la trampa, porque tu instinto de Excel te va a traicionar dos veces.</strong></p>
 <p class="small" style="margin-top:.7em"><strong>Uno.</strong> <code>BUSCARV</code> nunca te borra una fila: si no encuentra, te deja <code>#N/A</code> y tu lista sigue completa. <strong><code>INNER JOIN</code> s&iacute; te la borra</strong>, y sin avisar. El que se porta como tu <code>BUSCARV</code> no es <code>INNER JOIN</code>: es <code>LEFT JOIN</code>, el de la diapositiva siguiente.</p></div>
-<div><p class="small" style="margin:0"><strong>Dos.</strong> <code>BUSCARV</code> devuelve <em>un</em> valor por fila: entran 100 filas, salen 100. Un <code>JOIN</code> devuelve <strong>todas</strong> las coincidencias, as&iacute; que puede devolverte m&aacute;s filas de las que ten&iacute;as. Eso lo vemos a fondo m&aacute;s adelante.</p>
+<div><p class="small" style="margin:0"><strong>Dos.</strong> <code>BUSCARV</code> devuelve <em>un</em> valor por fila: entran 100 filas, salen 100. Un <code>JOIN</code> devuelve <strong>todas</strong> las coincidencias, as&iacute; que puede devolverte m&aacute;s filas de las que ten&iacute;as. Eso tiene diapositiva propia hoy: <em>Un <code>JOIN</code> puede multiplicar tus filas</em>.</p>
 <p class="small" style="margin-top:.7em"><strong>Tres.</strong> En Excel t&uacute; decides el sentido: pones la f&oacute;rmula en la hoja que quieres conservar. En SQL el sentido lo fij&oacute; qui&eacute;n dise&ntilde;&oacute; la base &mdash; por eso <code>customer</code> apunta a <code>address</code> y no al rev&eacute;s.</p></div></div>
 <div class="brand"><span>Bloque 4 &middot; Conservar</span><span>NULL es tu #N/A</span></div>
 </section>
@@ -781,7 +781,7 @@ INNER JOIN film AS f
 WHERE    a.first_name = 'Nick'
   AND    a.last_name  = 'Wahlberg';</pre>
 <div class="hintbox"><strong>C&oacute;mo se lee, paso a paso</strong><ul><li>Arranco en <code>actor</code>.</li><li>Le pego el puente por <code>actor_id</code>: ahora tengo una fila por cada pel&iacute;cula en la que sale cada actor.</li><li>Le pego <code>film</code> por <code>film_id</code>: ahora cada una de esas filas trae el t&iacute;tulo.</li><li>Y al final filtro por el actor que me interesa.</li></ul></div>
-<p class="small" style="margin-top:.8em">El <code>WHERE</code> podr&iacute;a ir tambi&eacute;n dentro del primer <code>ON</code>. En un <code>INNER JOIN</code> da lo mismo; en un <code>LEFT JOIN</code> <strong>no</strong>, y es una de las trampas cl&aacute;sicas de las entrevistas t&eacute;cnicas.</p></div></div>
+<p class="small" style="margin-top:.8em"><strong>Un detalle que importa:</strong> el filtro puede ir en el <code>WHERE</code> o dentro del <code>ON</code>. En un <code>INNER JOIN</code> da exactamente lo mismo. En un <code>LEFT JOIN</code> <strong>no</strong>: ponerlo en el <code>WHERE</code> lo convierte en <code>INNER</code> sin avisarte. Tienes las dos consultas comparadas al final de <code>S4.sql</code> &mdash; 2.511 filas contra 2.270.</p></div></div>
 <div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Cada JOIN trae su propio ON</span></div>
 </section>
 <section class="slide" data-title="Desaf&iacute;o 5"><div class="ey">Desaf&iacute;o 5 &middot; 8 minutos</div>
@@ -814,7 +814,7 @@ JOIN   inventory i ON f.film_id = i.film_id;  -- 4.581</pre>
 <p class="warn" style="margin-top:.9em"><strong>No se rompi&oacute; nada.</strong> Es una relaci&oacute;n 1:N: <em>casi</em> cada pel&iacute;cula tiene varias copias en <code>inventory</code> &mdash; entre 2 y 8, salvo las 42 que no tienen ninguna. Si una pel&iacute;cula tiene 8 copias, aparece <strong>8 veces</strong> en el resultado. Es correcto&hellip; para la pregunta &laquo;&iquest;cu&aacute;ntas copias hay?&raquo;.</p>
 <p style="margin-top:.8em">Es <strong>equivocado</strong> para la pregunta &laquo;&iquest;cu&aacute;nto mide en promedio una pel&iacute;cula?&raquo;:</p><pre>AVG sobre las 1.000 peliculas          115,27
 AVG sobre las 958 que tienen copia     115,49
-AVG sobre las 4.581 filas del JOIN     114,93</pre><p class="small" style="margin-top:.6em"><strong>El <code>JOIN</code> le hizo dos cosas a tu promedio, y van en direcciones contrarias:</strong> bot&oacute; las <strong>42 pel&iacute;culas sin copia</strong> del desaf&iacute;o anterior (sube a 115,49) y luego dio a cada pel&iacute;cula <strong>tanto peso como copias tenga</strong> (baja a 114,93). Ya no es el promedio de las pel&iacute;culas: es el de <em>los DVD del almac&eacute;n</em>.</p><p class="small" style="margin-top:.5em">Y ah&iacute; est&aacute; el peligro: los dos efectos se cancelan en parte, as&iacute; que la diferencia final es de 34 cent&eacute;simas. <strong>Peque&ntilde;a justo lo suficiente para que nadie la note en un informe.</strong></p></div>
+AVG sobre las 4.581 filas del JOIN     114,93</pre><p class="small" style="margin-top:.6em"><strong>El <code>JOIN</code> le hizo dos cosas a tu promedio, y van en direcciones contrarias:</strong> bot&oacute; las <strong>42 pel&iacute;culas sin copia</strong> del desaf&iacute;o 4 (sube a 115,49) y luego dio a cada pel&iacute;cula <strong>tanto peso como copias tenga</strong> (baja a 114,93). Ya no es el promedio de las pel&iacute;culas: es el de <em>los DVD del almac&eacute;n</em>.</p><p class="small" style="margin-top:.5em">Y ah&iacute; est&aacute; el peligro: los dos efectos se cancelan en parte, as&iacute; que la diferencia final es de 34 cent&eacute;simas. <strong>Peque&ntilde;a justo lo suficiente para que nadie la note en un informe.</strong></p></div>
 <div><table class="res"><caption>Cu&aacute;ntas filas esperar</caption>
 <tr><th>Relaci&oacute;n</th><th>Filas del resultado</th></tr>
 <tr><td><strong>1:1</strong></td><td>Las mismas de la tabla izquierda</td></tr>
@@ -887,7 +887,7 @@ LIMIT    5;</pre>
 <div class="g2" style="margin-top:1.2em">
 <div><p class="warn" style="margin:0"><strong>La pregunta que decide cu&aacute;l usar es siempre la misma:</strong> &iquest;qu&eacute; hago con las filas que <em>no</em> encuentran pareja? Si te sobran, <code>INNER</code>. Si las necesitas, uno de los otros tres.</p></div>
 <div><p class="small" style="margin:0"><strong>Para cuando salgas de SQLite:</strong> <code>INNER</code> y <code>LEFT</code> funcionan igual en todos los motores. <code>MySQL</code> no tiene <code>FULL OUTER JOIN</code> (y MariaDB tampoco); PostgreSQL, SQL Server y Oracle s&iacute;. La palabra <code>OUTER</code> es opcional <strong>en todos</strong>: <code>FULL JOIN</code> y <code>FULL OUTER JOIN</code> son lo mismo, tambi&eacute;n aqu&iacute;.</p>
-<p class="small" style="margin-top:.7em">Los cuatro entran en el examen <strong>DP-900</strong>, y el que m&aacute;s aparece es <code>LEFT JOIN</code>.</p></div></div>
+<p class="small" style="margin-top:.7em">De los cuatro, el que vas a escribir el 90&nbsp;% de las veces es <code>LEFT JOIN</code>. <code>RIGHT</code> y <code>FULL OUTER</code> hay que <em>reconocerlos</em> m&aacute;s que escribirlos.</p></div></div>
 <div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
 </section>
 <section class="slide yellow" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
