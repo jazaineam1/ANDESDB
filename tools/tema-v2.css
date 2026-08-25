@@ -458,3 +458,55 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 
 /* ===== el mapa con la cardinalidad ===== */
 .mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}
+
+/* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
+.cnode{cursor:pointer}
+.cnode rect{transition:filter .15s}
+.cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
+.cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
+.cdata{display:none}
+
+.cpanel{
+  position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
+  background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink); border-radius:var(--r-lg);
+  box-shadow:0 -6px 40px rgba(0,0,0,.22);
+  padding:1.1em 1.3em 1em; z-index:5;
+  display:none; max-height:66cqh; overflow:auto;
+}
+.cpanel.open{display:block}
+.cclose{
+  position:absolute; top:.5em; right:.6em; z-index:2;
+  border:0; background:var(--ink); color:#fff;
+  width:1.9em; height:1.9em; border-radius:50%;
+  font-size:1em; font-weight:800; cursor:pointer; line-height:1;
+}
+.cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
+.cbadge{
+  font-family:Consolas,monospace; font-size:.82em; font-weight:800;
+  color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
+}
+.cbadge.1N,.cbadge\31 N{background:var(--o)}
+.cbadge\31 1{background:var(--b)}
+.cbadge\4e N{background:var(--r)}
+
+.ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
+.cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
+.ct{margin:0;flex:0 1 auto;min-width:0}
+.cth{
+  font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
+  background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.ct.o .cth{background:var(--o)} .ct.k .cth{background:var(--ink)}
+.ct.y .cth{background:var(--y);color:var(--ink)}
+.ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
+  border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
+.ct th{background:#f4f7fa;color:var(--ink-soft);font-family:Consolas,monospace;
+  font-weight:700;text-align:left;padding:.3em .6em;font-size:.92em;white-space:nowrap}
+.ct td{padding:.28em .6em;border-top:1px solid #eef3f7;color:var(--ink);
+  font-family:Consolas,monospace;white-space:nowrap}
+.ct tr.mas td{text-align:center;color:var(--ink-soft);letter-spacing:.2em}
+.ct figcaption{font-size:.72em;color:var(--ink-soft);margin-top:.3em;text-align:center}
+.cnota{margin:1em 0 0;font-size:.86em;line-height:1.45;
+  background:var(--yl);border-left:.35em solid var(--y);
+  border-radius:var(--r-sm);padding:.7em .9em;color:var(--ink)}
