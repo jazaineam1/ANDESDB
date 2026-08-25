@@ -297,7 +297,7 @@ pre{
 .schema-sm{max-height:18cqh}
 .diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
 .diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
-.interaction-note{display:inline-flex;align-items:center;gap:.35em;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.interaction-note{display:inline-flex;align-items:center;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
 .tnode{cursor:pointer}
 .tnode rect{transition:fill .15s,stroke-width .15s}
 .tnode:hover rect{stroke-width:4.5}
@@ -328,6 +328,7 @@ pre{
   border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
 }
 .logo{max-width:14em;max-height:4.5em;object-fit:contain}
+.slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
 
 /* --- barras de cuota de mercado ------------------------------------- */
 .bars{margin:1.6em 0}
@@ -547,7 +548,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
   .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
   .dgrid{grid-template-columns:1fr}
-  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 0 0 100vmax rgba(17,17,17,.58)}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 12px 36px rgba(0,0,0,.28)}
   .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
   .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
   .ct{width:100%;overflow-x:auto}

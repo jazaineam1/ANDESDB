@@ -301,7 +301,7 @@ pre{
 .schema-sm{max-height:18cqh}
 .diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
 .diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
-.interaction-note{display:inline-flex;align-items:center;gap:.35em;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.interaction-note{display:inline-flex;align-items:center;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
 .tnode{cursor:pointer}
 .tnode rect{transition:fill .15s,stroke-width .15s}
 .tnode:hover rect{stroke-width:4.5}
@@ -332,6 +332,7 @@ pre{
   border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
 }
 .logo{max-width:14em;max-height:4.5em;object-fit:contain}
+.slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
 
 /* --- barras de cuota de mercado ------------------------------------- */
 .bars{margin:1.6em 0}
@@ -551,7 +552,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
   .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
   .dgrid{grid-template-columns:1fr}
-  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 0 0 100vmax rgba(17,17,17,.58)}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 12px 36px rgba(0,0,0,.28)}
   .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
   .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
   .ct{width:100%;overflow-x:auto}
@@ -570,7 +571,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 </style></head>
 <body><main class="stage">
 
-<section class="slide dark" data-title="Portada"><div class="logo">Universidad de los Andes &middot; Colsubsidio</div>
+<section class="slide dark" data-title="Portada"><img class="logo portada-logo" src="../../Imagenes/Universidad_de_los_Andes_(logo).png" alt="Universidad de los Andes">
 <div class="ey">Sesi&oacute;n 5 &middot; M&oacute;dulo 2</div>
 <h1>Algor&iacute;tmica de tablas</h1>
 <p class="lead">Ya sabes escribir consultas. Hoy aprendes a <strong>pensarlas antes de escribirlas</strong>: dibujar la tabla que quieres y llegar a ella por pedazos.</p>
@@ -649,7 +650,7 @@ rental     1 fila = 1 <strong>alquiler</strong></pre>
 
 ... LEFT JOIN payment p ON r.rental_id=p.rental_id
                                                   -- 16.091</pre>
-<p class="small" style="margin-top:.7em">Cada <code>JOIN</code> baja un nivel de agregaci&oacute;n. De pel&iacute;cula a copia, de copia a alquiler, de alquiler a pago.</p></div>
+<p class="small" style="margin-top:.7em">Cada <code>JOIN</code> baja un nivel de agregaci&oacute;n. De pel&iacute;cula a copia, de copia a alquiler, de alquiler a pago.</p><p class="small" style="margin-top:.5em"><strong>&iquest;4.623 y no 4.581?</strong> En la sesi&oacute;n 4 vimos 4.581 con <code>INNER JOIN</code>. Aqu&iacute; usamos <code>LEFT</code>, as&iacute; que se suman las <strong>42 sin copia</strong>: 4.581 + 42 = 4.623.</p></div>
 <div><p class="warn" style="margin:0"><strong>Y ahora el da&ntilde;o.</strong> Sobre esa tabla inflada, cuenta las copias de <em>Academy Dinosaur</em>:</p>
 <pre>SELECT f.title, COUNT(i.inventory_id) AS copias
 FROM   film f
@@ -659,7 +660,7 @@ WHERE  f.film_id = 1
 GROUP BY f.film_id;
 
 Academy Dinosaur   |   24</pre>
-<p class="warn" style="margin-top:.8em"><strong>Tiene 8 copias, no 24.</strong> Cada copia aparece una vez por cada alquiler suyo. El n&uacute;mero est&aacute; <strong>triplicado</strong>, la consulta no dio error, y el informe sale con pinta de correcto.</p>
+<p class="warn" style="margin-top:.8em"><strong>Tiene 8 copias, no 24.</strong> La cuenta sale as&iacute;: sus <strong>23 alquileres</strong> producen 23 filas, m&aacute;s <strong>1 copia que nunca se alquil&oacute;</strong> y aparece una sola vez con <code>NULL</code>. 23 + 1 = 24. La consulta no dio error, y el informe sale con pinta de correcto.</p>
 <p class="small" style="margin-top:.7em">Compru&eacute;balo: <code>SELECT COUNT(*) FROM inventory WHERE film_id=1;</code> &rarr; <strong>8</strong>.</p></div></div>
 <div class="brand"><span>Bloque 1 · El nivel de agregación</span><span>Cada JOIN baja un nivel</span></div>
 </section>
@@ -684,9 +685,8 @@ Alice F..  Classics    0           0        0
 
 ORIGEN                     NIVEL       &iquest;RESUMIR?
 film                       pel&iacute;cula    no
-film_category + category   pel&iacute;cula    no
-inventory                  copia       S&Iacute; -> contar
-rental + payment           alquiler    S&Iacute; -> contar y sumar</pre></div></div>
+...                        ...         ...</pre>
+<p class="small" style="margin-top:.6em">La primera l&iacute;nea va de regalo. Las otras cinco son el taller que viene.</p></div></div>
 <div class="brand"><span>Bloque 2 · La servilleta</span><span>Primero el dibujo, despu&eacute;s el SQL</span></div>
 </section>
 <section class="slide mid" data-title="El marco de cinco pasos"><div class="ey">Bloque 2 &middot; El m&eacute;todo</div>
@@ -775,7 +775,7 @@ LEFT JOIN copias c ON f.film_id = c.film_id;</pre>
 <li><strong>Compruebas por partes.</strong> Ejecutas el pedazo solo, ves que da 958 filas, y sigues.</li>
 <li><strong>Se lee de arriba abajo</strong>, como los pasos que dibujaste.</li>
 <li><strong>Puedes encadenar varios</strong> separados por coma. Es lo que haremos en un momento.</li></ul></div>
-<p class="small" style="margin-top:.9em"><code>LEFT JOIN</code> y no <code>JOIN</code>, porque las 42 pel&iacute;culas sin copia tienen que salir igual &mdash; con <code>NULL</code>, que despu&eacute;s convertiremos en cero.</p>
+<p class="small" style="margin-top:.9em"><code>LEFT JOIN</code> y no <code>JOIN</code>, porque las 42 pel&iacute;culas sin copia tienen que salir igual &mdash; con <code>NULL</code> al lado.</p><p class="warn" style="margin-top:.7em"><strong>Y una pieza peque&ntilde;a que vas a necesitar ya:</strong> <code>COALESCE(x, 0)</code> devuelve <code>x</code>, y si <code>x</code> es <code>NULL</code> devuelve <code>0</code>. Convierte el hueco del <code>LEFT JOIN</code> en un cero presentable &mdash; porque en un informe, <strong>vac&iacute;o y cero no significan lo mismo</strong>.</p>
 <div class="excel-anchor" style="margin-top:1em"><span>Ya sabes hacerlo</span>En Excel: una hoja intermedia con el resumen <i aria-hidden="true">&rarr;</i> En SQL: <code>WITH</code></div></div></div>
 <div class="brand"><span>Bloque 3 · Tejer</span><span>Un nombre para cada pedazo</span></div>
 </section>
@@ -786,7 +786,7 @@ LEFT JOIN copias c ON f.film_id = c.film_id;</pre>
 <div class="hintbox"><strong>Pistas</strong><ul>
 <li>El pedazo de arriba ya est&aacute; escrito en la diapositiva anterior: c&oacute;pialo.</li>
 <li>&iquest;<code>JOIN</code> o <code>LEFT JOIN</code>? Piensa en las 42.</li>
-<li>Antes de ejecutar: <strong>&iquest;cu&aacute;ntas filas esperas?</strong></li></ul></div>
+<li>Envuelve el conteo en <code>COALESCE(..., 0)</code> para que el hueco salga como cero.</li><li>Antes de ejecutar: <strong>&iquest;cu&aacute;ntas filas esperas?</strong></li></ul></div>
 <p class="small" style="margin-top:.8em">Deben salir <strong>1.000 filas</strong>. Si te salen 958, revisa el tipo de uni&oacute;n.</p></div>
 <div data-r><pre>WITH copias AS (
   SELECT   film_id, COUNT(*) AS n_copias
@@ -799,8 +799,7 @@ FROM     film f
 LEFT JOIN copias c ON f.film_id = c.film_id
 ORDER BY copias, f.title;
 -- 1.000 filas. Las 42 primeras tienen 0.</pre>
-<p class="small" style="margin-top:.8em"><strong>Una pieza nueva:</strong> <code>COALESCE(x, 0)</code> devuelve <code>x</code>, y si <code>x</code> es <code>NULL</code> devuelve <code>0</code>. Es lo que convierte el hueco del <code>LEFT JOIN</code> en un cero presentable.</p>
-<p class="warn" style="margin-top:.7em">Sin <code>COALESCE</code> el informe sale con celdas vac&iacute;as donde deber&iacute;a decir cero &mdash; y en un informe, vac&iacute;o y cero no significan lo mismo.</p></div></div>
+<p class="small" style="margin-top:.8em">Si te salieron celdas vac&iacute;as en vez de ceros, te falt&oacute; el <code>COALESCE</code> del que hablamos hace un momento.</p></div></div>
 <div class="brand"><span>Bloque 3 · Tejer</span><span>1.000 filas, 42 con cero</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
@@ -831,12 +830,11 @@ GROUP BY i.film_id;</pre>
 <div class="g2">
 <div><p class="warn" style="margin:0"><strong>1 &middot; <code>COUNT(DISTINCT r.rental_id)</code>, no <code>COUNT(*)</code>.</strong></p>
 <p class="small" style="margin-top:.6em">Al pegar <code>payment</code> volvemos a bajar de nivel: <strong>un alquiler puede tener varios pagos</strong>. Si cuentas con <code>COUNT(*)</code> cuentas pagos, no alquileres.</p>
-<pre>-- en toda la base hay 1 alquiler
--- con m&aacute;s de un pago. UNO.
-SELECT COUNT(*) FROM (
-  SELECT rental_id FROM payment
-  GROUP BY rental_id HAVING COUNT(*) &gt; 1);   -- 1</pre>
-<p class="small" style="margin-top:.6em">Uno solo. Con estos datos, olvidar el <code>DISTINCT</code> te desv&iacute;a una fila de mil. <strong>Y por eso mismo es peligroso:</strong> nunca lo vas a notar probando.</p></div>
+<pre>-- solo hay UN alquiler con varios pagos...
+SELECT rental_id, COUNT(*) FROM payment
+GROUP BY rental_id HAVING COUNT(*) &gt; 1;
+-- 4591  |  5 pagos</pre>
+<p class="warn" style="margin-top:.6em"><strong>&hellip;pero mira el da&ntilde;o que hace ese uno solo.</strong> Ese alquiler es de <em>Jungle Closer</em>. Con <code>DISTINCT</code> la pel&iacute;cula tiene <strong>9 alquileres</strong>; sin &eacute;l, <strong>13</strong>. Un <strong>44 % de error</strong> en esa fila.</p><p class="small" style="margin-top:.6em">Una sola fila mal de mil, y por eso es peligroso: <strong>nunca lo vas a notar probando</strong>. Pero si esa fila es la que va al informe, el error es enorme.</p></div>
 <div><p class="warn" style="margin:0"><strong>2 &middot; <code>LEFT JOIN payment</code>, no <code>JOIN</code>.</strong></p>
 <p class="small" style="margin-top:.6em">Hay <strong>1.452 alquileres sin ning&uacute;n pago registrado</strong> en la base. Con <code>JOIN</code> a secas desaparecen, y el conteo de alquileres queda corto.</p>
 <pre>SELECT COUNT(*)
@@ -844,7 +842,7 @@ FROM   rental r
 LEFT JOIN payment p ON r.rental_id = p.rental_id
 WHERE  p.payment_id IS NULL;   -- 1.452</pre>
 <p class="small" style="margin-top:.6em">Es el patr&oacute;n <code>LEFT JOIN</code> + <code>IS NULL</code> de la sesi&oacute;n 4, usado aqu&iacute; para <em>medir</em> el da&ntilde;o antes de cometerlo.</p>
-<p class="ctx" style="margin-top:.8em"><strong>Academy Dinosaur</strong> tiene 23 alquileres, de los cuales 2 no tienen pago. Con <code>JOIN</code> dir&iacute;as 21. Con <code>LEFT JOIN</code>, 23.</p></div></div>
+<p class="ctx" style="margin-top:.8em"><strong>Y no es un caso aislado:</strong> el <code>JOIN</code> a secas cambia el conteo de <strong>727 de las 958</strong> pel&iacute;culas con movimiento. <em>Academy Dinosaur</em> pasa de 23 a 21; <em>Bucket Brotherhood</em>, de 34 a 28.</p></div></div>
 <div class="brand"><span>Bloque 4 · Juntar</span><span>DISTINCT y LEFT: dos palabras, dos n&uacute;meros</span></div>
 </section>
 <section class="slide" data-title="Taller 3"><div class="ey">Taller 3 &middot; 10 minutos</div>
@@ -923,26 +921,38 @@ ORDER BY recaudo DESC;</pre></div>
 <tr><td class="hl">Telegraph Voyage</td><td class="hl">Music</td><td class="num hl">7</td><td class="num hl">27</td><td class="num hl">215,75</td></tr>
 <tr><td>Zorro Ark</td><td>Comedy</td><td class="num">8</td><td class="num">31</td><td class="num">199,72</td></tr>
 <tr><td>Wife Turn</td><td>Documentary</td><td class="num">8</td><td class="num">31</td><td class="num">198,73</td></tr>
-<tr><td>Innocent Usual</td><td>Foreign</td><td class="num">8</td><td class="num">30</td><td class="num">191,74</td></tr>
-<tr><td>Hustler Party</td><td>Comedy</td><td class="num">8</td><td class="num">26</td><td class="num">190,78</td></tr>
+<tr><td>Innocent Usual</td><td>Foreign</td><td class="num">8</td><td class="num">26</td><td class="num">191,74</td></tr>
+<tr><td>Hustler Party</td><td>Comedy</td><td class="num">8</td><td class="num">22</td><td class="num">190,78</td></tr>
 </table>
 <p class="small" style="margin-top:.8em"><strong>Un detalle que vale la pena mirar:</strong> <em>Telegraph Voyage</em> recauda m&aacute;s que <em>Zorro Ark</em> con <strong>una copia menos y cuatro alquileres menos</strong>. Cobra m&aacute;s por alquiler. Eso es un hallazgo de negocio que la tabla dej&oacute; a la vista sin que nadie lo buscara.</p></div></div>
 <div class="brand"><span>Bloque 4 · Juntar</span><span>1.000 filas · la primera, Telegraph Voyage</span></div>
 </section>
-<section class="slide mid" data-title="La comprobación cruzada"><div class="ey">Bloque 4 &middot; 4 minutos</div>
+<section class="slide dense" data-title="La comprobación cruzada"><div class="ey">Bloque 4 &middot; 5 minutos</div>
 <h2>&iquest;C&oacute;mo sabes que no te equivocaste?</h2>
-<div class="g2">
-<div><p>Una tabla de 1.000 filas no se revisa a ojo. Se comprueba con un n&uacute;mero que <strong>tenga que cuadrar por otro camino</strong>.</p>
-<pre>-- lo que suma mi tabla
-SELECT ROUND(SUM(recaudo), 2) FROM ( ...mi consulta... );
--- 61 312,04
+<p class="lead" style="max-width:none">Una tabla de 1.000 filas no se revisa a ojo. Se comprueba con totales que <strong>tengan que cuadrar por otro camino</strong>.</p>
+<div class="g2" style="margin-top:.9em">
+<div><pre>-- 1 · las copias
+SELECT SUM(copias)     FROM (...mi tabla...);   -- 4.581
+SELECT COUNT(*)        FROM inventory;          -- 4.581  &#10004;
 
--- lo que dice payment, directo y sin rodeos
-SELECT ROUND(SUM(amount), 2) FROM payment;
--- 61 312,04</pre></div>
-<div><p class="warn" style="margin:0"><strong>Cuadra al centavo, y eso no es casualidad.</strong> Si hubiera perdido alquileres con un <code>JOIN</code>, faltar&iacute;a plata. Si hubiera duplicado filas, sobrar&iacute;a. Que d&eacute; exactamente lo mismo por dos caminos distintos es la mejor prueba que vas a tener.</p>
-<div class="hintbox"><strong>H&aacute;zlo siempre</strong><p style="margin:.4em 0 0">Cada vez que construyas una tabla con varios <code>JOIN</code>, busca <strong>un total que puedas calcular por separado</strong> y comp&aacute;ralo. Cuesta treinta segundos y es la diferencia entre entregar y entregar con confianza.</p></div></div></div>
-<div class="brand"><span>Bloque 4 · Juntar</span><span>61.312,04 por los dos caminos</span></div>
+-- 2 · los alquileres
+SELECT SUM(alquileres) FROM (...mi tabla...);   -- 16.044
+SELECT COUNT(*)        FROM rental;             -- 16.044  &#10004;
+
+-- 3 · el dinero
+SELECT SUM(recaudo)    FROM (...mi tabla...);   -- 61.312,04
+SELECT SUM(amount)     FROM payment;            -- 61.312,04  &#10004;</pre>
+<p class="small" style="margin-top:.6em">Tres totales, tres caminos distintos. Los tres cuadran.</p></div>
+<div><p class="warn" style="margin:0"><strong>Y aqu&iacute; est&aacute; lo interesante: no todos sirven igual.</strong></p>
+<table class="res" style="margin-top:.7em"><caption>Qu&eacute; delata cada trampa</caption>
+<tr><th>Si te equivocaste en&hellip;</th><th class="num">recaudo</th><th class="num">alquileres</th></tr>
+<tr><td>nada &mdash; la buena</td><td class="num">61.312,04</td><td class="num">16.044</td></tr>
+<tr><td><code>JOIN</code> en vez de <code>LEFT JOIN</code></td><td class="num">61.312,04</td><td class="num hl"><strong>14.592</strong></td></tr>
+<tr><td><code>COUNT(*)</code> en vez de <code>DISTINCT</code></td><td class="num">61.312,04</td><td class="num hl"><strong>16.048</strong></td></tr>
+</table>
+<p class="warn" style="margin-top:.8em"><strong>El dinero no se entera de nada.</strong> Las dos trampas dejan el recaudo intacto y solo mueven el conteo. Si tu &uacute;nica comprobaci&oacute;n fuera la suma, las dos habr&iacute;an pasado.</p>
+<p class="small" style="margin-top:.7em"><strong>La lecci&oacute;n:</strong> comprueba <em>cada columna</em> contra su propia fuente, no solo la que te parece m&aacute;s importante. Y f&iacute;jate qu&eacute; barato es: son tres <code>SELECT COUNT(*)</code>.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>Cada columna, contra su propia fuente</span></div>
 </section>
 <section class="slide dense" data-title="CASE"><div class="ey">Bloque 5 &middot; La otra herramienta</div>
 <h2><code>CASE</code>: inventarte una columna</h2>

@@ -51,8 +51,9 @@ GROUP BY f.film_id;
 SELECT COUNT(*) FROM inventory WHERE film_id = 1;
 -- 8
 --
--- Cada copia aparece una vez por cada alquiler suyo. El número está
--- triplicado, no hubo error, y el informe sale con pinta de correcto.
+-- La cuenta sale así: sus 23 alquileres producen 23 filas, más 1 copia
+-- que nunca se alquiló y aparece una sola vez con NULL. 23 + 1 = 24.
+-- No hubo error, y el informe sale con pinta de correcto.
 
 
 -- =====================================================================
@@ -116,8 +117,15 @@ SELECT COUNT(*) FROM (
 );
 -- 1
 --
--- Uno solo en toda la base. Por eso es peligroso: olvidar el DISTINCT
--- te desvía una fila de mil y NUNCA lo vas a notar probando.
+-- Uno solo: el rental_id 4591, con 5 pagos. Pero mira el daño que hace:
+-- ese alquiler es de "Jungle Closer", que con DISTINCT tiene 9
+-- alquileres y sin él, 13. Un 44 % de error en esa fila.
+SELECT COUNT(DISTINCT r.rental_id), COUNT(*)
+FROM   film f JOIN inventory i ON f.film_id = i.film_id
+JOIN   rental r ON i.inventory_id = r.inventory_id
+LEFT JOIN payment p ON r.rental_id = p.rental_id
+WHERE  f.title = 'Jungle Closer';
+-- 9 | 13
 
 -- 4.2 · Trampa 2: hay alquileres SIN ningún pago registrado.
 SELECT COUNT(*)
@@ -126,7 +134,8 @@ LEFT JOIN payment p ON r.rental_id = p.rental_id
 WHERE  p.payment_id IS NULL;
 -- 1452
 --
--- Con JOIN a secas desaparecen y el conteo de alquileres queda corto.
+-- Con JOIN a secas desaparecen: cambia el conteo de 727 de las 958
+-- películas con movimiento. Bucket Brotherhood pasa de 34 a 28.
 
 -- Academy Dinosaur lo muestra en pequeño:
 SELECT COUNT(*) FROM rental r
@@ -186,8 +195,8 @@ ORDER BY recaudo DESC;
 --   Telegraph Voyage  Music         7  27  215.75
 --   Zorro Ark         Comedy        8  31  199.72
 --   Wife Turn         Documentary   8  31  198.73
---   Innocent Usual    Foreign       8  30  191.74
---   Hustler Party     Comedy        8  26  190.78
+--   Innocent Usual    Foreign       8  26  191.74
+--   Hustler Party     Comedy        8  22  190.78
 --
 -- Telegraph Voyage recauda MÁS que Zorro Ark con una copia menos y
 -- cuatro alquileres menos: cobra más por alquiler. Hallazgo de negocio
@@ -221,9 +230,21 @@ LEFT JOIN movimiento mv ON f.film_id = mv.film_id;
 -- Lo que dice payment, directo:
 SELECT ROUND(SUM(amount), 2) FROM payment;
 -- 61312.04
+
+-- PERO OJO: el dinero NO delata las trampas. Comprobado: la consulta
+-- correcta, la que usa JOIN en vez de LEFT JOIN y la que usa COUNT(*)
+-- en vez de COUNT(DISTINCT) dan las TRES 61312.04.
 --
--- Cuadra al centavo. Si hubiera perdido alquileres con un JOIN faltaría
--- plata; si hubiera duplicado filas, sobraría.
+-- Lo que sí las caza son los conteos:
+SELECT COUNT(*) FROM inventory;   -- 4581   <- comparar con SUM(copias)
+SELECT COUNT(*) FROM rental;      -- 16044  <- comparar con SUM(alquileres)
+--
+--   la buena ................. 16044
+--   con JOIN a payment ....... 14592   (faltan 1452)
+--   con COUNT(*) ............. 16048   (sobran 4)
+--
+-- LA LECCIÓN: comprueba CADA COLUMNA contra su propia fuente, no solo
+-- la que te parece más importante.
 
 
 -- =====================================================================
