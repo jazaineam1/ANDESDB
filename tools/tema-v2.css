@@ -455,3 +455,6 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 
 /* ===== esquema entrada -> resultado ===== */
 .joinviz{display:block;width:100%;max-height:34cqh;margin:.9em 0 0}
+
+/* ===== el mapa con la cardinalidad ===== */
+.mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}

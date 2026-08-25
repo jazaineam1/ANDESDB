@@ -83,6 +83,7 @@ DECKS = {
         'Calentamiento': 'Apertura',
         'Las llaves': 'Bloque 1 · Cómo se apuntan',
         'Cardinalidades': 'Bloque 1 · Cómo se apuntan',
+        'La cardinalidad en el mapa': 'Bloque 1 · Cómo se apuntan',
         'UNION': 'Bloque 2 · Apilar',
         'Las reglas del UNION': 'Bloque 2 · Apilar',
         'UNION ALL': 'Bloque 2 · Apilar',
