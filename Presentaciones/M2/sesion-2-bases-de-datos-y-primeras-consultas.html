@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesión 2 · Bases de datos y primeras consultas · Diseño y Gestión de Bases de Datos con SQL"><title>Sesión 2 · Bases de datos y primeras consultas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23ffd600%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22bold%22%20fill%3D%22%23171717%22%3E2%3C/text%3E%3C/svg%3E">
 <style>
 /* ====================================================================
    TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
@@ -59,13 +60,15 @@ button,a{font:inherit}
   position:relative;
   width:min(100vw,177.777vh);
   height:min(100vh,56.25vw);
-  margin:auto; top:50%; transform:translateY(-50%);
+  margin:auto; top:50%;
   background:var(--paper);
   border-radius:10px;
   box-shadow:0 24px 70px rgba(0,0,0,.45);
   overflow:hidden;
   container-type:size;
   container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
 }
 
 /* --- diapositiva: aquí nace la escala tipográfica ------------------ */
@@ -184,7 +187,13 @@ code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
 .flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
 .flowline article:nth-of-type(2n){border-top-color:var(--b)}
 .flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
-.flowline .em{font-size:1.9em;line-height:1;display:block}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
 .flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
 .flowline>i{
   align-self:center;flex:0 0 auto;display:grid;place-items:center;
@@ -268,7 +277,8 @@ pre{
 
 .dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
 .dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
-.dlrow a:hover{background:#000}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
 .dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
 
 /* --- botones --------------------------------------------------------- */
@@ -289,6 +299,9 @@ pre{
 .ui-legend span{color:var(--ink)}
 .ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
 .schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;gap:.35em;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
 .tnode{cursor:pointer}
 .tnode rect{transition:fill .15s,stroke-width .15s}
 .tnode:hover rect{stroke-width:4.5}
@@ -453,7 +466,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 .venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
 
 /* ===== reparto vertical: sin tercio inferior muerto ===== */
-.slide.mid.active{display:flex;flex-direction:column;justify-content:center}
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
 .slide.mid.active>.brand{position:absolute}
 
 /* ===== esquema entrada -> resultado ===== */
@@ -465,6 +478,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 /* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
 .cnode{cursor:pointer}
 .cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
 .cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
 .cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
 .cdata{display:none}
@@ -473,17 +487,26 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
   background:var(--paper); color:var(--ink);
   border:2px solid var(--ink); border-radius:var(--r-lg);
-  box-shadow:0 -6px 40px rgba(0,0,0,.22);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
   padding:1.1em 1.3em 1em; z-index:5;
-  display:none; max-height:66cqh; overflow:auto;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
 }
-.cpanel.open{display:block}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
 .cclose{
   position:absolute; top:.5em; right:.6em; z-index:2;
   border:0; background:var(--ink); color:#fff;
-  width:1.9em; height:1.9em; border-radius:50%;
+  width:44px; height:44px; border-radius:50%;
   font-size:1em; font-weight:800; cursor:pointer; line-height:1;
 }
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
 .cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
 .cbadge{
   font-family:Consolas,monospace; font-size:.82em; font-weight:800;
@@ -517,6 +540,32 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 /* los valores que se repiten en el puente, para ver el N:N */
 .ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
 .ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 0 0 100vmax rgba(17,17,17,.58)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
 
 </style></head>
 <body><main class="stage">
@@ -760,7 +809,7 @@ LIMIT 5;</pre></div><div class="brand"><span>Bloque 5 · Primeras consultas</spa
 </section>
 
 <div class="progress"><div class="bar" id="bar"></div></div></main>
-<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 28</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador">T</button><a class="ctl" id="dlBtn" href="sesion-2-bases-de-datos-y-primeras-consultas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 28</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-2-bases-de-datos-y-primeras-consultas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
 <div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button><button data-min="20">20 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
 <div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
 <div class="sr" id="announce" aria-live="assertive"></div>
@@ -836,6 +885,27 @@ let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].scr
 upd();render()})();
 </script><script>
 (()=>{'use strict';
+ const scope = document.querySelector('[data-title="Cómo se conectan"]');
+ if(!scope) return;
+ const schema = scope.querySelector('.schema-sm');
+ if(schema && !schema.closest('.diagram-scroll')){
+   const wrap = document.createElement('div');
+   wrap.className = 'diagram-scroll';
+   wrap.tabIndex = 0;
+   wrap.setAttribute('role','region');
+   wrap.setAttribute('aria-label','Mapa desplazable de tablas. En pantallas angostas, usa las flechas o desliza horizontalmente.');
+   schema.before(wrap);
+   wrap.appendChild(schema);
+ }
+ const purpose = scope.querySelector('.question-purpose');
+ if(purpose && !purpose.querySelector('.interaction-note')){
+   const note = document.createElement('span');
+   note.className = 'interaction-note';
+   note.textContent = '\u2192 haz clic';
+   purpose.appendChild(note);
+ }
+ const status = scope.querySelector('.tinfo');
+ if(status){status.setAttribute('role','status');status.setAttribute('aria-live','polite');}
  function pinta(scope, nombre){
    const info = scope.querySelector('.tinfo');
    const src  = scope.querySelector('.tdata[data-tabla="'+nombre+'"]');
@@ -843,8 +913,7 @@ upd();render()})();
    info.innerHTML = src.innerHTML;
    scope.querySelectorAll('.tnode').forEach(n=>n.classList.toggle('sel', n.dataset.tabla===nombre));
  }
- document.querySelectorAll('.tnode').forEach(n=>{
-   const scope = n.closest('.slide');
+ scope.querySelectorAll('.tnode').forEach(n=>{
    const go = ()=>pinta(scope, n.dataset.tabla);
    n.addEventListener('click', go);
    n.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); go(); }});

@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 5 - Algoritmica de tablas: nivel de agregacion, servilletas, CTE y CASE - Diseno y Gestion de Bases de Datos con SQL"><title>Sesi&oacute;n 5 &middot; Algor&iacute;tmica de tablas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23ffd600%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22bold%22%20fill%3D%22%23171717%22%3E5%3C/text%3E%3C/svg%3E">
+<style>
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%;
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;width:2em;height:2em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;gap:.35em;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.tnode{cursor:pointer}
+.tnode rect{transition:fill .15s,stroke-width .15s}
+.tnode:hover rect{stroke-width:4.5}
+.tnode:focus{outline:none}
+.tnode:focus rect{stroke:#ff8a24;stroke-width:5}
+.tnode.sel rect{stroke:#ff8a24;stroke-width:5}
+.tinfo{height:15cqh;overflow:auto;margin-top:.5em;padding:.7em 1em;background:var(--bl);border-left:.4em solid var(--b);border-radius:var(--r-md);color:var(--ink)}
+.tinfo h3{margin:0 0 .4em;font-family:Consolas,monospace;color:var(--b)}
+.tinfo h3 small{font-family:"Segoe UI",Arial,sans-serif;font-weight:600;color:var(--ink-soft);font-size:.62em;margin-left:.6em}
+.tinfo .res td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;width:14em}
+.tinfo-hint{margin:0;color:var(--ink-soft);font-size:.92em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15em 1.6em}
+.dgrid div{display:flex;gap:.6em;align-items:baseline;border-bottom:1px solid rgba(18,78,120,.12);padding:.16em 0}
+.dgrid b{font-family:Consolas,monospace;color:var(--b);flex:0 0 10.5em;font-size:.92em}
+.dgrid span{font-size:.88em;line-height:1.3}
+.tdata{display:none}
+.k{border-radius:var(--pill);padding:.05em .5em;font-size:.72em;font-weight:800;font-family:"Segoe UI",Arial,sans-serif}
+.k.pk{background:var(--ink);color:var(--y)}
+.k.fk{background:var(--b);color:#fff}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{max-width:14em;max-height:4.5em;object-fit:contain}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+
+/* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
+.minitimer{
+  position:fixed; left:1rem; bottom:1rem; z-index:90;
+  display:none; align-items:center; gap:.55rem;
+  padding:.5rem .6rem .5rem .9rem;
+  background:rgba(17,17,17,.94); color:#fff;
+  border-radius:999px; box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-family:"Segoe UI",Arial,sans-serif;
+  cursor:grab; touch-action:none; user-select:none;
+  transition:background .2s;
+}
+.minitimer.on{display:flex}
+.minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.minitimer .mt{
+  font:900 1.5rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.6em; text-align:center;
+}
+.minitimer button{
+  border:0; width:2rem; height:2rem; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff;
+  font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
+}
+.minitimer button:hover{background:rgba(255,255,255,.28)}
+.minitimer .lbl{
+  font-size:.62rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--y); font-weight:800; margin-right:.1rem;
+}
+/* últimos 60 segundos */
+.minitimer.avisa{background:rgba(193,18,63,.95)}
+.minitimer.avisa .lbl{color:#fff}
+/* se acabó */
+.minitimer.fin{background:rgba(193,18,63,.97); animation:latido 1s ease-in-out infinite}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media print{ .minitimer{display:none!important} }
+
+/* ===== arte de portada: ocupa la mitad que quedaba vacía ===== */
+.arte{
+  position:absolute; right:5.4%; top:50%; transform:translateY(-50%);
+  width:38%; max-height:70cqh; z-index:1; pointer-events:none;
+}
+@media (max-aspect-ratio:1/1){ .arte{display:none} }
+
+/* ===== los cuatro JOIN, de un vistazo ===== */
+.venns{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.2em 0 1.3em}
+.venns figure{margin:0;text-align:center}
+.venns svg{width:100%;max-height:11cqh;display:block;margin:0 auto}
+.venns figcaption{margin-top:.35em;line-height:1.25}
+.venns figcaption code{display:block;font-weight:800;font-size:.86em;color:var(--b)}
+.venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
+
+/* ===== reparto vertical: sin tercio inferior muerto ===== */
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
+.slide.mid.active>.brand{position:absolute}
+
+/* ===== esquema entrada -> resultado ===== */
+.joinviz{display:block;width:100%;max-height:34cqh;margin:.9em 0 0}
+
+/* ===== el mapa con la cardinalidad ===== */
+.mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}
+
+/* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
+.cnode{cursor:pointer}
+.cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
+.cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
+.cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
+.cdata{display:none}
+
+.cpanel{
+  position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
+  background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink); border-radius:var(--r-lg);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
+  padding:1.1em 1.3em 1em; z-index:5;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
+.cclose{
+  position:absolute; top:.5em; right:.6em; z-index:2;
+  border:0; background:var(--ink); color:#fff;
+  width:44px; height:44px; border-radius:50%;
+  font-size:1em; font-weight:800; cursor:pointer; line-height:1;
+}
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
+.cbadge{
+  font-family:Consolas,monospace; font-size:.82em; font-weight:800;
+  color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
+}
+.cbadge.1N,.cbadge\31 N{background:var(--o)}
+.cbadge\31 1{background:var(--b)}
+.cbadge\4e N{background:var(--r)}
+
+.ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
+.cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
+.ct{margin:0;flex:0 1 auto;min-width:0}
+.cth{
+  font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
+  background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.ct.o .cth{background:var(--o)} .ct.k .cth{background:var(--ink)}
+.ct.y .cth{background:var(--y);color:var(--ink)}
+.ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
+  border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
+.ct th{background:#f4f7fa;color:var(--ink-soft);font-family:Consolas,monospace;
+  font-weight:700;text-align:left;padding:.3em .6em;font-size:.92em;white-space:nowrap}
+.ct td{padding:.28em .6em;border-top:1px solid #eef3f7;color:var(--ink);
+  font-family:Consolas,monospace;white-space:nowrap}
+.ct tr.mas td{text-align:center;color:var(--ink-soft);letter-spacing:.2em}
+.ct figcaption{font-size:.72em;color:var(--ink-soft);margin-top:.3em;text-align:center}
+.cnota{margin:1em 0 0;font-size:.86em;line-height:1.45;
+  background:var(--yl);border-left:.35em solid var(--y);
+  border-radius:var(--r-sm);padding:.7em .9em;color:var(--ink)}
+
+/* los valores que se repiten en el puente, para ver el N:N */
+.ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
+.ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 0 0 100vmax rgba(17,17,17,.58)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
+
+</style></head>
+<body><main class="stage">
+
+<section class="slide dark" data-title="Portada"><div class="logo">Universidad de los Andes &middot; Colsubsidio</div>
+<div class="ey">Sesi&oacute;n 5 &middot; M&oacute;dulo 2</div>
+<h1>Algor&iacute;tmica de tablas</h1>
+<p class="lead">Ya sabes escribir consultas. Hoy aprendes a <strong>pensarlas antes de escribirlas</strong>: dibujar la tabla que quieres y llegar a ella por pedazos.</p>
+<div class="chips"><code>nivel de agregaci&oacute;n</code><code>servilleta</code><code>WITH</code><code>CTE</code><code>CASE</code></div>
+<div class="dlrow"><a href="base-datos/dvdrental.db" download>&#128451; La base de datos<small>la misma de siempre</small></a><a href="chuleta-taller.html">&#128196; Hoja de ayuda<small>t&eacute;nla al lado</small></a><a href="../../Scripts/S5.sql" download>&#128220; Las consultas de la clase<small>S5.sql</small></a></div>
+<p class="small" style="margin-top:1em;opacity:.85">Hoy es una sesi&oacute;n de <strong>taller</strong>: cinco ejercicios y menos diapositivas de las de siempre.</p>
+<div class="brand"><span>Sesión 5 · Módulo 2</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
+</section>
+<section class="slide mid" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>Cinco talleres y un m&eacute;todo</h2>
+<div class="agenda-grid">
+<article><b>1</b><h3>El nivel de agregaci&oacute;n</h3><p>Peras con peras, peras con manzanas. Por qu&eacute; una uni&oacute;n te da 24 copias donde hay 8.</p></article>
+<article><b>2</b><h3>La servilleta</h3><p>Dibujar la tabla que quieres <em>antes</em> de escribir una sola l&iacute;nea.</p></article>
+<article><b>3</b><h3>El marco de cinco pasos</h3><p>El mismo procedimiento para cualquier tabla, por complicada que sea.</p></article>
+<article><b>&#9208;</b><h3>Pausa</h3><p>15 minutos.</p></article>
+<article><b>4</b><h3>Tejer con <code>WITH</code></h3><p>Partir el problema en pedazos que puedes comprobar uno por uno.</p></article>
+<article><b>5</b><h3><code>CASE</code> y el cierre</h3><p>Crear columnas nuevas. Y tres certificados gratuitos de SQL.</p></article>
+</div>
+<div class="brand"><span>Apertura</span><span>Hoy se escribe m&aacute;s de lo que se escucha</span></div>
+</section>
+<section class="slide mid" data-title="Tus cuatro armas"><div class="ey">Calentamiento &middot; 5 minutos</div>
+<h2>Ya tienes todo lo que necesitas</h2>
+<p class="lead" style="max-width:none">En cuatro sesiones aprendiste cuatro operaciones. <strong>No hay una quinta.</strong> Todo lo que viene hoy son combinaciones de estas.</p>
+<div class="shapes" style="grid-template-columns:repeat(4,1fr)">
+<article><h3>Filtrar</h3><p><code>WHERE</code> &middot; <code>HAVING</code></p><p class="small" style="margin-top:.5em">Quedarme con unas filas y descartar otras.</p></article>
+<article><h3>Agregar</h3><p><code>GROUP BY</code> + <code>COUNT</code>, <code>SUM</code>, <code>AVG</code></p><p class="small" style="margin-top:.5em">Convertir muchas filas en una.</p></article>
+<article><h3>Apilar</h3><p><code>UNION</code> &middot; <code>UNION ALL</code></p><p class="small" style="margin-top:.5em">Pegar un resultado <em>debajo</em> de otro.</p></article>
+<article><h3>Enganchar</h3><p><code>JOIN</code></p><p class="small" style="margin-top:.5em">Pegar una tabla <em>al lado</em> de otra.</p></article>
+</div>
+<p class="warn" style="margin-top:1.4em"><strong>Lo que falta no es sintaxis: es orden.</strong> Hoy no aprendes una cl&aacute;usula nueva &mdash;bueno, dos peque&ntilde;as&mdash;. Aprendes en <strong>qu&eacute; orden</strong> aplicar las cuatro que ya tienes para llegar a una tabla que hoy no sabr&iacute;as escribir de un tir&oacute;n.</p>
+<div class="brand"><span>Apertura</span><span>Cuatro operaciones, infinitas combinaciones</span></div>
+</section>
+<section class="slide dense" data-title="La tabla de hoy"><div class="ey">Calentamiento &middot; 6 minutos</div>
+<h2>Esta es la tabla que vamos a construir</h2>
+<div class="ctx">La gerente pide un informe del cat&aacute;logo: <strong>una fila por pel&iacute;cula</strong>, con su categor&iacute;a, cu&aacute;ntas copias tiene, cu&aacute;ntas veces se ha alquilado y cu&aacute;nto ha recaudado.</div>
+<table class="res" style="margin-top:1.1em"><caption>Lo que hay que entregar &mdash; 1.000 filas</caption>
+<tr><th>title</th><th>categoria</th><th class="num">copias</th><th class="num">alquileres</th><th class="num">recaudo</th></tr>
+<tr><td>Telegraph Voyage</td><td>Music</td><td class="num">7</td><td class="num">27</td><td class="num">215,75</td></tr>
+<tr><td>Zorro Ark</td><td>Comedy</td><td class="num">8</td><td class="num">31</td><td class="num">199,72</td></tr>
+<tr><td>Wife Turn</td><td>Documentary</td><td class="num">8</td><td class="num">31</td><td class="num">198,73</td></tr>
+<tr><td>Academy Dinosaur</td><td>Documentary</td><td class="num">8</td><td class="num">23</td><td class="num">33,79</td></tr>
+<tr><td>Alice Fantasia</td><td>Classics</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+</table>
+<div class="g2" style="margin-top:1.1em">
+<div><p><strong>Necesita cuatro tablas:</strong> <code>film</code>, <code>film_category</code>, <code>category</code>, <code>inventory</code>, <code>rental</code> y <code>payment</code>. Seis, en realidad.</p>
+<p class="small" style="margin-top:.6em">Y f&iacute;jate en la &uacute;ltima fila: <em>Alice Fantasia</em> es una de las 42 sin copia. Tiene que salir, con ceros.</p></div>
+<div><p class="warn" style="margin:0"><strong>Int&eacute;ntalo de un tir&oacute;n y te sale mal.</strong> No por la sintaxis &mdash;esa la sabes toda&mdash; sino por una raz&oacute;n que vamos a ver en la diapositiva siguiente y que tiene nombre propio.</p></div></div>
+<div class="brand"><span>Apertura</span><span>Una fila por pel&iacute;cula, seis tablas de origen</span></div>
+</section>
+<section class="slide dense" data-title="Peras con manzanas"><div class="ey">Bloque 1 &middot; El nivel de agregaci&oacute;n</div>
+<h2>&iquest;Peras con peras, o peras con manzanas?</h2>
+<p class="lead" style="max-width:none">Antes de unir dos tablas hay una pregunta que decide si el resultado sirve: <strong>&iquest;qu&eacute; representa una fila en cada una?</strong> A eso se le llama <em>unidad de observaci&oacute;n</em> o <strong>nivel de agregaci&oacute;n</strong>.</p>
+<div class="vs-grid">
+<section><h3>Peras con peras</h3><p class="tagline">Mismo nivel</p>
+<pre>film        1 fila = 1 pel&iacute;cula
+film_category  1 fila = 1 pel&iacute;cula</pre>
+<p class="small" style="margin-top:.6em">Unirlas es seguro: entran 1.000 filas y salen 1.000. Nada se multiplica.</p></section>
+<section><h3>Peras con manzanas</h3><p class="tagline">Niveles distintos</p>
+<pre>film       1 fila = 1 pel&iacute;cula
+inventory  1 fila = 1 <strong>copia f&iacute;sica</strong>
+rental     1 fila = 1 <strong>alquiler</strong></pre>
+<p class="small" style="margin-top:.6em">Unirlas <strong>multiplica</strong>. Una pel&iacute;cula con 8 copias y 23 alquileres deja de ser una fila.</p></section>
+</div>
+<p class="warn" style="margin-top:1.2em"><strong>Esto ya te pas&oacute; y no ten&iacute;a nombre.</strong> En la sesi&oacute;n 4 viste que <code>film JOIN inventory</code> daba 4.581 filas con 1.000 pel&iacute;culas, y que el promedio sal&iacute;a distinto. Era esto. Hoy le ponemos nombre y, sobre todo, <strong>soluci&oacute;n</strong>.</p>
+<div class="brand"><span>Bloque 1 · El nivel de agregación</span><span>&iquest;Qu&eacute; representa una fila?</span></div>
+</section>
+<section class="slide dense" data-title="La trampa, en vivo"><div class="ey">Bloque 1 &middot; 8 minutos &middot; lo hacemos juntos</div>
+<h2>Ocho copias que se vuelven veinticuatro</h2>
+<div class="g2">
+<div><p><strong>Ejecuten esto</strong> y vean c&oacute;mo crece el resultado a cada paso:</p>
+<pre>SELECT COUNT(*) FROM film;                       -- 1.000
+
+... LEFT JOIN inventory i ON f.film_id=i.film_id  -- 4.623
+
+... LEFT JOIN rental r ON i.inventory_id=r.inventory_id
+                                                  -- 16.087
+
+... LEFT JOIN payment p ON r.rental_id=p.rental_id
+                                                  -- 16.091</pre>
+<p class="small" style="margin-top:.7em">Cada <code>JOIN</code> baja un nivel de agregaci&oacute;n. De pel&iacute;cula a copia, de copia a alquiler, de alquiler a pago.</p></div>
+<div><p class="warn" style="margin:0"><strong>Y ahora el da&ntilde;o.</strong> Sobre esa tabla inflada, cuenta las copias de <em>Academy Dinosaur</em>:</p>
+<pre>SELECT f.title, COUNT(i.inventory_id) AS copias
+FROM   film f
+LEFT JOIN inventory i ON f.film_id = i.film_id
+LEFT JOIN rental    r ON i.inventory_id = r.inventory_id
+WHERE  f.film_id = 1
+GROUP BY f.film_id;
+
+Academy Dinosaur   |   24</pre>
+<p class="warn" style="margin-top:.8em"><strong>Tiene 8 copias, no 24.</strong> Cada copia aparece una vez por cada alquiler suyo. El n&uacute;mero est&aacute; <strong>triplicado</strong>, la consulta no dio error, y el informe sale con pinta de correcto.</p>
+<p class="small" style="margin-top:.7em">Compru&eacute;balo: <code>SELECT COUNT(*) FROM inventory WHERE film_id=1;</code> &rarr; <strong>8</strong>.</p></div></div>
+<div class="brand"><span>Bloque 1 · El nivel de agregación</span><span>Cada JOIN baja un nivel</span></div>
+</section>
+<section class="slide dense" data-title="La servilleta"><div class="ey">Bloque 2 &middot; La servilleta</div>
+<h2>Dibuja la tabla antes de escribirla</h2>
+<div class="g2">
+<div><p>La costumbre que separa a quien copia consultas de quien las dise&ntilde;a es aburridamente simple: <strong>dibujar primero</strong>. En una servilleta, en un cuaderno, en una hoja de Excel. Sin SQL.</p>
+<p style="margin-top:.8em"><strong>Se dibujan tres cosas:</strong></p>
+<div class="steps" style="grid-template-columns:1fr">
+<article><b>1</b><h3>La tabla objetivo</h3><p>Sus columnas, y sobre todo <strong>qu&eacute; representa una fila</strong>. Dos o tres filas de ejemplo inventadas.</p></article>
+<article><b>2</b><h3>Las tablas de origen</h3><p>Cu&aacute;les son, y qu&eacute; representa una fila en cada una.</p></article>
+<article><b>3</b><h3>Qu&eacute; hay que hacerle a cada una</h3><p>&iquest;Est&aacute; al nivel que necesito, o hay que resumirla antes?</p></article>
+</div></div>
+<div><p class="ctx" style="margin:0"><strong>Por qu&eacute; funciona.</strong> Escribir SQL sin saber qu&eacute; representa una fila del resultado es como sumar sin saber las unidades. El dibujo obliga a decidirlo <em>antes</em>, cuando corregir cuesta un borr&oacute;n en vez de media hora de consulta.</p>
+<pre style="margin-top:1em">TABLA OBJETIVO
+1 fila = 1 pel&iacute;cula        &lt;- lo primero que escribo
+
+title  categoria  copias  alquileres  recaudo
+-----  ---------  ------  ----------  -------
+Zorro Ark  Comedy      8          31   199,72
+Alice F..  Classics    0           0        0
+
+ORIGEN                     NIVEL       &iquest;RESUMIR?
+film                       pel&iacute;cula    no
+film_category + category   pel&iacute;cula    no
+inventory                  copia       S&Iacute; -> contar
+rental + payment           alquiler    S&Iacute; -> contar y sumar</pre></div></div>
+<div class="brand"><span>Bloque 2 · La servilleta</span><span>Primero el dibujo, despu&eacute;s el SQL</span></div>
+</section>
+<section class="slide mid" data-title="El marco de cinco pasos"><div class="ey">Bloque 2 &middot; El m&eacute;todo</div>
+<h2>Cinco pasos, siempre los mismos</h2>
+<p class="lead" style="max-width:none">Sirve para esta tabla y para cualquier otra que te pidan el resto de tu vida.</p>
+<div class="steps" style="grid-template-columns:repeat(5,1fr)">
+<article><b>1</b><h3>Dibuja el objetivo</h3><p>Los campos y la <strong>unidad de observaci&oacute;n</strong>: qu&eacute; representa una fila.</p></article>
+<article><b>2</b><h3>&iquest;De d&oacute;nde viene cada campo?</h3><p>Qu&eacute; tabla trae cada columna.</p></article>
+<article><b>3</b><h3>Mira el nivel de cada origen</h3><p>&iquest;Peras con peras? &iquest;Peras con manzanas?</p></article>
+<article><b>4</b><h3>Resume lo que haga falta</h3><p><strong>Antes</strong> de unir, no despu&eacute;s. Un pedazo por cada nivel distinto.</p></article>
+<article><b>5</b><h3>Une los pedazos</h3><p>Ahora s&iacute;, todos al mismo nivel. Peras con peras.</p></article>
+</div>
+<p class="warn" style="margin-top:1.4em"><strong>El paso 4 es el que casi nadie hace, y es el que evita el desastre.</strong> «Resumir antes de unir» es la respuesta a la pregunta que qued&oacute; abierta en la sesi&oacute;n 4: c&oacute;mo arreglar un promedio inflado.</p>
+<div class="brand"><span>Bloque 2 · La servilleta</span><span>Resumir antes de unir</span></div>
+</section>
+<section class="slide" data-title="Taller 1"><div class="ey">Taller 1 &middot; 10 minutos &middot; sin escribir SQL</div>
+<h2>Tu servilleta</h2>
+<div class="g2">
+<div><div class="ctx"><strong>En parejas y en papel.</strong> No abras Beekeeper todav&iacute;a. Dibuja la servilleta de la tabla de hoy siguiendo los pasos 1, 2 y 3.</div>
+<div class="hintbox"><strong>Lo que tienes que entregar</strong><ul>
+<li>La tabla objetivo con sus 5 columnas y <strong>dos filas inventadas</strong>.</li>
+<li>La frase «una fila del resultado es ______».</li>
+<li>Para cada tabla de origen: qu&eacute; representa una fila en ella.</li>
+<li>Una marca en las que <strong>hay que resumir antes</strong>.</li></ul></div>
+<p class="small" style="margin-top:.8em">Si te trabas, la servilleta de la diapositiva anterior es un ejemplo, no la respuesta: h&aacute;zla con tus palabras.</p></div>
+<div data-r><p><strong>Lo que deber&iacute;a salirte:</strong></p>
+<pre>1 fila del resultado = 1 PEL&Iacute;CULA
+
+film              1 fila = 1 pel&iacute;cula    ok
+film_category     1 fila = 1 pel&iacute;cula    ok
+category          1 fila = 1 categor&iacute;a   ok (se llega por film_category)
+inventory         1 fila = 1 copia       &#9888; RESUMIR
+rental            1 fila = 1 alquiler    &#9888; RESUMIR
+payment           1 fila = 1 pago        &#9888; RESUMIR</pre>
+<p class="small" style="margin-top:.8em">Tres tablas est&aacute;n al nivel que necesitas y tres no. Esas tres son las que van a necesitar su propio pedazo de consulta.</p>
+<p class="warn" style="margin-top:.8em"><strong>Si escribiste esto, ya hiciste la parte dif&iacute;cil.</strong> Lo que queda es traducirlo, y traducir es lo que llevas cuatro sesiones practicando.</p></div></div>
+<div class="brand"><span>Bloque 2 · La servilleta</span><span>Papel primero, teclado despu&eacute;s</span></div>
+</section>
+<section class="slide dense" data-title="De dónde viene cada campo"><div class="ey">Bloque 3 &middot; Tejer &middot; paso 2</div>
+<h2>Cada columna tiene una direcci&oacute;n</h2>
+<table class="res"><caption>El paso 2 del marco, escrito</caption>
+<tr><th>Columna del objetivo</th><th>De d&oacute;nde sale</th><th>Nivel de origen</th><th>&iquest;Hay que resumir?</th></tr>
+<tr><td><code>title</code></td><td><code>film.title</code></td><td>pel&iacute;cula</td><td>no</td></tr>
+<tr><td><code>categoria</code></td><td><code>category.name</code>, por <code>film_category</code></td><td>pel&iacute;cula</td><td>no</td></tr>
+<tr><td class="hl"><code>copias</code></td><td class="hl">contar filas de <code>inventory</code></td><td class="hl">copia</td><td class="hl"><strong>s&iacute;</strong></td></tr>
+<tr><td class="hl"><code>alquileres</code></td><td class="hl">contar filas de <code>rental</code></td><td class="hl">alquiler</td><td class="hl"><strong>s&iacute;</strong></td></tr>
+<tr><td class="hl"><code>recaudo</code></td><td class="hl">sumar <code>payment.amount</code></td><td class="hl">pago</td><td class="hl"><strong>s&iacute;</strong></td></tr>
+</table>
+<div class="g2" style="margin-top:1.1em">
+<div><p class="ctx" style="margin:0">Las dos primeras filas son <strong>peras con peras</strong>: se pueden unir directo. Las tres amarillas est&aacute;n a otro nivel y hay que bajarlas al nivel «pel&iacute;cula» <em>antes</em> de pegarlas.</p></div>
+<div><p class="warn" style="margin:0"><strong>Y esa es toda la estrategia.</strong> Dos pedazos que resumen —uno para las copias, otro para el movimiento— y luego una uni&oacute;n final donde ya todo est&aacute; al mismo nivel.</p></div></div>
+<div class="brand"><span>Bloque 3 · Tejer</span><span>Dos pedazos y una uni&oacute;n final</span></div>
+</section>
+<section class="slide dense" data-title="El primer pedazo"><div class="ey">Bloque 3 &middot; Tejer &middot; paso 4</div>
+<h2>Baja <code>inventory</code> al nivel de pel&iacute;cula</h2>
+<div class="g2">
+<div><p><code>inventory</code> tiene 4.581 filas, una por copia. Lo que necesito es <strong>una por pel&iacute;cula</strong>, con el conteo. Eso ya lo sabes hacer desde la sesi&oacute;n 3:</p>
+<pre>SELECT   film_id, COUNT(*) AS n_copias
+FROM     inventory
+GROUP BY film_id;</pre>
+<p class="small" style="margin-top:.7em"><strong>958 filas.</strong> Una por cada pel&iacute;cula que tiene al menos una copia. Ya est&aacute; al nivel que quiero: <em>peras con peras</em> con <code>film</code>.</p></div>
+<div><table class="res" style="margin-top:0"><caption>El pedazo, por dentro</caption>
+<tr><th>film_id</th><th class="num">n_copias</th></tr>
+<tr><td>1</td><td class="num">8</td></tr>
+<tr><td>2</td><td class="num">3</td></tr>
+<tr><td>3</td><td class="num">4</td></tr>
+<tr><td colspan="2" style="text-align:center;color:var(--ink-soft)">&#8942;</td></tr>
+</table>
+<p class="warn" style="margin-top:.9em"><strong>Este es el paso que lo cambia todo.</strong> Ese <code>8</code> es el n&uacute;mero correcto, no el 24 de hace un rato. Y lo es porque resumimos <strong>antes</strong> de que <code>rental</code> entrara en escena.</p></div></div>
+<div class="brand"><span>Bloque 3 · Tejer</span><span>958 filas, una por pel&iacute;cula con copia</span></div>
+</section>
+<section class="slide dense" data-title="WITH"><div class="ey">Bloque 3 &middot; La herramienta nueva</div>
+<h2><code>WITH</code>: ponerle nombre a un pedazo</h2>
+<div class="g2">
+<div><p>Ese pedazo hay que guardarlo para usarlo despu&eacute;s. Para eso sirve <code>WITH</code>: <strong>le pone nombre a una consulta</strong> y luego la usas como si fuera una tabla m&aacute;s.</p>
+<pre>WITH copias AS (
+  SELECT   film_id, COUNT(*) AS n_copias
+  FROM     inventory
+  GROUP BY film_id
+)
+SELECT f.title, c.n_copias
+FROM   film f
+LEFT JOIN copias c ON f.film_id = c.film_id;</pre>
+<p class="small" style="margin-top:.7em">Se llama <strong>CTE</strong> (<em>Common Table Expression</em>). No crea nada en la base: existe solo mientras corre la consulta.</p></div>
+<div><div class="hintbox" style="margin-top:0"><strong>Tres cosas que ganas</strong><ul>
+<li><strong>Compruebas por partes.</strong> Ejecutas el pedazo solo, ves que da 958 filas, y sigues.</li>
+<li><strong>Se lee de arriba abajo</strong>, como los pasos que dibujaste.</li>
+<li><strong>Puedes encadenar varios</strong> separados por coma. Es lo que haremos en un momento.</li></ul></div>
+<p class="small" style="margin-top:.9em"><code>LEFT JOIN</code> y no <code>JOIN</code>, porque las 42 pel&iacute;culas sin copia tienen que salir igual &mdash; con <code>NULL</code>, que despu&eacute;s convertiremos en cero.</p>
+<div class="excel-anchor" style="margin-top:1em"><span>Ya sabes hacerlo</span>En Excel: una hoja intermedia con el resumen <i aria-hidden="true">&rarr;</i> En SQL: <code>WITH</code></div></div></div>
+<div class="brand"><span>Bloque 3 · Tejer</span><span>Un nombre para cada pedazo</span></div>
+</section>
+<section class="slide" data-title="Taller 2"><div class="ey">Taller 2 &middot; 8 minutos</div>
+<h2>Escribe el primer pedazo</h2>
+<div class="g2">
+<div><div class="ctx">Escribe la consulta completa con <code>WITH</code> que devuelva <strong>el t&iacute;tulo de cada pel&iacute;cula y cu&aacute;ntas copias tiene</strong>, incluidas las que no tienen ninguna.</div>
+<div class="hintbox"><strong>Pistas</strong><ul>
+<li>El pedazo de arriba ya est&aacute; escrito en la diapositiva anterior: c&oacute;pialo.</li>
+<li>&iquest;<code>JOIN</code> o <code>LEFT JOIN</code>? Piensa en las 42.</li>
+<li>Antes de ejecutar: <strong>&iquest;cu&aacute;ntas filas esperas?</strong></li></ul></div>
+<p class="small" style="margin-top:.8em">Deben salir <strong>1.000 filas</strong>. Si te salen 958, revisa el tipo de uni&oacute;n.</p></div>
+<div data-r><pre>WITH copias AS (
+  SELECT   film_id, COUNT(*) AS n_copias
+  FROM     inventory
+  GROUP BY film_id
+)
+SELECT   f.title,
+         COALESCE(c.n_copias, 0) AS copias
+FROM     film f
+LEFT JOIN copias c ON f.film_id = c.film_id
+ORDER BY copias, f.title;
+-- 1.000 filas. Las 42 primeras tienen 0.</pre>
+<p class="small" style="margin-top:.8em"><strong>Una pieza nueva:</strong> <code>COALESCE(x, 0)</code> devuelve <code>x</code>, y si <code>x</code> es <code>NULL</code> devuelve <code>0</code>. Es lo que convierte el hueco del <code>LEFT JOIN</code> en un cero presentable.</p>
+<p class="warn" style="margin-top:.7em">Sin <code>COALESCE</code> el informe sale con celdas vac&iacute;as donde deber&iacute;a decir cero &mdash; y en un informe, vac&iacute;o y cero no significan lo mismo.</p></div></div>
+<div class="brand"><span>Bloque 3 · Tejer</span><span>1.000 filas, 42 con cero</span></div>
+</section>
+<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
+<h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
+<p class="lead" style="margin:auto">Ya tienes el primer pedazo. Al volver hacemos el segundo &mdash;el que trae el dinero&mdash; y los juntamos.</p>
+<button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
+<div class="brand"><span>Pausa</span><span>Segunda mitad: juntar los pedazos</span></div>
+</section>
+<section class="slide dense" data-title="El segundo pedazo"><div class="ey">Bloque 4 &middot; Juntar</div>
+<h2>El movimiento: alquileres y dinero</h2>
+<div class="g2">
+<div><p>El segundo pedazo tiene que bajar <strong>dos niveles</strong> hasta pel&iacute;cula: de pago a alquiler, y de alquiler a copia.</p>
+<pre>SELECT   i.film_id,
+         COUNT(DISTINCT r.rental_id) AS n_alquileres,
+         ROUND(SUM(p.amount), 2)     AS total
+FROM     inventory i
+JOIN     rental  r ON i.inventory_id = r.inventory_id
+LEFT JOIN payment p ON r.rental_id   = p.rental_id
+GROUP BY i.film_id;</pre>
+<p class="small" style="margin-top:.7em">Empieza en <code>inventory</code> y no en <code>film</code> porque <code>inventory</code> es quien conoce el <code>film_id</code>: es el puente hacia arriba.</p></div>
+<div><p class="warn" style="margin:0"><strong>Hay dos trampas escondidas en esas cuatro l&iacute;neas</strong>, y las dos se ven en la diapositiva siguiente. Si las pasas por alto, el n&uacute;mero sale mal y no da error.</p>
+<p class="ctx" style="margin-top:.9em"><strong>Compru&eacute;balo antes de seguir.</strong> Ejecuta el pedazo solo, sin unirlo a nada. Debe darte <strong>958 filas</strong>, igual que el primero: una por pel&iacute;cula con movimiento.</p>
+<p class="small" style="margin-top:.7em">Ese h&aacute;bito &mdash;correr cada pedazo por separado antes de juntarlos&mdash; es la mitad del valor de trabajar con <code>WITH</code>.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>Comprueba cada pedazo por separado</span></div>
+</section>
+<section class="slide dense" data-title="Las dos trampas"><div class="ey">Bloque 4 &middot; 7 minutos</div>
+<h2>Dos detalles que cambian el n&uacute;mero</h2>
+<div class="g2">
+<div><p class="warn" style="margin:0"><strong>1 &middot; <code>COUNT(DISTINCT r.rental_id)</code>, no <code>COUNT(*)</code>.</strong></p>
+<p class="small" style="margin-top:.6em">Al pegar <code>payment</code> volvemos a bajar de nivel: <strong>un alquiler puede tener varios pagos</strong>. Si cuentas con <code>COUNT(*)</code> cuentas pagos, no alquileres.</p>
+<pre>-- en toda la base hay 1 alquiler
+-- con m&aacute;s de un pago. UNO.
+SELECT COUNT(*) FROM (
+  SELECT rental_id FROM payment
+  GROUP BY rental_id HAVING COUNT(*) &gt; 1);   -- 1</pre>
+<p class="small" style="margin-top:.6em">Uno solo. Con estos datos, olvidar el <code>DISTINCT</code> te desv&iacute;a una fila de mil. <strong>Y por eso mismo es peligroso:</strong> nunca lo vas a notar probando.</p></div>
+<div><p class="warn" style="margin:0"><strong>2 &middot; <code>LEFT JOIN payment</code>, no <code>JOIN</code>.</strong></p>
+<p class="small" style="margin-top:.6em">Hay <strong>1.452 alquileres sin ning&uacute;n pago registrado</strong> en la base. Con <code>JOIN</code> a secas desaparecen, y el conteo de alquileres queda corto.</p>
+<pre>SELECT COUNT(*)
+FROM   rental r
+LEFT JOIN payment p ON r.rental_id = p.rental_id
+WHERE  p.payment_id IS NULL;   -- 1.452</pre>
+<p class="small" style="margin-top:.6em">Es el patr&oacute;n <code>LEFT JOIN</code> + <code>IS NULL</code> de la sesi&oacute;n 4, usado aqu&iacute; para <em>medir</em> el da&ntilde;o antes de cometerlo.</p>
+<p class="ctx" style="margin-top:.8em"><strong>Academy Dinosaur</strong> tiene 23 alquileres, de los cuales 2 no tienen pago. Con <code>JOIN</code> dir&iacute;as 21. Con <code>LEFT JOIN</code>, 23.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>DISTINCT y LEFT: dos palabras, dos n&uacute;meros</span></div>
+</section>
+<section class="slide" data-title="Taller 3"><div class="ey">Taller 3 &middot; 10 minutos</div>
+<h2>Escribe el segundo pedazo</h2>
+<div class="g2">
+<div><div class="ctx">Escribe el CTE <code>movimiento</code>: por cada pel&iacute;cula, <strong>cu&aacute;ntos alquileres</strong> y <strong>cu&aacute;nto se recaud&oacute;</strong>. Ejec&uacute;talo solo, sin unirlo a nada.</div>
+<div class="hintbox"><strong>Pistas</strong><ul>
+<li>Arranca en <code>inventory</code>: es quien tiene el <code>film_id</code>.</li>
+<li>Acu&eacute;rdate del <code>DISTINCT</code> y del <code>LEFT</code>.</li>
+<li>Usa <code>ROUND(..., 2)</code> para el dinero.</li></ul></div>
+<p class="small" style="margin-top:.8em">Deben salir <strong>958 filas</strong>. Comprueba <em>Academy Dinosaur</em> (<code>film_id = 1</code>): <strong>23 alquileres y 33,79</strong>.</p></div>
+<div data-r><pre>WITH movimiento AS (
+  SELECT   i.film_id,
+           COUNT(DISTINCT r.rental_id) AS n_alquileres,
+           ROUND(SUM(p.amount), 2)     AS total
+  FROM     inventory i
+  JOIN     rental  r ON i.inventory_id = r.inventory_id
+  LEFT JOIN payment p ON r.rental_id   = p.rental_id
+  GROUP BY i.film_id
+)
+SELECT * FROM movimiento WHERE film_id = 1;
+
+film_id | n_alquileres | total
+      1 |           23 | 33.79</pre>
+<p class="small" style="margin-top:.8em"><strong>&iquest;Ves el 23?</strong> Ese es el n&uacute;mero que la trampa del <code>JOIN</code> habr&iacute;a dejado en 21, y el que la trampa del <code>COUNT(*)</code> habr&iacute;a dejado en 24. Las dos palabras importaban.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>958 filas · Academy Dinosaur, 23 y 33,79</span></div>
+</section>
+<section class="slide xdense" data-title="Juntar los pedazos"><div class="ey">Bloque 4 &middot; Paso 5</div>
+<h2>Ahora s&iacute;: todo al mismo nivel</h2>
+<p class="lead" style="max-width:none">Dos pedazos resumidos y tres tablas que ya estaban al nivel de pel&iacute;cula. <strong>Peras con peras.</strong> Se unen sin miedo.</p>
+<div class="g2" style="margin-top:.9em">
+<div><pre>WITH copias AS (
+  SELECT   film_id, COUNT(*) AS n_copias
+  FROM     inventory
+  GROUP BY film_id
+),
+movimiento AS (
+  SELECT   i.film_id,
+           COUNT(DISTINCT r.rental_id) AS n_alquileres,
+           ROUND(SUM(p.amount), 2)     AS total
+  FROM     inventory i
+  JOIN     rental  r ON i.inventory_id = r.inventory_id
+  LEFT JOIN payment p ON r.rental_id   = p.rental_id
+  GROUP BY i.film_id
+)
+SELECT   f.title,
+         cat.name                     AS categoria,
+         COALESCE(cp.n_copias, 0)     AS copias,
+         COALESCE(mv.n_alquileres, 0) AS alquileres,
+         COALESCE(mv.total, 0)        AS recaudo
+FROM     film f
+JOIN     film_category fc ON f.film_id = fc.film_id
+JOIN     category cat     ON fc.category_id = cat.category_id
+LEFT JOIN copias     cp ON f.film_id = cp.film_id
+LEFT JOIN movimiento mv ON f.film_id = mv.film_id
+ORDER BY recaudo DESC;</pre></div>
+<div><p><strong>F&iacute;jate en la forma.</strong> Dos <code>WITH</code> separados por coma, y luego una consulta final que solo <em>pega</em>. Ning&uacute;n <code>GROUP BY</code> en la parte de abajo: el trabajo pesado ya se hizo arriba.</p>
+<div class="hintbox"><strong>Por qu&eacute; cada uni&oacute;n es la que es</strong><ul>
+<li><code>JOIN film_category</code> y <code>JOIN category</code>: toda pel&iacute;cula tiene categor&iacute;a, no se pierde nada.</li>
+<li><code>LEFT JOIN copias</code>: las 42 sin copia deben salir.</li>
+<li><code>LEFT JOIN movimiento</code>: las que nunca se alquilaron, tambi&eacute;n.</li></ul></div>
+<p class="warn" style="margin-top:.9em"><strong>1.000 filas exactas.</strong> Una por pel&iacute;cula, como dec&iacute;a la servilleta. Si te salen m&aacute;s, alguna uni&oacute;n baj&oacute; de nivel sin que te dieras cuenta.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>Los CTE resumen, la consulta final solo pega</span></div>
+</section>
+<section class="slide" data-title="Taller 4"><div class="ey">Taller 4 &middot; 12 minutos</div>
+<h2>La tabla completa</h2>
+<div class="g2">
+<div><div class="ctx">Junta tus dos pedazos y entrega la tabla que pidi&oacute; la gerente: <strong>t&iacute;tulo, categor&iacute;a, copias, alquileres y recaudo</strong>, ordenada por recaudo de mayor a menor.</div>
+<div class="hintbox"><strong>Las tres comprobaciones</strong><ul>
+<li><strong>1.000 filas.</strong> Ni una m&aacute;s.</li>
+<li>La primera debe ser <em>Telegraph Voyage</em>, con 215,75.</li>
+<li>Las 42 sin copia deben aparecer con ceros, no vac&iacute;as.</li></ul></div>
+<p class="small" style="margin-top:.8em"><strong>&#9889; Si te sobra tiempo:</strong> a&ntilde;ade el promedio recaudado por alquiler. &iquest;Qu&eacute; hay que hacer con las que tienen cero alquileres?</p></div>
+<div data-r><table class="res"><caption>Las cinco primeras</caption>
+<tr><th>title</th><th>categoria</th><th class="num">copias</th><th class="num">alq.</th><th class="num">recaudo</th></tr>
+<tr><td class="hl">Telegraph Voyage</td><td class="hl">Music</td><td class="num hl">7</td><td class="num hl">27</td><td class="num hl">215,75</td></tr>
+<tr><td>Zorro Ark</td><td>Comedy</td><td class="num">8</td><td class="num">31</td><td class="num">199,72</td></tr>
+<tr><td>Wife Turn</td><td>Documentary</td><td class="num">8</td><td class="num">31</td><td class="num">198,73</td></tr>
+<tr><td>Innocent Usual</td><td>Foreign</td><td class="num">8</td><td class="num">30</td><td class="num">191,74</td></tr>
+<tr><td>Hustler Party</td><td>Comedy</td><td class="num">8</td><td class="num">26</td><td class="num">190,78</td></tr>
+</table>
+<p class="small" style="margin-top:.8em"><strong>Un detalle que vale la pena mirar:</strong> <em>Telegraph Voyage</em> recauda m&aacute;s que <em>Zorro Ark</em> con <strong>una copia menos y cuatro alquileres menos</strong>. Cobra m&aacute;s por alquiler. Eso es un hallazgo de negocio que la tabla dej&oacute; a la vista sin que nadie lo buscara.</p></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>1.000 filas · la primera, Telegraph Voyage</span></div>
+</section>
+<section class="slide mid" data-title="La comprobación cruzada"><div class="ey">Bloque 4 &middot; 4 minutos</div>
+<h2>&iquest;C&oacute;mo sabes que no te equivocaste?</h2>
+<div class="g2">
+<div><p>Una tabla de 1.000 filas no se revisa a ojo. Se comprueba con un n&uacute;mero que <strong>tenga que cuadrar por otro camino</strong>.</p>
+<pre>-- lo que suma mi tabla
+SELECT ROUND(SUM(recaudo), 2) FROM ( ...mi consulta... );
+-- 61 312,04
+
+-- lo que dice payment, directo y sin rodeos
+SELECT ROUND(SUM(amount), 2) FROM payment;
+-- 61 312,04</pre></div>
+<div><p class="warn" style="margin:0"><strong>Cuadra al centavo, y eso no es casualidad.</strong> Si hubiera perdido alquileres con un <code>JOIN</code>, faltar&iacute;a plata. Si hubiera duplicado filas, sobrar&iacute;a. Que d&eacute; exactamente lo mismo por dos caminos distintos es la mejor prueba que vas a tener.</p>
+<div class="hintbox"><strong>H&aacute;zlo siempre</strong><p style="margin:.4em 0 0">Cada vez que construyas una tabla con varios <code>JOIN</code>, busca <strong>un total que puedas calcular por separado</strong> y comp&aacute;ralo. Cuesta treinta segundos y es la diferencia entre entregar y entregar con confianza.</p></div></div></div>
+<div class="brand"><span>Bloque 4 · Juntar</span><span>61.312,04 por los dos caminos</span></div>
+</section>
+<section class="slide dense" data-title="CASE"><div class="ey">Bloque 5 &middot; La otra herramienta</div>
+<h2><code>CASE</code>: inventarte una columna</h2>
+<div class="g2">
+<div><p>A veces la columna que necesitas no est&aacute; en ninguna tabla: hay que <strong>derivarla</strong>. <code>CASE</code> mira un valor y devuelve otro seg&uacute;n el caso.</p>
+<pre>SELECT rating,
+       CASE
+         WHEN length &lt; 60  THEN 'corta'
+         WHEN length &lt; 120 THEN 'media'
+         ELSE                   'larga'
+       END AS duracion,
+       COUNT(*) AS peliculas
+FROM     film
+GROUP BY rating, duracion
+ORDER BY rating, duracion;</pre>
+<p class="small" style="margin-top:.7em">Las condiciones se eval&uacute;an <strong>en orden</strong> y gana la primera que se cumple. Por eso <code>&lt; 120</code> no necesita decir «y adem&aacute;s &ge; 60»: si fuera menor de 60 ya habr&iacute;a salido antes.</p></div>
+<div><table class="res" style="margin-top:0"><caption>El reparto del cat&aacute;logo</caption>
+<tr><th>duraci&oacute;n</th><th class="num">pel&iacute;culas</th></tr>
+<tr><td>corta &mdash; menos de 60 min</td><td class="num">96</td></tr>
+<tr><td>media &mdash; de 60 a 119</td><td class="num">438</td></tr>
+<tr><td>larga &mdash; 120 o m&aacute;s</td><td class="num">466</td></tr>
+</table>
+<p class="small" style="margin-top:.8em">Con <code>rating</code> incluido salen <strong>15 filas</strong>: cinco calificaciones por tres duraciones.</p>
+<div class="excel-anchor" style="margin-top:1em"><span>Ya sabes hacerlo</span>En Excel: <code>SI(...)</code> anidados <i aria-hidden="true">&rarr;</i> En SQL: <code>CASE WHEN</code></div>
+<p class="warn" style="margin-top:.9em"><strong>Y f&iacute;jate en algo:</strong> agrupamos por <code>duracion</code>, una columna que <em>no existe</em> en la tabla. La invent&oacute; el <code>CASE</code> y el <code>GROUP BY</code> la us&oacute; sin problema.</p></div></div>
+<div class="brand"><span>Bloque 5 · CASE</span><span>La columna que no estaba en ninguna tabla</span></div>
+</section>
+<section class="slide" data-title="Taller 5"><div class="ey">Taller 5 &middot; 8 minutos</div>
+<h2>Clasifica el cat&aacute;logo</h2>
+<div class="g2">
+<div><div class="ctx">Sobre la tabla que construiste, a&ntilde;ade una columna <code>rendimiento</code> que diga <strong>«sin movimiento»</strong> si no se alquil&oacute; nunca, <strong>«flojo»</strong> si recaud&oacute; menos de 50, y <strong>«bueno»</strong> si recaud&oacute; 50 o m&aacute;s.</div>
+<div class="hintbox"><strong>Pistas</strong><ul>
+<li>El <code>CASE</code> va en el <code>SELECT</code> final, no dentro de los <code>WITH</code>.</li>
+<li>El primer <code>WHEN</code> debe ser el de los ceros. &iquest;Por qu&eacute; el orden importa aqu&iacute;?</li>
+<li>Envuelve el resultado y cuenta cu&aacute;ntas caen en cada grupo.</li></ul></div></div>
+<div data-r><pre>CASE
+  WHEN COALESCE(mv.n_alquileres, 0) = 0 THEN 'sin movimiento'
+  WHEN COALESCE(mv.total, 0) &lt; 50       THEN 'flojo'
+  ELSE                                       'bueno'
+END AS rendimiento</pre>
+<p class="warn" style="margin-top:.9em"><strong>Por qu&eacute; el orden importa:</strong> una pel&iacute;cula sin alquileres tambi&eacute;n recaud&oacute; menos de 50. Si pones «flojo» primero, las 42 sin copia caen ah&iacute; y nunca ves el grupo que de verdad te interesa. <strong>En un <code>CASE</code>, lo m&aacute;s espec&iacute;fico va arriba.</strong></p>
+<p class="small" style="margin-top:.8em">Ese error &mdash;poner la condici&oacute;n general antes que la particular&mdash; es el m&aacute;s com&uacute;n con <code>CASE</code>, y como siempre, no da error: solo deja un grupo vac&iacute;o.</p></div></div>
+<div class="brand"><span>Bloque 5 · CASE</span><span>Lo m&aacute;s espec&iacute;fico, arriba</span></div>
+</section>
+<section class="slide mid" data-title="El promedio, ahora bien"><div class="ey">Bloque 5 &middot; 5 minutos</div>
+<h2>La deuda de la sesi&oacute;n 4, saldada</h2>
+<div class="g2">
+<div><p>En la sesi&oacute;n 4 quedamos con esto sin resolver: el promedio de duraci&oacute;n cambiaba seg&uacute;n c&oacute;mo unieras, y la respuesta fue «lo vemos en la sesi&oacute;n 5».</p>
+<pre>AVG sobre film                      115,27
+AVG sobre film JOIN inventory       114,93   &lt;- ponderado por copias
+AVG resumiendo antes, con CTE       115,49   &lt;- las 958 con copia</pre>
+<p class="small" style="margin-top:.7em">Los tres n&uacute;meros son <strong>correctos</strong>. Lo que cambia es la pregunta que responden.</p></div>
+<div><pre>WITH con_copia AS (
+  SELECT   f.film_id, f.length
+  FROM     film f
+  JOIN     inventory i ON f.film_id = i.film_id
+  GROUP BY f.film_id          -- una fila por pel&iacute;cula
+)
+SELECT ROUND(AVG(length), 2) FROM con_copia;
+-- 115,49</pre>
+<p class="warn" style="margin-top:.9em"><strong>El <code>GROUP BY</code> dentro del CTE es todo el truco.</strong> Sube <code>inventory</code> del nivel «copia» al nivel «pel&iacute;cula» antes de promediar, as&iacute; que cada pel&iacute;cula pesa una vez. Es el paso 4 del marco, aplicado a un promedio.</p>
+<p class="small" style="margin-top:.7em">Y ahora ya puedes contestar la pregunta que importa: <strong>&iquest;el promedio de qu&eacute;?</strong> De las pel&iacute;culas, de las que tienen copia, o de los DVD del almac&eacute;n. Tres tablas distintas, tres n&uacute;meros distintos, y ninguno est&aacute; mal.</p></div></div>
+<div class="brand"><span>Bloque 5 · CASE</span><span>Resumir antes de unir</span></div>
+</section>
+<section class="slide dense" data-title="Tres certificados gratis"><div class="ey">Cierre &middot; 5 minutos</div>
+<h2>Y esto que acabas de hacer, se puede certificar</h2>
+<div class="g2">
+<div><p><strong>HackerRank</strong> tiene tres certificados de SQL, gratuitos, que se presentan en l&iacute;nea cuando quieras. El b&aacute;sico es una prueba de <strong>30 minutos con dos preguntas</strong>.</p>
+<div class="dlrow" style="flex-direction:column;align-items:stretch">
+<a href="https://www.hackerrank.com/skills-verification/sql_basic" target="_blank" rel="noopener">&#127941; SQL (Basic)<small>consultas simples &middot; puedes presentarlo hoy mismo</small></a>
+<a href="https://www.hackerrank.com/skills-verification/sql_intermediate" target="_blank" rel="noopener">&#127941; SQL (Intermediate)<small>uniones y agregaciones &middot; lo de las sesiones 3, 4 y 5</small></a>
+<a href="https://www.hackerrank.com/skills-verification/sql_advanced" target="_blank" rel="noopener">&#127941; SQL (Advanced)<small>para despu&eacute;s, con calma</small></a>
+</div></div>
+<div><p class="warn" style="margin:0"><strong>Con lo de hoy ya alcanzas el intermedio.</strong> Consultas simples, filtros, agregaciones, agrupaciones y uniones: eso es exactamente lo que hemos hecho en cinco sesiones. No hay nada ah&iacute; que no hayas escrito ya.</p>
+<div class="hintbox"><strong>Tres consejos</strong><ul>
+<li><strong>Se puede repetir.</strong> Si no pasas, vuelves a intentarlo. No hay penalizaci&oacute;n.</li>
+<li>Empieza por el b&aacute;sico aunque te parezca f&aacute;cil: sirve para conocer el formato.</li>
+<li>Es una credencial que puedes poner en tu perfil <strong>esta misma semana</strong>, sin esperar a que termine el curso.</li></ul></div>
+<p class="small" style="margin-top:.9em">Del examen grande &mdash;el <strong>DP-900</strong>, con el voucher que entrega Colsubsidio&mdash; hablamos en la sesi&oacute;n 7, con calma y con tiempo para prepararlo.</p></div></div>
+<div class="brand"><span>Cierre</span><span>La primera credencial del curso</span></div>
+</section>
+<section class="slide yellow mid" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
+<h2>Ya no copias consultas: las dise&ntilde;as</h2>
+<div class="g2">
+<div><h3>Lo que te llevas</h3>
+<ul class="checks">
+<li>Preguntar siempre <strong>qu&eacute; representa una fila</strong>: peras con peras o con manzanas.</li>
+<li><strong>Dibujar la servilleta</strong> antes de escribir.</li>
+<li>El <strong>marco de cinco pasos</strong>, que sirve para cualquier tabla.</li>
+<li><strong>Resumir antes de unir</strong> &mdash; el paso que casi nadie hace.</li>
+<li><code>WITH</code> para partir el problema y comprobar por pedazos.</li>
+<li><code>COALESCE</code> para que el hueco sea un cero.</li>
+<li><code>CASE</code> para inventarte una columna, con lo espec&iacute;fico arriba.</li>
+<li>La <strong>comprobaci&oacute;n cruzada</strong>: un total que cuadre por otro camino.</li>
+</ul></div>
+<div><h3>Para practicar</h3>
+<p class="small">Una tabla m&aacute;s, con el mismo m&eacute;todo. Dib&uacute;jala primero:</p>
+<div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>Una fila por categor&iacute;a</strong>, con cu&aacute;ntas pel&iacute;culas tiene, cu&aacute;nto recaud&oacute; en total y cu&aacute;l fue su pel&iacute;cula m&aacute;s taquillera.</p></div>
+<p class="small" style="margin-top:.6em">Deben salir <strong>16 filas</strong>. La de mayor recaudo no es la que m&aacute;s pel&iacute;culas tiene &mdash; y esa diferencia es justamente lo interesante.</p>
+<p class="warn" style="margin-top:1em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> hasta hoy la base ya exist&iacute;a y t&uacute; hac&iacute;as preguntas. En la sesi&oacute;n 6 empezamos por el otro lado: <strong>de d&oacute;nde salen las reglas</strong> que hacen que una base sea como es. Y en la 7, adem&aacute;s, hablamos de las certificaciones.</p></div></div>
+<p class="quote" style="margin-top:1.1em" data-r>Una consulta larga no se escribe: se teje, pedazo por pedazo, comprobando cada uno.</p>
+<div class="brand"><span>Cierre</span><span>Sesi&oacute;n 6: reglas de negocio</span><a href="../../index.html" style="color:inherit;font-weight:800">&larr; Volver al curso</a></div>
+</section>
+
+
+
+
+
+
+
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 25</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-5-algoritmica-de-tablas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
+<div class="sr" id="announce" aria-live="assertive"></div>
+<script>
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),noteOv=document.getElementById('noteOv'),noteBody=document.getElementById('noteBody'),announce=document.getElementById('announce'),clock=document.querySelector('.clock'),noteBtn=document.getElementById('noteBtn');
+let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length+(ss[i].dataset.opcional?' · opcional':'');bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(noteOv&&noteOv.classList.contains('open'))fillNotes();if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
+function fillNotes(){if(!noteBody)return;const n=ss[i].querySelector('.notes');noteBody.innerHTML=n?n.innerHTML:'<p>Esta diapositiva no tiene notas.</p>'}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
+function closeAll(){timeOv.classList.remove('open');if(noteOv)noteOv.classList.remove('open')}
+function anyOpen(){return timeOv.classList.contains('open')||(noteOv&&noteOv.classList.contains('open'))}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
+if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
+let remain=900000,initial=remain,end=0,running=false,tick=null;
+const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){const q=cur(),v=fmt(q);document.getElementById('timer').textContent=v;
+ if(miniT){miniT.textContent=v;
+  mini.classList.toggle('avisa',running&&q>0&&q<=60000);
+  mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));
+  miniPP.innerHTML=running?'&#10074;&#10074;':'&#9654;';
+  miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar');}
+ if(clock&&ss[i].dataset.break==='15')clock.textContent=v;
+ if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
+function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
+function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
+function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
+/* al arrancar, el panel se quita de en medio y queda la pastilla flotante */
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);
+ if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
+function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
+document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+if(mini){
+ miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};
+ document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};
+ document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
+ /* arrastrar a cualquier lado; la posición se recuerda */
+ let ax=0,ay=0,px=0,py=0,mov=false;
+ const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};
+ try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');
+  if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}
+ mini.addEventListener('pointerdown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  const r=mini.getBoundingClientRect();
+  ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;
+  mini.setPointerCapture(e.pointerId);mini.classList.add('arrastrando')});
+ mini.addEventListener('pointermove',e=>{
+  if(!mini.hasPointerCapture||!mini.classList.contains('arrastrando'))return;
+  if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;
+  if(!mov)return;
+  const r=mini.getBoundingClientRect();
+  const x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width);
+  const y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);
+  mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});
+ mini.addEventListener('pointerup',e=>{
+  mini.classList.remove('arrastrando');
+  try{mini.releasePointerCapture(e.pointerId)}catch(_){}
+  if(mov)guardar();});
+ addEventListener('resize',()=>{const r=mini.getBoundingClientRect();
+  if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}});
+}
+let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
+upd();render()})();
+</script>
+</body></html>

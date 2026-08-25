@@ -56,13 +56,15 @@ button,a{font:inherit}
   position:relative;
   width:min(100vw,177.777vh);
   height:min(100vh,56.25vw);
-  margin:auto; top:50%; transform:translateY(-50%);
+  margin:auto; top:50%;
   background:var(--paper);
   border-radius:10px;
   box-shadow:0 24px 70px rgba(0,0,0,.45);
   overflow:hidden;
   container-type:size;
   container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
 }
 
 /* --- diapositiva: aquí nace la escala tipográfica ------------------ */
@@ -181,7 +183,13 @@ code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
 .flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
 .flowline article:nth-of-type(2n){border-top-color:var(--b)}
 .flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
-.flowline .em{font-size:1.9em;line-height:1;display:block}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
 .flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
 .flowline>i{
   align-self:center;flex:0 0 auto;display:grid;place-items:center;
@@ -265,7 +273,8 @@ pre{
 
 .dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
 .dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
-.dlrow a:hover{background:#000}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
 .dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
 
 /* --- botones --------------------------------------------------------- */
@@ -286,6 +295,9 @@ pre{
 .ui-legend span{color:var(--ink)}
 .ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
 .schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;gap:.35em;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
 .tnode{cursor:pointer}
 .tnode rect{transition:fill .15s,stroke-width .15s}
 .tnode:hover rect{stroke-width:4.5}
@@ -450,7 +462,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 .venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
 
 /* ===== reparto vertical: sin tercio inferior muerto ===== */
-.slide.mid.active{display:flex;flex-direction:column;justify-content:center}
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
 .slide.mid.active>.brand{position:absolute}
 
 /* ===== esquema entrada -> resultado ===== */
@@ -462,6 +474,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 /* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
 .cnode{cursor:pointer}
 .cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
 .cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
 .cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
 .cdata{display:none}
@@ -470,17 +483,26 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
   background:var(--paper); color:var(--ink);
   border:2px solid var(--ink); border-radius:var(--r-lg);
-  box-shadow:0 -6px 40px rgba(0,0,0,.22);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
   padding:1.1em 1.3em 1em; z-index:5;
-  display:none; max-height:66cqh; overflow:auto;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
 }
-.cpanel.open{display:block}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
 .cclose{
   position:absolute; top:.5em; right:.6em; z-index:2;
   border:0; background:var(--ink); color:#fff;
-  width:1.9em; height:1.9em; border-radius:50%;
+  width:44px; height:44px; border-radius:50%;
   font-size:1em; font-weight:800; cursor:pointer; line-height:1;
 }
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
 .cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
 .cbadge{
   font-family:Consolas,monospace; font-size:.82em; font-weight:800;
@@ -514,3 +536,29 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 /* los valores que se repiten en el puente, para ver el N:N */
 .ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
 .ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 0 0 100vmax rgba(17,17,17,.58)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
