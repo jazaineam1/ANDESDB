@@ -7,7 +7,7 @@
     "48 horas · 16 sesiones",
     "Clases en vivo por videollamada"
   ],
-  "sesionActual": 3,
+  "sesionActual": 4,
   "totalSesiones": 16,
   "herramientas": [
     {
@@ -101,7 +101,7 @@
         {
           "n": 3,
           "titulo": "Filtrar mejor y resumir",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
           "tags": [
@@ -122,7 +122,7 @@
         {
           "n": 4,
           "titulo": "Uniones de tablas",
-          "estado": "proxima",
+          "estado": "hoy",
           "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
           "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
           "tags": [
@@ -181,6 +181,11 @@
     {
       "txt": "🗄️ La base de datos",
       "href": "Presentaciones/M2/base-datos/dvdrental.db",
+      "download": true
+    },
+    {
+      "txt": "📜 Las consultas de la clase",
+      "href": "Scripts/S4.sql",
       "download": true
     },
     {

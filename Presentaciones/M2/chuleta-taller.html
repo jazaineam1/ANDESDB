@@ -122,12 +122,28 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
   <div class="note"><b>Para encontrar lo que falta:</b> <code>LEFT JOIN</code> + <code>WHERE otra.columna IS NULL</code>. Clientes que nunca compraron, películas sin copia, facturas sin pago. Un <code>INNER JOIN</code> no puede responder eso nunca: busca justo las filas que él descarta.</div>
   <div class="note"><b>Cuidado con las filas.</b> Si la relación es 1:N, el resultado tiene <b>más</b> filas que la tabla de partida. <code>film</code> tiene 1.000; unida a <code>inventory</code> son 4.581, una por copia. Di en voz alta cuántas filas esperas <b>antes</b> de ejecutar.</div>
 
+  <h3>Funciones que salen hoy</h3>
+  <table>
+    <tr><td><code>a || ' ' || b</code></td><td>Pega dos textos · es el <code>&amp;</code> de Excel</td></tr>
+    <tr><td><code>ROUND(x, 2)</code></td><td>Redondea a 2 decimales · <b>sin el <code>, 2</code></b> redondea a entero</td></tr>
+    <tr><td><code>TRIM(texto)</code></td><td>Quita los espacios de los extremos</td></tr>
+    <tr><td><code>LENGTH(texto)</code></td><td>Cuántos caracteres tiene · sirve para cazar espacios invisibles</td></tr>
+  </table>
+
   <h3>Apilar en vez de enganchar</h3>
   <table>
     <tr><td><code>UNION</code></td><td>Apila y <b>borra</b> las filas repetidas</td></tr>
     <tr><td><code>UNION ALL</code></td><td>Apila y <b>conserva</b> todo (y es más rápido)</td></tr>
   </table>
   <div class="note">Mismo número de columnas, mismo orden, tipos compatibles. <code>UNION</code> compara la <b>fila entera</b>: una sola columna distinta y ya no borra nada.</div>
+
+  <h3>El molde, para llevar a tu trabajo</h3>
+<pre><span class="k">SELECT</span>   a.____, b.____
+<span class="k">FROM</span>     ______ <span class="k">AS</span> a       <span class="c">-- la que quiero conservar ENTERA</span>
+<span class="k">LEFT JOIN</span> ______ <span class="k">AS</span> b       <span class="c">-- de donde traigo el dato</span>
+  <span class="k">ON</span>     a.____ = b.____   <span class="c">-- el codigo que comparten</span>
+<span class="k">WHERE</span>    b.____ <span class="k">IS NULL</span>;   <span class="c">-- solo si busco los que FALTAN</span></pre>
+  <div class="note"><b>El <code>ON</code> no exige que las columnas se llamen igual.</b> En <code>dvdrental</code> siempre coinciden y eso engaña. <code>ON p.id_paciente = c.cod_afiliado</code> es válido: lo que debe coincidir es el <b>contenido</b>, no el nombre.</div>
 
   <h3>Alias</h3>
   <div class="note">Con dos tablas puede haber <b>dos columnas que se llamen igual</b>. Ponle apodo a cada tabla (<code>film AS f</code>) y escribe siempre de quién es la columna: <code>f.title</code>, no <code>title</code>.</div>
@@ -181,14 +197,7 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
     <tr><td>first_name / last_name</td><td>Nombre y apellido</td></tr>
   </table></div>
 
-  <div class="warn"><b>Tres trampas de esta base.</b> La columna <code>language.name</code> viene con espacios de relleno: usa <code>TRIM(name)</code> para compararla. Todos los correos son <code>@sakilacustomer.org</code>. Y <code>staff_id</code> solo vale 1 o 2: un 3 siempre devuelve cero filas.</div>
-</div>
-
-</div>
-
-<div class="foot">
-  <span>Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio</span>
-  <span>Base <code>dvdrental</code> en SQLite · Módulo 2</span>
+  <div class="warn"><b>Tres trampas de esta base.</b> Todos los correos son <code>@sakilacustomer.org</code>. <code>staff_id</code> solo vale 1 o 2: un 3 siempre devuelve cero filas. Y si una comparación de texto no encuentra <b>nada</b> donde debería encontrar algo, míralo con <code>LENGTH(columna)</code>: puede traer espacios invisibles.</div>
 
   <div class="tb"><div class="cap">inventory <span>4.581 filas · las copias físicas</span></div><table>
     <tr><td>inventory_id<span class="pk">PK</span></td><td>Identificador de la copia</td></tr>
@@ -203,7 +212,7 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
 
   <div class="tb"><div class="cap">language <span>6 filas · los idiomas</span></div><table>
     <tr><td>language_id<span class="pk">PK</span></td><td>1 a 6</td></tr>
-    <tr><td>name</td><td><b>Ojo:</b> rellenado con espacios. Usa <code>TRIM(name)</code></td></tr>
+    <tr><td>name</td><td>English, Italian, Japanese, Mandarin, French, German</td></tr>
   </table></div>
 
   <div class="tb"><div class="cap">staff <span>2 filas · los empleados</span></div><table>
@@ -229,9 +238,20 @@ td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap
   <code>inventory.film_id</code> &rarr; <code>film.film_id</code><br>
   <code>rental.inventory_id</code> &rarr; <code>inventory.inventory_id</code> &nbsp;·&nbsp;
   <code>payment.rental_id</code> &rarr; <code>rental.rental_id</code><br>
+  <code>rental.customer_id</code> &rarr; <code>customer.customer_id</code> &nbsp;·&nbsp;
+  <code>payment.customer_id</code> &rarr; <code>customer.customer_id</code>
+  <span style="color:#8a6d00">(el atajo: de <code>customer</code> a <code>payment</code> se llega directo)</span><br>
   <b>Puentes (N:N):</b> <code>film_actor</code> une <code>actor</code> con <code>film</code>;
   <code>film_category</code> une <code>film</code> con <code>category</code>.<br>
   <b>Ojo:</b> <code>address</code> <u>no</u> tiene <code>customer_id</code>. La flecha va de <code>customer</code> hacia <code>address</code>, nunca al revés.</div>
+
+</div>
+
+</div>
+
+<div class="foot">
+  <span>Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes × Colsubsidio</span>
+  <span>Base <code>dvdrental</code> en SQLite · Módulo 2</span>
 </div>
 
 </div>

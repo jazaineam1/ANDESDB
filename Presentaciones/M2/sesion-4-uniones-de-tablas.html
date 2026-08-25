@@ -408,7 +408,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 <h1>Uniones de tablas</h1>
 <p class="lead">Hasta hoy cada consulta mir&oacute; <strong>una</strong> tabla. Hoy aprendemos a combinarlas: apilarlas con <code>UNION</code> y engancharlas con <code>JOIN</code>.</p>
 <div class="chips"><code>UNION</code><code>UNION ALL</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>RIGHT JOIN</code><code>FULL OUTER JOIN</code></div>
-<div class="dlrow"><a href="base-datos/dvdrental.db" download>&#128451; La base de datos<small>dvdrental.db &middot; 3,3 MB</small></a><a href="chuleta-taller.html">&#128196; Hoja de ayuda<small>tenla abierta al lado</small></a></div>
+<div class="dlrow"><a href="base-datos/dvdrental.db" download>&#128451; La base de datos<small>dvdrental.db &middot; 3,3 MB</small></a><a href="chuleta-taller.html">&#128196; Hoja de ayuda<small>tenla abierta al lado</small></a><a href="../../Scripts/S4.sql" download>&#128220; Las consultas de la clase<small>S4.sql &middot; &aacute;brelo ahora</small></a></div><p class="small" style="margin-top:1em;opacity:.85">Antes de empezar, ejecuta <code>SELECT sqlite_version();</code> &mdash; necesitas <strong>3.39 o superior</strong> para el &uacute;ltimo bloque de hoy.</p>
 <div class="brand"><span>Sesi&oacute;n 4 &middot; M&oacute;dulo 2</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
 </section>
 <section class="slide" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>De una tabla a varias</h2>
@@ -466,7 +466,7 @@ SELECT * FROM film  LIMIT 5;</pre>
 <div><p class="ctx"><strong>El sentido de la flecha importa, y se equivoca todo el mundo.</strong> Es <code>customer</code> quien guarda <code>address_id</code>. La tabla <code>address</code> <strong>no sabe</strong> qui&eacute;n vive ah&iacute;: no tiene ninguna columna <code>customer_id</code>.</p>
 <p style="margin-top:.8em">Compru&eacute;balo t&uacute; en Beekeeper antes de seguir:</p>
 <pre>SELECT * FROM address LIMIT 3;</pre>
-<p class="small" style="margin-top:.5em">Columnas: <code>address_id</code>, <code>address</code>, <code>address2</code>, <code>district</code>, <code>city_id</code>, <code>postal_code</code>, <code>phone</code>. Ni rastro de <code>customer_id</code>.</p>
+<p class="small" style="margin-top:.5em">Sus ocho columnas: <code>address_id</code>, <code>address</code>, <code>address2</code>, <code>district</code>, <code>city_id</code>, <code>postal_code</code>, <code>phone</code> y <code>last_update</code>. <strong>Ni rastro de <code>customer_id</code>.</strong></p>
 <p class="warn" style="margin-top:.9em"><strong>Y una advertencia sobre la herramienta.</strong> En este archivo las llaves for&aacute;neas <strong>no est&aacute;n declaradas</strong>: si haces <code>PRAGMA foreign_key_list(customer)</code> sale vac&iacute;o. Aqu&iacute; la FK es un <em>acuerdo de nombres</em>, no algo que la base te obligue a cumplir. Beekeeper no te va a avisar si unes por la columna equivocada &mdash; el &uacute;nico que revisa eres t&uacute;.</p></div></div>
 <div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: <code>BUSCARV</code> busca un c&oacute;digo en otra hoja <i aria-hidden="true">&rarr;</i> En SQL: la <span class="k fk">FK</span> es ese c&oacute;digo</div>
 <div class="brand"><span>Bloque 1 &middot; C&oacute;mo se apuntan</span><span>PK identifica &middot; FK apunta</span></div>
@@ -481,14 +481,14 @@ SELECT * FROM film  LIMIT 5;</pre>
 </div>
 <div class="g2" style="margin-top:1.2em;align-items:start">
 <div><p><strong>La tabla puente.</strong> Una relaci&oacute;n N:N no cabe en una sola columna: no hay d&oacute;nde meter &laquo;los 5 actores&raquo; en una celda. Por eso existe <code>film_actor</code>, con <strong>una fila por cada pareja</strong>. <strong>Ábrela t&uacute;:</strong> <code>SELECT * FROM film_actor LIMIT 10;</code> &mdash; y f&iacute;jate en por qu&eacute; el actor 1 aparece varias veces.</p>
-<pre>film_actor
+<pre>film_actor        (y una 3a columna, last_update)
  actor_id | film_id
  ---------+--------
      1    |   23     &lt;- Penelope, en la pelicula 23
      1    |   25     &lt;- la misma actriz, otra pelicula
-     2    |   23     &lt;- otro actor, la misma pelicula</pre></div>
+     4    |   23     &lt;- otro actor, la misma pelicula</pre></div>
 <div><p class="warn"><strong>Aqu&iacute; est&aacute; el porqu&eacute; de casi todo lo de hoy.</strong> Para ir de <code>actor</code> a <code>film</code> no hay camino directo: hay que <strong>pasar por el puente</strong>, en dos saltos. Cuando lleguemos a la pregunta de Nick Wahlberg vas a ver por qu&eacute; eso obliga a hacer el trabajo dos veces.</p>
-<p class="small" style="margin-top:.9em">Tambi&eacute;n son N:N en esta base: <code>film</code> &harr; <code>category</code>, con el puente <code>film_category</code>. Y son 1:N: <code>customer</code> &rarr; <code>rental</code> &rarr; <code>payment</code>, y <code>film</code> &rarr; <code>inventory</code>.</p>
+<p class="small" style="margin-top:.9em">El otro puente es <code>film_category</code>. Ojo: su <em>dise&ntilde;o</em> admite N:N, pero en <em>estos datos</em> cada pel&iacute;cula tiene una sola categor&iacute;a. Modelo y datos no siempre coinciden &mdash; eso es del m&oacute;dulo 3. Y son 1:N: <code>customer</code> &rarr; <code>rental</code> &rarr; <code>payment</code>, y <code>film</code> &rarr; <code>inventory</code>.</p>
 <p class="small" style="margin-top:.6em">C&oacute;mo se <em>dibujan</em> estas relaciones &mdash;el modelo entidad-relaci&oacute;n&mdash; lo veremos en el m&oacute;dulo 3.</p></div></div>
 <div class="brand"><span>Bloque 1 &middot; C&oacute;mo se apuntan</span><span>N:N siempre necesita puente</span></div>
 </section>
@@ -521,7 +521,7 @@ UNION
 SELECT nombre, codigo FROM empleados_2024;</pre>
 <p class="warn" style="margin-top:1em"><strong>Por defecto, <code>UNION</code> elimina los duplicados.</strong> Mariana est&aacute; en las dos listas y sale una sola vez. Eso le cuesta trabajo al motor: para saber qu&eacute; se repite tiene que ordenar y comparar todo el resultado.</p>
 <div class="hintbox"><strong>Las tres reglas</strong><ul><li>Las dos consultas deben tener el <strong>mismo n&uacute;mero de columnas</strong>.</li><li>En el <strong>mismo orden</strong> y de tipos compatibles.</li><li>Los nombres de columna los pone la <strong>primera</strong> consulta.</li></ul></div>
-<p class="small" style="margin-top:.8em">Si hay <code>ORDER BY</code>, va <strong>una sola vez al final</strong> y aplica a todo el resultado apilado.</p></div></div>
+<p class="warn" style="margin-top:.8em"><strong>La trampa que no da error.</strong> En Excel, al pegar una hoja debajo de otra, t&uacute; alineas mirando los <em>encabezados</em>. SQL alinea por <strong>posici&oacute;n</strong>: primera con primera, segunda con segunda. Si inviertes dos columnas en la segunda consulta, <strong>no hay ning&uacute;n aviso</strong> &mdash; te salen las mismas filas de siempre, con los datos revueltos.</p><p class="small" style="margin-top:.6em">Si hay <code>ORDER BY</code>, va <strong>una sola vez al final</strong> y aplica a todo el resultado apilado.</p></div></div>
 <div class="brand"><span>Bloque 2 &middot; Apilar</span><span>UNION apila &middot; JOIN engancha</span></div>
 </section>
 <section class="slide" data-title="UNION ALL"><div class="ey">Bloque 2 &middot; Apilar</div>
@@ -544,7 +544,7 @@ UNION     SELECT first_name FROM customer;   -- 647
 
 SELECT first_name FROM actor
 UNION ALL SELECT first_name FROM customer;   -- 799</pre>
-<p class="small" style="margin-top:.5em">200 + 599 = 799. Con <code>UNION</code> bajan a 647: se borraron <strong>152 filas</strong>. Y no todas por la raz&oacute;n que uno se imagina: <strong>72</strong> son nombres repetidos <em>dentro</em> de <code>actor</code>, <strong>8</strong> repetidos dentro de <code>customer</code>, y solo <strong>72</strong> son nombres que aparecen en las dos tablas. <code>UNION</code> limpia los duplicados <em>de cada lado</em>, no solo los del cruce.</p></div></div>
+<p class="small" style="margin-top:.5em">200 + 599 = 799. Con <code>UNION</code> bajan a 647: se borraron <strong>152 filas</strong>. Y ojo, no solo las del cruce entre las dos tablas: <code>UNION</code> limpia tambi&eacute;n los nombres que ya se repiten <em>dentro</em> de cada una. El desglose exacto est&aacute; en <code>S4.sql</code>.</p></div></div>
 <div class="excel-anchor"><span>Ya sabes hacerlo</span>En Excel: copiar una hoja y pegarla debajo de otra <i aria-hidden="true">&rarr;</i> En SQL: <code>UNION ALL</code></div>
 <div class="brand"><span>Bloque 2 &middot; Apilar</span><span>Por defecto UNION borra repetidos</span></div>
 </section>
@@ -563,9 +563,9 @@ ORDER BY last_name;
 -- 601 filas</pre>
 <p class="warn" style="margin-top:1em"><strong>&iquest;Por qu&eacute; <code>UNION ALL</code>?</strong> Porque aqu&iacute; un repetido ser&iacute;a <em>otra persona con el mismo nombre</em>, no un error. Si dos clientes se llamaran igual, <code>UNION</code> borrar&iacute;a uno y el listado de RR. HH. saldr&iacute;a incompleto sin que nadie se entere.</p>
 <p class="small" style="margin-top:.7em"><strong>Pru&eacute;balo:</strong> con <code>UNION</code> a secas tambi&eacute;n salen <strong>601</strong>. El motivo es uno solo: <strong>en esta base no hay dos personas con el mismo nombre y apellido</strong>, as&iacute; que <code>UNION</code> no encuentra nada que borrar.</p>
-<p class="small" style="margin-top:.5em">Y ojo con un espejismo: la columna <code>tipo</code> <em>no</em> te salva. Vale <code>'cliente'</code> en las 599 filas de un lado y <code>'empleado'</code> en las 2 del otro, as&iacute; que separa clientes de empleados pero <strong>no distingue dos clientes entre s&iacute;</strong>. Si ma&ntilde;ana entran dos personas hom&oacute;nimas, <code>UNION</code> borrar&iacute;a una igual.</p>
-<p class="small" style="margin-top:.5em">Que hoy coincidan no valida <code>UNION</code>: significa que el resultado <strong>depende del azar de los datos</strong>. <code>UNION ALL</code> acierta pase lo que pase, y encima es m&aacute;s r&aacute;pido.</p></div></div>
-<div class="brand"><span>Bloque 2 &middot; Apilar</span><span>Al apilar hechos, UNION ALL</span></div>
+<p class="small" style="margin-top:.5em">Y ojo con un espejismo: la columna <code>tipo</code> <em>no</em> te salva. Vale <code>'cliente'</code> en las 599 filas de un lado y <code>'empleado'</code> en las 2 del otro, as&iacute; que separa clientes de empleados pero <strong>no distingue dos clientes entre s&iacute;</strong>. Si ma&ntilde;ana entran <strong>dos clientes</strong> con el mismo nombre y apellido, <code>UNION</code> borrar&iacute;a uno igual: los dos llevan <code>'cliente'</code> en esa columna.</p>
+<p class="small" style="margin-top:.5em">Que hoy coincidan no valida <code>UNION</code>: el resultado <strong>depende del azar de los datos</strong>. <code>UNION ALL</code> acierta pase lo que pase, y es m&aacute;s r&aacute;pido.</p></div></div>
+<p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> &iquest;Y si a&ntilde;ades una tercera rama con los actores? <strong>801 filas.</strong></p><div class="brand"><span>Bloque 2 &middot; Apilar</span><span>Al apilar hechos, UNION ALL</span></div>
 </section>
 <section class="slide" data-title="Las cinco preguntas"><div class="ey">Bloque 3 &middot; Enganchar</div>
 <h2>Las cinco preguntas del <code>JOIN</code></h2>
@@ -596,7 +596,7 @@ SELECT title, language_id, name
 FROM film JOIN language
   ON film.language_id = language.language_id;</pre>
 <p class="warn" style="margin-top:.9em"><strong>Ejec&uacute;tala: falla.</strong> SQLite responde <em>ambiguous column name: language_id</em>, y PostgreSQL y SQL Server dicen lo mismo con otras palabras. Aqu&iacute; el motor <strong>te protege</strong>: prefiere pararte a inventarse cu&aacute;l de las dos columnas quer&iacute;as. <strong>Di siempre de qui&eacute;n es cada columna.</strong></p></div>
-<div><p>El <strong>alias</strong> es un apodo corto para la tabla. Se declara con <code>AS</code> (o sin nada) y se usa en todo el resto de la consulta.</p>
+<div><p>El <strong>alias</strong> es un apodo corto para la tabla. Se declara con <code>AS</code> (o sin nada) y se usa en todo el resto de la consulta.</p><p class="small" style="margin:.5em 0 0"><strong>Y el punto se lee &laquo;de&raquo;:</strong> <code>f.title</code> es <em>el <code>title</code> de <code>f</code></em>. No es un decimal &mdash; es una direcci&oacute;n: primero la tabla, luego la columna.</p>
 <pre>SELECT   f.title, l.name
 FROM     film     AS f
 INNER JOIN language AS l
@@ -614,15 +614,15 @@ INNER JOIN language AS l
 FROM     empleados e
 INNER JOIN proyectos p
   ON     e.id_empleado = p.id_empleado;</pre>
-<p class="warn" style="margin-top:.9em"><strong>Se cayeron dos filas, y ninguna dio error.</strong> <em>Andr&eacute;s</em> desaparece porque no tiene proyecto. <em>App m&oacute;vil</em> desaparece porque su responsable (el 5) no existe en la n&oacute;mina. El <code>INNER JOIN</code> descarta en silencio todo lo que no encuentra pareja.</p></div>
+<p class="warn" style="margin-top:.9em"><strong>Si vienes de Excel, esto NO es tu <code>BUSCARV</code>:</strong> el <code>BUSCARV</code> te deja la fila con un <code>#N/A</code>; el <code>INNER JOIN</code> <strong>te la borra</strong>. El que se porta como tu <code>BUSCARV</code> llega despu&eacute;s de la pausa.</p><p class="warn" style="margin-top:.7em"><strong>Se cayeron dos filas, y ninguna dio error.</strong> <em>Andr&eacute;s</em> desaparece porque no tiene proyecto. <em>App m&oacute;vil</em> desaparece porque su responsable (el 5) no existe en la n&oacute;mina. El <code>INNER JOIN</code> descarta en silencio todo lo que no encuentra pareja.</p></div>
 <div><table class="res"><caption>Resultado: 2 filas de 3 empleados y 3 proyectos</caption><tr><th>nombre</th><th>nombre_proyecto</th></tr><tr><td>Camila</td><td>Sistema de control</td></tr><tr><td>Laura</td><td>Campa&ntilde;a redes</td></tr></table>
 <p class="ctx" style="margin-top:.9em"><strong>El <code>INNER JOIN</code> es sim&eacute;trico.</strong> Da igual cu&aacute;l pongas primero: <code>empleados JOIN proyectos</code> devuelve exactamente lo mismo que <code>proyectos JOIN empleados</code>. Con <code>LEFT</code> y <code>RIGHT</code> esto <strong>dejar&aacute; de ser cierto</strong>.</p>
-<p class="small" style="margin-top:.7em"><strong>Tecl&eacute;alo t&uacute;.</strong> Estas dos tablitas no vienen en la base: cr&eacute;alas pegando las cuatro l&iacute;neas del comienzo de <code>S4.sql</code> en Beekeeper. Todo el bloque de hoy se puede ejecutar, no solo mirar.</p><p class="small" style="margin-top:.7em">La palabra <code>INNER</code> es opcional: escribir <code>JOIN</code> a secas significa lo mismo. Yo la escribo completa para que quede claro cu&aacute;l de los cuatro estoy usando.</p></div></div>
+<p class="small" style="margin-top:.7em"><strong>Ya deber&iacute;as tenerlas creadas</strong> (las pegamos al empezar). Si no, abre <code>S4.sql</code> &mdash;el bot&oacute;n de la portada&mdash; y copia <strong>todo el primer bloque</strong>, desde <code>CREATE TABLE empleados</code> hasta <code>Campa&ntilde;a redes</code>. No toca <code>dvdrental</code>; si algo falla, <code>DROP TABLE empleados;</code> y repites.</p><p class="small" style="margin-top:.5em">Y si no te salen, <strong>no pasa nada</strong>: los cinco desaf&iacute;os de hoy corren sobre <code>dvdrental</code>, no sobre estas dos.</p><p class="small" style="margin-top:.7em">La palabra <code>INNER</code> es opcional: escribir <code>JOIN</code> a secas significa lo mismo. Yo la escribo completa para que quede claro cu&aacute;l de los cuatro estoy usando.</p></div></div>
 <div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Descarta lo que no tiene pareja, sin avisar</span></div>
 </section>
 <section class="slide xdense" data-title="Desaf&iacute;o 2"><div class="ey">Desaf&iacute;o 2 &middot; 10 minutos</div>
 <h2>Un cliente solo habla italiano</h2>
-<div class="ctx">Un cliente entra a la tienda y <strong>solo habla italiano</strong>. Busca una pel&iacute;cula en su idioma. &mdash; <strong>a)</strong> &iquest;En qu&eacute; idioma est&aacute; cada pel&iacute;cula? &nbsp;<strong>b)</strong> &iquest;Hay alguna en italiano? &nbsp;&middot;&nbsp; Tablas <code>film</code> y <code>language</code>; columnas <code>title</code> y <code>name</code>.</div>
+<div class="ctx">Un cliente entra a la tienda y <strong>solo habla italiano</strong>. Busca una pel&iacute;cula en su idioma. &mdash; <strong>a)</strong> &iquest;En qu&eacute; idioma est&aacute; cada pel&iacute;cula? &nbsp;<strong>b)</strong> &iquest;Hay alguna en italiano? &nbsp;&middot;&nbsp; Tablas <code>film</code> y <code>language</code>; columnas <code>title</code> y <code>name</code>.<br><strong>&#9888; Y antes de responderle al cliente: prueba tu misma consulta con un idioma que S&Iacute; deber&iacute;a tener pel&iacute;culas.</strong></div>
 <div class="g2" style="margin-top:1em">
 <div><pre>-- a)
 SELECT   f.title, l.name
@@ -636,11 +636,11 @@ INNER JOIN language AS l
 <pre>...  WHERE l.name = 'English';            -- 0 filas</pre>
 <p class="small" style="margin-top:.6em"><strong>Tambi&eacute;n cero.</strong> Y eso es imposible. El cero de arriba no significaba lo que cre&iacute;as.</p></div>
 <div><p><strong>El diagn&oacute;stico.</strong> Mira lo que hay de verdad en esa columna:</p>
-<pre>SELECT '[' || name || ']', LENGTH(name)
+<pre>SELECT name, LENGTH(name)
 FROM   language;
 
-[English             ]   20
-[Italian             ]   20</pre>
+English      20     &lt;- "English" son 7 letras.
+Italian      20        Las otras 13 son espacios.</pre>
 <p class="small" style="margin-top:.6em">El texto viene <strong>rellenado con espacios</strong> hasta 20 caracteres &mdash; una herencia de c&oacute;mo se guard&oacute; en la base original. <code>'English'</code> son 7 caracteres, as&iacute; que <code>=</code> no coincide <strong>nunca</strong>. <code>TRIM</code> quita esos espacios.</p>
 <pre data-r>...  WHERE TRIM(l.name) = 'English';   -- 1.000 ✔
 ...  WHERE TRIM(l.name) = 'Italian';   --     0 ✔</pre>
@@ -673,7 +673,7 @@ ORDER BY c.last_name;
 -- 9 filas. La primera: Patricia Johnson</pre>
 <p class="small" style="margin-top:.5em">Sin <code>ORDER BY</code> el motor te las devuelve en el orden que le conviene. Si vas a prometer &laquo;la primera&raquo;, ord&eacute;nalas.</p></div></div>
 <p class="quote" style="margin-top:1.1em" data-r>El mensaje de error no es un regaño: es el motor diciéndote qué columna buscó y no encontró.</p>
-<div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Ante un ON que falla, mira las columnas reales</span></div>
+<p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> Olv&iacute;date de California: &iquest;qu&eacute; <em>distrito</em> tiene m&aacute;s clientes? <strong>Buenos Aires, con 10.</strong></p><div class="brand"><span>Bloque 3 &middot; Enganchar</span><span>Ante un ON que falla, mira las columnas reales</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
@@ -681,9 +681,9 @@ ORDER BY c.last_name;
 <button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
 <div class="brand"><span>Pausa</span><span>Segunda mitad: los JOIN externos</span></div>
 </section>
-<section class="slide" data-title="Tu Excel en SQL"><div class="ey">Bloque 4 &middot; Conservar</div>
-<h2>Si sabes <code>BUSCARV</code>, ya sabes esto</h2>
-<p class="lead">Lo que acabas de aprender tiene un nombre que quiz&aacute; ya usas todos los d&iacute;as. Y hay una diferencia que te puede costar un informe.</p>
+<section class="slide dense" data-title="Tu Excel en SQL"><div class="ey">Bloque 4 &middot; Conservar</div>
+<h2>Traer un dato de otra tabla &mdash; lo que en Excel es <code>BUSCARV</code></h2>
+<p class="lead">Retomamos. Si nunca has usado <code>BUSCARV</code>, la columna de la derecha se entiende sola. Si lo usas a diario, la de la izquierda te ahorra media clase &mdash; y te avisa de dos trampas.</p>
 <table class="res"><caption>La misma operaci&oacute;n, dos idiomas</caption>
 <tr><th>En Excel</th><th>En SQL</th></tr>
 <tr><td>Mi hoja, la que quiero conservar</td><td><code>FROM</code></td></tr>
@@ -697,7 +697,7 @@ ORDER BY c.last_name;
 <div><p class="warn" style="margin:0"><strong>Y aqu&iacute; est&aacute; la trampa, porque tu instinto de Excel te va a traicionar dos veces.</strong></p>
 <p class="small" style="margin-top:.7em"><strong>Uno.</strong> <code>BUSCARV</code> nunca te borra una fila: si no encuentra, te deja <code>#N/A</code> y tu lista sigue completa. <strong><code>INNER JOIN</code> s&iacute; te la borra</strong>, y sin avisar. El que se porta como tu <code>BUSCARV</code> no es <code>INNER JOIN</code>: es <code>LEFT JOIN</code>, el de la diapositiva siguiente.</p></div>
 <div><p class="small" style="margin:0"><strong>Dos.</strong> <code>BUSCARV</code> devuelve <em>un</em> valor por fila: entran 100 filas, salen 100. Un <code>JOIN</code> devuelve <strong>todas</strong> las coincidencias, as&iacute; que puede devolverte m&aacute;s filas de las que ten&iacute;as. Eso tiene diapositiva propia hoy: <em>Un <code>JOIN</code> puede multiplicar tus filas</em>.</p>
-<p class="small" style="margin-top:.7em"><strong>Tres.</strong> En Excel t&uacute; decides el sentido: pones la f&oacute;rmula en la hoja que quieres conservar. En SQL el sentido lo fij&oacute; qui&eacute;n dise&ntilde;&oacute; la base &mdash; por eso <code>customer</code> apunta a <code>address</code> y no al rev&eacute;s.</p></div></div>
+<p class="small" style="margin-top:.7em"><strong>Y una libertad que ganas:</strong> el <code>ON</code> <strong>no exige que las dos columnas se llamen igual</strong>. Aqu&iacute; siempre coinciden (<code>film_id</code> con <code>film_id</code>) y eso engorda mal la intuici&oacute;n. En una base de verdad <code>ON p.id_paciente = c.cod_afiliado</code> es perfectamente v&aacute;lido: lo que tiene que coincidir es <strong>el contenido, no el nombre</strong>. Por eso la cuarta pregunta es una pregunta &mdash; hay que averiguarlo mirando las dos tablas.</p></div></div>
 <div class="brand"><span>Bloque 4 &middot; Conservar</span><span>NULL es tu #N/A</span></div>
 </section>
 <section class="slide dense" data-title="LEFT JOIN"><div class="ey">Bloque 4 &middot; Conservar</div>
@@ -708,7 +708,7 @@ ORDER BY c.last_name;
 FROM     empleados e          <span style="color:#ff8a24">&lt;- la IZQUIERDA</span>
 LEFT JOIN proyectos p
   ON     e.id_empleado = p.id_empleado;</pre>
-<p style="margin-top:.9em"><strong>Conserva todas las filas de la izquierda</strong>, tengan pareja o no. Andr&eacute;s sigue ah&iacute;, con <code>NULL</code> al lado. <em>App m&oacute;vil</em>, que est&aacute; a la derecha y no tiene due&ntilde;o, esta vez s&iacute; se cae.</p>
+<p style="margin-top:.9em"><strong>Conserva todas las filas de la izquierda</strong>, tengan pareja o no. Andr&eacute;s sigue ah&iacute;, con <code>NULL</code> al lado &mdash; y ojo, <strong>ese <code>NULL</code> no est&aacute; guardado en ninguna tabla</strong>: el motor lo pone en el momento porque no encontr&oacute; con qui&eacute;n emparejarlo. Es distinto del <code>NULL</code> de la sesi&oacute;n 3, que s&iacute; viv&iacute;a en la base. <em>App m&oacute;vil</em>, que est&aacute; a la derecha y no tiene due&ntilde;o, esta vez s&iacute; se cae.</p>
 <p class="warn" style="margin-top:.9em"><strong>El orden importa y aqu&iacute; s&iacute; cambia el resultado.</strong> &laquo;La izquierda&raquo; es literalmente <strong>la primera tabla que escribes</strong>, la del <code>FROM</code>. Con <code>INNER</code> pod&iacute;as intercambiarlas; a partir de aqu&iacute;, no.</p></div>
 <div><table class="res"><caption>Resultado: 3 filas &mdash; los 3 empleados</caption><tr><th>nombre</th><th>nombre_proyecto</th></tr><tr><td>Laura</td><td>Campa&ntilde;a redes</td></tr><tr><td class="hl">Andres</td><td class="hl"><em style="color:#c1121f">NULL</em></td></tr><tr><td>Camila</td><td>Sistema de control</td></tr></table>
 <div class="hintbox"><strong>El patr&oacute;n que hay que memorizar</strong><p style="margin:.4em 0 0"><code>LEFT JOIN</code> + <code>WHERE ... IS NULL</code> = <strong>&laquo;lo que est&aacute; aqu&iacute; y no est&aacute; all&aacute;&raquo;</strong>.</p><p style="margin:.5em 0 0"><strong>En Excel es esto:</strong> pegas un <code>BUSCARV</code>, filtras por <code>#N/A</code>, y esa es tu lista de los que faltan. Aqu&iacute; el <code>#N/A</code> se llama <code>NULL</code> &mdash; y sale en la columna que <em>traes de la otra tabla</em>, nunca en la tuya.</p><p style="margin:.5em 0 0">Clientes que nunca compraron. Productos sin ventas. Facturas sin pago. Estudiantes sin matr&iacute;cula. Es la forma de encontrar <strong>ausencias</strong>, y un <code>INNER JOIN</code> no puede hacerlo jam&aacute;s: busca precisamente las filas que &eacute;l descarta.</p></div>
@@ -731,7 +731,7 @@ ORDER BY f.title;
 <p class="warn" style="margin-top:.9em"><strong>Este ejercicio no se puede resolver con <code>INNER JOIN</code>.</strong> Con <code>INNER</code> salen las 958 pel&iacute;culas que <em>s&iacute;</em> tienen copia. Las 42 que buscas son precisamente las que el <code>INNER JOIN</code> tira a la basura.</p>
 <p class="small" style="margin-top:.8em">958 + 42 = 1.000. Cuadra.</p><p class="warn" style="margin-top:.8em"><strong>El error que va a cometer medio sal&oacute;n:</strong> escribir <code>WHERE f.film_id IS NULL</code>. Eso devuelve <strong>0 filas y ning&uacute;n error</strong> &mdash; porque <code>f.film_id</code> nunca est&aacute; vac&iacute;o, es la columna de tu propia tabla. Y despu&eacute;s de la lecci&oacute;n del desaf&iacute;o 2 uno est&aacute; tentado a creerle al cero. <strong>Compru&eacute;balo siempre.</strong></p>
 <p class="small" style="margin-top:.6em">Y esto es plata: 42 pel&iacute;culas del cat&aacute;logo son inalquilables. O se compran copias, o se sacan del cat&aacute;logo para no prometer lo que no hay.</p></div></div>
-<div class="brand"><span>Bloque 4 &middot; Conservar</span><span>Las ausencias solo se ven con LEFT JOIN</span></div>
+<p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> Dale la vuelta: &iquest;cu&aacute;ntas <em>direcciones</em> no tienen ning&uacute;n cliente? <strong>4 de 603.</strong></p><div class="brand"><span>Bloque 4 &middot; Conservar</span><span>Las ausencias solo se ven con LEFT JOIN</span></div>
 </section>
 <section class="slide dense" data-title="Los otros dos"><div class="ey">Bloque 4 &middot; Conservar</div>
 <h2>Los otros dos, en cinco minutos</h2>
@@ -781,7 +781,7 @@ INNER JOIN film AS f
 WHERE    a.first_name = 'Nick'
   AND    a.last_name  = 'Wahlberg';</pre>
 <div class="hintbox"><strong>C&oacute;mo se lee, paso a paso</strong><ul><li>Arranco en <code>actor</code>.</li><li>Le pego el puente por <code>actor_id</code>: ahora tengo una fila por cada pel&iacute;cula en la que sale cada actor.</li><li>Le pego <code>film</code> por <code>film_id</code>: ahora cada una de esas filas trae el t&iacute;tulo.</li><li>Y al final filtro por el actor que me interesa.</li></ul></div>
-<p class="small" style="margin-top:.8em"><strong>Un detalle que importa:</strong> el filtro puede ir en el <code>WHERE</code> o dentro del <code>ON</code>. En un <code>INNER JOIN</code> da exactamente lo mismo. En un <code>LEFT JOIN</code> <strong>no</strong>: ponerlo en el <code>WHERE</code> lo convierte en <code>INNER</code> sin avisarte. Tienes las dos consultas comparadas al final de <code>S4.sql</code> &mdash; 2.511 filas contra 2.270.</p></div></div>
+<p class="small" style="margin-top:.8em"><strong>Un detalle que solo afecta a los <code>LEFT JOIN</code>:</strong> un filtro <strong>sobre la tabla de la derecha</strong> no da lo mismo en el <code>ON</code> que en el <code>WHERE</code>. En el <code>ON</code> se aplica al emparejar y las filas sin pareja sobreviven con <code>NULL</code>; en el <code>WHERE</code> se aplica despu&eacute;s, y como <code>NULL</code> no cumple ninguna condici&oacute;n, esas filas se caen: tu <code>LEFT</code> se volvi&oacute; <code>INNER</code>. Un filtro sobre la tabla de la <em>izquierda</em> &mdash;como el <code>WHERE</code> de aqu&iacute; arriba&mdash; no tiene ese problema. Las cuatro consultas comparadas est&aacute;n al final de <code>S4.sql</code>.</p></div></div>
 <div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Cada JOIN trae su propio ON</span></div>
 </section>
 <section class="slide" data-title="Desaf&iacute;o 5"><div class="ey">Desaf&iacute;o 5 &middot; 8 minutos</div>
@@ -800,7 +800,7 @@ ORDER BY f.title;
 -- 25 filas. La primera: Adaptation Holes (50 min, NC-17)</pre>
 <p class="small" style="margin-top:.9em">Penelope Guiness: <strong>19 pel&iacute;culas</strong>.</p>
 <p class="warn" style="margin-top:.8em"><strong>Fallo t&iacute;pico:</strong> escribir <code>WHERE first_name = 'Nick'</code> sin el <code>a.</code> delante. Aqu&iacute; funciona de casualidad, porque solo <code>actor</code> tiene esa columna. A&ntilde;ade <code>customer</code> a la consulta y la misma l&iacute;nea se vuelve ambigua. <strong>Escribe siempre el alias.</strong></p></div></div>
-<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Del puente salen los dos lados</span></div>
+<p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> &iquest;Con qu&eacute; actor comparte Nick m&aacute;s pel&iacute;culas? <strong>Empate a 3</strong> &mdash; y ah&iacute; <code>LIMIT 1</code> te miente.</p><div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Del puente salen los dos lados</span></div>
 </section>
 <section class="slide dense" data-title="Filas que se multiplican"><div class="ey">Bloque 5 &middot; Encadenar &middot; la trampa</div>
 <h2>Un <code>JOIN</code> puede <em>multiplicar</em> tus filas</h2>
@@ -818,12 +818,12 @@ AVG sobre las 4.581 filas del JOIN     114,93</pre><p class="small" style="margi
 <div><table class="res"><caption>Cu&aacute;ntas filas esperar</caption>
 <tr><th>Relaci&oacute;n</th><th>Filas del resultado</th></tr>
 <tr><td><strong>1:1</strong></td><td>Las mismas de la tabla izquierda</td></tr>
-<tr><td><strong>1:N</strong></td><td class="hl"><strong>M&aacute;s</strong>: una por cada hijo</td></tr>
+<tr><td><strong>1:N</strong></td><td class="hl"><strong>M&aacute;s</strong> por los hijos&hellip; y <strong>menos</strong> con <code>INNER</code> si hay padres sin ninguno</td></tr>
 <tr><td><strong>N:N</strong></td><td class="hl"><strong>Muchas m&aacute;s</strong>: el producto de las coincidencias</td></tr>
 </table>
 <div class="hintbox"><strong>El h&aacute;bito que te salva</strong><p style="margin:.4em 0 0"><strong>Antes</strong> de ejecutar, di en voz alta cu&aacute;ntas filas esperas. <strong>Despu&eacute;s</strong>, mira el contador de Beekeeper. Si no cuadra, no sigas construyendo encima: entiende primero por qu&eacute;.</p></div>
 <p class="small" style="margin-top:.8em">Es el error m&aacute;s caro de este oficio, porque <strong>no da error</strong>: da un n&uacute;mero. Un informe con las ventas infladas al doble sale con la misma cara de correcto que uno bueno.</p>
-<p class="small" style="margin-top:.6em"><strong>Para contar</strong>, el ant&iacute;doto es <code>COUNT(DISTINCT f.film_id)</code> en vez de <code>COUNT(*)</code>. <strong>Para promediar y sumar no sirve:</strong> <code>AVG(DISTINCT length)</code> da 115,50, que tampoco es el n&uacute;mero que quer&iacute;as. Ah&iacute; hay que resumir <em>antes</em> de unir, y eso es justo lo que aprendemos en la sesi&oacute;n 5.</p></div></div>
+<p class="small" style="margin-top:.6em"><strong>Para contar</strong>, el ant&iacute;doto es <code>COUNT(DISTINCT f.film_id)</code> en vez de <code>COUNT(*)</code>. <strong>Para promediar y sumar no sirve.</strong> Ah&iacute; hay que resumir <em>antes</em> de unir, y eso es justo lo que aprendemos en la sesi&oacute;n 5. Mientras tanto, la regla de emergencia: <strong>antes de promediar sobre un <code>JOIN</code>, cuenta cu&aacute;ntas filas te quedaron</strong>. Si no son las que esperabas, el promedio tampoco.</p></div></div>
 <div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Predice las filas antes de ejecutar</span></div>
 </section>
 <section class="slide" data-title="Quiz"><div class="ey">Quiz &middot; 5 minutos</div>
@@ -849,12 +849,12 @@ SELECT COUNT(*) FROM rental;</pre></button>
 <button class="verify">Verificar</button><div class="fb"></div></div>
 <div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>Buscar ausencias: LEFT + IS NULL</span></div>
 </section>
-<section class="slide" data-title="Desaf&iacute;o integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
+<section class="slide xdense" data-title="Desaf&iacute;o integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
 <h2>Los cinco clientes que m&aacute;s han gastado</h2>
 <div class="g2">
 <div><div class="ctx">Marketing va a mandar un bono a los <strong>cinco mejores clientes</strong>. Necesitan <strong>nombre completo, correo y cu&aacute;nto han pagado en total</strong>, del que m&aacute;s gast&oacute; al que menos.</div>
-<div class="hintbox"><strong>Aqu&iacute; se junta todo el curso</strong><ul><li><code>JOIN</code> entre <code>customer</code> y <code>payment</code> &mdash; hoy.</li><li><code>SUM</code> y <code>GROUP BY</code> &mdash; sesi&oacute;n 3.</li><li><code>ORDER BY</code> y <code>LIMIT</code> &mdash; sesi&oacute;n 2.</li><li><code>ROUND</code> para que el total no salga con 17 decimales.</li></ul></div>
-<p class="small" style="margin-top:.8em"><strong>Pista sobre el <code>GROUP BY</code>:</strong> agrupa por <code>c.customer_id</code>, no por el nombre. Dos personas pueden llamarse igual; el identificador nunca se repite. Si agrupas por <code>first_name</code> te sale <em>Marion con 302,34</em> &mdash; no da error, simplemente est&aacute; mal.</p><p class="warn" style="margin-top:.7em"><strong>&laquo;&iquest;Y la regla de oro del martes?&raquo;</strong> Buena pregunta. Agrupar por la <strong>llave primaria</strong> es la excepci&oacute;n: si fijas <code>customer_id</code>, el nombre y el correo ya no pueden ser otra cosa &mdash; quedan determinados. Si prefieres ir sobre seguro, mete las tres en el <code>GROUP BY</code>: da exactamente el mismo resultado.</p><p class="small" style="margin-top:.7em"><strong>Y una pieza nueva:</strong> <code>||</code> pega dos textos. <code>first_name || ' ' || last_name</code> da <em>Eleanor Hunt</em> en una sola columna. Si te estorba, pide las dos columnas por separado.</p></div>
+<div class="hintbox"><strong>Aqu&iacute; se junta todo el curso</strong><ul><li><code>JOIN</code> entre <code>customer</code> y <code>payment</code> &mdash; hoy.</li><li><code>SUM</code> y <code>GROUP BY</code> &mdash; sesi&oacute;n 3.</li><li><code>ORDER BY</code> y <code>LIMIT</code> &mdash; sesi&oacute;n 2.</li><li><code>ROUND(SUM(p.amount), 2)</code> &mdash; f&iacute;jate en el <strong><code>, 2</code></strong>: sin &eacute;l redondea a pesos enteros. Los cinco primeros salen limpios, pero baja a la fila 7 y ver&aacute;s <code>167.67000000000002</code>.</li></ul></div>
+<p class="small" style="margin-top:.8em"><strong>Pista sobre el <code>GROUP BY</code>:</strong> agrupa por <code>c.customer_id</code>, no por el nombre. Dos personas pueden llamarse igual; el identificador nunca se repite. Si agrupas por <code>first_name</code> te sale <em>Marion con 302,34</em> &mdash; no da error, simplemente est&aacute; mal.</p><p class="warn" style="margin-top:.7em"><strong>&laquo;&iquest;Y la regla de oro del martes?&raquo;</strong> Buena pregunta. Agrupar por la <strong>llave primaria</strong> es la excepci&oacute;n: si fijas <code>customer_id</code>, el nombre y el correo ya no pueden ser otra cosa &mdash; quedan determinados. Si prefieres ir sobre seguro, repite en el <code>GROUP BY</code> todas las columnas del <code>SELECT</code> que <strong>no</strong> sean una suma o un conteo:<br><code>GROUP BY c.customer_id, c.first_name, c.last_name, c.email</code> &mdash; da el mismo resultado.</p><p class="small" style="margin-top:.5em"><strong>Y ojo con el motor.</strong> SQLite no valida nada: te deja agrupar por <code>first_name</code> y pedir <code>last_name</code> sin rechistar. PostgreSQL y MySQL aceptan la excepci&oacute;n de la llave primaria; <strong>SQL Server y Oracle exigen la lista completa siempre</strong>. Escribirla entera es lo que viaja a cualquier motor.</p><p class="small" style="margin-top:.7em"><strong>Y una pieza nueva:</strong> <code>||</code> pega dos textos. <code>first_name || ' ' || last_name</code> da <em>Eleanor Hunt</em> en una sola columna. Si te estorba, pide las dos columnas por separado.</p></div>
 <div data-r><pre>SELECT   c.first_name || ' ' || c.last_name AS cliente,
          c.email,
          ROUND(SUM(p.amount), 2) AS total
@@ -873,7 +873,7 @@ LIMIT    5;</pre>
 <tr><td>Clara Shaw</td><td>189,60</td></tr>
 </table>
 <p class="small" style="margin-top:.7em">Te doy el resultado a prop&oacute;sito: el reto es <strong>escribir la consulta</strong> y poder comprobarte solo.</p></div></div>
-<div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>JOIN + GROUP BY + ORDER BY + LIMIT</span></div>
+<p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> Ahora el top 5 por <em>n&uacute;mero de alquileres</em>, no por plata. <strong>No son los mismos.</strong></p><div class="brand"><span>Bloque 5 &middot; Encadenar</span><span>JOIN + GROUP BY + ORDER BY + LIMIT</span></div>
 </section>
 <section class="slide" data-title="Los cuatro de un vistazo"><div class="ey">Resumen &middot; para la chuleta</div>
 <h2>Los cuatro <code>JOIN</code>, en una tabla</h2>
@@ -890,7 +890,7 @@ LIMIT    5;</pre>
 <p class="small" style="margin-top:.7em">De los cuatro, el que vas a escribir el 90&nbsp;% de las veces es <code>LEFT JOIN</code>. <code>RIGHT</code> y <code>FULL OUTER</code> hay que <em>reconocerlos</em> m&aacute;s que escribirlos.</p></div></div>
 <div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
 </section>
-<section class="slide yellow" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
+<section class="slide yellow dense" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
 <h2>Ya puedes responder preguntas de verdad</h2>
 <div class="g2">
 <div><h3>Lo que te llevas</h3>
@@ -909,7 +909,7 @@ LIMIT    5;</pre>
 <li>&iquest;Cu&aacute;ntas pel&iacute;culas hay <strong>por cada categor&iacute;a</strong>? Tablas <code>category</code>, <code>film_category</code>.<br><span class="small">Deben salir <strong>16 filas</strong>. La mayor: <em>Sports</em>, con 74.</span></li>
 <li>&iquest;Qu&eacute; <strong>ciudad</strong> tiene m&aacute;s clientes? Tablas <code>customer</code>, <code>address</code>, <code>city</code>.<br><span class="small">Necesitas <strong>dos <code>JOIN</code></strong>, <code>GROUP BY</code>, <code>ORDER BY</code> y <code>LIMIT</code>. <strong>Cuidado con el <code>LIMIT 1</code>:</strong> hay un empate. Aurora y London tienen 2 clientes cada una, y todas las dem&aacute;s tienen 1. Si pides una sola fila, el motor escoge por ti &mdash; y no siempre la misma.</span></li>
 </ol>
-<p class="warn" style="margin-top:1em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> ya sabes las piezas. En la sesi&oacute;n 5 aprendemos a <strong>pensar la consulta antes de escribirla</strong>: dibujar la tabla que quieres, decidir qu&eacute; unir y en qu&eacute; orden. Se llama <em>algor&iacute;tmica de tablas</em>, y es lo que separa a quien copia consultas de quien las dise&ntilde;a.</p></div></div>
+<p class="small" style="margin-top:.8em"><strong>Y para que esto salga de Beekeeper:</strong> clic derecho sobre la tabla de resultados &rarr; <em>Export</em> &rarr; CSV, y lo abres en Excel. Una pregunta de negocio termina en un archivo que alguien usa, no en una ventana.</p><p class="warn" style="margin-top:.9em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> ya sabes las piezas. En la sesi&oacute;n 5 aprendemos a <strong>pensar la consulta antes de escribirla</strong>: dibujar la tabla que quieres, decidir qu&eacute; unir y en qu&eacute; orden. Se llama <em>algor&iacute;tmica de tablas</em>, y es lo que separa a quien copia consultas de quien las dise&ntilde;a.</p></div></div>
 <p class="quote" style="margin-top:1.2em" data-r>Unir tablas no es un truco técnico: es volver a armar la realidad que la base separó para poder cuidarla.</p>
 <div class="brand"><span>Cierre</span><span>Sesi&oacute;n 5: algor&iacute;tmica de tablas</span><a href="../../index.html" style="color:inherit;font-weight:800">&larr; Volver al curso</a></div>
 </section>
@@ -920,7 +920,6 @@ LIMIT    5;</pre>
 
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 25</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador">T</button><a class="ctl" id="dlBtn" href="sesion-4-uniones-de-tablas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
-</div>
 <div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
 <div class="sr" id="announce" aria-live="assertive"></div>
 <script>
