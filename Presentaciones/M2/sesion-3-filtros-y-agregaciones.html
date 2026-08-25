@@ -402,6 +402,41 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   *,*:before,*:after{transition:none!important;animation:none!important}
 }
 
+/* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
+.minitimer{
+  position:fixed; left:1rem; bottom:1rem; z-index:90;
+  display:none; align-items:center; gap:.55rem;
+  padding:.5rem .6rem .5rem .9rem;
+  background:rgba(17,17,17,.94); color:#fff;
+  border-radius:999px; box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-family:"Segoe UI",Arial,sans-serif;
+  cursor:grab; touch-action:none; user-select:none;
+  transition:background .2s;
+}
+.minitimer.on{display:flex}
+.minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.minitimer .mt{
+  font:900 1.5rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.6em; text-align:center;
+}
+.minitimer button{
+  border:0; width:2rem; height:2rem; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff;
+  font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
+}
+.minitimer button:hover{background:rgba(255,255,255,.28)}
+.minitimer .lbl{
+  font-size:.62rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--y); font-weight:800; margin-right:.1rem;
+}
+/* últimos 60 segundos */
+.minitimer.avisa{background:rgba(193,18,63,.95)}
+.minitimer.avisa .lbl{color:#fff}
+/* se acabó */
+.minitimer.fin{background:rgba(193,18,63,.97); animation:latido 1s ease-in-out infinite}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media print{ .minitimer{display:none!important} }
+
 </style></head>
 <body><main class="stage">
 
@@ -554,8 +589,8 @@ HAVING SUM(amount) > 110;</pre></div><div class="brand"><span>Bloque 4 · Filtra
 
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 20</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador">T</button><a class="ctl" id="dlBtn" href="sesion-3-filtros-y-agregaciones.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
-</div>
 <div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
 <div class="sr" id="announce" aria-live="assertive"></div>
 <script>
 (()=>{'use strict';
@@ -572,19 +607,59 @@ async function full(){try{document.fullscreenElement?await document.exitFullscre
 document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
 if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
 document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
-document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
 document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
 let remain=900000,initial=remain,end=0,running=false,tick=null;
+const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
 function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function cur(){return running?Math.max(0,end-Date.now()):remain}
-function render(){const v=fmt(cur());document.getElementById('timer').textContent=v;if(clock&&ss[i].dataset.break==='15')clock.textContent=v;if(running&&cur()<=0){pause();announce.textContent='Temporizador terminado'}}
+function render(){const q=cur(),v=fmt(q);document.getElementById('timer').textContent=v;
+ if(miniT){miniT.textContent=v;
+  mini.classList.toggle('avisa',running&&q>0&&q<=60000);
+  mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));
+  miniPP.innerHTML=running?'&#10074;&#10074;':'&#9654;';
+  miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar');}
+ if(clock&&ss[i].dataset.break==='15')clock.textContent=v;
+ if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
+function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
 function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
-function setTimer(m,open=true){pause();initial=remain=m*60000;render();if(open)timeOv.classList.add('open')}
-function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);render()}
-function reset(){pause();remain=initial;render()}
-document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>setTimer(Number(b.dataset.min),false));
-const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);start();timeOv.classList.add('open')};
+function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
+/* al arrancar, el panel se quita de en medio y queda la pastilla flotante */
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);
+ if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
+function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
 document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+if(mini){
+ miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};
+ document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};
+ document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
+ /* arrastrar a cualquier lado; la posición se recuerda */
+ let ax=0,ay=0,px=0,py=0,mov=false;
+ const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};
+ try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');
+  if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}
+ mini.addEventListener('pointerdown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  const r=mini.getBoundingClientRect();
+  ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;
+  mini.setPointerCapture(e.pointerId);mini.classList.add('arrastrando')});
+ mini.addEventListener('pointermove',e=>{
+  if(!mini.hasPointerCapture||!mini.classList.contains('arrastrando'))return;
+  if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;
+  if(!mov)return;
+  const r=mini.getBoundingClientRect();
+  const x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width);
+  const y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);
+  mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});
+ mini.addEventListener('pointerup',e=>{
+  mini.classList.remove('arrastrando');
+  try{mini.releasePointerCapture(e.pointerId)}catch(_){}
+  if(mov)guardar();});
+ addEventListener('resize',()=>{const r=mini.getBoundingClientRect();
+  if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}});
+}
 let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
 upd();render()})();
 </script></body></html>
