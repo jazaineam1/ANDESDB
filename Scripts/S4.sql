@@ -12,61 +12,56 @@
 
 
 -- =====================================================================
---  ANTES DE EMPEZAR · las dos tablitas de los ejemplos
+--  LOS CUATRO JOIN, SOBRE LA BASE REAL
 --
---  Los cuatro tipos de JOIN se explican con dos tablas de juguete que NO
---  vienen en la base. Pega este bloque en Beekeeper y podrás ejecutar
---  todo lo que veas proyectado, no solo mirarlo.
+--  En clase los cuatro tipos se explican con un dibujo de dos tablas
+--  pequeñas (empleados y proyectos). Ese dibujo NO está en la base: es
+--  solo para verlo de un vistazo, con tres filas por lado.
 --
---  Si algo sale mal, DROP TABLE empleados; DROP TABLE proyectos; y vuelve
---  a empezar. No tocan nada de dvdrental.
+--  Aquí tienes los mismos cuatro JOIN sobre tablas de verdad. No hay
+--  que crear nada: ejecútalos tal cual.
+--
+--  El par es film e inventory. Cada fila de inventory es una copia
+--  física de una película. Hay 1.000 películas y 4.581 copias, y 42
+--  películas no tienen ninguna copia.
 -- =====================================================================
 
-CREATE TABLE empleados (
-  id_empleado  INTEGER PRIMARY KEY,
-  nombre       TEXT,
-  departamento TEXT
-);
+-- INNER JOIN · solo lo que tiene pareja en las dos
+SELECT   f.title, i.inventory_id
+FROM     film AS f
+INNER JOIN inventory AS i ON f.film_id = i.film_id;
+-- 4581 filas. Las 42 películas sin copia NO aparecen.
 
-INSERT INTO empleados VALUES
-  (1, 'Laura',  'Marketing'),
-  (2, 'Andrés', 'Finanzas'),
-  (3, 'Camila', 'Planeación');
+-- LEFT JOIN · todas las películas, tengan copia o no
+SELECT   f.title, i.inventory_id
+FROM     film AS f
+LEFT JOIN inventory AS i ON f.film_id = i.film_id;
+-- 4623 filas = 4581 + las 42 sin copia, que salen con NULL al lado.
 
-CREATE TABLE proyectos (
-  id_proyecto     INTEGER PRIMARY KEY,
-  id_empleado     INTEGER,
-  nombre_proyecto TEXT
-);
+-- RIGHT JOIN · lo mismo con las tablas volteadas
+SELECT   f.title, i.inventory_id
+FROM     inventory AS i
+RIGHT JOIN film AS f ON f.film_id = i.film_id;
+-- 4623 filas: idéntico al LEFT de arriba. Eso es todo lo que hace
+-- RIGHT: cambiar cuál tabla se conserva entera.
 
-INSERT INTO proyectos VALUES
-  (101, 3, 'Sistema de control'),
-  (102, 5, 'App móvil'),           -- ojo: el empleado 5 no existe en la nómina
-  (103, 1, 'Campaña redes');
-
--- Los cuatro JOIN sobre estas dos tablas. Ejecútalos y compara.
-SELECT e.nombre, p.nombre_proyecto
-FROM   empleados e INNER JOIN proyectos p ON e.id_empleado = p.id_empleado;
--- 2 filas: Camila y Laura. Se cayeron Andrés (sin proyecto) y App móvil
--- (su responsable no está en la nómina).
-
-SELECT e.nombre, p.nombre_proyecto
-FROM   empleados e LEFT JOIN proyectos p ON e.id_empleado = p.id_empleado;
--- 3 filas: los tres empleados. Andrés sale con NULL al lado.
-
-SELECT e.nombre, p.nombre_proyecto
-FROM   empleados e RIGHT JOIN proyectos p ON e.id_empleado = p.id_empleado;
--- 3 filas: los tres proyectos. App móvil sale con NULL.
-
-SELECT e.nombre, p.nombre_proyecto
-FROM   empleados e FULL OUTER JOIN proyectos p ON e.id_empleado = p.id_empleado;
--- 4 filas: no se pierde nada de ningún lado.
-
--- El uso real del FULL OUTER: quedarse solo con los huérfanos.
-SELECT e.nombre, p.nombre_proyecto
-FROM   empleados e FULL OUTER JOIN proyectos p ON e.id_empleado = p.id_empleado
-WHERE  e.nombre IS NULL OR p.nombre_proyecto IS NULL;
--- 2 filas: Andrés sin proyecto, App móvil sin responsable.
+-- FULL OUTER JOIN · todo, de los dos lados
+SELECT   f.title, i.inventory_id
+FROM     film AS f
+FULL OUTER JOIN inventory AS i ON f.film_id = i.film_id;
+-- 4623 filas. ¿Las mismas que el LEFT? Sí. Y eso es información:
+-- significa que NO hay ninguna copia huérfana, ninguna fila de
+-- inventory que apunte a una película inexistente. Compruébalo:
+SELECT COUNT(*)
+FROM   inventory i LEFT JOIN film f ON f.film_id = i.film_id
+WHERE  f.film_id IS NULL;
+-- 0
+--
+-- LA LECCIÓN: en una base bien mantenida, FULL OUTER JOIN casi nunca
+-- añade nada sobre LEFT JOIN, porque la integridad referencial impide
+-- que existan huérfanos del lado hijo. FULL OUTER se gana el sueldo
+-- cuando cruzas DOS SISTEMAS distintos que deberían cuadrar y no
+-- cuadran: ahí sí aparecen huérfanos por los dos lados.
 
 
 -- =====================================================================
