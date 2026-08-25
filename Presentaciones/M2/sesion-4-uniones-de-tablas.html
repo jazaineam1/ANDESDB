@@ -437,6 +437,25 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 @keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @media print{ .minitimer{display:none!important} }
 
+/* ===== arte de portada: ocupa la mitad que quedaba vacía ===== */
+.arte{
+  position:absolute; right:5.4%; top:50%; transform:translateY(-50%);
+  width:38%; max-height:70cqh; z-index:1; pointer-events:none;
+}
+@media (max-aspect-ratio:1/1){ .arte{display:none} }
+
+/* ===== los cuatro JOIN, de un vistazo ===== */
+.venns{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.2em 0 1.3em}
+.venns figure{margin:0;text-align:center}
+.venns svg{width:100%;max-height:11cqh;display:block;margin:0 auto}
+.venns figcaption{margin-top:.35em;line-height:1.25}
+.venns figcaption code{display:block;font-weight:800;font-size:.86em;color:var(--b)}
+.venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
+
+/* ===== reparto vertical: sin tercio inferior muerto ===== */
+.slide.mid.active{display:flex;flex-direction:column;justify-content:center}
+.slide.mid.active>.brand{position:absolute}
+
 </style></head>
 <body><main class="stage">
 
@@ -446,9 +465,57 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 <p class="lead">Hasta hoy cada consulta mir&oacute; <strong>una</strong> tabla. Hoy aprendemos a combinarlas: apilarlas con <code>UNION</code> y engancharlas con <code>JOIN</code>.</p>
 <div class="chips"><code>UNION</code><code>UNION ALL</code><code>INNER JOIN</code><code>LEFT JOIN</code><code>RIGHT JOIN</code><code>FULL OUTER JOIN</code></div>
 <div class="dlrow"><a href="base-datos/dvdrental.db" download>&#128451; La base de datos<small>dvdrental.db &middot; 3,3 MB</small></a><a href="chuleta-taller.html">&#128196; Hoja de ayuda<small>tenla abierta al lado</small></a><a href="../../Scripts/S4.sql" download>&#128220; Las consultas de la clase<small>S4.sql &middot; &aacute;brelo ahora</small></a></div><p class="small" style="margin-top:1em;opacity:.85">Usamos <strong>el mismo archivo de las sesiones anteriores</strong>. Si ya lo tienes, no descargues nada: no ha cambiado.</p>
+<svg class="arte" viewBox="0 0 420 300" role="img" aria-label="Dos tablas que se enganchan por una columna compartida">
+<defs>
+  <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff" stop-opacity=".13"/><stop offset="1" stop-color="#ffffff" stop-opacity=".05"/>
+  </linearGradient>
+  <marker id="fl" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#ffd600"/>
+  </marker>
+</defs>
+<!-- tabla izquierda -->
+<rect x="10" y="42" width="168" height="150" rx="12" fill="url(#g1)" stroke="#ffffff" stroke-opacity=".28" stroke-width="1.5"/>
+<rect x="10" y="42" width="168" height="26" rx="12" fill="#ffffff" fill-opacity=".10"/>
+<rect x="10" y="56" width="168" height="12" fill="#ffffff" fill-opacity=".10"/>
+<text x="24" y="60" font-size="13" font-weight="700" fill="#fff" font-family="Consolas,monospace">film</text>
+<rect x="24" y="80" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="88" y="80" width="76" height="9" rx="4.5" fill="#fff" fill-opacity=".30"/>
+<rect x="24" y="102" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="88" y="102" width="66" height="9" rx="4.5" fill="#fff" fill-opacity=".22"/>
+<rect x="24" y="124" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="88" y="124" width="72" height="9" rx="4.5" fill="#fff" fill-opacity=".22"/>
+<rect x="24" y="146" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".45"/>
+<rect x="88" y="146" width="58" height="9" rx="4.5" fill="#fff" fill-opacity=".16"/>
+<rect x="24" y="168" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".45"/>
+<rect x="88" y="168" width="68" height="9" rx="4.5" fill="#fff" fill-opacity=".16"/>
+<!-- tabla derecha -->
+<rect x="242" y="72" width="168" height="150" rx="12" fill="url(#g1)" stroke="#ffffff" stroke-opacity=".28" stroke-width="1.5"/>
+<rect x="242" y="72" width="168" height="26" rx="12" fill="#ffffff" fill-opacity=".10"/>
+<rect x="242" y="86" width="168" height="12" fill="#ffffff" fill-opacity=".10"/>
+<text x="256" y="90" font-size="13" font-weight="700" fill="#fff" font-family="Consolas,monospace">inventory</text>
+<rect x="256" y="110" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="320" y="110" width="74" height="9" rx="4.5" fill="#fff" fill-opacity=".30"/>
+<rect x="256" y="132" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="320" y="132" width="60" height="9" rx="4.5" fill="#fff" fill-opacity=".22"/>
+<rect x="256" y="154" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".85"/>
+<rect x="320" y="154" width="70" height="9" rx="4.5" fill="#fff" fill-opacity=".22"/>
+<rect x="256" y="176" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".45"/>
+<rect x="320" y="176" width="64" height="9" rx="4.5" fill="#fff" fill-opacity=".16"/>
+<rect x="256" y="198" width="52" height="9" rx="4.5" fill="#ffd600" fill-opacity=".45"/>
+<rect x="320" y="198" width="56" height="9" rx="4.5" fill="#fff" fill-opacity=".16"/>
+<!-- el enganche -->
+<path d="M178 106 C210 106 210 136 242 136" fill="none" stroke="#ffd600" stroke-width="2.4" marker-end="url(#fl)"/>
+<path d="M178 128 C206 128 214 158 242 158" fill="none" stroke="#ffd600" stroke-width="2.4" stroke-opacity=".55" marker-end="url(#fl)"/>
+<rect x="176" y="18" width="70" height="24" rx="12" fill="#ffd600"/>
+<text x="211" y="35" text-anchor="middle" font-size="13" font-weight="800" fill="#171717" font-family="Consolas,monospace">ON</text>
+<line x1="211" y1="42" x2="211" y2="98" stroke="#ffd600" stroke-width="1.5" stroke-dasharray="3 4" stroke-opacity=".7"/>
+<text x="210" y="252" text-anchor="middle" font-size="12.5" fill="#fff" fill-opacity=".62">la columna que comparten</text>
+<text x="210" y="272" text-anchor="middle" font-size="12.5" fill="#ffd600" font-weight="700" font-family="Consolas,monospace">film.film_id = inventory.film_id</text>
+</svg>
 <div class="brand"><span>Sesión 4 · Módulo 2</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
 </section>
-<section class="slide" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>De una tabla a varias</h2>
+<section class="slide mid" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>De una tabla a varias</h2>
 <div class="agenda-grid">
 <article><b>1</b><h3>C&oacute;mo se apuntan</h3><p>Llaves primarias y for&aacute;neas: por qu&eacute; una tabla sabe de otra.</p></article>
 <article><b>2</b><h3>Apilar</h3><p><code>UNION</code> y <code>UNION ALL</code>: pegar un resultado <em>debajo</em> de otro.</p></article>
@@ -459,7 +526,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 </div>
 <div class="brand"><span>Apertura</span><span>Cinco desaf&iacute;os y un reto integrador</span></div>
 </section>
-<section class="slide" data-title="Calentamiento"><div class="ey">Calentamiento &middot; 6 minutos</div>
+<section class="slide mid" data-title="Calentamiento"><div class="ey">Calentamiento &middot; 6 minutos</div>
 <h2>La pregunta que ninguna tabla responde sola</h2>
 <div class="g2">
 <div><p>Un cliente llama y pregunta: <strong>&laquo;&iquest;qu&eacute; pel&iacute;culas tienen de Nick Wahlberg?&raquo;</strong></p>
@@ -473,7 +540,7 @@ SELECT * FROM film  LIMIT 5;</pre>
 <p class="small" style="margin-top:.9em">Al final de la sesi&oacute;n vas a responder esa misma pregunta en una sola consulta.</p></div></div>
 <div class="brand"><span>Apertura</span><span>El dato se guarda una vez y se apunta</span></div>
 </section>
-<section class="slide dense" data-title="Las llaves"><div class="ey">Bloque 1 &middot; C&oacute;mo se apuntan</div>
+<section class="slide dense mid" data-title="Las llaves"><div class="ey">Bloque 1 &middot; C&oacute;mo se apuntan</div>
 <h2>Llave primaria y llave for&aacute;nea</h2>
 <div class="g2">
 <div><p>Toda tabla bien hecha tiene una columna &mdash;o un conjunto de columnas&mdash; que <strong>identifica cada fila sin repetirse</strong>. Es la <strong>llave primaria</strong> (<em>primary key</em>, <span class="k pk">PK</span>).</p>
@@ -615,16 +682,15 @@ ORDER BY last_name;
 </div>
 <div class="g2" style="margin-top:1.2em;align-items:start">
 <div><div class="hintbox" style="margin-top:0"><strong><span class="k pk" style="font-size:.95em;margin-right:.5em">5</span>&iquest;Con qu&eacute; filas me quedo?</strong><p style="margin:.4em 0 0">Ese es el <strong>tipo de uni&oacute;n</strong>: <code>INNER</code>, <code>LEFT</code>, <code>RIGHT</code> o <code>FULL OUTER</code>. Es la &uacute;nica pregunta que cambia de un <code>JOIN</code> a otro &mdash; las otras cuatro son id&eacute;nticas siempre.</p></div>
-<p class="small" style="margin-top:.9em">Si respondes las cinco antes de teclear, la consulta se escribe sola. Si te trabas escribiendo, es que te saltaste una.</p></div>
+</div>
 <div><pre>SELECT   film.title, language.name        <span style="color:#ff8a24">-- 3</span>
 FROM     film                             <span style="color:#ff8a24">-- 1</span>
 <span style="color:#ff8a24">INNER</span> JOIN language                   <span style="color:#ff8a24">-- 5 y 2</span>
   ON     film.language_id = language.language_id;   <span style="color:#ff8a24">-- 4</span></pre>
-<p class="small" style="margin-top:.6em">Toda consulta con <code>JOIN</code> que escribas este semestre tiene exactamente esta forma. Lo dem&aacute;s son variaciones.</p>
-<p class="small" style="margin-top:.6em">S&iacute;, es largo de escribir. En la diapositiva siguiente lo acortamos.</p></div></div>
+<p class="small" style="margin-top:.6em">Toda consulta con <code>JOIN</code> que escribas tiene esta forma; lo dem&aacute;s son variaciones. Si te trabas escribiendo, es que te saltaste una pregunta. <strong>Y s&iacute;, es largo: en la siguiente lo acortamos.</strong></p></div></div>
 <div class="brand"><span>Bloque 3 · Enganchar</span><span>Cuatro preguntas iguales, una que cambia</span></div>
 </section>
-<section class="slide" data-title="Alias"><div class="ey">Bloque 3 &middot; Enganchar</div>
+<section class="slide mid" data-title="Alias"><div class="ey">Bloque 3 &middot; Enganchar</div>
 <h2>Por qu&eacute; ahora hay que escribir <code>f.title</code> y no <code>title</code></h2>
 <div class="g2">
 <div><p>Con una sola tabla, <code>SELECT title</code> era suficiente. Con dos, el motor puede tener <strong>dos columnas que se llaman igual</strong> y no sabe cu&aacute;l quieres.</p>
@@ -739,7 +805,7 @@ ORDER BY c.last_name;
 <p class="small" style="margin-top:.7em"><strong>Y una libertad que ganas:</strong> el <code>ON</code> <strong>no exige que las dos columnas se llamen igual</strong>. Aqu&iacute; siempre coinciden (<code>film_id</code> con <code>film_id</code>) y eso engorda mal la intuici&oacute;n. En una base de verdad <code>ON p.id_paciente = c.cod_afiliado</code> es perfectamente v&aacute;lido: lo que tiene que coincidir es <strong>el contenido, no el nombre</strong>. Por eso la cuarta pregunta es una pregunta &mdash; hay que averiguarlo mirando las dos tablas.</p></div></div>
 <div class="brand"><span>Bloque 4 · Conservar</span><span>NULL es tu #N/A</span></div>
 </section>
-<section class="slide dense" data-title="LEFT JOIN"><div class="ey">Bloque 4 &middot; Conservar</div>
+<section class="slide dense mid" data-title="LEFT JOIN"><div class="ey">Bloque 4 &middot; Conservar</div>
 <h2><code>LEFT JOIN</code>: el que m&aacute;s vas a usar</h2>
 <div class="g2">
 <div><p><strong>La pregunta:</strong> &laquo;&iquest;qu&eacute; empleados tengo en n&oacute;mina y, <em>si</em> est&aacute;n en un proyecto, cu&aacute;l es?&raquo;</p>
@@ -772,7 +838,7 @@ ORDER BY f.title;
 <p class="small" style="margin-top:.6em">Y esto es plata: 42 pel&iacute;culas del cat&aacute;logo son inalquilables. O se compran copias, o se sacan del cat&aacute;logo para no prometer lo que no hay.</p></div></div>
 <p class="small" style="margin-top:.8em;opacity:.75"><strong>&#9889; Si te sobra tiempo:</strong> Dale la vuelta: &iquest;cu&aacute;ntas <em>direcciones</em> no tienen ning&uacute;n cliente? <strong>4 de 603.</strong></p><div class="brand"><span>Bloque 4 · Conservar</span><span>Las ausencias solo se ven con LEFT JOIN</span></div>
 </section>
-<section class="slide dense" data-title="Los otros dos"><div class="ey">Bloque 4 &middot; Conservar</div>
+<section class="slide dense mid" data-title="Los otros dos"><div class="ey">Bloque 4 &middot; Conservar</div>
 <h2>Los otros dos, en cinco minutos</h2>
 <p class="lead">Ya entendiste el mecanismo: donde no hay pareja, <code>NULL</code>. Los dos que faltan son variaciones de lo mismo, y ninguno cambia de sintaxis.</p>
 <div class="g2">
@@ -790,7 +856,7 @@ FROM proyectos p LEFT  JOIN empleados e ON ...</pre>
 <p class="small" style="margin-top:1em"><strong>Sim&eacute;tricos y no sim&eacute;tricos.</strong> Con <code>INNER</code> y con <code>FULL OUTER</code> da igual qu&eacute; tabla pongas primero. Con <code>LEFT</code> y <code>RIGHT</code> el orden <strong>cambia el resultado</strong> &mdash; por eso se llaman as&iacute;.</p>
 <div class="brand"><span>Bloque 4 · Conservar</span><span>RIGHT = LEFT volteado &middot; FULL = los dos</span></div>
 </section>
-<section class="slide dense" data-title="Encadenar"><div class="ey">Bloque 5 &middot; Encadenar</div>
+<section class="slide dense mid" data-title="Encadenar"><div class="ey">Bloque 5 &middot; Encadenar</div>
 <h2>Dos <code>JOIN</code> seguidos: cruzar el puente</h2>
 <div class="g2">
 <div><p>Volvemos a la pregunta del principio: <strong>&iquest;qu&eacute; pel&iacute;culas tiene Nick Wahlberg?</strong> No hay camino directo de <code>actor</code> a <code>film</code>. Hay que pasar por <code>film_actor</code>.</p>
@@ -823,7 +889,7 @@ WHERE    a.first_name = 'Nick'
 <p class="small" style="margin-top:.8em"><strong>Un detalle que solo afecta a los <code>LEFT JOIN</code>:</strong> un filtro <strong>sobre la tabla de la derecha</strong> no da lo mismo en el <code>ON</code> que en el <code>WHERE</code>. En el <code>ON</code> se aplica al emparejar y las filas sin pareja sobreviven con <code>NULL</code>; en el <code>WHERE</code> se aplica despu&eacute;s, y como <code>NULL</code> no cumple ninguna condici&oacute;n, esas filas se caen: tu <code>LEFT</code> se volvi&oacute; <code>INNER</code>. Un filtro sobre la tabla de la <em>izquierda</em> &mdash;como el <code>WHERE</code> de aqu&iacute; arriba&mdash; no tiene ese problema. Las cuatro consultas comparadas est&aacute;n al final de <code>S4.sql</code>.</p></div></div>
 <div class="brand"><span>Bloque 5 · Encadenar</span><span>Cada JOIN trae su propio ON</span></div>
 </section>
-<section class="slide" data-title="Desafío 5"><div class="ey">Desaf&iacute;o 5 &middot; 8 minutos</div>
+<section class="slide mid" data-title="Desafío 5"><div class="ey">Desaf&iacute;o 5 &middot; 8 minutos</div>
 <h2>El fan de Nick Wahlberg</h2>
 <div class="g2">
 <div><div class="ctx">Un cliente es <strong>fan aguerrido de Nick Wahlberg</strong> y quiere conocer todas las pel&iacute;culas en las que act&uacute;a. Adem&aacute;s de los t&iacute;tulos, pon la duraci&oacute;n y la calificaci&oacute;n, y ord&eacute;nalas alfab&eacute;ticamente.</div>
@@ -865,7 +931,7 @@ AVG sobre las 4.581 filas del JOIN     114,93</pre><p class="small" style="margi
 <p class="small" style="margin-top:.6em"><strong>Para contar</strong>, el ant&iacute;doto es <code>COUNT(DISTINCT f.film_id)</code> en vez de <code>COUNT(*)</code>. <strong>Para promediar y sumar no sirve.</strong> Ah&iacute; hay que resumir <em>antes</em> de unir, y eso es justo lo que aprendemos en la sesi&oacute;n 5. Mientras tanto, la regla de emergencia: <strong>antes de promediar sobre un <code>JOIN</code>, cuenta cu&aacute;ntas filas te quedaron</strong>. Si no son las que esperabas, el promedio tampoco.</p></div></div>
 <div class="brand"><span>Bloque 5 · Encadenar</span><span>Predice las filas antes de ejecutar</span></div>
 </section>
-<section class="slide" data-title="Quiz"><div class="ey">Quiz &middot; 5 minutos</div>
+<section class="slide mid" data-title="Quiz"><div class="ey">Quiz &middot; 5 minutos</div>
 <h2>&iquest;Cu&aacute;l de estas responde la pregunta?</h2>
 <p class="question-purpose"><strong>La pregunta:</strong> &laquo;&iquest;cu&aacute;ntos clientes <em>nunca</em> han alquilado nada?&raquo; &mdash; Tablas <code>customer</code> (599 filas) y <code>rental</code>.</p>
 <div class="q" data-answer="c">
@@ -888,7 +954,7 @@ SELECT COUNT(*) FROM rental;</pre></button>
 <button class="verify">Verificar</button><div class="fb"></div></div>
 <div class="brand"><span>Bloque 5 · Encadenar</span><span>Buscar ausencias: LEFT + IS NULL</span></div>
 </section>
-<section class="slide xdense" data-title="Desafío integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
+<section class="slide xdense mid" data-title="Desafío integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
 <h2>Los cinco clientes que m&aacute;s han gastado</h2>
 <div class="g2">
 <div><div class="ctx">Marketing va a mandar un bono a los <strong>cinco mejores clientes</strong>. Necesitan <strong>nombre completo, correo y cu&aacute;nto han pagado en total</strong>, del que m&aacute;s gast&oacute; al que menos.</div>
@@ -916,6 +982,7 @@ LIMIT    5;</pre>
 </section>
 <section class="slide" data-title="Los cuatro de un vistazo" data-opcional="1"><div class="ey">Resumen &middot; para la chuleta</div>
 <h2>Los cuatro <code>JOIN</code>, en una tabla</h2>
+<div class="venns"><figure class="venn"><svg viewBox="0 0 130 76" role="img" aria-label="INNER"><defs><clipPath id="cia"><circle cx="52" cy="38" r="30"/></clipPath></defs><circle cx="52" cy="38" r="30" fill="#e9eef2"/><circle cx="78" cy="38" r="30" fill="#e9eef2"/><g clip-path="url(#cia)"><circle cx="78" cy="38" r="30" fill="#ffd600"/></g><circle cx="52" cy="38" r="30" fill="none" stroke="#124e78" stroke-width="2.6"/><circle cx="78" cy="38" r="30" fill="none" stroke="#ff8a24" stroke-width="2.6"/></svg><figcaption><code>INNER</code><span>solo lo com&uacute;n</span></figcaption></figure><figure class="venn"><svg viewBox="0 0 130 76" role="img" aria-label="LEFT"><defs><clipPath id="cib"><circle cx="52" cy="38" r="30"/></clipPath></defs><circle cx="52" cy="38" r="30" fill="#ffd600"/><circle cx="78" cy="38" r="30" fill="#e9eef2"/><g clip-path="url(#cib)"><circle cx="78" cy="38" r="30" fill="#ffd600"/></g><circle cx="52" cy="38" r="30" fill="none" stroke="#124e78" stroke-width="2.6"/><circle cx="78" cy="38" r="30" fill="none" stroke="#ff8a24" stroke-width="2.6"/></svg><figcaption><code>LEFT</code><span>todo lo de la izquierda</span></figcaption></figure><figure class="venn"><svg viewBox="0 0 130 76" role="img" aria-label="RIGHT"><defs><clipPath id="cic"><circle cx="52" cy="38" r="30"/></clipPath></defs><circle cx="52" cy="38" r="30" fill="#e9eef2"/><circle cx="78" cy="38" r="30" fill="#ffd600"/><g clip-path="url(#cic)"><circle cx="78" cy="38" r="30" fill="#ffd600"/></g><circle cx="52" cy="38" r="30" fill="none" stroke="#124e78" stroke-width="2.6"/><circle cx="78" cy="38" r="30" fill="none" stroke="#ff8a24" stroke-width="2.6"/></svg><figcaption><code>RIGHT</code><span>todo lo de la derecha</span></figcaption></figure><figure class="venn"><svg viewBox="0 0 130 76" role="img" aria-label="FULL OUTER"><defs><clipPath id="cid"><circle cx="52" cy="38" r="30"/></clipPath></defs><circle cx="52" cy="38" r="30" fill="#ffd600"/><circle cx="78" cy="38" r="30" fill="#ffd600"/><g clip-path="url(#cid)"><circle cx="78" cy="38" r="30" fill="#ffd600"/></g><circle cx="52" cy="38" r="30" fill="none" stroke="#124e78" stroke-width="2.6"/><circle cx="78" cy="38" r="30" fill="none" stroke="#ff8a24" stroke-width="2.6"/></svg><figcaption><code>FULL OUTER</code><span>todo, de los dos lados</span></figcaption></figure></div>
 <table class="res"><caption>Todos usan la misma sintaxis. Solo cambia con qu&eacute; filas te quedas.</caption>
 <tr><th>Tipo</th><th>Se queda con&hellip;</th><th>&iquest;Sim&eacute;trico?</th><th>La pregunta que responde</th></tr>
 <tr><td><code>INNER JOIN</code></td><td>Solo lo que tiene pareja en <strong>las dos</strong></td><td>S&iacute;</td><td>&laquo;&iquest;Qu&eacute; empleados <strong>est&aacute;n</strong> en un proyecto?&raquo;</td></tr>
@@ -929,7 +996,7 @@ LIMIT    5;</pre>
 <p class="small" style="margin-top:.7em">De los cuatro, el que vas a escribir el 90&nbsp;% de las veces es <code>LEFT JOIN</code>. <code>RIGHT</code> y <code>FULL OUTER</code> hay que <em>reconocerlos</em> m&aacute;s que escribirlos.</p></div></div>
 <div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
 </section>
-<section class="slide yellow dense" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
+<section class="slide yellow dense mid" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
 <h2>Ya puedes responder preguntas de verdad</h2>
 <div class="g2">
 <div><h3>Lo que te llevas</h3>
