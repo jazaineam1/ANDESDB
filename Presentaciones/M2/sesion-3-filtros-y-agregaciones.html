@@ -237,7 +237,7 @@ pre{
 .optbl th,.tbl th{background:var(--ink)}
 .res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
 .res tr:nth-child(2n) td{background:#f4fafe}
-.res td.hl{background:var(--yl);font-weight:800}
+.res td.hl,.res tr:nth-child(2n) td.hl{background:var(--yl);font-weight:800}
 .optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
 
 /* --- puente Excel → SQL --------------------------------------------- */
@@ -331,7 +331,7 @@ pre{
   background:var(--ink);color:#fff;padding:.4em .75em;
   border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
 }
-.logo{max-width:14em;max-height:4.5em;object-fit:contain}
+.logo{display:flex;align-items:center;gap:.75em;max-width:14em;max-height:4.5em;object-fit:contain}
 .slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
 
 /* --- barras de cuota de mercado ------------------------------------- */
@@ -513,9 +513,13 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   font-family:Consolas,monospace; font-size:.82em; font-weight:800;
   color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
 }
-.cbadge.1N,.cbadge\31 N{background:var(--o)}
-.cbadge\31 1{background:var(--b)}
-.cbadge\4e N{background:var(--r)}
+.cbadge.tipo-1n{background:var(--o);color:#171717}
+.cbadge.tipo-11{background:var(--b);color:#fff}
+.cbadge.tipo-nn{background:var(--r);color:#fff}
+
+
+
+
 
 .ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
 .cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
@@ -524,7 +528,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
   background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
 }
-.ct.o .cth{background:var(--o)} .ct.k .cth{background:var(--ink)}
+.ct.o .cth{background:var(--o)} .ct.res-final .cth{background:var(--ink)}
 .ct.y .cth{background:var(--y);color:var(--ink)}
 .ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
   border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
@@ -567,6 +571,17 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
   .slide.mid.active{justify-content:flex-start}
   .slide.mid.active>.brand{position:static;margin-top:1.6rem}
 }
+
+/* ===== columnas de números: a la derecha, como en una hoja de cálculo ===== */
+.res td.num,.res th.num,.optbl td.num,.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* la tabla del panel no debe heredar la píldora .k de PK/FK */
+.ct,.ct table,.ct td,.ct th{border-radius:0;letter-spacing:normal}
+.ct table{border-radius:0 0 var(--r-sm) var(--r-sm)}
+
+/* ===== el escudo de Uniandes ===== */
+.escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
+.logo span{line-height:1.2}
 
 </style></head>
 <body><main class="stage">
