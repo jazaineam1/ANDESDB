@@ -178,3 +178,11 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
   .hito{grid-template-columns:2rem 1fr;gap:.7rem}
   .hito .st{grid-column:2;justify-self:start;margin-top:.3rem}
 }
+
+/* ===== el rótulo de cada módulo dentro de «Sesiones» ===== */
+.grupo-mod{font-size:.82rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--b);margin:2rem 0 .9rem;padding-bottom:.5rem;border-bottom:2px solid var(--line);
+  display:flex;align-items:center;gap:.6rem}
+.grupo-mod:first-of-type{margin-top:0}
+.grupo-mod:before{content:"";width:.9rem;height:.9rem;border-radius:50%;
+  background:var(--y);flex:0 0 auto}

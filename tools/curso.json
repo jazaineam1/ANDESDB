@@ -7,7 +7,7 @@
     "48 horas · 16 sesiones",
     "Clases en vivo por videollamada"
   ],
-  "sesionActual": 5,
+  "sesionActual": 6,
   "totalSesiones": 16,
   "herramientas": [
     {
@@ -58,7 +58,7 @@
     {
       "n": 2,
       "titulo": "Explorando bases de datos con SQL",
-      "estado": "curso",
+      "estado": "completado",
       "desc": "Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
       "recursos": [
         {
@@ -144,7 +144,7 @@
         {
           "n": 5,
           "titulo": "Algorítmica de tablas",
-          "estado": "proxima",
+          "estado": "completado",
           "desc": "Dibujar la tabla antes de escribirla y llegar a ella por pedazos. El nivel de agregación, el orden en que SQL ejecuta de verdad, y cómo resumir antes de unir para que las cuentas no se inflen.",
           "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
           "tags": [
@@ -168,10 +168,47 @@
     {
       "n": 3,
       "titulo": "Modelos de datos útiles",
-      "estado": "pendiente",
-      "desc": "Reglas de negocio, modelado entidad-relación y normalización.",
-      "recursos": [],
-      "sesiones": []
+      "estado": "curso",
+      "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones y las tablas que salen de ahí.",
+      "recursos": [
+        {
+          "txt": "📋 El caso y la plantilla de reglas",
+          "href": "Presentaciones/M3/caso-restaurante-abc.html"
+        },
+        {
+          "txt": "🗄️ La base de datos (archivo)",
+          "href": "Presentaciones/M2/base-datos/dvdrental.db",
+          "download": true
+        }
+      ],
+      "sesiones": [
+        {
+          "n": 6,
+          "titulo": "Reglas de negocio",
+          "estado": "proxima",
+          "desc": "Toda base de datos es una opinión sobre cómo funciona un negocio. Leer esa opinión con SQL, distinguir lo que es certeza de lo que es suposición, y escribir las reglas de un caso nuevo.",
+          "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
+          "tags": [
+            "reglas de negocio",
+            "OLTP",
+            "OLAP",
+            "data lake",
+            "data warehouse",
+            "ETL / ELT"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S6.sql",
+              "download": true
+            },
+            {
+              "txt": "📋 El caso y la plantilla de reglas",
+              "href": "Presentaciones/M3/caso-restaurante-abc.html"
+            }
+          ]
+        }
+      ]
     },
     {
       "n": 4,
@@ -198,7 +235,7 @@
       "sesiones": []
     }
   ],
-  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3, 4 y 5.",
+  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 fueron las sesiones 2 a 5; el módulo 3 empieza en la 6.",
   "materialesHoy": [
     {
       "txt": "🗄️ La base de datos",
@@ -207,12 +244,12 @@
     },
     {
       "txt": "📜 Las consultas de la clase",
-      "href": "Scripts/S5.sql",
+      "href": "Scripts/S6.sql",
       "download": true
     },
     {
-      "txt": "📄 Hoja de ayuda",
-      "href": "Presentaciones/M2/chuleta-taller.html"
+      "txt": "📋 El caso y la plantilla",
+      "href": "Presentaciones/M3/caso-restaurante-abc.html"
     },
     {
       "txt": "📘 Guía para repasar",

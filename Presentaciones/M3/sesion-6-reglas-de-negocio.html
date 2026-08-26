@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 6 - Reglas de negocio: leerlas en la base, levantarlas del cliente, y OLTP frente a OLAP - Diseno y Gestion de Bases de Datos con SQL"><title>Sesi&oacute;n 6 &middot; Reglas de negocio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23ffd600%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22bold%22%20fill%3D%22%23171717%22%3E6%3C/text%3E%3C/svg%3E">
+<style>
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%;
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;width:2em;height:2em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl,.res tr:nth-child(2n) td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.tnode{cursor:pointer}
+.tnode rect{transition:fill .15s,stroke-width .15s}
+.tnode:hover rect{stroke-width:4.5}
+.tnode:focus{outline:none}
+.tnode:focus rect{stroke:#ff8a24;stroke-width:5}
+.tnode.sel rect{stroke:#ff8a24;stroke-width:5}
+.tinfo{height:15cqh;overflow:auto;margin-top:.5em;padding:.7em 1em;background:var(--bl);border-left:.4em solid var(--b);border-radius:var(--r-md);color:var(--ink)}
+.tinfo h3{margin:0 0 .4em;font-family:Consolas,monospace;color:var(--b)}
+.tinfo h3 small{font-family:"Segoe UI",Arial,sans-serif;font-weight:600;color:var(--ink-soft);font-size:.62em;margin-left:.6em}
+.tinfo .res td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;width:14em}
+.tinfo-hint{margin:0;color:var(--ink-soft);font-size:.92em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15em 1.6em}
+.dgrid div{display:flex;gap:.6em;align-items:baseline;border-bottom:1px solid rgba(18,78,120,.12);padding:.16em 0}
+.dgrid b{font-family:Consolas,monospace;color:var(--b);flex:0 0 10.5em;font-size:.92em}
+.dgrid span{font-size:.88em;line-height:1.3}
+.tdata{display:none}
+.k{border-radius:var(--pill);padding:.05em .5em;font-size:.72em;font-weight:800;font-family:"Segoe UI",Arial,sans-serif}
+.k.pk{background:var(--ink);color:var(--y)}
+.k.fk{background:var(--b);color:#fff}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{display:flex;align-items:center;gap:.75em;max-width:14em;max-height:4.5em;object-fit:contain}
+.slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+
+/* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
+.minitimer{
+  position:fixed; left:1rem; bottom:1rem; z-index:90;
+  display:none; align-items:center; gap:.55rem;
+  padding:.5rem .6rem .5rem .9rem;
+  background:rgba(17,17,17,.94); color:#fff;
+  border-radius:999px; box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-family:"Segoe UI",Arial,sans-serif;
+  cursor:grab; touch-action:none; user-select:none;
+  transition:background .2s;
+}
+.minitimer.on{display:flex}
+.minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.minitimer .mt{
+  font:900 1.5rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.6em; text-align:center;
+}
+.minitimer button{
+  border:0; width:2rem; height:2rem; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff;
+  font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
+}
+.minitimer button:hover{background:rgba(255,255,255,.28)}
+.minitimer .lbl{
+  font-size:.62rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--y); font-weight:800; margin-right:.1rem;
+}
+/* últimos 60 segundos */
+.minitimer.avisa{background:rgba(193,18,63,.95)}
+.minitimer.avisa .lbl{color:#fff}
+/* se acabó */
+.minitimer.fin{background:rgba(193,18,63,.97); animation:latido 1s ease-in-out infinite}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media print{ .minitimer{display:none!important} }
+
+/* ===== arte de portada: ocupa la mitad que quedaba vacía ===== */
+.arte{
+  position:absolute; right:5.4%; top:50%; transform:translateY(-50%);
+  width:38%; max-height:70cqh; z-index:1; pointer-events:none;
+}
+@media (max-aspect-ratio:1/1){ .arte{display:none} }
+
+/* ===== los cuatro JOIN, de un vistazo ===== */
+.venns{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.2em 0 1.3em}
+.venns figure{margin:0;text-align:center}
+.venns svg{width:100%;max-height:11cqh;display:block;margin:0 auto}
+.venns figcaption{margin-top:.35em;line-height:1.25}
+.venns figcaption code{display:block;font-weight:800;font-size:.86em;color:var(--b)}
+.venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
+
+/* ===== reparto vertical: sin tercio inferior muerto ===== */
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
+.slide.mid.active>.brand{position:absolute}
+
+/* ===== esquema entrada -> resultado ===== */
+.joinviz{display:block;width:100%;max-height:34cqh;margin:.9em 0 0}
+
+/* ===== el mapa con la cardinalidad ===== */
+.mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}
+
+/* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
+.cnode{cursor:pointer}
+.cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
+.cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
+.cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
+.cdata{display:none}
+
+.cpanel{
+  position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
+  background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink); border-radius:var(--r-lg);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
+  padding:1.1em 1.3em 1em; z-index:5;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
+.cclose{
+  position:absolute; top:.5em; right:.6em; z-index:2;
+  border:0; background:var(--ink); color:#fff;
+  width:44px; height:44px; border-radius:50%;
+  font-size:1em; font-weight:800; cursor:pointer; line-height:1;
+}
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
+.cbadge{
+  font-family:Consolas,monospace; font-size:.82em; font-weight:800;
+  color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
+}
+.cbadge.tipo-1n{background:var(--o);color:#171717}
+.cbadge.tipo-11{background:var(--b);color:#fff}
+.cbadge.tipo-nn{background:var(--r);color:#fff}
+
+
+
+
+
+.ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
+.cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
+.ct{margin:0;flex:0 1 auto;min-width:0}
+.cth{
+  font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
+  background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.ct.o .cth{background:var(--o)} .ct.res-final .cth{background:var(--ink)}
+.ct.y .cth{background:var(--y);color:var(--ink)}
+.ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
+  border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
+.ct th{background:#f4f7fa;color:var(--ink-soft);font-family:Consolas,monospace;
+  font-weight:700;text-align:left;padding:.3em .6em;font-size:.92em;white-space:nowrap}
+.ct td{padding:.28em .6em;border-top:1px solid #eef3f7;color:var(--ink);
+  font-family:Consolas,monospace;white-space:nowrap}
+.ct tr.mas td{text-align:center;color:var(--ink-soft);letter-spacing:.2em}
+.ct figcaption{font-size:.72em;color:var(--ink-soft);margin-top:.3em;text-align:center}
+.cnota{margin:1em 0 0;font-size:.86em;line-height:1.45;
+  background:var(--yl);border-left:.35em solid var(--y);
+  border-radius:var(--r-sm);padding:.7em .9em;color:var(--ink)}
+
+/* los valores que se repiten en el puente, para ver el N:N */
+.ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
+.ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 12px 36px rgba(0,0,0,.28)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
+
+/* ===== columnas de números: a la derecha, como en una hoja de cálculo ===== */
+.res td.num,.res th.num,.optbl td.num,.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* la tabla del panel no debe heredar la píldora .k de PK/FK */
+.ct,.ct table,.ct td,.ct th{border-radius:0;letter-spacing:normal}
+.ct table{border-radius:0 0 var(--r-sm) var(--r-sm)}
+
+/* ===== el escudo de Uniandes ===== */
+.escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
+.logo span{line-height:1.2}
+
+/* ===== botón de copiar en cada bloque de código ===== */
+pre{position:relative}
+.copybtn{
+  position:absolute; top:.5em; right:.5em; z-index:3;
+  font:800 .68em/1 "Segoe UI",Arial,sans-serif; letter-spacing:.07em; text-transform:uppercase;
+  color:#cfe3f0; background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.24);
+  border-radius:var(--pill); padding:.42em .85em; cursor:pointer; opacity:.55;
+  transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+pre:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.2); color:#fff}
+.copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
+.copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.copybtn{transition:none}}
+</style></head>
+<body><main class="stage">
+
+<section class="slide dark" data-title="Portada"><img class="logo portada-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAADwCAYAAAD4pgDaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI2OUVGQkRFRDQ5MjExRTQ5QjcyQUNGMDEwN0ExMEU2IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI2OUVGQkRGRDQ5MjExRTQ5QjcyQUNGMDEwN0ExMEU2Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjY5RUZCRENENDkyMTFFNDlCNzJBQ0YwMTA3QTEwRTYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjY5RUZCRERENDkyMTFFNDlCNzJBQ0YwMTA3QTEwRTYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5qc4MeAABg6ElEQVR42uyd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" alt="Universidad de los Andes">
+<div class="ey">Sesi&oacute;n 6 &middot; M&oacute;dulo 3</div>
+<h1>Reglas de negocio</h1>
+<p class="lead">Toda base de datos es <strong>una opini&oacute;n sobre c&oacute;mo funciona un negocio</strong>. Hoy aprendes a leer esa opini&oacute;n &mdash; y a escribir la tuya.</p>
+<div class="chips"><code>reglas de negocio</code><code>OLTP</code><code>OLAP</code><code>laguna de datos</code><code>bodega de datos</code><code>ETL / ELT</code></div>
+<div class="dlrow"><a href="../M2/base-datos/dvdrental.db" download>&#128451; La base de datos<small>dvdrental.db &middot; 3,3 MB &middot; la misma de siempre</small></a><a href="../M2/chuleta-taller.html" target="_blank" rel="noopener">&#128196; Hoja de ayuda<small>tenla abierta al lado</small></a><a href="../../Scripts/S6.sql" download>&#128220; Las consultas de la clase<small>S6.sql</small></a></div>
+<p class="small" style="margin-top:1em;opacity:.85">Empieza el <strong>m&oacute;dulo 3</strong>. Hoy se escribe poco SQL y se decide mucho: lo que salga de esta sesi&oacute;n es el material de la siguiente.</p>
+<svg class="arte" viewBox="0 0 420 300" role="img" aria-label="Una base de datos con reglas escritas dentro"><defs><marker id="p6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ffd600" fill-opacity=".8"/></marker></defs><ellipse cx="210" cy="76" rx="96" ry="26" fill="#ffd600" fill-opacity=".16" stroke="#ffd600" stroke-width="2.4"/><path d="M114 76 v96 a96 26 0 0 0 192 0 v-96" fill="#ffd600" fill-opacity=".08" stroke="#ffd600" stroke-width="2.4"/><path d="M114 124 a96 26 0 0 0 192 0" fill="none" stroke="#ffd600" stroke-width="1.6" stroke-opacity=".55"/><text x="210" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#ffd600" fill-opacity="0.9" font-family="Consolas,monospace">NOT NULL</text><text x="210" y="138" text-anchor="middle" font-size="13" font-weight="700" fill="#ffd600" fill-opacity="0.78" font-family="Consolas,monospace">ON DELETE</text><text x="210" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#ffd600" fill-opacity="0.66" font-family="Consolas,monospace">UNIQUE</text><text x="210" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#ffd600" fill-opacity="0.54" font-family="Consolas,monospace">CHECK</text><text x="210" y="40" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fff" fill-opacity=".55" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">DENTRO DE LA BASE</text><text x="210" y="226" text-anchor="middle" font-size="13" fill="#fff" fill-opacity=".68" font-family="Segoe UI,Arial,sans-serif">hay reglas escritas &mdash; y se leen</text><path d="M210 244 v26" fill="none" stroke="#ffd600" stroke-width="2.4" stroke-opacity=".8" marker-end="url(#p6)"/><text x="210" y="290" text-anchor="middle" font-size="14.5" font-weight="800" fill="#ffd600" font-family="Segoe UI,Arial,sans-serif">&iquest;qui&eacute;n las decidi&oacute;?</text></svg>
+<div class="brand"><span>Sesi&oacute;n 6 &middot; M&oacute;dulo 3</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
+</section>
+<section class="slide mid" data-title="Agenda">
+<div class="ey">Qu&eacute; haremos hoy</div><h2>De leer reglas a escribirlas</h2>
+<div class="agenda-grid">
+<article><b>1</b><h3>Leer sin sobreinterpretar</h3><p>Lo que <code>dvdrental</code> tiene escrito dentro &mdash; y hasta d&oacute;nde te puedes fiar de cada cosa.</p></article>
+<article><b>2</b><h3>Lo que el dato no dice</h3><p>Por qu&eacute; una consulta te da una hip&oacute;tesis y no una regla.</p></article>
+<article><b>3</b><h3>Levantar reglas</h3><p>La entrevista, y c&oacute;mo se escribe una regla que se pueda comprobar.</p></article>
+<article><b>&#9208;</b><h3>Pausa</h3><p>15 minutos.</p></article>
+<article><b>4</b><h3>Restaurante ABC</h3><p>Tus propias reglas para un caso nuevo. Es el material de la sesi&oacute;n 7.</p></article>
+<article><b>5 y 6</b><h3>Operar o entender</h3><p>OLTP, OLAP, y d&oacute;nde acaba viviendo el dato.</p></article>
+</div>
+<div class="brand"><span>Apertura</span><span>Hoy decides t&uacute;, no la base</span></div>
+</section>
+<section class="slide dense mid" data-title="El giro">
+<div class="ey">Apertura &middot; 5 minutos</div>
+<h2>Hasta hoy preguntabas. Hoy decides.</h2>
+<div class="vs-grid" style="margin-top:.9em">
+<section><h3>Sesiones 2 a 5</h3><p class="tagline">La base ya exist&iacute;a</p>
+<ul>
+<li>Alguien hab&iacute;a decidido que hubiera una tabla <code>rental</code>.</li>
+<li>Alguien decidi&oacute; que <code>return_date</code> pudiera quedarse vac&iacute;a.</li>
+<li>Alguien decidi&oacute; que solo existieran cinco clasificaciones.</li>
+</ul>
+<p class="small" style="margin-top:.5em">T&uacute; preguntabas y la base contestaba.</p></section>
+<section><h3>De aqu&iacute; en adelante</h3><p class="tagline">Ese alguien vas a ser t&uacute;</p>
+<ul>
+<li>&iquest;Qu&eacute; tiene que guardar el sistema, y qu&eacute; no?</li>
+<li>&iquest;Qu&eacute; puede faltar y qu&eacute; es obligatorio?</li>
+<li>&iquest;Qu&eacute; no puede pasar <strong>nunca</strong>?</li>
+</ul>
+<p class="small" style="margin-top:.5em">Esas respuestas se llaman <strong>reglas de negocio</strong>.</p></section>
+</div>
+<div class="g2" style="margin-top:.9em">
+<div><p class="quote" style="margin:0">Toda base de datos es una opini&oacute;n sobre c&oacute;mo funciona un negocio &mdash; y esa opini&oacute;n se puede leer.</p></div>
+<div><div class="hintbox" style="margin:0"><strong>Con qu&eacute; te vas esta noche</strong><ul>
+<li><strong>Ocho reglas escritas</strong> de un caso real, con su fuente y su forma de comprobarlas.</li>
+<li>Y una pregunta pendiente por cada &aacute;rea &mdash; que es tan valiosa como las reglas.</li>
+<li>Eso es lo que la <strong>sesi&oacute;n 7</strong> convierte en un modelo.</li>
+</ul></div></div></div>
+<div class="brand"><span>Apertura</span><span>De preguntar a decidir</span></div>
+</section>
+<section class="slide xdense mid" data-title="Qué es una regla de negocio">
+<div class="ey">Bloque 1 &middot; 4 minutos</div>
+<h2>Una frase que dice qu&eacute; se puede y qu&eacute; no</h2>
+<p class="lead" style="max-width:none">Una <strong>regla de negocio</strong> es un enunciado que define o limita c&oacute;mo funciona el negocio. Todas tienen que cumplirse dentro del sistema que se va a construir.</p>
+<div class="steps" style="margin-top:.9em">
+<article><b>&#9881;</b><h3>Comportamientos</h3><p>Qu&eacute; pasa cuando ocurre algo.</p></article>
+<article><b>&#128683;</b><h3>Restricciones</h3><p>Qu&eacute; no se permite nunca.</p></article>
+<article><b>&#10067;</b><h3>Condiciones</h3><p>Qu&eacute; hace falta para poder seguir.</p></article>
+<article><b>&#128220;</b><h3>Pol&iacute;ticas</h3><p>Lo que la empresa decidi&oacute;, aunque pudiera ser de otra forma.</p></article>
+</div>
+<table class="res" style="margin-top:1em"><caption>La misma idea, en cuatro sectores</caption>
+<tr><th>Sector</th><th>La regla</th><th>Qu&eacute; tipo es</th></tr>
+<tr><td>Educaci&oacute;n</td><td>Un profesor no puede dictar m&aacute;s de cinco materias por semestre.</td><td>Restricci&oacute;n</td></tr>
+<tr><td>Comercio electr&oacute;nico</td><td>Un cliente no puede comprar sin registrar direcci&oacute;n de env&iacute;o.</td><td>Condici&oacute;n</td></tr>
+<tr><td>Banca</td><td>No se transfieren fondos si el saldo disponible es insuficiente.</td><td>Restricci&oacute;n</td></tr>
+<tr><td>Salud</td><td>Un m&eacute;dico solo puede ver los historiales de sus propios pacientes.</td><td>Pol&iacute;tica</td></tr>
+</table>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Qu&eacute; se puede y qu&eacute; no</span></div>
+</section>
+<section class="slide mid" data-title="Dónde vive una regla">
+<div class="ey">Bloque 1 &middot; 4 minutos</div>
+<h2>La misma regla puede vivir en tres sitios</h2>
+<p class="lead" style="max-width:none">Y no da igual cu&aacute;l: cambia lo que cuesta modificarla y cambia <strong>qui&eacute;n se la puede saltar</strong>.</p>
+<svg class="joinviz" style="max-height:46cqh" viewBox="0 0 1010 292" role="img" aria-label="Las tres capas donde puede vivir una regla de negocio: la cabeza de alguien, el codigo, o la base de datos"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">D&Oacute;NDE VIVE UNA REGLA &mdash; Y CU&Aacute;NTO CUESTA CAMBIARLA</text><text x="360" y="52" text-anchor="middle" font-size="11.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">CUESTA CAMBIARLA</text><text x="620" y="52" text-anchor="middle" font-size="11.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">QUI&Eacute;N SE LA PUEDE SALTAR</text><rect x="6" y="62" width="268" height="52" rx="10" fill="#f7f8fa" stroke="#d7dde3" stroke-width="2.2"/><text x="22" y="88" font-size="14" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">En la cabeza de alguien</text><text x="22" y="105" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">una persona</text><rect x="290" y="80" width="26" height="17" rx="8.5" fill="#d7dde3"/><text x="326" y="93" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">nada</text><text x="478" y="93" font-size="14" fill="#d7dde3" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&rarr;</text><rect x="506" y="76" width="498" height="26" rx="13" fill="#fff" stroke="#d7dde3" stroke-width="1.6"/><text x="520" y="93" font-size="12.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">cualquiera &mdash; y se pierde cuando esa persona se va</text><rect x="6" y="124" width="268" height="52" rx="10" fill="#fff4e0" stroke="#ff8a24" stroke-width="2.2"/><text x="22" y="150" font-size="14" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">En el c&oacute;digo de la aplicaci&oacute;n</text><text x="22" y="167" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">el equipo que la escribió</text><rect x="290" y="142" width="62" height="17" rx="8.5" fill="#ff8a24"/><text x="362" y="155" font-size="12.5" fill="#8a4b00" font-weight="800" font-family="Segoe UI,Arial,sans-serif">poco</text><text x="478" y="155" font-size="14" fill="#d7dde3" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&rarr;</text><rect x="506" y="138" width="498" height="26" rx="13" fill="#fff" stroke="#ff8a24" stroke-width="1.6"/><text x="520" y="155" font-size="12.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">quien entre por otra aplicaci&oacute;n</text><rect x="6" y="186" width="268" height="52" rx="10" fill="#e8f1f8" stroke="#124e78" stroke-width="2.2"/><text x="22" y="212" font-size="14" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">En la base de datos</text><text x="22" y="229" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">todo el que entre</text><rect x="290" y="204" width="110" height="17" rx="8.5" fill="#124e78"/><text x="410" y="217" font-size="12.5" fill="#124e78" font-weight="800" font-family="Segoe UI,Arial,sans-serif">mucho</text><text x="478" y="217" font-size="14" fill="#d7dde3" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&rarr;</text><rect x="506" y="200" width="498" height="26" rx="13" fill="#fff" stroke="#124e78" stroke-width="1.6"/><text x="520" y="217" font-size="12.5" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">nadie</text><rect x="6" y="254" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="273" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La consecuencia:</tspan> las reglas que est&aacute;n en la base son las que <tspan font-weight="800">no se negocian</tspan>. Y hoy vamos a leerlas, porque est&aacute;n escritas ah&iacute; dentro.</text></svg>
+<div class="g2" style="margin-top:.7em">
+<div><p class="ctx" style="margin:0"><strong>Ninguna es mejor que las otras.</strong> Una regla que cambia cada mes no puede estar en la base: cambiarla cuesta una migraci&oacute;n. Una que no se puede violar jam&aacute;s no puede estar solo en la aplicaci&oacute;n.</p></div>
+<div><p class="warn" style="margin:0"><strong>Pero las de la base son las &uacute;nicas que nadie negocia.</strong> Y por eso se pueden leer: est&aacute;n escritas, en un sitio concreto, con un lenguaje que ya conoces.</p></div></div>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Las de la base no se negocian</span></div>
+</section>
+<section class="slide mid" data-title="Cuatro niveles de certeza">
+<div class="ey">Bloque 1 &middot; 6 minutos &middot; la diapositiva clave de hoy</div>
+<h2>Antes de leer nada: cuatro cosas que parecen la misma</h2>
+<p class="lead" style="max-width:none">Todo lo que viene ahora sale de consultar la base. Pero <strong>no todo lo que sale de una consulta vale lo mismo</strong>, y la diferencia decide qu&eacute; puedes escribir en un documento y qu&eacute; no.</p>
+<svg class="joinviz" style="max-height:48cqh" viewBox="0 0 1010 312" role="img" aria-label="Cuatro niveles de certeza: restriccion implementada, permiso del esquema, patron observado e hipotesis sin confirmar"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">CUATRO COSAS DISTINTAS QUE PARECEN LA MISMA</text><text x="886" y="20" text-anchor="middle" font-size="11.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">CU&Aacute;NTO TE PUEDES FIAR</text><rect x="6" y="32" width="760" height="52" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="2.2"/><rect x="6" y="32" width="7" height="52" rx="3.5" fill="#2e7d32"/><text x="24" y="54" font-size="13.5" fill="#2e7d32" font-weight="800" font-family="Segoe UI,Arial,sans-serif">RESTRICCI&Oacute;N</text><text x="24" y="72" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">implementada</text><text x="176" y="54" font-size="12.4" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">El motor la impide. No se puede violar.</text><text x="176" y="72" font-size="11.8" fill="#6b7480" font-family="Consolas,monospace">NOT NULL &middot; UNIQUE &middot; CHECK &middot; FOREIGN KEY</text><rect x="790" y="48" width="20" height="20" rx="5" fill="#2e7d32"/><rect x="816" y="48" width="20" height="20" rx="5" fill="#2e7d32"/><rect x="842" y="48" width="20" height="20" rx="5" fill="#2e7d32"/><rect x="868" y="48" width="20" height="20" rx="5" fill="#2e7d32"/><text x="886" y="82" text-anchor="middle" font-size="11.5" fill="#2e7d32" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Certeza</text><rect x="6" y="92" width="760" height="52" rx="10" fill="#fff" stroke="#124e78" stroke-width="2.2"/><rect x="6" y="92" width="7" height="52" rx="3.5" fill="#124e78"/><text x="24" y="114" font-size="13.5" fill="#124e78" font-weight="800" font-family="Segoe UI,Arial,sans-serif">PERMISO</text><text x="24" y="132" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">del esquema</text><text x="176" y="114" font-size="12.4" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">El motor lo deja pasar. No dice que ocurra.</text><text x="176" y="132" font-size="11.8" fill="#6b7480" font-family="Consolas,monospace">una columna que admite vac&iacute;o</text><rect x="790" y="108" width="20" height="20" rx="5" fill="#124e78"/><rect x="816" y="108" width="20" height="20" rx="5" fill="#124e78"/><rect x="842" y="108" width="20" height="20" rx="5" fill="#124e78"/><rect x="868" y="108" width="20" height="20" rx="5" fill="#eef0f3"/><text x="886" y="142" text-anchor="middle" font-size="11.5" fill="#124e78" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Alta</text><rect x="6" y="152" width="760" height="52" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2.2"/><rect x="6" y="152" width="7" height="52" rx="3.5" fill="#ff8a24"/><text x="24" y="174" font-size="13.5" fill="#8a4b00" font-weight="800" font-family="Segoe UI,Arial,sans-serif">PATR&Oacute;N</text><text x="24" y="192" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">observado</text><text x="176" y="174" font-size="12.4" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Se cumple en todos los datos que hay hoy.</text><text x="176" y="192" font-size="11.8" fill="#6b7480" font-family="Consolas,monospace">un COUNT que da 0 &middot; un valor que siempre se repite</text><rect x="790" y="168" width="20" height="20" rx="5" fill="#ff8a24"/><rect x="816" y="168" width="20" height="20" rx="5" fill="#ff8a24"/><rect x="842" y="168" width="20" height="20" rx="5" fill="#eef0f3"/><rect x="868" y="168" width="20" height="20" rx="5" fill="#eef0f3"/><text x="886" y="202" text-anchor="middle" font-size="11.5" fill="#8a4b00" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Media</text><rect x="6" y="212" width="760" height="52" rx="10" fill="#fff" stroke="#c1121f" stroke-width="2.2"/><rect x="6" y="212" width="7" height="52" rx="3.5" fill="#c1121f"/><text x="24" y="234" font-size="13.5" fill="#c1121f" font-weight="800" font-family="Segoe UI,Arial,sans-serif">HIP&Oacute;TESIS</text><text x="24" y="252" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">sin confirmar</text><text x="176" y="234" font-size="12.4" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Te la imaginas al mirar el dato.</text><text x="176" y="252" font-size="11.8" fill="#6b7480" font-family="Consolas,monospace">una fecha rara &middot; dos cosas que parecen ir juntas</text><rect x="790" y="228" width="20" height="20" rx="5" fill="#c1121f"/><rect x="816" y="228" width="20" height="20" rx="5" fill="#eef0f3"/><rect x="842" y="228" width="20" height="20" rx="5" fill="#eef0f3"/><rect x="868" y="228" width="20" height="20" rx="5" fill="#eef0f3"/><text x="886" y="262" text-anchor="middle" font-size="11.5" fill="#c1121f" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Ninguna</text><rect x="6" y="274" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="293" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">Las cuatro se leen con la misma consulta.</tspan> Lo que cambia es qu&eacute; puedes afirmar despu&eacute;s &mdash; y confundirlas es el error m&aacute;s caro de todo el oficio.</text></svg>
+<p class="small" style="margin-top:.5em">Gu&aacute;rdate estas cuatro palabras: <strong>restricci&oacute;n</strong>, <strong>permiso</strong>, <strong>patr&oacute;n</strong> e <strong>hip&oacute;tesis</strong>. Las vas a usar en los dos talleres siguientes y en el trabajo, dentro de un a&ntilde;o, cuando te sienten delante de una base que no conoces.</p>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Restricci&oacute;n, permiso, patr&oacute;n, hip&oacute;tesis</span></div>
+</section>
+<section class="slide mid" data-title="NOT NULL es una regla">
+<div class="ey">Bloque 1 &middot; 5 minutos &middot; lo hacemos juntos</div>
+<h2>La primera la tienes a un <code>pragma</code> de distancia</h2>
+<div class="g2" style="align-items:center">
+<div><p>Ejecuta esto y no mires las filas: mira la columna <code>notnull</code>.</p>
+<pre>SELECT name, "notnull"
+FROM   pragma_table_info('rental');</pre>
+<p class="small" style="margin-top:.7em"><code>pragma_table_info</code> no consulta datos: consulta <strong>la forma de la tabla</strong>. Y la forma de la tabla es una decisi&oacute;n que alguien tom&oacute;.</p></div>
+<div><p class="ctx" style="margin:0"><strong>Un <code>NOT NULL</code> es una <em>restricci&oacute;n implementada</em>:</strong> el motor la impide, as&iacute; que te puedes fiar del todo. Donde no lo pusieron hay un <em>permiso del esquema</em>: dice que <strong>puede</strong> faltar, no que falte.</p></div></div>
+<svg class="joinviz" style="max-height:44cqh" viewBox="0 0 1010 274" role="img" aria-label="Las columnas de la tabla rental: cuatro obligatorias y una que admite vacio, y las dos reglas de negocio que eso significa"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LO QUE LA TABLA <tspan font-family="Consolas,monospace">rental</tspan> EXIGE</text><rect x="6" y="34" width="470" height="28" rx="8" fill="#f7f8fa" stroke="#6b7480" stroke-width="1.6"/><text x="20" y="53" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">rental_id</text><rect x="196" y="39" width="118" height="18" rx="9" fill="#6b7480"/><text x="255" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">clave</text><rect x="6" y="68" width="470" height="28" rx="8" fill="#eef6ee" stroke="#2e7d32" stroke-width="1.6"/><text x="20" y="87" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">rental_date</text><rect x="196" y="73" width="104" height="18" rx="9" fill="#2e7d32"/><text x="248" y="86" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">NOT NULL</text><text x="330" y="87" font-size="12.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">cu&aacute;ndo</text><rect x="6" y="102" width="470" height="28" rx="8" fill="#eef6ee" stroke="#2e7d32" stroke-width="1.6"/><text x="20" y="121" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">inventory_id</text><rect x="196" y="107" width="104" height="18" rx="9" fill="#2e7d32"/><text x="248" y="120" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">NOT NULL</text><text x="330" y="121" font-size="12.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">qu&eacute; copia</text><rect x="6" y="136" width="470" height="28" rx="8" fill="#eef6ee" stroke="#2e7d32" stroke-width="1.6"/><text x="20" y="155" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">customer_id</text><rect x="196" y="141" width="104" height="18" rx="9" fill="#2e7d32"/><text x="248" y="154" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">NOT NULL</text><text x="330" y="155" font-size="12.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">qui&eacute;n</text><rect x="6" y="170" width="470" height="28" rx="8" fill="#fff2f2" stroke="#c1121f" stroke-width="1.6"/><text x="20" y="189" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">return_date</text><rect x="196" y="175" width="118" height="18" rx="9" fill="#c1121f"/><text x="255" y="188" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">admite vac&iacute;o</text><rect x="6" y="204" width="470" height="28" rx="8" fill="#eef6ee" stroke="#2e7d32" stroke-width="1.6"/><text x="20" y="223" font-size="13.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">staff_id</text><rect x="196" y="209" width="104" height="18" rx="9" fill="#2e7d32"/><text x="248" y="222" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">NOT NULL</text><text x="330" y="223" font-size="12.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">qui&eacute;n atendi&oacute;</text><rect x="500" y="34" width="504" height="90" rx="10" fill="#eef6ee" stroke="#2e7d32" stroke-width="2.2"/><text x="518" y="58" font-size="13" fill="#2e7d32" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&#10004; Regla 1</text><text x="518" y="80" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Para alquilar hace falta s&iacute; o s&iacute;: <tspan font-weight="800">cu&aacute;ndo,</text><text x="518" y="99" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif">qu&eacute; copia, qui&eacute;n y qui&eacute;n atendi&oacute;.</tspan></text><text x="518" y="117" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Cuatro columnas obligatorias, cuatro datos que el negocio exige.</text><rect x="500" y="136" width="504" height="90" rx="10" fill="#fff2f2" stroke="#c1121f" stroke-width="2.2"/><text x="518" y="160" font-size="13" fill="#c1121f" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&#9888; Regla 2</text><text x="518" y="182" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif">La devoluci&oacute;n <tspan font-weight="800">puede faltar</tspan>: el sistema</text><text x="518" y="201" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">permite un alquiler abierto.</tspan></text><text x="518" y="219" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">No es un descuido: es una decisi&oacute;n. Alguien dijo que se pod&iacute;a.</text><rect x="500" y="238" width="504" height="26" rx="13" fill="#fff8e1" stroke="#ffd600" stroke-width="1.6"/><text x="514" y="256" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">Y hay 183 ahora mismo:</tspan> <tspan font-family="Consolas,monospace">WHERE return_date IS NULL</tspan></text></svg>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Lo obligatorio y lo opcional son decisiones</span></div>
+</section>
+<section class="slide dense mid" data-title="Taller 1">
+<div class="ey">Taller 1 &middot; 10 minutos &middot; individual</div>
+<h2>Cuatro consultas: qu&eacute; demuestran y qu&eacute; no</h2>
+<div class="g2">
+<div><div class="ctx" style="margin:0"><strong>Las consultas te las doy hechas.</strong> Para cada una escribe <strong>dos cosas</strong>: la frase que sale de ella, y <strong>de qu&eacute; nivel es</strong> &mdash; restricci&oacute;n, permiso, patr&oacute;n o hip&oacute;tesis.</div>
+<pre>-- 1 &middot; &iquest;se puede tener una pel&iacute;cula sin devolver?
+SELECT COUNT(*) AS sin_devolver
+FROM   rental
+WHERE  return_date IS NULL;
+
+-- 2 &middot; &iquest;dos personas con la misma copia a la vez?
+SELECT COUNT(*) AS solapes
+FROM   rental a
+JOIN   rental b ON a.inventory_id = b.inventory_id
+               AND a.rental_id    &lt; b.rental_id
+WHERE  a.return_date IS NOT NULL
+  AND  b.rental_date &gt;= a.rental_date
+  AND  b.rental_date &lt;  a.return_date;</pre></div>
+<div><pre>-- 3 &middot; &iquest;la clasificaci&oacute;n es texto libre?
+SELECT   rating, COUNT(*) AS n
+FROM     film
+GROUP BY rating
+ORDER BY n DESC;
+
+-- 4 &middot; &iquest;puede haber una pel&iacute;cula sin copias?
+SELECT COUNT(*) AS sin_copias
+FROM   film f
+LEFT JOIN inventory i ON f.film_id = i.film_id
+WHERE  i.film_id IS NULL;</pre>
+<p class="small" style="margin-top:.7em"><strong>La 2 es lo &uacute;nico nuevo de hoy:</strong> une <code>rental</code> consigo misma para buscar parejas de alquileres de la misma copia que se pisen en el tiempo. <code>a.rental_id &lt; b.rental_id</code> evita comparar una fila consigo misma y contar cada pareja dos veces.</p></div></div>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Qu&eacute; frase sale, y de qu&eacute; nivel es</span></div>
+</section>
+<section class="slide xdense mid" data-title="Las cuatro respuestas">
+<div class="ey">Taller 1 &middot; la respuesta &middot; 5 minutos</div>
+<h2>Cuatro n&uacute;meros, y solo dos son certezas</h2>
+<table class="res"><caption>El nivel importa m&aacute;s que la frase</caption>
+<tr><th class="num">#</th><th class="num">Sale</th><th>Lo que puedes escribir</th><th>Qu&eacute; nivel es</th></tr>
+<tr><td class="num">1</td><td class="num"><strong>183</strong></td><td><strong>Se puede tener una pel&iacute;cula sin devolver.</strong> Lo garantiza que <code>return_date</code> admita vac&iacute;o; los 183 casos solo confirman que ocurre.</td><td><strong>Permiso</strong> del esquema</td></tr>
+<tr><td class="num">2</td><td class="num"><strong>0</strong></td><td><strong>Ninguna copia estuvo alquilada dos veces a la vez</strong> en 16.044 alquileres. Cuidado: la base <em>no lo impide</em>.</td><td class="hl"><strong>Patr&oacute;n</strong> observado</td></tr>
+<tr><td class="num">3</td><td class="num"><strong>5</strong></td><td><strong>La clasificaci&oacute;n solo admite cinco valores</strong>, y ninguna pel&iacute;cula se queda sin ella: en el original es un tipo enumerado.</td><td><strong>Restricci&oacute;n</strong> implementada</td></tr>
+<tr><td class="num">4</td><td class="num"><strong>42</strong></td><td><strong>Una pel&iacute;cula puede estar en el cat&aacute;logo sin copias.</strong> Nada obliga a que exista inventario.</td><td><strong>Permiso</strong> del esquema</td></tr>
+</table>
+<div class="g2" style="margin-top:.8em">
+<div><p class="warn" style="margin:0"><strong>La 2 es la trampa, y es la m&aacute;s importante del d&iacute;a.</strong> Un cero es tentador: parece una ley. Pero significa &laquo;no ha pasado&raquo;, no &laquo;no puede pasar&raquo;. Si lo escribes como restricci&oacute;n y ma&ntilde;ana alguien alquila dos veces la misma copia, el sistema lo va a permitir.</p></div>
+<div><p class="ctx" style="margin:0"><strong>Y la 2 bien escrita ser&iacute;a:</strong> &laquo;una copia no deber&iacute;a poder alquilarse dos veces a la vez &mdash; <em>hoy se cumple, pero nada lo impide: hay que preguntarlo y, si es regla, implementarla</em>&raquo;. Eso es una fila entera de la plantilla de hoy.</p></div></div>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Un cero no es una ley</span></div>
+</section>
+<section class="slide mid" data-title="Las reglas del esquema">
+<div class="ey">Bloque 1 &middot; 6 minutos</div>
+<h2>Las restricciones de verdad no se ven consultando</h2>
+<p class="lead" style="max-width:none">El archivo original de <code>dvdrental</code> &mdash;el de PostgreSQL, antes de convertirlo&mdash; trae <strong>restricciones implementadas</strong> que ninguna consulta te ense&ntilde;a. Se leen en el <strong>esquema</strong>, no en los datos.</p>
+<svg class="joinviz" style="max-height:48cqh" viewBox="0 0 1010 296" role="img" aria-label="Las reglas escritas en el esquema original: claves foraneas, enumerados, CHECK, UNIQUE y valores por defecto, y las 18 claves foraneas que se perdieron al convertir"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LO QUE EL ESQUEMA ORIGINAL DEJA ESCRITO</text><rect x="6" y="32" width="690" height="31" rx="8" fill="#fff" stroke="#124e78" stroke-width="1.6"/><text x="18" y="53" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">FOREIGN KEY &times; 18</text><rect x="176" y="39" width="127.2" height="18" rx="9" fill="#124e78"/><text x="239.6" y="52" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">ON DELETE RESTRICT</text><text x="325.2" y="53" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">No puedes borrar un cliente que tiene alquileres.</text><rect x="6" y="69" width="690" height="31" rx="8" fill="#fff5f5" stroke="#c1121f" stroke-width="2.4"/><text x="18" y="90" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">&hellip; y una sola excepci&oacute;n</text><rect x="176" y="76" width="127.2" height="18" rx="9" fill="#c1121f"/><text x="239.6" y="89" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">ON DELETE SET NULL</text><text x="325.2" y="90" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Si se borra el alquiler, <tspan font-weight="800">el pago se queda</tspan>.</text><rect x="6" y="106" width="690" height="31" rx="8" fill="#fff" stroke="#6a4bb8" stroke-width="1.6"/><text x="18" y="127" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">mpaa_rating</text><rect x="176" y="113" width="101.60000000000001" height="18" rx="9" fill="#6a4bb8"/><text x="226.8" y="126" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">TYPE &hellip; AS ENUM</text><text x="299.6" y="127" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Solo existen cinco clasificaciones. No es texto libre.</text><rect x="6" y="143" width="690" height="31" rx="8" fill="#fff" stroke="#6a4bb8" stroke-width="1.6"/><text x="18" y="164" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">year_check</text><rect x="176" y="150" width="108.0" height="18" rx="9" fill="#6a4bb8"/><text x="230.0" y="163" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">CHECK 1901&ndash;2155</text><text x="306.0" y="164" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Un a&ntilde;o fuera de ese rango no entra.</text><rect x="6" y="180" width="690" height="31" rx="8" fill="#fff" stroke="#2e7d32" stroke-width="1.6"/><text x="18" y="201" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">idx_unq_rental&hellip;</text><rect x="176" y="187" width="50.400000000000006" height="18" rx="9" fill="#2e7d32"/><text x="201.2" y="200" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">UNIQUE</text><text x="248.4" y="201" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">El mismo cliente no alquila la misma copia en el mismo instante.</text><rect x="6" y="217" width="690" height="31" rx="8" fill="#fff" stroke="#ff8a24" stroke-width="1.6"/><text x="18" y="238" font-size="12.5" fill="#171717" font-weight="700" font-family="Consolas,monospace">rental_duration / rate</text><rect x="176" y="224" width="165.60000000000002" height="18" rx="9" fill="#ff8a24"/><text x="258.8" y="237" text-anchor="middle" font-size="10.8" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">DEFAULT 3 &middot; 4,99 &middot; 19,99</text><text x="363.6" y="238" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Si nadie dice nada: 3 d&iacute;as, 4,99 y 19,99 de reposici&oacute;n.</text><rect x="712" y="32" width="292" height="106" rx="12" fill="#fff5f5" stroke="#c1121f" stroke-width="2.6"/><text x="858" y="62" text-anchor="middle" font-size="30" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128176;</text><text x="858" y="92" text-anchor="middle" font-size="15" fill="#c1121f" font-weight="800" font-family="Segoe UI,Arial,sans-serif">LA PLATA NO SE BORRA</text><text x="858" y="114" text-anchor="middle" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Es la <tspan font-weight="800">&uacute;nica</tspan> excepci&oacute;n</text><text x="858" y="130" text-anchor="middle" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">en toda la base de datos.</text><rect x="712" y="150" width="292" height="100" rx="12" fill="#f7f8fa" stroke="#d7dde3" stroke-width="2"/><text x="730" y="174" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Y en tu archivo <tspan font-family="Consolas,monospace">.db</tspan>&hellip;</text><text x="858" y="212" text-anchor="middle" font-size="30" fill="#c1121f" font-weight="800" font-family="Consolas,monospace">18 &rarr; 0</text><text x="858" y="236" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">claves for&aacute;neas</text><rect x="6" y="258" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="277" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">Una regla que solo vive en la base viaja mal.</tspan> Al convertir de PostgreSQL a SQLite se quedaron atr&aacute;s las 18, en silencio. Por eso se escriben tambi&eacute;n fuera.</text></svg>
+<p class="small" style="margin-top:.5em">De estas seis, la que m&aacute;s dice del negocio es la segunda: alguien se sent&oacute; a decidir que, si desaparece un alquiler, <strong>el registro del dinero sobrevive</strong>. Es la &uacute;nica excepci&oacute;n en 18 relaciones &mdash; y eso no lo adivinas mirando filas.</p>
+<div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>La plata no se borra</span></div>
+</section>
+<section class="slide xdense mid" data-title="El dato miente">
+<div class="ey">Bloque 2 &middot; 5 minutos</div>
+<h2>Y ahora el nivel m&aacute;s bajo: la hip&oacute;tesis</h2>
+<div class="g2" style="margin-top:.8em">
+<div><pre>SELECT MIN(rental_date), MAX(rental_date) FROM rental;
+-- 2005-05-24  &hellip;  2006-02-14
+
+SELECT MIN(payment_date), MAX(payment_date) FROM payment;
+-- 2007-02-14  &hellip;  2007-05-14</pre>
+<p class="warn" style="margin-top:.8em"><strong>&iquest;Regla descubierta?</strong> &laquo;En este negocio se paga entre uno y dos a&ntilde;os despu&eacute;s de alquilar.&raquo;</p></div>
+<div><p class="ctx" style="margin:0"><strong>Falso.</strong> Nadie alquila un DVD y paga dos a&ntilde;os despu&eacute;s. Es un defecto de los datos de ejemplo: quien los gener&oacute; puso las fechas de pago en otro rango y nadie lo revis&oacute;.</p>
+<p style="margin-top:.9em">Si hubieras escrito esa frase en un documento y alguien hubiera dise&ntilde;ado el sistema con ella, habr&iacute;as construido un negocio que no existe.</p>
+<p class="quote" style="margin-top:1em">El dato te dice qu&eacute; pas&oacute;. Solo el negocio te dice qu&eacute; est&aacute; permitido.</p></div></div>
+<div class="brand"><span>Bloque 2 &middot; Lo que el dato no dice</span><span>Una hip&oacute;tesis no es una regla</span></div>
+</section>
+<section class="slide xdense mid" data-title="599 de 599">
+<div class="ey">Bloque 2 &middot; 4 minutos</div>
+<h2>Cuando el esquema dice una cosa y el dato otra</h2>
+<div class="g2" style="margin-top:.8em">
+<div><p><code>customer</code> tiene una columna <code>store_id</code>. Leyendo el esquema parece claro: <strong>cada cliente pertenece a una tienda</strong>.</p>
+<pre>-- clientes que alquilan en las DOS tiendas
+SELECT COUNT(*) FROM (
+  SELECT r.customer_id
+  FROM   rental r
+  JOIN   inventory i ON r.inventory_id = i.inventory_id
+  GROUP BY r.customer_id
+  HAVING COUNT(DISTINCT i.store_id) &gt; 1
+);
+-- 599</pre></div>
+<div><p class="warn" style="margin:0"><strong>Los 599 clientes que existen alquilan en las dos.</strong> Y 7.981 alquileres los atendi&oacute; alguien de la otra tienda.</p>
+<p style="margin-top:.9em">Hay dos lecturas y <strong>la base no puede decidir cu&aacute;l es</strong>:</p>
+<div class="hintbox" style="margin-top:.6em"><ul>
+<li><strong>Puede ser una regla:</strong> el cliente est&aacute; asignado a una tienda pero alquila en cualquiera, y <code>store_id</code> es solo su tienda habitual.</li>
+<li><strong>Puede ser ruido:</strong> los datos se generaron al azar y nadie respet&oacute; esa columna.</li>
+</ul></div>
+<p class="small" style="margin-top:.8em">Nivel: <strong>hip&oacute;tesis</strong>. Para subirla de nivel hay que <strong>preguntarle a alguien</strong>. Y eso ya no es SQL.</p></div></div>
+<div class="brand"><span>Bloque 2 &middot; Lo que el dato no dice</span><span>La base no decide por ti</span></div>
+</section>
+<section class="slide dense mid" data-title="Taller 2">
+<div class="ey">Taller 2 &middot; 6 minutos &middot; se contesta por el chat</div>
+<h2>Pon el nivel a cada hallazgo</h2>
+<p class="lead" style="max-width:none">Seis hallazgos reales de esta base. Para cada uno, una letra: <strong>R</strong> restricci&oacute;n implementada &middot; <strong>P</strong> permiso del esquema &middot; <strong>O</strong> patr&oacute;n observado &middot; <strong>H</strong> hip&oacute;tesis.</p>
+<table class="res" style="margin-top:.7em"><caption>Escribe en el chat las seis letras seguidas &mdash; por ejemplo <code>P O H H O R</code></caption>
+<tr><th class="num">#</th><th>El hallazgo</th><th class="num">Sale</th></tr>
+<tr><td class="num">1</td><td>Alquileres sin fecha de devoluci&oacute;n</td><td class="num">183</td></tr>
+<tr><td class="num">2</td><td>Una pel&iacute;cula nunca tiene dos clasificaciones distintas a la vez</td><td class="num">&mdash;</td></tr>
+<tr><td class="num">3</td><td>Los pagos son de 2007; los alquileres, de 2005 y 2006</td><td class="num">&mdash;</td></tr>
+<tr><td class="num">4</td><td>Alquileres que no tienen ning&uacute;n pago asociado</td><td class="num">1.452</td></tr>
+<tr><td class="num">5</td><td>Pagos registrados por importe cero</td><td class="num">24</td></tr>
+<tr><td class="num">6</td><td>Empleados en toda la cadena: uno por tienda</td><td class="num">2</td></tr>
+</table>
+<div data-r style="margin-top:.8em">
+<div class="g2">
+<div><p class="ctx" style="margin:0"><strong>P &middot; R &middot; H &middot; H &middot; H &middot; O</strong></p>
+<p class="small" style="margin-top:.5em"><strong>1 &middot; permiso:</strong> la columna admite vac&iacute;o. <strong>2 &middot; restricci&oacute;n:</strong> <code>rating</code> es una sola columna, el motor no deja poner dos valores. <strong>6 &middot; patr&oacute;n:</strong> hoy hay dos empleados, pero nada impide contratar m&aacute;s.</p></div>
+<div><p class="warn" style="margin:0"><strong>3, 4 y 5 son hip&oacute;tesis, y ah&iacute; est&aacute; el trabajo de verdad.</strong> Las fechas huelen a defecto de carga. Los 1.452 alquileres sin pago pueden ser una promoci&oacute;n, un cobro pendiente o un fallo. Los 24 pagos de cero, cortes&iacute;as o anulaciones.</p>
+<p class="small" style="margin-top:.6em"><strong>Ninguna de las tres se resuelve mirando la base.</strong> Las tres se convierten en una l&iacute;nea de la columna &laquo;qu&eacute; falta preguntar&raquo;. Eso es el bloque siguiente.</p></div></div></div>
+<div class="brand"><span>Bloque 2 &middot; Lo que el dato no dice</span><span>Tres hip&oacute;tesis, tres preguntas pendientes</span></div>
+</section>
+<section class="slide xdense mid" data-title="La entrevista">
+<div class="ey">Bloque 3 &middot; 6 minutos</div>
+<h2>Entonces se pregunta &mdash; y preguntar tiene m&eacute;todo</h2>
+<p class="lead" style="max-width:none">El objetivo de una entrevista no es que te cuenten el negocio: es <strong>salir con una lista de frases comprobables</strong>. Se entra por cuatro puertas.</p>
+<svg class="joinviz" style="max-height:40cqh" viewBox="0 0 1010 214" role="img" aria-label="Los cuatro bloques de preguntas de una entrevista: negocio, usuarios, datos y relaciones"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LAS CUATRO PREGUNTAS QUE ABREN UNA ENTREVISTA</text><rect x="6" y="32" width="240" height="132" rx="11" fill="#fff" stroke="#124e78" stroke-width="2.2"/><path d="M6 42 a11 11 0 0 1 11 -11 h218 a11 11 0 0 1 11 11 v22 h-240 z" fill="#124e78"/><text x="126" y="54" text-anchor="middle" font-size="13" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Sobre el negocio</text><circle cx="126" cy="92" r="17" fill="none" stroke="#124e78" stroke-width="2"/><text x="126" y="99" text-anchor="middle" font-size="17" fill="#124e78" font-weight="800" font-family="Consolas,monospace">1</text><text x="20" y="128" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Cu&aacute;l es el prop&oacute;sito del sistema?</text><text x="20" y="148" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; procesos quiere mejorar?</text><rect x="258" y="32" width="240" height="132" rx="11" fill="#fff" stroke="#ff8a24" stroke-width="2.2"/><path d="M258 42 a11 11 0 0 1 11 -11 h218 a11 11 0 0 1 11 11 v22 h-240 z" fill="#ff8a24"/><text x="378" y="54" text-anchor="middle" font-size="13" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Sobre los usuarios</text><circle cx="378" cy="92" r="17" fill="none" stroke="#ff8a24" stroke-width="2"/><text x="378" y="99" text-anchor="middle" font-size="17" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">2</text><text x="272" y="128" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qui&eacute;nes lo van a usar?</text><text x="272" y="148" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; hace cada tipo de usuario?</text><rect x="510" y="32" width="240" height="132" rx="11" fill="#fff" stroke="#2e7d32" stroke-width="2.2"/><path d="M510 42 a11 11 0 0 1 11 -11 h218 a11 11 0 0 1 11 11 v22 h-240 z" fill="#2e7d32"/><text x="630" y="54" text-anchor="middle" font-size="13" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Sobre los datos</text><circle cx="630" cy="92" r="17" fill="none" stroke="#2e7d32" stroke-width="2"/><text x="630" y="99" text-anchor="middle" font-size="17" fill="#2e7d32" font-weight="800" font-family="Consolas,monospace">3</text><text x="524" y="128" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; informaci&oacute;n hay que guardar?</text><text x="524" y="148" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; se consulta a menudo?</text><rect x="762" y="32" width="240" height="132" rx="11" fill="#fff" stroke="#6a4bb8" stroke-width="2.2"/><path d="M762 42 a11 11 0 0 1 11 -11 h218 a11 11 0 0 1 11 11 v22 h-240 z" fill="#6a4bb8"/><text x="882" y="54" text-anchor="middle" font-size="13" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Sobre las relaciones</text><circle cx="882" cy="92" r="17" fill="none" stroke="#6a4bb8" stroke-width="2"/><text x="882" y="99" text-anchor="middle" font-size="17" fill="#6a4bb8" font-weight="800" font-family="Consolas,monospace">4</text><text x="776" y="128" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; se relaciona con qu&eacute;?</text><text x="776" y="148" font-size="11.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Qu&eacute; no puede pasar nunca?</text><rect x="6" y="176" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="195" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La cuarta es la que casi nadie hace</tspan> &mdash; y es la que da las reglas. &laquo;&iquest;Qu&eacute; no puede pasar nunca?&raquo; se contesta con prohibiciones, y una prohibici&oacute;n ya es una regla escrita.</text></svg>
+<div class="g2" style="margin-top:.7em">
+<div><p class="ctx" style="margin:0"><strong>Un truco que funciona:</strong> pide que te cuenten <em>un d&iacute;a normal</em>, de principio a fin. Las reglas salen solas, porque la gente las cuenta sin darse cuenta: &laquo;claro, eso no se puede hacer si antes no&hellip;&raquo;.</p></div>
+<div><p class="warn" style="margin:0"><strong>Y otro que funciona mejor todav&iacute;a:</strong> pregunta por <em>la &uacute;ltima vez que algo sali&oacute; mal</em>. Cada cosa que sali&oacute; mal es una regla que faltaba.</p></div></div>
+<div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>&iquest;Qu&eacute; no puede pasar nunca?</span></div>
+</section>
+<section class="slide mid" data-title="Cómo se escribe una regla">
+<div class="ey">Bloque 3 &middot; 7 minutos</div>
+<h2>Una regla que no se puede comprobar no es una regla</h2>
+<div class="steps" style="margin-top:.7em">
+<article><b>1</b><h3>Sujeto concreto</h3><p>&laquo;Un cliente&raquo;, &laquo;una reserva&raquo;. Nunca &laquo;el sistema&raquo;.</p></article>
+<article><b>2</b><h3>Verbo de obligaci&oacute;n</h3><p><em>debe</em>, <em>no puede</em>, <em>solo si</em>. Si no hay uno, no es una regla.</p></article>
+<article><b>3</b><h3>Comprobable</h3><p>Se puede describir la consulta que la verifica.</p></article>
+<article><b>4</b><h3>Sin implementaci&oacute;n</h3><p>Dice <em>qu&eacute;</em>, no <em>c&oacute;mo</em>. Nada de tablas ni pantallas.</p></article>
+</div>
+<table class="res" style="margin-top:.8em"><caption>La misma intenci&oacute;n, mal y bien escrita</caption>
+<tr><th>As&iacute; no</th><th>As&iacute; s&iacute;</th><th>Por qu&eacute;</th></tr>
+<tr><td>El sistema debe ser r&aacute;pido.</td><td class="hl">Un alquiler no puede registrarse sin un empleado que lo atienda.</td><td>La primera no se puede comprobar con nada.</td></tr>
+<tr><td>Registrar cada reserva con fecha y hora.</td><td class="hl">Una reserva no puede confirmarse sin fecha, hora, n&uacute;mero de personas y un cliente identificado.</td><td>La primera es una lista de campos; la segunda es una prohibici&oacute;n.</td></tr>
+<tr><td>Guardar el pago en la tabla <code>pagos</code>.</td><td class="hl">Un pedido no puede cerrarse sin pago.</td><td>La primera ya est&aacute; dise&ntilde;ando, y eso viene despu&eacute;s.</td></tr>
+</table>
+<svg class="joinviz" style="max-height:30cqh" viewBox="0 0 1010 228" role="img" aria-label="La plantilla de cinco columnas: area, regla, fuente o evidencia, como se comprueba y que falta preguntar"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LA PLANTILLA &mdash; Y LAS DOS &Uacute;LTIMAS COLUMNAS SON LAS QUE NADIE RELLENA</text><rect x="6" y="30" width="92" height="28" rx="7" fill="#124e78"/><text x="52.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&Aacute;REA</text><rect x="6" y="62" width="92" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="16" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Reservas</text><rect x="102" y="30" width="296" height="28" rx="7" fill="#124e78"/><text x="250.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">LA REGLA</text><rect x="102" y="62" width="296" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="112" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Una mesa no puede tener dos reservas que se</text><text x="112" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">solapen.</text><rect x="402" y="30" width="186" height="28" rx="7" fill="#124e78"/><text x="495.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">FUENTE O EVIDENCIA</text><rect x="402" y="62" width="186" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="412" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Entrevista con la</text><text x="412" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">due&ntilde;a</text><rect x="592" y="30" width="212" height="28" rx="7" fill="#ff8a24"/><text x="698.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">C&Oacute;MO SE COMPRUEBA</text><rect x="592" y="62" width="212" height="54" rx="7" fill="#fff5e6" stroke="#ff8a24" stroke-width="1.6"/><text x="602" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Buscar solapes por mesa y franja</text><rect x="808" y="30" width="186" height="28" rx="7" fill="#ff8a24"/><text x="901.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">QU&Eacute; FALTA PREGUNTAR</text><rect x="808" y="62" width="186" height="54" rx="7" fill="#fff5e6" stroke="#ff8a24" stroke-width="1.6"/><text x="818" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Hay margen entre</text><text x="818" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">turnos?</text><rect x="6" y="128" width="998" height="52" rx="8" fill="#fff" stroke="#d7dde3" stroke-width="1.6"/><text x="20" y="148" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Reservas</text><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="102" y1="128" x2="102" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="116" y1="158" x2="380" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="402" y1="128" x2="402" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="416" y1="158" x2="570" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="592" y1="128" x2="592" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="606" y1="158" x2="786" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="808" y1="128" x2="808" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="822" y1="158" x2="976" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><text x="20" y="172" font-size="11" fill="#d7dde3" font-family="Segoe UI,Arial,sans-serif">la tuya&hellip;</text><rect x="6" y="190" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="209" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La quinta columna vale tanto como la segunda.</tspan> Una regla que todav&iacute;a no puedes confirmar no es un fracaso: es la pregunta que llevas a la siguiente reuni&oacute;n.</text></svg>
+<div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Sujeto, prohibici&oacute;n y forma de comprobarla</span></div>
+</section>
+<section class="slide mid" data-title="Calentamiento">
+<div class="ey">Bloque 3 &middot; 5 minutos &middot; lo hacemos juntos</div>
+<h2>Cuatro reglas de un restaurante, en voz alta</h2>
+<p class="lead" style="max-width:none">Un ensayo antes del taller grande. Para cada &aacute;rea, alguien dice una regla y entre todos la arreglamos hasta que pase las cuatro pruebas.</p>
+<div class="g2" style="margin-top:.9em">
+<div><div class="hintbox" style="margin:0"><strong>Las cuatro &aacute;reas</strong><ul>
+<li>&#128197; <strong>Reservas</strong> &mdash; mesas, horarios, personas</li>
+<li>&#127869; <strong>Pedidos</strong> &mdash; qu&eacute; se pide y a qu&eacute; mesa</li>
+<li>&#128179; <strong>Pagos</strong> &mdash; cu&aacute;nto, c&oacute;mo y cu&aacute;ndo</li>
+<li>&#129387; <strong>Inventario</strong> &mdash; ingredientes y caducidades</li>
+</ul></div></div>
+<div data-r><p><strong>Lo que suele salir, y c&oacute;mo queda al arreglarlo:</strong></p>
+<table class="res"><tr><th>Un requisito de datos</th><th>Una regla</th></tr>
+<tr><td>Registrar cada reserva con fecha, hora, personas y cliente.</td><td class="hl">Una mesa no puede tener dos reservas que se solapen en el tiempo.</td></tr>
+<tr><td>Registrar cada pedido con mesa, platos y estado.</td><td class="hl">Un pedido no puede enviarse a cocina sin al menos un plato.</td></tr>
+<tr><td>Registrar cada pago con monto, m&eacute;todo y fecha.</td><td class="hl">Un pedido no puede cerrarse sin pago.</td></tr>
+<tr><td>Registrar cada ingrediente con cantidad y vencimiento.</td><td class="hl">Un ingrediente vencido no puede usarse en ning&uacute;n plato.</td></tr>
+</table>
+<p class="small" style="margin-top:.6em">La izquierda dice <strong>qu&eacute; campos guardar</strong>. La derecha dice <strong>qu&eacute; no se permite</strong>. Solo la segunda es una regla.</p></div></div>
+<div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Campos no, prohibiciones s&iacute;</span></div>
+</section>
+<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
+<h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
+<p class="lead" style="margin:auto">Ya sabes leer reglas de una base que existe, distinguir cu&aacute;nto vale cada una y escribirlas de forma que se puedan comprobar. Al volver: <strong>un restaurante que todav&iacute;a no tiene base de datos</strong>, y sus reglas las levantas t&uacute;.</p>
+<button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
+<div class="brand"><span>Pausa</span><span>Segunda mitad: tus propias reglas</span></div>
+</section>
+<section class="slide dense mid" data-title="Restaurante ABC">
+<div class="ey">Bloque 4 &middot; 5 minutos</div>
+<h2>Restaurante ABC, un d&iacute;a cualquiera</h2>
+<div class="g2">
+<div><p class="ctx" style="margin:0"><strong>El encargo.</strong> El restaurante lleva veinte a&ntilde;os con una libreta y una hoja de c&aacute;lculo. Quieren un sistema. Te sientan con la due&ntilde;a media hora y te cuenta esto.</p>
+<div class="hintbox" style="margin-top:.7em"><strong>Lo que te cuenta</strong><ul>
+<li><strong>Doce mesas</strong>, de 2, 4 y 6 puestos. Dos turnos: almuerzo y cena.</li>
+<li>Se reserva por tel&eacute;fono y por WhatsApp. A veces la gente no llega.</li>
+<li>La carta cambia cada temporada. Hay platos que se acaban a media noche.</li>
+<li>Un pedido se toma en la mesa y se manda a cocina. Se puede a&ntilde;adir despu&eacute;s.</li>
+<li><strong>La cuenta se divide</strong>: cada uno paga lo suyo, o alguien invita.</li>
+<li>Los ingredientes se compran a tres proveedores y algunos caducan r&aacute;pido.</li>
+<li>Los meseros entran por turno y solo tocan sus propias mesas.</li>
+</ul></div>
+<p class="small" style="margin-top:.6em"><strong>Alcance de hoy: solo lo que pasa en el local.</strong> Domicilios y pedidos para llevar no se inventan &mdash; si te hacen falta, van a la columna de preguntas pendientes.</p></div>
+<div><p class="warn" style="margin:0"><strong>Fíjate en lo que <em>no</em> te ha dicho.</strong> No te ha dicho qu&eacute; tablas quiere, ni qu&eacute; columnas, ni de qu&eacute; color es la pantalla. Te ha contado c&oacute;mo funciona el sitio.</p>
+<p style="margin-top:.8em">Tu trabajo es convertir ese relato en <strong>frases comprobables</strong>. Ese es el paso que se salta casi todo el mundo, y es la raz&oacute;n por la que tantos sistemas acaban sin parecerse al negocio que deb&iacute;an representar.</p>
+<div class="dlrow" style="flex-direction:column;align-items:stretch;margin-top:.8em">
+<a href="caso-restaurante-abc.html" target="_blank" rel="noopener">&#128220; El caso y la plantilla<small>&aacute;brelo en otra pesta&ntilde;a y escribe ah&iacute; &middot; se guarda solo</small></a>
+</div>
+<p class="quote" style="margin-top:.9em">Media hora de conversaci&oacute;n bien apuntada ahorra tres meses de sistema mal hecho.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Del relato a las frases</span></div>
+</section>
+<section class="slide dense mid" data-title="Taller 3">
+<div class="ey">Taller 3 &middot; 14 minutos &middot; el entregable de hoy</div>
+<h2>Levanta las reglas del Restaurante ABC</h2>
+<div class="g2">
+<div><div class="ctx" style="margin:0"><strong>Cada quien las suyas</strong>, en la plantilla que abriste en la otra pesta&ntilde;a, en un cuaderno o donde prefieras. Hoy no se escribe SQL en este taller.</div>
+<div class="hintbox" style="margin-top:.7em"><strong>Lo que hay que entregar</strong><ul>
+<li><strong>Dos reglas por &aacute;rea</strong> &mdash; ocho en total.</li>
+<li>Cada una con <strong>sujeto concreto</strong> y con <em>debe</em>, <em>no puede</em> o <em>solo si</em>.</li>
+<li>Y las dos columnas que casi nadie rellena: <strong>c&oacute;mo la comprobar&iacute;as</strong> y <strong>qu&eacute; te falta preguntar</strong>.</li>
+</ul></div>
+<p class="small" style="margin-top:.7em">Si te bloqueas en un &aacute;rea, salta a otra y vuelve. Las de pagos suelen ser las m&aacute;s f&aacute;ciles; las de inventario, las m&aacute;s interesantes.</p></div>
+<div><p class="ctx" style="margin:0"><strong>Una plantilla de frase que ayuda:</strong></p>
+<pre>Un/Una ______________ no puede ______________
+                        si ______________ .
+
+  Lo compruebo: contando cu&aacute;ntos ______
+  cumplen ______ . Si sale algo distinto
+  de cero, la regla se est&aacute; violando.
+
+  Me falta preguntar: ______________ .</pre>
+<p class="warn" style="margin-top:.8em"><strong>Si una regla no la puedes confirmar, no la borres.</strong> Escr&iacute;bela igual y ponla como <em>hip&oacute;tesis</em> con su pregunta al lado. Una pregunta bien formulada vale tanto como una regla.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Ocho reglas, con su evidencia y su duda</span></div>
+</section>
+<section class="slide tiny mid" data-title="Las diez de referencia">
+<div class="ey">Taller 3 &middot; contraste &middot; 6 minutos</div>
+<h2>Diez reglas que aguantan el examen</h2>
+<p class="lead" style="max-width:none"><strong>No es la respuesta correcta: es una lista de referencia.</strong> Compara con las tuyas y busca dos cosas: alguna que se te haya escapado, y alguna tuya que est&eacute; mejor escrita que la m&iacute;a.</p>
+<div class="g2" style="margin-top:.7em">
+<div><table class="res"><caption>Reservas y pedidos</caption>
+<tr><th class="num">#</th><th>La regla</th></tr>
+<tr><td class="num">1</td><td>Una <strong>reserva</strong> no puede confirmarse sin fecha, hora, n&uacute;mero de personas y un cliente identificado.</td></tr>
+<tr><td class="num">2</td><td>Una <strong>mesa</strong> no puede tener dos reservas que se solapen en el tiempo.</td></tr>
+<tr><td class="num">3</td><td>Una <strong>reserva</strong> no puede aceptar m&aacute;s personas de las que caben en la mesa.</td></tr>
+<tr><td class="num">4</td><td>Un <strong>pedido</strong> pertenece a una sola mesa y a un solo turno.</td></tr>
+<tr><td class="num">5</td><td>Un <strong>pedido</strong> no puede enviarse a cocina sin al menos un plato.</td></tr>
+</table></div>
+<div><table class="res"><caption>Pagos, inventario y personal</caption>
+<tr><th class="num">#</th><th>La regla</th></tr>
+<tr><td class="num">6</td><td>Un <strong>plato</strong> no puede pedirse si alguno de sus ingredientes est&aacute; agotado.</td></tr>
+<tr><td class="num">7</td><td>Un <strong>ingrediente</strong> vencido no puede usarse en ning&uacute;n plato.</td></tr>
+<tr><td class="num">8</td><td>Un <strong>pedido</strong> no puede cerrarse sin pago.</td></tr>
+<tr><td class="num">9</td><td>Un <strong>pago</strong> puede repartirse entre varias personas, pero la suma debe igualar el total del pedido.</td></tr>
+<tr><td class="num">10</td><td>Un <strong>empleado</strong> solo puede modificar los pedidos de su propio turno.</td></tr>
+</table></div></div>
+<div class="g2" style="margin-top:.7em">
+<div><p class="ctx" style="margin:0"><strong>Ninguna nombra una tabla.</strong> Y sin embargo ya te est&aacute;n diciendo cu&aacute;les van a hacer falta: mesa, reserva, cliente, pedido, plato, ingrediente, pago, empleado y turno. <strong>Nueve sustantivos que t&uacute; no elegiste: los eligi&oacute; el negocio.</strong></p></div>
+<div><p class="warn" style="margin:0"><strong>Tres de las diez son en realidad hip&oacute;tesis.</strong> La 3 supone que no se juntan mesas; la 9, que no se admiten propinas aparte; la 10, que un mesero no cubre a otro. Ninguna se puede confirmar sin volver a preguntar &mdash; y as&iacute; hay que escribirlas.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Una lista de referencia, no la respuesta</span></div>
+</section>
+<section class="slide dense mid" data-title="Corrige y publica">
+<div class="ey">Taller 3 &middot; correcci&oacute;n &middot; 7 minutos</div>
+<h2>Arregla dos y qu&eacute;date con las dos versiones</h2>
+<div class="g2">
+<div><div class="ctx" style="margin:0"><strong>Vuelve a tus ocho reglas y corrige al menos dos.</strong> No borres lo que ten&iacute;as: tacha y escribe debajo. Ver las dos versiones juntas es la mitad de lo que se aprende hoy.</div>
+<div class="hintbox" style="margin-top:.7em"><strong>Los tres arreglos m&aacute;s frecuentes</strong><ul>
+<li><strong>Era una lista de campos.</strong> &laquo;Guardar el m&eacute;todo de pago&raquo; &rarr; &laquo;un pedido no puede cerrarse sin registrar el m&eacute;todo de pago&raquo;.</li>
+<li><strong>El sujeto era &laquo;el sistema&raquo;.</strong> C&aacute;mbialo por la cosa del negocio de la que hablas: la mesa, el plato, el turno.</li>
+<li><strong>Era una restricci&oacute;n disfrazada de hip&oacute;tesis</strong> &mdash; o al rev&eacute;s. Pregunta: &iquest;esto lo impide alguien, o solo pasa que no ocurre?</li>
+</ul></div></div>
+<div><p class="warn" style="margin:0"><strong>Y ahora, al chat &mdash; pero solo dos l&iacute;neas.</strong> Somos muchos: si cada quien pega ocho reglas, no se lee ninguna.</p>
+<div class="hintbox" style="margin-top:.7em"><ul>
+<li><strong>1 &middot;</strong> Tu <strong>mejor regla corregida</strong>. Una sola.</li>
+<li><strong>2 &middot;</strong> Tu <strong>pregunta pendiente</strong> m&aacute;s importante &mdash; la que le har&iacute;as a la due&ntilde;a si pudieras llamarla ahora.</li>
+</ul></div>
+<p class="small" style="margin-top:.8em">Leemos unas cuantas en voz alta. Las preguntas suelen ser m&aacute;s interesantes que las reglas: es donde se ve qui&eacute;n entendi&oacute; el negocio.</p>
+<p class="warn" style="margin-top:.9em"><strong>Guarda el archivo.</strong> Estas ocho frases son el material de la <strong>sesi&oacute;n 7</strong>: ah&iacute; se convierten en tablas, claves y cardinalidades.</p></div></div>
+<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Dos l&iacute;neas al chat, ocho reglas al archivo</span></div>
+</section>
+<section class="slide mid" data-title="OLTP y OLAP">
+<div class="ey">Bloque 5 &middot; 6 minutos</div>
+<h2>Ya tienes las reglas. &iquest;Qu&eacute; sistema construyes?</h2>
+<p class="lead" style="max-width:none">Depende de una sola cosa: <strong>&iquest;este sistema es para que el negocio funcione, o para entender c&oacute;mo va?</strong> No es la misma base, ni se dise&ntilde;a igual.</p>
+<svg class="joinviz" style="max-height:46cqh" viewBox="0 0 1010 260" role="img" aria-label="OLTP y OLAP enfrentados, con las dos flechas que los conectan: del transaccional se extrae al analitico, y del analitico vuelven decisiones a la operacion"><defs><marker id="c6" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6b7480"/></marker></defs><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">DOS SISTEMAS, Y CADA UNO NECESITA AL OTRO</text><rect x="6" y="34" width="380" height="176" rx="12" fill="#e8f1f8" stroke="#124e78" stroke-width="2.6"/><text x="26" y="62" font-size="24" fill="#124e78" font-weight="800" font-family="Consolas,monospace">OLTP</text><text x="110" y="62" font-size="13" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">procesamiento transaccional</text><text x="26" y="84" font-size="13.5" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">La operaci&oacute;n, mientras ocurre</text><text x="26" y="108" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Una fila = un hecho que acaba de pasar</text><text x="26" y="129" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Muy normalizado: sin repetir nada</text><text x="26" y="150" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Miles de escrituras peque&ntilde;as por minuto</text><text x="26" y="171" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Si falla, el cliente se enoja</text><rect x="26" y="176" width="340" height="24" rx="12" fill="#fff" stroke="#124e78" stroke-width="1.6"/><text x="38" y="193" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">La caja registradora &middot; <tspan font-family="Consolas,monospace">dvdrental</tspan> es esto</text><rect x="624" y="34" width="380" height="176" rx="12" fill="#fff4e0" stroke="#ff8a24" stroke-width="2.6"/><text x="644" y="62" font-size="24" fill="#8a4b00" font-weight="800" font-family="Consolas,monospace">OLAP</text><text x="730" y="62" font-size="13" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">procesamiento anal&iacute;tico</text><text x="644" y="84" font-size="13.5" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">La operaci&oacute;n, ya resumida</text><text x="644" y="108" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Una fila = un resumen de muchos hechos</text><text x="644" y="129" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Desnormalizado: repetir sale barato</text><text x="644" y="150" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Pocas consultas, pero enormes</text><text x="644" y="171" font-size="12.3" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; Si tarda un minuto, no pasa nada</text><rect x="644" y="176" width="340" height="24" rx="12" fill="#fff" stroke="#ff8a24" stroke-width="1.6"/><text x="656" y="193" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">El gerente mirando el mes &middot; tu tabla de la sesi&oacute;n 5</text><path d="M392 92 C460 92 550 92 618 92" fill="none" stroke="#6b7480" stroke-width="2.4" marker-end="url(#c6)"/><text x="505" y="84" text-anchor="middle" font-size="11.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">cada cierto tiempo se extrae</text><text x="505" y="70" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">y se resume</text><path d="M618 160 C550 160 460 160 392 160" fill="none" stroke="#6b7480" stroke-width="2.4" marker-end="url(#c6)"/><text x="505" y="180" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">y lo que se descubre</text><text x="505" y="194" text-anchor="middle" font-size="11.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif">cambia la operaci&oacute;n</text><rect x="6" y="222" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="241" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">Sin datos transaccionales no hay an&aacute;lisis</tspan>, y sin an&aacute;lisis la operaci&oacute;n se queda como est&aacute;. No compiten: se turnan.</text></svg>
+<p class="small" style="margin-top:.5em"><strong>Los nombres, para el examen:</strong> <code>OLTP</code> es <em>online transaction processing</em> y <code>OLAP</code> es <em>online analytical processing</em>. El DP-900 los llama exactamente as&iacute;, y pregunta por la diferencia.</p>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>Operar o entender: dos bases distintas</span></div>
+</section>
+<section class="slide mid" data-title="El supermercado">
+<div class="ey">Bloque 5 &middot; 4 minutos &middot; lo contestamos juntos</div>
+<h2>Vamos al supermercado</h2>
+<div class="g2" style="margin-top:1em">
+<div><div class="ctx" style="margin:0"><strong>&#128722; La caja registradora.</strong> Cada persona pasa una por una. Se registra cada compra: qu&eacute; producto, cu&aacute;ntos, cu&aacute;nto cost&oacute;. Tiene que ser r&aacute;pido, exacto y constante. Si falla, hay cola y el cliente se enoja.</div>
+<p style="margin-top:.7em;text-align:center;font-size:1.1em"><strong>&iquest;Qu&eacute; tipo de procesamiento es?</strong></p>
+<p class="quote" data-r style="margin-top:.5em;text-align:center"><strong>OLTP.</strong> Muchas escrituras peque&ntilde;as, todas urgentes.</p></div>
+<div><div class="ctx" style="margin:0"><strong>&#128202; El gerente, el lunes por la ma&ntilde;ana.</strong> &iquest;Qu&eacute; producto se vendi&oacute; m&aacute;s? &iquest;Cu&aacute;ntos tomates salieron esta semana? &iquest;Qui&eacute;n compra m&aacute;s los lunes? Mira meses de historia de golpe.</div>
+<p style="margin-top:.7em;text-align:center;font-size:1.1em"><strong>&iquest;Y este?</strong></p>
+<p class="quote" data-r style="margin-top:.5em;text-align:center"><strong>OLAP.</strong> Pocas consultas, enormes, y ninguna urgente.</p></div></div>
+<p class="warn" style="margin-top:1.1em"><strong>Es el mismo supermercado y son los mismos datos.</strong> Lo que cambia es qui&eacute;n pregunta, cu&aacute;nto abarca la pregunta y cu&aacute;nto puede esperar la respuesta.</p>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>Mismos datos, dos preguntas distintas</span></div>
+</section>
+<section class="slide dense mid" data-title="En resumen">
+<div class="ey">Bloque 5 &middot; 4 minutos</div>
+<h2>Las siete diferencias que hay que saberse</h2>
+<table class="res"><caption>Y todas salen en el examen DP-900</caption>
+<tr><th></th><th>OLTP &middot; transaccional</th><th>OLAP &middot; anal&iacute;tico</th></tr>
+<tr><td><strong>Para qu&eacute;</strong></td><td>Sostener la operaci&oacute;n del d&iacute;a a d&iacute;a</td><td class="hl">Reportar y analizar vol&uacute;menes grandes</td></tr>
+<tr><td><strong>Dise&ntilde;o</strong></td><td>Muy <strong>normalizado</strong>: nada se repite</td><td class="hl"><strong>Desnormalizado</strong>: repetir sale barato</td></tr>
+<tr><td><strong>Los datos</strong></td><td>Al d&iacute;a, operativos, se borran o cambian</td><td class="hl">Consolidados e hist&oacute;ricos, no se tocan</td></tr>
+<tr><td><strong>Tama&ntilde;o</strong></td><td>Lo que est&aacute; vivo &mdash; gigabytes</td><td class="hl">Todo el archivo &mdash; terabytes</td></tr>
+<tr><td><strong>Consultas</strong></td><td>Simples y muy frecuentes, con escritura</td><td class="hl">Complejas, con mucha agregaci&oacute;n, casi solo lectura</td></tr>
+<tr><td><strong>Qui&eacute;n lo usa</strong></td><td>Clientes y sistemas en vivo &mdash; miles</td><td class="hl">Analistas y quien decide &mdash; decenas</td></tr>
+<tr><td><strong>Ejemplos</strong></td><td>Cajeros, la app de pedidos, <code>dvdrental</code></td><td class="hl">Tableros de BI, an&aacute;lisis de ventas</td></tr>
+</table>
+<p class="ctx" style="margin-top:.9em"><strong>La fila que m&aacute;s cuesta creer es la segunda.</strong> Llevas cinco sesiones evitando repetir datos, y ahora resulta que en el mundo anal&iacute;tico repetir es lo correcto. No es una contradicci&oacute;n: all&iacute; se optimiza para leer, no para escribir.</p>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>Normalizar para operar, repetir para analizar</span></div>
+</section>
+<section class="slide dense mid" data-title="Ya lo viviste">
+<div class="ey">Bloque 5 &middot; 4 minutos</div>
+<h2>Y esto ya lo hiciste, sin saber c&oacute;mo se llamaba</h2>
+<div class="g2" style="margin-top:.9em">
+<div><p class="ctx" style="margin:0"><strong><code>dvdrental</code> es un sistema OLTP.</strong> Una fila por alquiler. Todo normalizado: el t&iacute;tulo de la pel&iacute;cula est&aacute; escrito una sola vez en toda la base. Por eso te hicieron falta <strong>seis tablas</strong> para contestar una pregunta.</p></div>
+<div><p class="warn" style="margin:0"><strong>Y la tabla que construiste en la sesi&oacute;n 5 es anal&iacute;tica.</strong> Una fila por pel&iacute;cula, con su categor&iacute;a, sus copias, sus alquileres y su recaudo, todo junto y repetido. Nadie escribe en esa tabla: solo se lee.</p></div></div>
+<table class="res" style="margin-top:1em"><caption>La misma informaci&oacute;n, en los dos mundos</caption>
+<tr><th></th><th>Como la guarda <code>dvdrental</code></th><th>Como la dejaste t&uacute; en la sesi&oacute;n 5</th></tr>
+<tr><td><strong>Una fila es</strong></td><td>un alquiler</td><td class="hl">una pel&iacute;cula</td></tr>
+<tr><td><strong>Cu&aacute;ntas filas</strong></td><td>16.044</td><td class="hl">1.000</td></tr>
+<tr><td><strong>Tablas para leerla</strong></td><td>seis, con <code>JOIN</code></td><td class="hl">una</td></tr>
+<tr><td><strong>El t&iacute;tulo aparece</strong></td><td>una vez, en <code>film</code></td><td class="hl">repetido en cada fila</td></tr>
+<tr><td><strong>Sirve para</strong></td><td>registrar lo que pasa</td><td class="hl">entender lo que pas&oacute;</td></tr>
+</table>
+<p class="quote" style="margin-top:1em">Llevas una sesi&oacute;n entera construyendo a mano, con <code>WITH</code>, lo que un almac&eacute;n anal&iacute;tico hace de oficio.</p>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>Tu tabla de la sesi&oacute;n 5 era anal&iacute;tica</span></div>
+</section>
+<section class="slide dense mid" data-title="Taller 4">
+<div class="ey">Taller 4 &middot; 6 minutos &middot; se contesta por el chat</div>
+<h2>&iquest;OLTP u OLAP?</h2>
+<p class="lead" style="max-width:none">Cuatro situaciones. Escribe las cuatro respuestas seguidas en el chat. <strong>Una de las cuatro tiene trampa.</strong></p>
+<div class="g2" style="margin-top:.8em">
+<div><div class="hintbox" style="margin:0"><ul>
+<li><strong>1 &middot;</strong> Un cliente compra en Amazon: el sistema registra el pedido, descuenta el inventario y genera la orden de env&iacute;o.</li>
+<li><strong>2 &middot;</strong> Netflix analiza los h&aacute;bitos de millones de personas en los &uacute;ltimos doce meses para decidir qu&eacute; series producir.</li>
+<li><strong>3 &middot;</strong> Alguien pide en la app de McDonald&rsquo;s y el pedido llega en tiempo real a la cocina del local m&aacute;s cercano.</li>
+<li><strong>4 &middot;</strong> Una app de viajes conecta conductores con pasajeros: cientos de personas a la vez, y adem&aacute;s quieren analizar los trayectos para mejorar las asignaciones.</li>
+</ul></div></div>
+<div data-r><p><strong>1 &middot; OLTP</strong> &mdash; escritura peque&ntilde;a y urgente.<br>
+<strong>2 &middot; OLAP</strong> &mdash; doce meses de historia, ninguna prisa.<br>
+<strong>3 &middot; OLTP</strong> &mdash; si tarda, se enfr&iacute;a la comida.</p>
+<p class="warn" style="margin-top:.9em"><strong>4 &middot; Los dos.</strong> Y esa es la respuesta que importa. Los viajes se registran en una base <strong>OLTP</strong>, y cada cierto tiempo se extraen y se resumen en una <strong>OLAP</strong> donde se analizan sin molestar a la operaci&oacute;n.</p>
+<p class="small" style="margin-top:.7em">Nunca se analiza directamente sobre la base que est&aacute; atendiendo clientes: una consulta pesada la frenar&iacute;a justo cuando m&aacute;s se necesita.</p></div></div>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>La cuarta respuesta es &laquo;los dos&raquo;</span></div>
+</section>
+<section class="slide xdense mid" data-title="Quién hace qué">
+<div class="ey">Bloque 5 &middot; 5 minutos</div>
+<h2>&iquest;Y qui&eacute;n hace cada cosa?</h2>
+<p class="lead" style="max-width:none">Los tres oficios que se reparten este mundo. En una empresa peque&ntilde;a los hace la misma persona; en una grande son tres equipos.</p>
+<svg class="joinviz" style="max-height:42cqh" viewBox="0 0 1010 230" role="img" aria-label="Los tres oficios del mundo de los datos: administrador de base de datos, ingeniero de datos y analista de datos"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">TRES OFICIOS, Y HOY HAS TOCADO LOS TRES</text><rect x="6" y="32" width="324" height="150" rx="12" fill="#fff" stroke="#124e78" stroke-width="2.4"/><circle cx="46" cy="66" r="22" fill="#124e78" fill-opacity=".14"/><text x="46" y="74" text-anchor="middle" font-size="21" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128295;</text><text x="80" y="62" font-size="13" fill="#124e78" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Administrador de base de datos</text><text x="80" y="82" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Cuida que la base est&eacute;</text><text x="80" y="97" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">viva, segura y r&aacute;pida.</text><rect x="22" y="116" width="292" height="52" rx="8" fill="#124e7814" stroke="#124e78" stroke-width="1.4"/><text x="34" y="138" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Es quien pone las reglas del bloque</text><text x="34" y="154" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">1 dentro de la base.</text><rect x="342" y="32" width="324" height="150" rx="12" fill="#fff" stroke="#ff8a24" stroke-width="2.4"/><circle cx="382" cy="66" r="22" fill="#ff8a24" fill-opacity=".14"/><text x="382" y="74" text-anchor="middle" font-size="21" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128679;</text><text x="416" y="62" font-size="13" fill="#ff8a24" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Ingeniero de datos</text><text x="416" y="82" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Mueve el dato de donde nace a</text><text x="416" y="97" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">donde se analiza.</text><rect x="358" y="116" width="292" height="52" rx="8" fill="#ff8a2414" stroke="#ff8a24" stroke-width="1.4"/><text x="370" y="138" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Es quien construye la ETL y llena la</text><text x="370" y="154" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">bodega.</text><rect x="678" y="32" width="324" height="150" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><circle cx="718" cy="66" r="22" fill="#2e7d32" fill-opacity=".14"/><text x="718" y="74" text-anchor="middle" font-size="21" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128200;</text><text x="752" y="62" font-size="13" fill="#2e7d32" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Analista de datos</text><text x="752" y="82" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Convierte la tabla en una</text><text x="752" y="97" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">respuesta y en una</text><text x="752" y="112" font-size="11.8" fill="#171717" font-family="Segoe UI,Arial,sans-serif">decisi&oacute;n.</text><rect x="694" y="116" width="292" height="52" rx="8" fill="#2e7d3214" stroke="#2e7d32" stroke-width="1.4"/><text x="706" y="138" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Es lo que llevas cinco sesiones</text><text x="706" y="154" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">haciendo.</text><rect x="6" y="192" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="211" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">Y el examen DP-900 pregunta por los tres.</tspan> Los nombra tal cual: database administrator, data engineer y data analyst.</text></svg>
+<p class="small" style="margin-top:.5em">Hay un cuarto papel que no aparece en el examen y es el que has hecho hoy: <strong>quien habla con el negocio y traduce</strong>. Se llama de muchas formas &mdash;analista funcional, analista de negocio&mdash; y es el que hace que los otros tres construyan lo correcto.</p>
+<div class="brand"><span>Bloque 5 &middot; OLTP y OLAP</span><span>Tres oficios, y uno que no tiene nombre fijo</span></div>
+</section>
+<section class="slide mid" data-title="Tres clases de dato">
+<div class="ey">Bloque 6 &middot; 5 minutos</div>
+<h2>No todo el dato cabe en una tabla</h2>
+<p class="lead" style="max-width:none">Llevas cinco sesiones con el m&aacute;s c&oacute;modo de los tres. Antes de hablar de d&oacute;nde se guarda todo, hay que saber que <strong>&laquo;todo&raquo; no es solo filas y columnas</strong>.</p>
+<svg class="joinviz" style="max-height:44cqh" viewBox="0 0 1010 228" role="img" aria-label="Las tres clases de dato: estructurado, semiestructurado y no estructurado, con ejemplos de cada una"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">TRES CLASES DE DATO &mdash; Y SQL SOLO ENTIENDE LA PRIMERA DE ENTRADA</text><rect x="6" y="32" width="324" height="186" rx="12" fill="#eef6ee" stroke="#2e7d32" stroke-width="2.4"/><path d="M6 44 a12 12 0 0 1 12 -12 h300 a12 12 0 0 1 12 12 v24 h-324 z" fill="#2e7d32"/><text x="168" y="58" text-anchor="middle" font-size="14.5" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Estructurado</text><text x="22" y="84" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Filas y columnas, con un esquema fijo</text><text x="22" y="108" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; una tabla de una base de datos</text><text x="22" y="129" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; un CSV de ventas</text><text x="22" y="150" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; una hoja de c&aacute;lculo</text><rect x="20" y="176" width="296" height="32" rx="8" fill="#fff" stroke="#2e7d32" stroke-width="1.5"/><text x="32" y="191" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Se consulta con SQL desde el primer</text><text x="32" y="205" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">minuto</text><rect x="342" y="32" width="324" height="186" rx="12" fill="#fff4e0" stroke="#ff8a24" stroke-width="2.4"/><path d="M342 44 a12 12 0 0 1 12 -12 h300 a12 12 0 0 1 12 12 v24 h-324 z" fill="#ff8a24"/><text x="504" y="58" text-anchor="middle" font-size="14.5" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Semiestructurado</text><text x="358" y="84" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Tiene forma, pero no una tabla</text><text x="358" y="108" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; un JSON de un pedido</text><text x="358" y="129" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; un XML de una factura</text><text x="358" y="150" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; un registro de una aplicaci&oacute;n</text><rect x="356" y="176" width="296" height="32" rx="8" fill="#fff" stroke="#ff8a24" stroke-width="1.5"/><text x="368" y="191" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Se puede consultar, pero antes hay que</text><text x="368" y="205" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">aplanarlo</text><rect x="678" y="32" width="324" height="186" rx="12" fill="#fff2f2" stroke="#c1121f" stroke-width="2.4"/><path d="M678 44 a12 12 0 0 1 12 -12 h300 a12 12 0 0 1 12 12 v24 h-324 z" fill="#c1121f"/><text x="840" y="58" text-anchor="middle" font-size="14.5" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">No estructurado</text><text x="694" y="84" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Ning&uacute;n esquema: es el contenido y ya</text><text x="694" y="108" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; fotos y v&iacute;deo de una c&aacute;mara</text><text x="694" y="129" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; audio de una llamada</text><text x="694" y="150" font-size="12.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; el texto de una rese&ntilde;a</text><rect x="692" y="176" width="296" height="32" rx="8" fill="#fff" stroke="#c1121f" stroke-width="1.5"/><text x="704" y="191" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Sin procesarlo antes, SQL no lo puede</text><text x="704" y="205" font-size="11.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">tocar</text></svg>
+<p class="small" style="margin-top:.5em"><strong>Sale en el examen tal cual:</strong> <em>structured</em>, <em>semi-structured</em> y <em>unstructured</em>. Con sus formatos: <code>CSV</code> para el primero, <code>JSON</code> y <code>XML</code> para el segundo, y cualquier cosa para el tercero.</p>
+<div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>SQL solo entiende el primero de entrada</span></div>
+</section>
+<section class="slide dense mid" data-title="Laguna y bodega">
+<div class="ey">Bloque 6 &middot; 5 minutos</div>
+<h2>Dos sitios donde guardar, y no compiten</h2>
+<svg class="joinviz" style="max-height:50cqh" viewBox="0 0 1010 278" role="img" aria-label="Laguna de datos frente a bodega de datos, con el ejemplo del supermercado"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LOS DOS SITIOS DONDE SE GUARDA, Y PARA QU&Eacute; SIRVE CADA UNO</text><rect x="6" y="32" width="492" height="198" rx="12" fill="#eef4fa" stroke="#124e78" stroke-width="2.6"/><text x="26" y="62" font-size="17" fill="#124e78" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&#127754; Laguna de datos</text><text x="26" y="82" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">data lake &mdash; todo tal como llega</text><text x="26" y="106" font-size="12.5" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Lo del supermercado, al terminar el d&iacute;a:</text><text x="26" y="128" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; tickets escaneados (im&aacute;genes)</text><text x="26" y="147" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; v&iacute;deo de las c&aacute;maras</text><text x="26" y="166" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; comentarios de redes (texto libre)</text><text x="26" y="185" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; sensores de los refrigeradores (n&uacute;meros)</text><text x="26" y="204" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; ventas de cada caja (tablas)</text><rect x="24" y="226" width="456" height="0" rx="8" fill="#fff" stroke="#124e78" stroke-width="0"/><text x="26" y="224" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Acepta <tspan font-weight="800">las tres clases de dato</tspan>. No lo analizas hoy: lo guardas por si acaso.</text><rect x="518" y="32" width="486" height="198" rx="12" fill="#fff4e0" stroke="#ff8a24" stroke-width="2.6"/><text x="538" y="62" font-size="17" fill="#8a4b00" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&#127970; Bodega de datos</text><text x="538" y="82" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">data warehouse &mdash; ya limpio y ordenado</text><text x="538" y="106" font-size="12.5" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">El informe que el gerente recibe el lunes:</text><text x="538" y="128" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; ventas por categor&iacute;a de producto</text><text x="538" y="147" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; compra media por cliente</text><text x="538" y="166" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; los m&aacute;s vendidos de la semana</text><text x="538" y="185" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; ingresos comparados por sucursal</text><text x="538" y="204" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&middot; descuentos y su efecto en las ventas</text><text x="538" y="224" font-size="12" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Solo <tspan font-weight="800">dato estructurado</tspan>. Ya est&aacute; listo para un tablero de BI.</text><rect x="6" y="240" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="259" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La diferencia no es el tama&ntilde;o, es el momento de ordenar:</tspan> la laguna guarda primero y ordena si hace falta; la bodega ordena primero y guarda ya listo.</text></svg>
+<div class="g2" style="margin-top:.7em">
+<div><p class="ctx" style="margin:0"><strong>La pregunta que decide:</strong> &iquest;ya sabes para qu&eacute; vas a usar este dato? Si lo sabes, ord&eacute;nalo y gu&aacute;rdalo en la bodega. Si no lo sabes todav&iacute;a, gu&aacute;rdalo tal cual en la laguna y decide despu&eacute;s.</p></div>
+<div><p class="warn" style="margin:0"><strong>El riesgo de la laguna tiene nombre:</strong> si nadie la ordena nunca, deja de ser una laguna y se convierte en un pantano. Guardar por si acaso sale barato; encontrar algo despu&eacute;s, no.</p></div></div>
+<div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>Ordenar antes o ordenar despu&eacute;s</span></div>
+</section>
+<section class="slide mid" data-title="ETL y ELT">
+<div class="ey">Bloque 6 &middot; 5 minutos</div>
+<h2>Y &iquest;c&oacute;mo llega el dato hasta ah&iacute;?</h2>
+<p class="lead" style="max-width:none">Con tres pasos: <strong>extraer</strong> de donde nace, <strong>transformar</strong> para dejarlo utilizable y <strong>cargar</strong> en su destino. Lo &uacute;nico que cambia es el orden &mdash; y cambia mucho.</p>
+<svg class="joinviz" style="max-height:48cqh" viewBox="0 0 1010 306" role="img" aria-label="ETL y ELT explicados con naranjas: exprimir antes de llevar, o llevar las naranjas y exprimir en destino"><defs><marker id="j6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7480"/></marker></defs><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LO MISMO, EN OTRO ORDEN &mdash; Y ESO LO CAMBIA TODO</text><text x="6" y="46" font-size="15" fill="#124e78" font-weight="800" font-family="Consolas,monospace">ETL</text><text x="72" y="46" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">transformar antes de guardar</text><rect x="6" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="76" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#127818;</text><text x="76" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Extract</text><text x="76" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">coges las naranjas</text><line x1="150" y1="91" x2="174" y2="91" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="178" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="248" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129380;</text><text x="248" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Transform</text><text x="248" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">las exprimes fuera</text><line x1="322" y1="91" x2="346" y2="91" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="350" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="420" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129371;</text><text x="420" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Load</text><text x="420" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">llega el zumo hecho</text><text x="534" y="88" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Llega listo para usar.</text><text x="534" y="108" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Cuesta m&aacute;s antes, y solo tienes</text><text x="534" y="125" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">el zumo que decidiste hacer.</text><text x="6" y="162" font-size="15" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">ELT</text><text x="72" y="162" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">guardar antes de transformar</text><rect x="6" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="76" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#127818;</text><text x="76" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Extract</text><text x="76" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">coges las naranjas</text><line x1="150" y1="207" x2="174" y2="207" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="178" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="248" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128230;</text><text x="248" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Load</text><text x="248" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">las llevas tal cual</text><line x1="322" y1="207" x2="346" y2="207" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="350" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="420" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129380;</text><text x="420" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Transform</text><text x="420" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">exprimes all&iacute;, a la carta</text><text x="534" y="204" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Llega crudo, y decides luego.</text><text x="534" y="224" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Necesitas sitio y potencia,</text><text x="534" y="241" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">pero puedes cambiar de idea.</text><rect x="6" y="268" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="287" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La ETL cabe en una bodega; la ELT necesita una laguna.</tspan> Esto se ve a fondo en la sesi&oacute;n 12 &mdash; hoy basta con saber cu&aacute;l es cu&aacute;l.</text></svg>
+<div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>A fondo en la sesi&oacute;n 12</span></div>
+</section>
+<section class="slide dense mid" data-title="Repaso">
+<div class="ey">Cierre &middot; 5 minutos</div>
+<h2>Siete palabras que esta ma&ntilde;ana no significaban nada</h2>
+<p class="lead" style="max-width:none">Se contestan en voz alta o por el chat. Si te salen las siete, la sesi&oacute;n cumpli&oacute;.</p>
+<div class="g2" style="margin-top:.8em">
+<div><div class="hintbox" style="margin:0"><ul>
+<li><strong>1 &middot;</strong> Definen c&oacute;mo una empresa toma sus decisiones, y hoy las levantaste de un restaurante.</li>
+<li><strong>2 &middot;</strong> Sistema de procesamiento centrado en las transacciones.</li>
+<li><strong>3 &middot;</strong> Sistema de procesamiento centrado en la anal&iacute;tica.</li>
+<li><strong>4 &middot;</strong> Repositorio que guarda todo tipo de informaci&oacute;n, tal como llega.</li>
+</ul></div></div>
+<div><div class="hintbox" style="margin:0"><ul>
+<li><strong>5 &middot;</strong> Almac&eacute;n que organiza y estructura los datos de toda la organizaci&oacute;n.</li>
+<li><strong>6 &middot;</strong> Proceso que transforma los datos <em>antes</em> de guardarlos.</li>
+<li><strong>7 &middot;</strong> Proceso que los carga como vienen y los transforma m&aacute;s adelante.</li>
+</ul></div>
+<p class="quote" data-r style="margin-top:.9em">reglas de negocio &middot; OLTP &middot; OLAP &middot; laguna de datos &middot; bodega de datos &middot; ETL &middot; ELT</p></div></div>
+<div class="brand"><span>Cierre</span><span>Siete palabras nuevas</span></div>
+</section>
+<section class="slide yellow dense mid" data-title="Cierre">
+<div class="ey">Cierre &middot; 6 minutos</div>
+<h2>Ya no solo consultas la base: entiendes por qu&eacute; es as&iacute;</h2>
+<div class="g2">
+<div><h3>Lo que te llevas</h3>
+<ul class="checks">
+<li>Una base de datos es <strong>una opini&oacute;n sobre un negocio</strong>, y se puede leer.</li>
+<li>Cuatro niveles: <strong>restricci&oacute;n, permiso, patr&oacute;n e hip&oacute;tesis</strong>. Confundirlos sale caro.</li>
+<li>Un <code>NOT NULL</code>, un <code>DEFAULT</code> o un <code>ON DELETE</code> son <strong>reglas de negocio</strong>.</li>
+<li>Una regla necesita <strong>sujeto, prohibici&oacute;n y forma de comprobarla</strong>.</li>
+<li><strong>OLTP</strong> para operar, <strong>OLAP</strong> para entender &mdash; y hacen falta los dos.</li>
+<li><strong>Laguna</strong> para guardar sin decidir, <strong>bodega</strong> para lo ya ordenado.</li>
+<li><strong>ETL</strong> transforma antes; <strong>ELT</strong> guarda antes.</li>
+</ul></div>
+<div><h3>Para llevar a la sesi&oacute;n 7</h3>
+<div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>Tus ocho reglas del Restaurante ABC</strong>, con las dos que corregiste y sus preguntas pendientes. No las pierdas: son el material de la pr&oacute;xima clase. Si no llegaste a ocho, compl&eacute;talas en casa &mdash; con la lista de referencia al lado cuesta veinte minutos.</p></div>
+<p class="small" style="margin-top:.7em"><strong>Y una de propina, para practicar el ojo:</strong> abre <code>dvdrental</code> y cuenta cu&aacute;ntos clientes hay de cada valor de <code>customer.active</code>. &iquest;Qu&eacute; le pasa a un cliente que se da de baja? &iquest;Y de qu&eacute; nivel es esa conclusi&oacute;n: restricci&oacute;n, permiso, patr&oacute;n o hip&oacute;tesis?</p>
+<p class="warn" style="margin-top:1em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> tus frases se convierten en un modelo &mdash; entidades, relaciones y cardinalidades. Y como estamos en la mitad del curso, dedicamos media hora a <strong>las certificaciones</strong>: cu&aacute;les hay, cu&aacute;l entrega Colsubsidio y cu&aacute;ndo llega.</p></div></div>
+<p class="quote" style="margin-top:1em" data-r>Antes de dise&ntilde;ar una base hay que escuchar un negocio. Lo dif&iacute;cil nunca fue el SQL.</p>
+<div class="brand"><span>Cierre</span><span>Sesi&oacute;n 7: de las reglas al modelo</span></div>
+</section>
+
+
+
+
+
+
+
+
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 32</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-6-reglas-de-negocio.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
+<div class="sr" id="announce" aria-live="assertive"></div>
+<script>
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),noteOv=document.getElementById('noteOv'),noteBody=document.getElementById('noteBody'),announce=document.getElementById('announce'),clock=document.querySelector('.clock'),noteBtn=document.getElementById('noteBtn');
+let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length+(ss[i].dataset.opcional?' · opcional':'');bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(noteOv&&noteOv.classList.contains('open'))fillNotes();if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
+function fillNotes(){if(!noteBody)return;const n=ss[i].querySelector('.notes');noteBody.innerHTML=n?n.innerHTML:'<p>Esta diapositiva no tiene notas.</p>'}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
+function closeAll(){timeOv.classList.remove('open');if(noteOv)noteOv.classList.remove('open')}
+function anyOpen(){return timeOv.classList.contains('open')||(noteOv&&noteOv.classList.contains('open'))}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
+if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
+let remain=900000,initial=remain,end=0,running=false,tick=null;
+const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){const q=cur(),v=fmt(q);document.getElementById('timer').textContent=v;
+ if(miniT){miniT.textContent=v;
+  mini.classList.toggle('avisa',running&&q>0&&q<=60000);
+  mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));
+  miniPP.innerHTML=running?'&#10074;&#10074;':'&#9654;';
+  miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar');}
+ if(clock&&ss[i].dataset.break==='15')clock.textContent=v;
+ if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
+function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
+function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
+function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
+/* al arrancar, el panel se quita de en medio y queda la pastilla flotante */
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);
+ if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
+function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
+document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+if(mini){
+ miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};
+ document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};
+ document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
+ /* arrastrar a cualquier lado; la posición se recuerda */
+ let ax=0,ay=0,px=0,py=0,mov=false;
+ const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};
+ try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');
+  if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}
+ mini.addEventListener('pointerdown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  const r=mini.getBoundingClientRect();
+  ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;
+  mini.setPointerCapture(e.pointerId);mini.classList.add('arrastrando')});
+ mini.addEventListener('pointermove',e=>{
+  if(!mini.hasPointerCapture||!mini.classList.contains('arrastrando'))return;
+  if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;
+  if(!mov)return;
+  const r=mini.getBoundingClientRect();
+  const x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width);
+  const y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);
+  mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});
+ mini.addEventListener('pointerup',e=>{
+  mini.classList.remove('arrastrando');
+  try{mini.releasePointerCapture(e.pointerId)}catch(_){}
+  if(mov)guardar();});
+ addEventListener('resize',()=>{const r=mini.getBoundingClientRect();
+  if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}});
+}
+let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
+upd();render()})();
+/* --- copiar el código de un bloque, para que nadie lo transcriba a mano --- */
+document.querySelectorAll('.slide pre').forEach(function(pre){
+  // solo los bloques que son código: las etiquetas y los esquemas no se copian
+  if(pre.hasAttribute('data-nocopy'))return;
+  if(!/\b(SELECT|WITH|FROM|JOIN|WHERE|GROUP BY|ORDER BY|COUNT|SUM|AVG|CASE|CREATE|INSERT|UPDATE|DELETE)\b/i.test(pre.textContent))return;
+  var b=document.createElement('button');
+  b.type='button'; b.className='copybtn'; b.textContent='copiar';
+  b.setAttribute('aria-label','Copiar este c\u00f3digo al portapapeles');
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    var t=pre.cloneNode(true);
+    t.querySelectorAll('.copybtn').forEach(function(x){x.remove()});
+    var txt=t.textContent.replace(/\s+$/,'');
+    var listo=function(){b.textContent='copiado';b.classList.add('ok');
+      setTimeout(function(){b.textContent='copiar';b.classList.remove('ok')},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(listo,function(){b.textContent='no se pudo'})
+    }else{
+      var ta=document.createElement('textarea');ta.value=txt;
+      ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
+      ta.select();try{document.execCommand('copy');listo()}catch(_){b.textContent='no se pudo'}
+      ta.remove()
+    }
+  });
+  pre.appendChild(b);
+});
+
+</script>
+</body></html>

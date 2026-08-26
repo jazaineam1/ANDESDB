@@ -79,10 +79,22 @@ def construir():
 
     datos = ''.join('<span>%s</span>' % e(x) for x in c['datos'])
 
-    # el módulo en curso manda sus sesiones a la sección «Sesiones»
+    # todas las sesiones publicadas, agrupadas por módulo: al avanzar el curso
+    # no puede desaparecer de la página lo que ya se dictó
+    grupos = [m for m in c['modulos'] if m.get('sesiones')]
+    if len(grupos) > 1:
+        sesiones = ''.join(
+            '<h3 class="grupo-mod">M&oacute;dulo %s &middot; %s</h3>'
+            '<div class="sessions">%s</div>'
+            % (m['n'], e(m['titulo']),
+               ''.join(tarjeta_sesion(s) for s in m['sesiones']))
+            for m in grupos)
+    else:
+        sesiones = ('<div class="sessions">%s</div>'
+                    % ''.join(tarjeta_sesion(s)
+                              for m in grupos for s in m['sesiones']))
     activo = next((m for m in c['modulos'] if m.get('estado') == 'curso'), None)
-    sesiones = ''.join(tarjeta_sesion(s) for s in (activo or {}).get('sesiones', []))
-    tit_ses = 'Módulo %s · %s' % (activo['n'], e(activo['titulo'])) if activo else 'Sesiones'
+    tit_ses = 'M&oacute;dulo %s &middot; %s' % (activo['n'], e(activo['titulo'])) if activo else 'Sesiones'
 
     modulos = ''.join(paso_ruta(m) for m in c['modulos'])
 
@@ -175,7 +187,7 @@ def construir():
     <p>Cada sesión es un archivo único que funciona sin conexión, y trae dentro lo que necesitas ese día.
        Navega con ← y →; <b>F</b> pantalla completa, <b>T</b> cronómetro. El botón ↓ de la barra la descarga.</p>
   </div>
-  <div class="sessions">{sesiones}</div>
+  {sesiones}
 </div></section>
 
 <section id="herramientas"><div class="wrap">
