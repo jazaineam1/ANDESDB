@@ -583,6 +583,20 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 .escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
 .logo span{line-height:1.2}
 
+/* ===== botón de copiar en cada bloque de código ===== */
+pre{position:relative}
+.copybtn{
+  position:absolute; top:.5em; right:.5em; z-index:3;
+  font:800 .68em/1 "Segoe UI",Arial,sans-serif; letter-spacing:.07em; text-transform:uppercase;
+  color:#cfe3f0; background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.24);
+  border-radius:var(--pill); padding:.42em .85em; cursor:pointer; opacity:.55;
+  transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+pre:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.2); color:#fff}
+.copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
+.copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.copybtn{transition:none}}
 </style></head>
 <body><main class="stage">
 
@@ -808,4 +822,31 @@ if(mini){
 }
 let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
 upd();render()})();
+/* --- copiar el código de un bloque, para que nadie lo transcriba a mano --- */
+document.querySelectorAll('.slide pre').forEach(function(pre){
+  // solo los bloques que son código: las etiquetas y los esquemas no se copian
+  if(pre.hasAttribute('data-nocopy'))return;
+  if(!/\b(SELECT|WITH|FROM|JOIN|WHERE|GROUP BY|ORDER BY|COUNT|SUM|AVG|CASE|CREATE|INSERT|UPDATE|DELETE)\b/i.test(pre.textContent))return;
+  var b=document.createElement('button');
+  b.type='button'; b.className='copybtn'; b.textContent='copiar';
+  b.setAttribute('aria-label','Copiar este c\u00f3digo al portapapeles');
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    var t=pre.cloneNode(true);
+    t.querySelectorAll('.copybtn').forEach(function(x){x.remove()});
+    var txt=t.textContent.replace(/\s+$/,'');
+    var listo=function(){b.textContent='copiado';b.classList.add('ok');
+      setTimeout(function(){b.textContent='copiar';b.classList.remove('ok')},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(listo,function(){b.textContent='no se pudo'})
+    }else{
+      var ta=document.createElement('textarea');ta.value=txt;
+      ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
+      ta.select();try{document.execCommand('copy');listo()}catch(_){b.textContent='no se pudo'}
+      ta.remove()
+    }
+  });
+  pre.appendChild(b);
+});
+
 </script></body></html>

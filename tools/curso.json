@@ -1,5 +1,5 @@
 {
-  "_comentario": "Manifiesto del curso. Para añadir una sesión o un recurso NO se toca index.html: se edita este archivo y se ejecuta 'py tools/construir-index.py'. Estados válidos: completado, curso, pendiente. En sesiones además: hoy.",
+  "_comentario": "Manifiesto del curso. Para añadir una sesión o un recurso NO se toca index.html: se edita este archivo y se ejecuta 'py tools/construir-index.py'. Estados válidos: completado, curso, pendiente. En sesiones además: proxima, hoy. Si ninguna está marcada 'hoy', la marcada 'proxima' es la que sale en el botón principal.",
   "titulo": "Diseño y Gestión de Bases de Datos con SQL",
   "institucion": "Universidad de los Andes · Colsubsidio",
   "subtitulo": "Aprende a hacerle preguntas a una base de datos y a obtener respuestas. Empezamos desde cero y practicamos con datos reales en cada clase.",
@@ -7,7 +7,7 @@
     "48 horas · 16 sesiones",
     "Clases en vivo por videollamada"
   ],
-  "sesionActual": 4,
+  "sesionActual": 5,
   "totalSesiones": 16,
   "herramientas": [
     {
@@ -59,7 +59,7 @@
       "n": 2,
       "titulo": "Explorando bases de datos con SQL",
       "estado": "curso",
-      "desc": "Consultar, filtrar, agrupar y unir tablas reales.",
+      "desc": "Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
       "recursos": [
         {
           "txt": "🗄️ La base de datos (archivo)",
@@ -122,7 +122,7 @@
         {
           "n": 4,
           "titulo": "Uniones de tablas",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
           "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
           "tags": [
@@ -137,6 +137,28 @@
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
               "href": "Scripts/S4.sql",
+              "download": true
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "titulo": "Algorítmica de tablas",
+          "estado": "proxima",
+          "desc": "Dibujar la tabla antes de escribirla y llegar a ella por pedazos. El nivel de agregación, el orden en que SQL ejecuta de verdad, y cómo resumir antes de unir para que las cuentas no se inflen.",
+          "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
+          "tags": [
+            "WITH",
+            "CTE",
+            "COUNT(DISTINCT)",
+            "COALESCE",
+            "CASE",
+            "nivel de agregación"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S5.sql",
               "download": true
             }
           ]
@@ -176,7 +198,7 @@
       "sesiones": []
     }
   ],
-  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3 y 4.",
+  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2, 3, 4 y 5.",
   "materialesHoy": [
     {
       "txt": "🗄️ La base de datos",
@@ -185,7 +207,7 @@
     },
     {
       "txt": "📜 Las consultas de la clase",
-      "href": "Scripts/S4.sql",
+      "href": "Scripts/S5.sql",
       "download": true
     },
     {

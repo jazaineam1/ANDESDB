@@ -578,3 +578,18 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 /* ===== el escudo de Uniandes ===== */
 .escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
 .logo span{line-height:1.2}
+
+/* ===== botón de copiar en cada bloque de código ===== */
+pre{position:relative}
+.copybtn{
+  position:absolute; top:.5em; right:.5em; z-index:3;
+  font:800 .68em/1 "Segoe UI",Arial,sans-serif; letter-spacing:.07em; text-transform:uppercase;
+  color:#cfe3f0; background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.24);
+  border-radius:var(--pill); padding:.42em .85em; cursor:pointer; opacity:.55;
+  transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+pre:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.2); color:#fff}
+.copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
+.copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.copybtn{transition:none}}

@@ -86,15 +86,23 @@ def construir():
 
     modulos = ''.join(paso_ruta(m) for m in c['modulos'])
 
-    # la sesión marcada como «hoy» manda: es la acción principal de la página
-    hoy = next((s for m in c['modulos'] for s in m.get('sesiones', [])
-                if s.get('estado') == 'hoy' and s.get('href')), None)
-    if hoy:
-        cta = ('<a class="btn-main" href="%s">▶ Abrir la sesión de hoy'
+    # la sesión marcada «hoy» manda; si no hay, manda la «proxima»
+    def marcada(estado):
+        return next((s for m in c['modulos'] for s in m.get('sesiones', [])
+                     if s.get('estado') == estado and s.get('href')), None)
+
+    hoy = marcada('hoy')
+    destacada, rotulo, corto = hoy, 'Abrir la sesión de hoy', 'Sesión de hoy'
+    if not destacada:
+        destacada = marcada('proxima')
+        rotulo, corto = 'Abrir la próxima sesión', 'Próxima sesión'
+    if destacada:
+        cta = ('<a class="btn-main" href="%s">▶ %s'
                '<small>%s · %s</small></a>'
                '<a class="btn-ghost" href="#sesiones">Ver todas las sesiones</a>'
-               % (e(hoy['href']), 'Sesión %s' % hoy['n'], e(hoy['titulo'])))
-        cta_nav = '<a class="cta" href="%s">▶ Sesión de hoy</a>' % e(hoy['href'])
+               % (e(destacada['href']), rotulo,
+                  'Sesión %s' % destacada['n'], e(destacada['titulo'])))
+        cta_nav = '<a class="cta" href="%s">▶ %s</a>' % (e(destacada['href']), corto)
     else:
         cta = '<a class="btn-main" href="#sesiones">Ver las sesiones</a>'
         cta_nav = '<a class="cta" href="#sesiones">Sesiones</a>' 
