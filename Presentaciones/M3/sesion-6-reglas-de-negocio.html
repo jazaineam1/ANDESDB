@@ -849,21 +849,21 @@ SELECT COUNT(*) FROM (
 <div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Sujeto, prohibici&oacute;n y forma de comprobarla</span></div>
 </section>
 <section class="slide yellow dense mid" data-title="Concurso 1">
-<div class="ey">Concurso &middot; partida 1 &middot; 9 minutos</div>
+<div class="ey">Concurso &middot; partida 1 &middot; 7 minutos</div>
 <h2>&#127942; Leer sin sobreinterpretar</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Entra en wayground.com</strong> con el PIN de la pantalla compartida. Sirve el tel&eacute;fono. <strong>Usa el mismo apodo</strong> en las dos partidas de hoy, o el marcador final no se puede sumar.</div>
-<div class="hintbox" style="margin-top:.7em"><strong>7 preguntas &middot; todo lo del bloque 1 y 3</strong><ul>
+<div class="hintbox" style="margin-top:.7em"><strong>5 preguntas &middot; dos minutos para entrar, una por pregunta</strong><ul>
 <li>Los cuatro niveles de certeza.</li>
-<li>Lo que dice el esquema, y lo que se perdi&oacute; al convertir.</li>
+<li>Lo que se perdi&oacute; al convertir tu archivo.</li>
 <li>Qu&eacute; frase es una regla y qu&eacute; frase no lo es.</li>
 </ul></div>
 <p class="small" style="margin-top:.6em">Hay tiempo para comentar cada una. Si fallas, mejor: el taller de despu&eacute;s de la pausa es exactamente esto.</p></div>
 <div><p class="ctx" style="margin:0"><strong>Y ahora la parte que importa: comprob&aacute;rselo.</strong></p>
 <table class="res" data-r style="margin-top:.5em"><caption>No te creas ninguna. Compru&eacute;balas</caption>
 <tr><th>Lo que se afirm&oacute;</th><th>C&oacute;mo lo compruebas t&uacute;</th></tr>
-<tr><td>La devoluci&oacute;n puede faltar</td><td><code>pragma_table_info('rental')</code> &rarr; <code>return_date</code> sale con 0</td></tr>
-<tr><td>Tu archivo no tiene claves for&aacute;neas</td><td><code>pragma_foreign_key_list</code> en cualquier tabla &rarr; 0</td></tr>
+<tr><td>La devoluci&oacute;n puede faltar</td><td><code>SELECT "notnull" FROM pragma_table_info('rental')<br>WHERE name='return_date';</code> &rarr; <b>0</b></td></tr>
+<tr><td>Tu archivo no tiene claves for&aacute;neas</td><td><code>SELECT COUNT(*) FROM pragma_foreign_key_list('rental');</code> &rarr; <b>0</b></td></tr>
 <tr><td>Los 1.452 sin pago</td><td>El conteo se comprueba. <strong>Que fueran una promoci&oacute;n, no</strong>: eso no sale de ninguna consulta</td></tr>
 <tr><td>El pago sobrevive al alquiler</td><td>Falso: <code>rental_id</code> es <code>NOT NULL</code>, el borrado falla</td></tr>
 </table></div></div>
@@ -1070,16 +1070,16 @@ SELECT COUNT(*) FROM (
 <h2>&#127942; Operar, analizar y guardar</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Segundo PIN, mismo apodo.</strong> Al terminar, el marcador de las dos partidas se suma y se lee en voz alta.</div>
-<div class="hintbox" style="margin-top:.7em"><strong>8 preguntas &middot; todo el bloque 5 y 6</strong><ul>
-<li>Cuatro situaciones: &iquest;OLTP, OLAP, las dos o ninguna?</li>
-<li>Clases de dato, laguna y bodega, ETL y ELT.</li>
-<li>Y una &uacute;ltima que resume la noche entera.</li>
+<div class="hintbox" style="margin-top:.7em"><strong>5 preguntas &middot; dos minutos para entrar, una por pregunta</strong><ul>
+<li>Tres situaciones: &iquest;OLTP, OLAP, las dos o ninguna?</li>
+<li>Qu&eacute; clase de dato es un v&iacute;deo.</li>
+<li>Y una de ETL contra ELT.</li>
 </ul></div></div>
 <div><p class="warn" style="margin:0"><strong>Aqu&iacute; casi nada se comprueba con una consulta</strong>, y eso tambi&eacute;n hay que saberlo.</p>
 <div class="hintbox" data-r style="margin-top:.7em"><strong>Lo que se decide, no se consulta</strong><ul>
 <li><strong>OLTP u OLAP</strong> no sale de ninguna tabla: se decide por c&oacute;mo se usa el sistema &mdash; cu&aacute;ntas escrituras, cu&aacute;nta historia, cu&aacute;nta prisa.</li>
 <li>Y ojo con los absolutos: <strong>s&iacute; se puede</strong> analizar sobre la base que opera &mdash; en una r&eacute;plica, o de madrugada. Lo que se evita es la consulta pesada en hora punta.</li>
-<li>La cuarta situaci&oacute;n es <strong>las dos cosas</strong>. La mayor&iacute;a de los sistemas reales lo son.</li>
+<li>La tercera situaci&oacute;n es <strong>las dos cosas</strong>. La mayor&iacute;a de los sistemas reales lo son.</li>
 </ul></div></div></div>
 <div class="brand"><span>Concurso &middot; partida 2</span><span>Lo que se decide, no se consulta</span></div>
 </section>
