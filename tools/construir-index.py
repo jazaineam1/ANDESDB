@@ -172,7 +172,7 @@ def construir():
   </div>
   <aside class="progress-card">
     <div class="progress-head">
-      <b>Tu avance</b>
+      <b>Avance del curso</b>
       <em>Sesión {c['sesionActual']} de {c['totalSesiones']}</em>
     </div>
     <div class="track"><div class="fill" style="width:{pct}%"></div></div>
