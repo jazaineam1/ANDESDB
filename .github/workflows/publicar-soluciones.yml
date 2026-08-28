@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -36,7 +40,7 @@ jobs:
             exit 0
           fi
           session=$(python - <<'PY'
-          import json, os
+          import json
           from datetime import datetime
           from zoneinfo import ZoneInfo
           plan=json.load(open('assets/learning/learning-plan.json', encoding='utf-8'))
@@ -89,4 +93,5 @@ jobs:
             exit 0
           fi
           git commit -m "Publicar solución S${n} · 20:00 Bogotá"
-          git push
+          git pull --rebase origin main
+          git push origin main
