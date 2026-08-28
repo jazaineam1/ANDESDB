@@ -54,12 +54,6 @@ button.niv{padding:.4em .85em;font-size:.86rem;font-weight:700;border-radius:var
 button.niv.sel.n-confirmada{background:var(--g);border-color:var(--g);color:#fff}
 button.niv.sel.n-candidata{background:var(--b);border-color:var(--b);color:#fff}
 button.niv.sel.n-hiptesis{background:var(--r);border-color:var(--r);color:#fff}
-.quien{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.2rem 0 .6rem}
-.quien label{font-weight:700;font-size:.95rem}
-.quien input{flex:1;min-width:13rem;font:400 .98rem/1.3 "Segoe UI",Arial,sans-serif;
-  padding:.55rem .75rem;border:2px solid var(--line);border-radius:10px;color:var(--ink)}
-.quien input:focus{outline:none;border-color:var(--b)}
-.quien .nota{width:100%;font-size:.85rem;color:var(--soft);margin:0}
 .acciones{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;margin-top:1rem}
 .estado{font-size:.88rem;color:var(--soft)}
 .estado.ok{color:var(--g);font-weight:700}
@@ -78,7 +72,9 @@ button.niv.sel.n-hiptesis{background:var(--r);border-color:var(--r);color:#fff}
     <p class="sub">Reglas de negocio. Primero <strong>reconocerlas</strong> con un clic;
     solo despu&eacute;s, <strong>escribir dos</strong>. Lo que escribas aqu&iacute; es el
     material de la sesi&oacute;n 7, y se guarda en este navegador para que no lo pierdas
-    si se te cae la conexi&oacute;n. <em>El concurso se juega aparte, en Wayground.</em></p>
+    si se te cae la conexi&oacute;n. <em>El concurso se juega aparte, en Wayground.</em>
+    Esta p&aacute;gina es <strong>tuya</strong>: no se entrega, se guarda &mdash; la vas a
+    necesitar delante el martes.</p>
   </div>
 
   <h2>El encargo<span class="lead">Media hora de conversaci&oacute;n con la due&ntilde;a
@@ -100,17 +96,16 @@ button.niv.sel.n-hiptesis{background:var(--r);border-color:var(--r);color:#fff}
   <h2>&iquest;Es una regla?<span class="lead" id="mclasif">&mdash;</span></h2>
   <div id="frases"></div>
 
-  <h2>Ahora dos tuyas<span class="lead">Sujeto concreto, verbo de prohibici&oacute;n
-  (<em>no puede</em>, <em>debe</em>, <em>solo si</em>) y algo que se pueda contar.
-  Y para cada una, <strong>cu&aacute;nto te fías de ella</strong>. Esto, y solo esto,
-  es lo que llevamos a la sesi&oacute;n 7.</span></h2>
-  <div class="quien">
-    <label for="nombre">Tu nombre</label>
-    <input type="text" id="nombre" maxlength="60" placeholder="Para reconocer tu entrega en la sesi&oacute;n 7">
-    <p class="nota">Se queda en este navegador y en el archivo que te descargues.
-    No se env&iacute;a a ninguna parte.</p>
-  </div>
+  <h2>Ahora dos tuyas<span class="lead">Sujeto concreto, una condici&oacute;n, obligaci&oacute;n
+  o acci&oacute;n expl&iacute;cita, y una forma de comprobarla. Para cada una, indica
+  <strong>cu&aacute;nto respaldo tiene</strong>. Al final guarda tambi&eacute;n la pregunta que
+  el dato no puede responder.</span></h2>
   <div id="mias"></div>
+  <div class="mia">
+    <label for="pregunta">Tu pregunta pendiente para la due&ntilde;a</label>
+    <p class="pista">Debe resolver algo que no puedas confirmar solamente con el esquema o los datos.</p>
+    <textarea id="pregunta" placeholder="Por ejemplo: &iquest;se pueden juntar dos mesas para una reserva grande?"></textarea>
+  </div>
 
   <div class="acciones">
     <button class="principal" id="copiar">Copiar mi trabajo</button>
@@ -129,14 +124,14 @@ var CASO = {"nombre":"Restaurante ABC","quien":"Lo que te cuenta la due&ntilde;a
 var LT    = 'TALLER6';
 var LLAVE = 'taller-s6';
 var NIVELES = [
-  ['confirmada', 'La dueña lo dijo, o lo puedes comprobar'],
-  ['candidata',  'Se deduce de lo que dijo, pero nadie lo confirmó'],
-  ['hipótesis',  'Te la has inventado tú. No es un fracaso: es la pregunta']
+  ['confirmada', 'Una fuente explícita ya la respalda'],
+  ['candidata',  'Se deduce razonablemente del relato, pero falta confirmarla'],
+  ['hipótesis',  'Es una posibilidad sin evidencia suficiente: debe convertirse en pregunta']
 ];
-var est = {clasif:{}, escrito:{}, nivel:{}, nombre:''};
+var est = {clasif:{}, escrito:{}, nivel:{}, pregunta:''};
 try{ var g = localStorage.getItem(LLAVE); if(g) est = JSON.parse(g); }catch(e){}
 ['clasif','escrito','nivel'].forEach(function(k){ if(!est[k]) est[k] = {}; });
-if(typeof est.nombre !== 'string') est.nombre = '';
+if(typeof est.pregunta !== 'string') est.pregunta = '';
 function guarda(){ try{ localStorage.setItem(LLAVE, JSON.stringify(est)); }catch(e){} }
 
 function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
@@ -252,33 +247,33 @@ function vuelca(){
     if(ta.value.trim()) d[i] = ta.value.trim();
   });
   est.escrito.abc = d;
-  var nom = document.getElementById('nombre');
-  if(nom) est.nombre = nom.value.trim();
+  var pr = document.getElementById('pregunta');
+  if(pr) est.pregunta = pr.value.trim();
   guarda();
 
   /* el entregable esta completo cuando hay nombre, dos reglas y sus dos niveles */
   var e = document.getElementById('mestado');
   var faltan = [];
-  if(!est.nombre) faltan.push('tu nombre');
   if(Object.keys(d).length < 2) faltan.push((2 - Object.keys(d).length) + ' regla(s)');
   var sinNivel = [0, 1].filter(function(i){ return d[i] && !est.nivel[i]; }).length;
   if(sinNivel) faltan.push(sinNivel + ' nivel(es)');
+  if(!est.pregunta) faltan.push('tu pregunta pendiente');
   if(faltan.length){
     e.textContent = 'Se guarda solo \u00b7 falta ' + faltan.join(', ');
     e.className = 'estado';
   } else {
-    e.textContent = 'Entregable completo \u00b7 c\u00f3pialo o desc\u00e1rgalo';
+    e.textContent = 'Listo \u00b7 desc\u00e1rgalo para tenerlo el martes';
     e.className = 'estado ok';
   }
 }
 
 function pintaTaller(){
   pintaEncargo(); pintaFrases(); pintaMias();
-  var nom = document.getElementById('nombre');
-  if(nom && !nom.dataset.listo){
-    nom.value = est.nombre || '';
-    nom.addEventListener('input', function(){ clearTimeout(tm); tm = setTimeout(vuelca, 400); });
-    nom.dataset.listo = '1';
+  var pr = document.getElementById('pregunta');
+  if(pr && !pr.dataset.listo){
+    pr.value = est.pregunta || '';
+    pr.addEventListener('input', function(){ clearTimeout(tm); tm = setTimeout(vuelca, 400); });
+    pr.dataset.listo = '1';
   }
   marcadorTaller(); vuelca();
 }
@@ -292,7 +287,6 @@ function texto(){
   var hoy = new Date().toISOString().slice(0, 10);
   var ls = ['REGLAS DE NEGOCIO \u00b7 SESION 6',
             'Caso ......... ' + c.nombre,
-            'Autor ........ ' + (est.nombre || '(sin nombre)'),
             'Fecha ........ ' + hoy,
             '',
             'CALENTAMIENTO  \u00bfes una regla?  ' + n + ' de ' + hechas + ' bien',
@@ -305,9 +299,12 @@ function texto(){
     ls.push('      nivel: ' + (est.nivel[i] || '(sin clasificar)'));
   });
   ls.push('');
-  ls.push('Confirmada = la fuente lo dijo o se puede comprobar.');
-  ls.push('Candidata  = se deduce, pero nadie lo ha confirmado.');
-  ls.push('Hipotesis  = me la he inventado: es la pregunta que llevo a la sesion 7.');
+  ls.push('PREGUNTA PENDIENTE PARA LA DUENA');
+  ls.push('  ' + (est.pregunta || '(sin escribir)'));
+  ls.push('');
+  ls.push('Confirmada = una fuente explicita ya la respalda.');
+  ls.push('Candidata  = se deduce razonablemente, pero falta confirmarla.');
+  ls.push('Hipotesis  = posibilidad sin evidencia suficiente; es una pregunta.');
   return ls.join('\n');
 }
 function avisa(b, msg){
@@ -331,7 +328,7 @@ document.getElementById('bajar').onclick = function(){
 };
 document.getElementById('reiniciar').onclick = function(){
   if(!window.confirm('Se borra el taller entero. No se puede deshacer.')) return;
-  est = {clasif:{}, escrito:{}, nivel:{}, nombre:''}; guarda(); location.reload();
+  est = {clasif:{}, escrito:{}, nivel:{}, pregunta:''}; guarda(); location.reload();
 };
 
 pintaTaller();

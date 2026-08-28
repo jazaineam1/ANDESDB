@@ -55,13 +55,14 @@
       "actividad": {
         "titulo": "Reconocer una regla antes de escribirla",
         "minutos": 12,
-        "instrucciones": "Ejecuta las consultas del Taller 1 y clasifica cada hallazgo como restricción, permiso, patrón o hipótesis — recordando que el hecho es un patrón y su explicación una hipótesis. Después, en tu página de la sesión, marca con un clic cuáles de las doce frases del Restaurante ABC son reglas, escribe dos reglas propias y etiqueta cada una como confirmada, candidata o hipótesis.",
+        "instrucciones": "Ejecuta las consultas del Taller 1 y clasifica cada hallazgo como restricción, permiso, patrón o hipótesis — recordando que el hecho es un patrón y su explicación una hipótesis. Después, en tu página de la sesión, marca con un clic cuáles de las doce frases del Restaurante ABC son reglas, escribe dos reglas propias, etiqueta cada una como confirmada, candidata o hipótesis y registra una pregunta pendiente para la sesión 7.",
         "criterios": [
           "clasifica los 4 hallazgos del Taller 1 separando el hecho de su explicación",
           "marca las 12 frases y entiende por qué falló las que falló",
-          "redacta 2 reglas comprobables, con sujeto y verbo de prohibición",
-          "etiqueta cada regla como confirmada, candidata o hipótesis",
-          "descarga el entregable con su nombre: es el insumo de la sesión 7"
+          "redacta 2 reglas comprobables, con sujeto y una condición, obligación o acción explícita",
+          "etiqueta cada regla como confirmada, candidata o hipótesis según la evidencia disponible",
+          "registra una pregunta pendiente que no puede resolver solo con los datos",
+          "se queda con su archivo: no se entrega, lo necesita en la sesión 7"
         ]
       }
     },
