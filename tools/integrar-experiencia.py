@@ -3,6 +3,7 @@
 
 - index.html: manifiesto PWA + learning-core.js
 - sesiones HTML S6-S16: learning-core.js con ruta relativa correcta
+- S12-S14: enlace contextual al laboratorio analítico local
 - S2-S5 se dejan intactas deliberadamente.
 
 Es idempotente: puede ejecutarse en cada build.
@@ -15,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
-MANIFEST = ROOT / "manifest.webmanifest"
+ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
 
 
 def relative_url(from_file: Path, target: Path) -> str:
@@ -52,14 +53,25 @@ def process_index() -> bool:
 
 def process_session(path: Path) -> bool:
     m = re.search(r"sesion-(\d+)", path.name, re.I)
-    if not m or int(m.group(1)) < 6:
+    if not m:
         return False
+    n = int(m.group(1))
+    if n < 6:
+        return False
+
     text = path.read_text(encoding="utf-8")
-    if "learning-core.js" in text:
-        return False
-    src = relative_url(path, LEARNING)
-    fragment = f'<script src="{src}"></script>'
-    text, changed = inject_before(text, "</body>", fragment)
+    changed = False
+
+    if "learning-core.js" not in text:
+        src = relative_url(path, LEARNING)
+        text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+        changed |= ok
+
+    if 12 <= n <= 14 and "analytics-fallback-link.js" not in text:
+        src = relative_url(path, ANALYTICS_FALLBACK)
+        text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+        changed |= ok
+
     if changed:
         path.write_text(text, encoding="utf-8")
     return changed
