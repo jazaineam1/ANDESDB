@@ -31,10 +31,10 @@
       id: 'solapes',
       label: '2 · Solapes',
       marker: 'AS solapes',
-      sql: `SELECT COUNT(*) AS solapes\nFROM rental a\nJOIN rental b ON a.inventory_id = b.inventory_id\n             AND a.rental_id < b.rental_id\nWHERE a.return_date IS NOT NULL\n  AND b.rental_date >= a.rental_date\n  AND b.rental_date < a.return_date;`,
+      sql: `SELECT COUNT(*) AS solapes\nFROM rental a\nJOIN rental b ON a.inventory_id = b.inventory_id\n             AND a.rental_id < b.rental_id\nWHERE a.rental_date < COALESCE(b.return_date, '9999-12-31')\n  AND b.rental_date < COALESCE(a.return_date, '9999-12-31');`,
       level: 'patron',
       expected: '0',
-      explanation: 'Cero significa “no ocurrió en estos datos”, no “el sistema lo prohíbe”. Un cero no es una ley.'
+      explanation: 'Cero significa “no ocurrió en estos datos”, no “el sistema lo prohíbe”. Un cero no es una ley. Fíjate en la condición: dos intervalos se pisan cuando cada uno empieza antes de que acabe el otro, y un alquiler sin devolver sigue ocupando la copia.'
     },
     {
       id: 'ratings',

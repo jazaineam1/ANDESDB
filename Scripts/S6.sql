@@ -58,13 +58,16 @@ WHERE  return_date IS NULL;
 --       Autounión: rental contra sí misma, buscando parejas que se pisen.
 --       a.rental_id < b.rental_id evita comparar una fila consigo misma
 --       y evita contar cada pareja dos veces.
+--       La condición de solape es la canónica de dos intervalos: cada uno
+--       empieza antes de que acabe el otro. El COALESCE (sesión 5) trata
+--       un alquiler sin devolver como si acabara muy lejos, porque la copia
+--       sigue ocupada. Sin eso se pierden justo los 183 casos más largos.
 SELECT COUNT(*) AS solapes
 FROM   rental a
 JOIN   rental b ON a.inventory_id = b.inventory_id
                AND a.rental_id    < b.rental_id
-WHERE  a.return_date IS NOT NULL
-  AND  b.rental_date >= a.rental_date
-  AND  b.rental_date <  a.return_date;
+WHERE  a.rental_date < COALESCE(b.return_date,'9999-12-31')
+  AND  b.rental_date < COALESCE(a.return_date,'9999-12-31');
 -- 0
 -- NIVEL: PATRÓN observado, y aquí está la trampa del taller.
 --        Un cero es tentador: parece una ley. Pero significa
@@ -122,12 +125,15 @@ FROM (
 );
 -- 599   <- que son TODOS los clientes que existen
 
-SELECT COUNT(*) AS alquileres_en_otra_tienda
+SELECT COUNT(*) AS alquileres_con_dvd_de_otra_tienda
 FROM   rental r
 JOIN   inventory i ON r.inventory_id = i.inventory_id
 JOIN   customer c  ON r.customer_id  = c.customer_id
 WHERE  i.store_id <> c.store_id;
--- 8018
+-- 8018  <- DVD de una tienda distinta a la del cliente.
+--          En la diapositiva sale 7.981, que es OTRA pregunta:
+--          alquileres atendidos por un empleado de la otra tienda.
+--          Los dos numeros son correctos.
 --
 -- ¿Regla o ruido? La base no lo puede decidir. NIVEL: HIPÓTESIS.
 
