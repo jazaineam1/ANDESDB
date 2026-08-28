@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratorio analítico local · ANDESDB</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#171717">
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#171717;background:#f5f5f5}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1100px;margin:auto;padding:24px}.head{background:#171717;color:white;padding:22px 0}.head h1{margin:0;font-size:clamp(24px,4vw,42px)}.head p{color:#ccc;margin:8px 0 0}.notice{background:#fff6bf;border:1px solid #d6b900;border-radius:14px;padding:14px 16px;margin:20px 0;line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:18px}.card h2{margin-top:0;font-size:19px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:10px;background:#171717;color:white;padding:10px 13px;font-weight:800;cursor:pointer}.btn.alt{background:#eee;color:#171717}.status{font-size:13px;color:#555;margin:10px 0}textarea{width:100%;min-height:240px;resize:vertical;border:1px solid #bbb;border-radius:12px;padding:14px;font:14px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;background:#111;color:#f6f6f6}.tablebox{overflow:auto;max-height:430px;border:1px solid #ddd;border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#171717;color:white}.meta{font-size:12px;color:#666;margin-top:8px}.real{border-left:6px solid #2563eb}.fallback{border-left:6px solid #f59e0b}@media(max-width:800px){.grid{grid-template-columns:1fr}.wrap{padding:14px}textarea{min-height:180px}}
+</style></head>
+<body>
+<header class="head"><div class="wrap"><h1>Laboratorio analítico local</h1><p>DuckDB-Wasm · CSV, JSON y Parquet directamente en tu navegador</p></div></header>
+<main class="wrap">
+  <div class="notice"><b>⚠️ Este laboratorio es un respaldo pedagógico.</b> En S13 y S14 el objetivo sigue siendo trabajar con <b>Google BigQuery real</b>. Si una cuenta, login o permiso bloquea a una persona, este entorno permite que siga practicando el mismo razonamiento mientras el docente muestra el servicio cloud real.</div>
+  <div class="grid">
+    <section class="card fallback">
+      <h2>1 · Datos</h2>
+      <div class="actions">
+        <button class="btn" id="preset">Cargar ventas_dirty.csv</button>
+        <label class="btn alt">Abrir archivo local<input id="file" type="file" accept=".csv,.json,.parquet" hidden></label>
+      </div>
+      <div id="status" class="status">Preparando DuckDB-Wasm…</div>
+      <p class="meta">Los datos se procesan en tu equipo. No se suben a un servidor de ANDESDB.</p>
+    </section>
+    <section class="card real">
+      <h2>2 · Transferencia al servicio real</h2>
+      <p>Cuando uses BigQuery, pregunta siempre:</p>
+      <ul><li>¿qué representa una fila?</li><li>¿qué columnas necesito leer?</li><li>¿qué formato y partición tiene el dato?</li><li>¿cómo valido el resultado?</li></ul>
+      <p><b>El motor cambia; el razonamiento no.</b></p>
+    </section>
+  </div>
+  <section class="card" style="margin-top:18px">
+    <h2>3 · Consulta</h2>
+    <textarea id="sql">-- Carga primero el dataset de ejemplo
+SELECT *
+FROM read_csv_auto('ventas_dirty.csv')
+LIMIT 20;</textarea>
+    <div class="actions" style="margin-top:10px"><button id="run" class="btn">▶ Ejecutar</button><button id="count" class="btn alt">Ejemplo COUNT</button><button id="schema" class="btn alt">Describir datos</button></div>
+  </section>
+  <section class="card" style="margin-top:18px">
+    <h2>4 · Resultado</h2>
+    <div id="result" class="tablebox"><div class="status" style="padding:14px">Todavía no hay resultado.</div></div>
+    <div id="meta" class="meta"></div>
+  </section>
+</main>
+<script type="module" src="analitica-local.mjs"></script>
+<script src="../assets/learning/learning-core.js"></script>
+</body></html>
