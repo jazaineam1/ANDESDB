@@ -7,6 +7,7 @@ on:
     paths:
       - 'tools/**'
       - 'assets/learning/**'
+      - 'assets/pwa-install.js'
       - 'Presentaciones/**/*.html'
       - 'Scripts/**'
       - 'manifest.webmanifest'
@@ -27,6 +28,12 @@ jobs:
 
       - name: Validar estructura, pedagogía y recursos
         run: python tools/validar_curso.py
+
+      - name: Validar JavaScript de la experiencia
+        run: |
+          node --check assets/learning/learning-core.js
+          node --check assets/pwa-install.js
+          node --check service-worker.js
 
       - name: Comprobar que la portada se puede regenerar
         run: |
