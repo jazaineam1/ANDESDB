@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v4-ruta-simple-20260828';
+const VERSION = 'andesdb-v5-practica-tecnica-20260828';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -98,8 +98,6 @@ self.addEventListener('fetch', event => {
   const isLearningRuntime = /\/assets\/(?:learning\/learning-core\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet)$/i.test(url.pathname);
 
-  // La interfaz pedagógica cambia con frecuencia: preferimos la versión de red
-  // y usamos la caché solo si la conexión falla.
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
   else if (isAsset) event.respondWith(cacheFirst(request));
 });
