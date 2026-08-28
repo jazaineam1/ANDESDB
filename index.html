@@ -200,7 +200,12 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .grupo-mod:before{content:"";width:.9rem;height:.9rem;border-radius:50%;
   background:var(--y);flex:0 0 auto}
 
-</style></head>
+</style><link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#171717">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/andesdb-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="assets/icons/andesdb-192.png">
+</head>
 <body>
 
 <div class="topbar"><div class="wrap">
@@ -273,4 +278,5 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
     if (!location.hash) window.scrollTo(0, 0);
   });
 </script>
+<script src="assets/pwa-install.js"></script>
 </body></html>
