@@ -49,8 +49,8 @@ def validate_course_manifest(course: dict) -> None:
         err("tools/curso.json debe declarar totalSesiones = 16")
 
     method = course.get("metodologia", {})
-    if method.get("progresoPersistente") is not False:
-        err("metodologia.progresoPersistente debe ser false: los estudiantes cambian de dispositivo")
+    if method.get("progresoLocal") is not False:
+        err("metodologia.progresoLocal debe ser false: los estudiantes cambian de dispositivo")
     declared = set(method.get("diferenciacionTecnicaSesiones", []))
     if declared != TECHNICAL_DIFFERENTIATION:
         err(
@@ -131,9 +131,6 @@ def validate_published_html() -> None:
         if "data-title=" not in text:
             warn(f"S{n}: {path.name} no contiene data-title")
 
-        # S6 conserva únicamente su laboratorio SQL; no debe reaparecer una
-        # capa de Ruta/progreso. La diferenciación técnica se inyecta solo en
-        # las sesiones donde realmente aporta por velocidad de ejecución.
         if n == 6 and "learning-core.js" in text:
             err("S6 no debe cargar learning-core.js ni una capa de Ruta/Núcleo-Reto")
         if n in TECHNICAL_DIFFERENTIATION and "learning-core.js" not in text:
