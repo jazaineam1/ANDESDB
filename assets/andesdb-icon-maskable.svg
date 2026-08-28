@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#171717"/><circle cx="256" cy="256" r="162" fill="#ffd600"/><path d="M155 332V180h113c65 0 103 29 103 76 0 47-38 76-103 76H155zm61-50h49c30 0 45-9 45-26s-15-26-45-26h-49v52zm0-102h48c27 0 41-8 41-24 0-15-14-23-41-23h-48v47z" fill="#171717"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ANDESDB base de datos">
+  <rect width="512" height="512" fill="#171717"/>
+  <ellipse cx="256" cy="164" rx="126" ry="50" fill="#ffd600"/>
+  <path d="M130 164v74c0 28 56 50 126 50s126-22 126-50v-74c-18 30-68 50-126 50s-108-20-126-50Z" fill="#ffd600"/>
+  <path d="M130 238v74c0 28 56 50 126 50s126-22 126-50v-74c-18 30-68 50-126 50s-108-20-126-50Z" fill="#ffd600"/>
+  <path d="M130 312v34c0 28 56 50 126 50s126-22 126-50v-34c-18 30-68 50-126 50s-108-20-126-50Z" fill="#ffd600"/>
+  <path d="M130 164c0 28 56 50 126 50s126-22 126-50M130 238c0 28 56 50 126 50s126-22 126-50M130 312c0 28 56 50 126 50s126-22 126-50" fill="none" stroke="#171717" stroke-width="11"/>
+</svg>
