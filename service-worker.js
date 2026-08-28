@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v1-20260828';
+const VERSION = 'andesdb-v2-android-20260828';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -8,6 +8,9 @@ const ESSENTIAL = [
   './index.html',
   './manifest.webmanifest',
   './assets/andesdb-icon.svg',
+  './assets/icons/andesdb-192.png',
+  './assets/icons/andesdb-512.png',
+  './assets/pwa-install.js',
   './assets/learning/learning-core.js',
   './assets/learning/learning-plan.json',
   './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
