@@ -137,6 +137,26 @@ def validate_published_html() -> None:
             err(f"S{n}: la práctica técnica publicada debe cargar learning-core.js")
 
 
+def validate_runtime_policies() -> None:
+    learning_core = ROOT / "assets/learning/learning-core.js"
+    pwa_install = ROOT / "assets/pwa-install.js"
+
+    if learning_core.exists():
+        text = learning_core.read_text(encoding="utf-8", errors="replace")
+        if "localStorage" in text:
+            err("learning-core.js no debe usar localStorage como expediente de progreso")
+
+    if pwa_install.exists():
+        text = pwa_install.read_text(encoding="utf-8", errors="replace")
+        forbidden = ("beforeinstallprompt", "ensureInstallCard", "api-install-btn")
+        found = [token for token in forbidden if token in text]
+        if found:
+            err(
+                "La PWA no debe mostrar sugerencias propias de instalación; "
+                f"se encontraron: {', '.join(found)}"
+            )
+
+
 def validate_required_files() -> None:
     required = [
         "manifest.webmanifest",
@@ -147,6 +167,11 @@ def validate_required_files() -> None:
         "assets/icons/andesdb-512.png",
         "assets/icons/andesdb-maskable-512.png",
         ".github/ISSUE_TEMPLATE/problema-clase.yml",
+        "docs/VALIDACION-IA-PRE-PUSH.md",
+        "tools/pre_push_check.py",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".github/copilot-instructions.md",
     ]
     for item in required:
         if not (ROOT / item).exists():
@@ -172,6 +197,7 @@ def main() -> int:
     if plan:
         validate_learning_plan(plan)
     validate_published_html()
+    validate_runtime_policies()
     validate_required_files()
 
     print("\n=== ANDESDB · control de calidad ===")
