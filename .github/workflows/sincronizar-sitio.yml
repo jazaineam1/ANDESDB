@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,6 +37,7 @@ jobs:
 
       - name: Publicar cambios generados
         run: |
+          set -euo pipefail
           if git diff --quiet -- index.html Presentaciones; then
             echo 'Sitio ya sincronizado'
             exit 0
@@ -41,4 +46,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html Presentaciones
           git commit -m 'Sincronizar sitio con el manifiesto del curso'
-          git push
+          git pull --rebase origin main
+          git push origin main
