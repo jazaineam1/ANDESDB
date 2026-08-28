@@ -2,9 +2,10 @@ name: Publicar soluciones programadas
 
 on:
   schedule:
-    # 20:00 America/Bogota = 01:00 UTC del día siguiente. El script vuelve
-    # a calcular la fecha en Bogotá y solo publica sesiones marcadas en el plan.
-    - cron: '0 1 * * *'
+    # Se dispara a las 19:45 de Bogotá (00:45 UTC del día siguiente) y el
+    # runner espera internamente hasta las 20:00. Esto reduce el riesgo de
+    # retraso de los cron programados justo al inicio de la hora.
+    - cron: '45 0 * * *'
   workflow_dispatch:
     inputs:
       session:
@@ -37,6 +38,7 @@ jobs:
           manual='${{ inputs.session }}'
           if [ -n "$manual" ]; then
             echo "session=$manual" >> "$GITHUB_OUTPUT"
+            echo "manual=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           session=$(python - <<'PY'
@@ -53,6 +55,7 @@ jobs:
           PY
           )
           echo "session=$session" >> "$GITHUB_OUTPUT"
+          echo "manual=false" >> "$GITHUB_OUTPUT"
 
       - name: No hay publicación para hoy
         if: steps.target.outputs.session == ''
@@ -72,6 +75,23 @@ jobs:
             echo "::error::No existe soluciones_cifradas/S${n}.sql.enc"
             exit 1
           fi
+
+      - name: Esperar hasta las 20:00 Bogotá
+        if: steps.target.outputs.session != '' && steps.target.outputs.manual != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          seconds=$(python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          tz=ZoneInfo('America/Bogota')
+          now=datetime.now(tz)
+          target=now.replace(hour=20, minute=0, second=0, microsecond=0)
+          print(max(0, int((target-now).total_seconds())))
+          PY
+          )
+          echo "Esperando ${seconds}s para publicar a las 20:00 Bogotá."
+          sleep "$seconds"
 
       - name: Descifrar y publicar solución
         if: steps.target.outputs.session != ''
