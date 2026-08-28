@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#171717"/><circle cx="256" cy="256" r="174" fill="#ffd600"/><path d="M155 332V180h113c65 0 103 29 103 76 0 47-38 76-103 76H155zm61-50h49c30 0 45-9 45-26s-15-26-45-26h-49v52zm0-102h48c27 0 41-8 41-24 0-15-14-23-41-23h-48v47z" fill="#171717"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ANDESDB base de datos">
+  <rect width="512" height="512" rx="96" fill="#171717"/>
+  <ellipse cx="256" cy="150" rx="142" ry="56" fill="#ffd600"/>
+  <path d="M114 150v84c0 31 64 56 142 56s142-25 142-56v-84c-20 34-76 56-142 56s-122-22-142-56Z" fill="#ffd600"/>
+  <path d="M114 234v84c0 31 64 56 142 56s142-25 142-56v-84c-20 34-76 56-142 56s-122-22-142-56Z" fill="#ffd600"/>
+  <path d="M114 318v40c0 31 64 56 142 56s142-25 142-56v-40c-20 34-76 56-142 56s-122-22-142-56Z" fill="#ffd600"/>
+  <path d="M114 150c0 31 64 56 142 56s142-25 142-56M114 234c0 31 64 56 142 56s142-25 142-56M114 318c0 31 64 56 142 56s142-25 142-56" fill="none" stroke="#171717" stroke-width="12"/>
+</svg>
