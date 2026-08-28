@@ -605,6 +605,25 @@ pre:hover .copybtn{opacity:1}
 #lupa .caja svg{width:100%;height:100%;max-width:100%;max-height:100%}
 #lupa .pie{flex:none;padding-top:1.1vh;text-align:center;color:#cfe3f0;
   font:800 .78rem/1 "Segoe UI",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.frgrid{display:grid;grid-template-columns:1fr 1fr;gap:.3em .9em;margin-top:.5em}
+.fr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.5em;
+  border:1.5px solid var(--line,#dfe6ec);border-radius:.6em;padding:.28em .5em;background:#fff}
+.fr:nth-child(even){background:#fafbfc}
+.fr.si{border-color:var(--g);background:#e8f5e9}
+.fr.no{border-color:var(--r);background:#fdecee}
+.fr .fn{font-weight:800;color:var(--b);min-width:1.4em;text-align:right}
+.fr .ft{font-size:.94em;line-height:1.25}
+.fr .fb{display:flex;gap:.25em}
+.fr .fb button{font:800 .78em/1 inherit;padding:.32em .7em;border-radius:999px;
+  border:1.5px solid var(--line,#dfe6ec);background:#fff;color:var(--ink);cursor:pointer}
+.fr .fb button:hover{border-color:var(--b)}
+.fr .fb button.el{background:var(--b);border-color:var(--b);color:#fff}
+.fr[data-hecho] .fb button{cursor:default;opacity:.75}
+.marc{font-weight:800;color:var(--b);white-space:nowrap}
+.porq{margin:.55em 0 0;padding:.5em .8em;border-radius:.6em;background:#fff8e1;
+  border-left:5px solid var(--y);font-size:.92em;min-height:2.2em}
+.porq.si{background:#e8f5e9;border-left-color:var(--g)}
+.porq.no{background:#fdecee;border-left-color:var(--r)}
 </style></head>
 <body><main class="stage">
 
@@ -912,34 +931,22 @@ SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="sm
 <p class="small" style="margin-top:.6em"><strong>Alcance de hoy: solo lo que pasa en el local.</strong> Domicilios y pedidos para llevar no se inventan &mdash; si te hacen falta, van a la columna de preguntas pendientes.</p></div>
 <div><p class="warn" style="margin:0"><strong>Fíjate en lo que <em>no</em> te ha dicho.</strong> No te ha dicho qu&eacute; tablas quiere, ni qu&eacute; columnas, ni de qu&eacute; color es la pantalla. Te ha contado c&oacute;mo funciona el sitio.</p>
 <p style="margin-top:.8em">Tu trabajo es convertir ese relato en <strong>frases comprobables</strong>. Ese es el paso que se salta casi todo el mundo, y es la raz&oacute;n por la que tantos sistemas acaban sin parecerse al negocio que deb&iacute;an representar.</p>
-<div class="dlrow" style="flex-direction:column;align-items:stretch;margin-top:.8em">
-<a href="taller-sesion-6.html" target="_blank" rel="noopener">&#128220; El taller de la sesi&oacute;n<small>dos casos a elegir &middot; se guarda solo en tu navegador</small></a>
-</div>
+
 <p class="quote" style="margin-top:.9em">Media hora de conversaci&oacute;n bien apuntada ahorra tres meses de sistema mal hecho.</p></div></div>
 <div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Del relato a las frases</span></div>
 </section>
-<section class="slide dense mid" data-title="Taller 3">
-<div class="ey">Taller 3 &middot; 12 minutos &middot; el entregable de hoy</div>
-<h2>Primero reconocerlas. Solo despu&eacute;s, escribirlas</h2>
-<div class="g2">
-<div><div class="ctx" style="margin:0"><strong>En tu p&aacute;gina de la sesi&oacute;n</strong>, la que abriste en la otra pesta&ntilde;a. Baja hasta <em>&laquo;&iquest;Es una regla?&raquo;</em>. Este caso vuelve en las sesiones 7 a 12: lo que escribas hoy es con lo que vas a modelar.</div>
-<div class="hintbox" style="margin-top:.7em"><strong>Paso 1 &mdash; doce frases, un clic cada una <span class="small">(6 min)</span></strong><ul>
-<li>Para cada una: <strong>o es una regla, o no lo es</strong>. Nada que escribir.</li>
-<li>Se corrigen solas y te dicen <strong>por qu&eacute;</strong>. Ah&iacute; est&aacute; el aprendizaje.</li>
-<li>Seis lo son y seis no. Las que no, son listas de campos, deseos o datos.</li>
-</ul></div>
-<div class="hintbox" style="margin-top:.7em"><strong>Paso 2 &mdash; dos reglas tuyas <span class="small">(6 min)</span></strong><ul>
-<li><strong>Dos. No ocho.</strong> Escritas con calma valen m&aacute;s que ocho a medias.</li>
-<li>Y para cada una, <strong>cu&aacute;nto te f&iacute;as</strong>: confirmada, candidata o hip&oacute;tesis. Es un clic.</li>
-<li>Y una <strong>pregunta pendiente</strong> para la due&ntilde;a: algo que ni el esquema ni los datos resuelven.</li>
-</ul></div></div>
-<div><p class="ctx" style="margin:0"><strong>La plantilla de frase, para el paso 2:</strong></p>
-<pre>Un/Una ______________ no puede ______________
-                        si ______________ .</pre>
-<p class="small" style="margin-top:.6em">Sujeto concreto &mdash; nunca &laquo;el sistema&raquo;. Verbo de prohibici&oacute;n. Y algo que se pueda contar.</p>
-<p class="warn" style="margin-top:.8em"><strong>Si una regla no la puedes confirmar, escr&iacute;bela igual.</strong> Ponla como <em>hip&oacute;tesis</em> y d&eacute;jala anotada con su duda. Una pregunta bien formulada vale tanto como una regla.</p>
-<p class="small" style="margin-top:.7em">Se guarda sola en tu navegador: si se te cae la conexi&oacute;n, no pierdes nada.</p></div></div>
-<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Doce con un clic, dos con tus palabras</span></div>
+<section class="slide tiny mid" data-title="Taller 3">
+<div class="ey">Taller 3 &middot; 8 minutos &middot; se contesta aqu&iacute; mismo</div>
+<h2>&iquest;Es una regla, o solo lo parece?</h2>
+<p class="lead" style="max-width:none">Doce frases sobre el Restaurante ABC. Para cada una, un clic:
+<strong>o es una regla de negocio, o no lo es</strong>. Seis lo son. Las que no, son listas de campos,
+deseos o datos. <span class="marc" id="frMarc">0 contestadas</span></p>
+<div class="frgrid">
+<div><div class="fr" data-i="1"><span class="fn">1</span><span class="ft">Guardar el tel&eacute;fono de quien reserva.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="2"><span class="fn">2</span><span class="ft">Una mesa no puede tener dos reservas que se solapen.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="3"><span class="fn">3</span><span class="ft">El sistema debe ser r&aacute;pido.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="4"><span class="fn">4</span><span class="ft">Un pedido no puede cerrarse sin pago.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="5"><span class="fn">5</span><span class="ft">Hay doce mesas, de 2, 4 y 6 puestos.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="6"><span class="fn">6</span><span class="ft">Una reserva no puede ser para m&aacute;s personas que puestos tiene la mesa.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div></div>
+<div><div class="fr" data-i="7"><span class="fn">7</span><span class="ft">Registrar la fecha y la hora de cada reserva.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="8"><span class="fn">8</span><span class="ft">Un ingrediente vencido no puede usarse en ning&uacute;n plato.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="9"><span class="fn">9</span><span class="ft">La carta cambia cada temporada.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="10"><span class="fn">10</span><span class="ft">Un plato no puede pedirse si ya se agot&oacute;.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="11"><span class="fn">11</span><span class="ft">Mostrar los pedidos de la mesa en la pantalla de cocina.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div><div class="fr" data-i="12"><span class="fn">12</span><span class="ft">La suma de una cuenta dividida debe igualar el total del pedido.</span><span class="fb"><button type="button" data-v="1">regla</button><button type="button" data-v="0">no</button></span></div></div>
+</div>
+<p class="porq" id="frPorq">Marca cualquiera y aqu&iacute; aparece por qu&eacute;.</p>
+<div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Reconocerla antes de escribirla</span></div>
 </section>
 <section class="slide tiny mid" data-title="Las diez de referencia">
 <div class="ey">Taller 3 &middot; contraste &middot; 6 minutos</div>
@@ -971,7 +978,7 @@ SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="sm
 <div class="ey">Taller 3 &middot; correcci&oacute;n &middot; 7 minutos</div>
 <h2>Arregla dos y qu&eacute;date con las dos versiones</h2>
 <div class="g2">
-<div><div class="ctx" style="margin:0"><strong>Vuelve a tus dos reglas y m&eacute;telas por las cuatro pruebas.</strong> Y rev&iacute;sales el nivel: <b>confirmada</b> si la due&ntilde;a lo dijo, <b>candidata</b> si lo dedujiste, <b>hip&oacute;tesis</b> si te la inventaste. Marcarla como hip&oacute;tesis <em>no resta</em>: es la pregunta que llevas a la sesi&oacute;n 7.</div>
+<div><div class="ctx" style="margin:0"><strong>Vuelve a las que fallaste y m&iacute;ralas de nuevo.</strong> Casi siempre es lo mismo: falta un verbo de obligaci&oacute;n, o el sujeto era &laquo;el sistema&raquo;, o la frase ya estaba dise&ntilde;ando tablas. Ahora escribe <b>una</b> tuya, en el chat, con esas tres pruebas en la cabeza.</div>
 <div class="hintbox" style="margin-top:.7em"><strong>Los tres arreglos m&aacute;s frecuentes</strong><ul>
 <li><strong>Era una lista de campos.</strong> &laquo;Guardar el m&eacute;todo de pago&raquo; &rarr; &laquo;un pedido no puede cerrarse sin registrar el m&eacute;todo de pago&raquo;.</li>
 <li><strong>El sujeto era &laquo;el sistema&raquo;.</strong> C&aacute;mbialo por la cosa del negocio de la que hablas: la mesa, el plato, el turno.</li>
@@ -979,8 +986,8 @@ SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="sm
 </ul></div></div>
 <div><p class="warn" style="margin:0"><strong>Y ahora, al chat &mdash; pero solo dos l&iacute;neas.</strong> Somos muchos: si cada quien pega todo, no se lee nada.</p>
 <div class="hintbox" style="margin-top:.7em"><ul>
-<li><strong>1 &middot;</strong> Tu <strong>mejor regla</strong>, con su nivel. Una sola.</li>
-<li><strong>2 &middot;</strong> Tu <strong>pregunta pendiente</strong>. Esas dos l&iacute;neas son lo &uacute;nico que llega a la clase: el archivo te lo quedas t&uacute;.</li>
+<li><strong>1 &middot;</strong> <strong>Una regla tuya</strong> para el Restaurante ABC. Una sola.</li>
+<li><strong>2 &middot;</strong> Tu <strong>pregunta pendiente</strong> para la due&ntilde;a. Leemos unas cuantas en voz alta &mdash; eso es todo lo que hay que entregar.</li>
 </ul></div>
 <p class="small" style="margin-top:.8em">Leemos unas cuantas en voz alta. Las preguntas suelen ser m&aacute;s interesantes que las reglas: es donde se ve qui&eacute;n entendi&oacute; el negocio.</p>
 <p class="warn" style="margin-top:.9em"><strong>Dale a &laquo;Copiar mi trabajo&raquo; y gu&aacute;rdalo donde quieras.</strong> Esas dos frases son el material de la <strong>sesi&oacute;n 7</strong>: ah&iacute; se convierten en tablas, claves y cardinalidades.</p></div></div>
@@ -1116,7 +1123,7 @@ SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="sm
 <li><strong>ETL</strong> transforma antes; <strong>ELT</strong> guarda antes.</li>
 </ul></div>
 <div><h3>Para llevar a la sesi&oacute;n 7</h3>
-<div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>Esa p&aacute;gina es tuya, no se entrega.</strong> Nadie la va a recoger ni a corregir: dale a <em>&laquo;Descargar como texto&raquo;</em> y gu&aacute;rdalo donde lo encuentres el martes, porque la sesi&oacute;n 7 <b>empieza con tus dos reglas y tu pregunta delante</b>, convirti&eacute;ndolas en entidades y relaciones. <b>Nada de tarea</b> &mdash; con dos frases bien escritas vamos servidos.</p></div>
+<div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>Las diez reglas de referencia, con su nivel.</strong> Son las que el martes se convierten en entidades, relaciones y cardinalidades, en un taller de equipo. Est&aacute;n en esta misma presentaci&oacute;n: no hay nada que descargar ni que entregar. <b>Nada de tarea</b> &mdash; hoy has aprendido a distinguir una regla de un deseo, y con eso vamos servidos.</p></div>
 <p class="small" style="margin-top:.7em"><strong>Y una de propina, para practicar el ojo:</strong> abre <code>dvdrental</code> y cuenta cu&aacute;ntos clientes hay de cada valor de <code>customer.active</code>, y luego comp&aacute;ralo con <code>customer.activebool</code>. <b>No dicen lo mismo</b> &mdash; y los que se contradicen tienen alquileres. Dos columnas sobre el mismo cliente, escritas por dos personas distintas, y el motor no garantiza ninguna de las dos. &iquest;De qu&eacute; nivel es lo que concluyas?</p>
 <p class="warn" style="margin-top:1em"><strong>Pr&oacute;xima sesi&oacute;n:</strong> tus frases se convierten en un modelo &mdash; entidades, relaciones y cardinalidades. Y como estamos en la mitad del curso, dedicamos media hora a <strong>las certificaciones</strong>: cu&aacute;les hay, cu&aacute;l entrega Colsubsidio y cu&aacute;ndo llega.</p></div></div>
 <p class="quote" style="margin-top:1em" data-r>Antes de dise&ntilde;ar una base hay que escuchar un negocio. Lo dif&iacute;cil nunca fue el SQL.</p>
@@ -1266,6 +1273,46 @@ document.querySelectorAll('.slide pre').forEach(function(pre){
     e.preventDefault(); e.stopPropagation();     /* que no navegue por detras */
     cerrar();
   }, true);
+})();
+</script>
+<script>
+/* Taller 3: doce frases, un clic cada una. Las respuestas van cifradas para que
+   no se lean en el codigo fuente de una pagina publica. */
+(function(){
+  var D = 'vekWYlvQ9CcDvfNaPsz5po9gw7m1EyAkx5aGTcOGnZtp14YZTdQEco1x8LAkxfozk2Rn9H2qcI82FZ+hWiw+2azwownrIimH26PoIyuDPImrdKN7poNq6OIYUDOc+l0Aawk9NYrg831h8vzXm1g/gM9N93nNkC0oC6xzWgD2gWQVSlCK5nQv+zTX1r27iJc8n3sBwO2ig8yk+0mZ5C2Rw8LjkRbiANSTTSbp4fAubLxAPZ9jDunNHQ2rK3ua8jY9roBiezy4udV1bAzyM1V2tSb8Q3kK/JWBQ8rdDaSCynajqsVcF1A3BOsPbEFec0j2jvEBjXG0szdNgBHT40bqOuh8+dFrxFpJWCAk7FbAWRPj8QWzzEYUwqR5R8S/SdIudrLR9TJTScIH+jmtwZNCoKNS9Y3+8jlsYu9a5xoYa+83Njtn6CZBKjJf0CyKF1rFOQGGyPVJl0xYKSz3eMS2UzVggXaomU0xiL/SmZjGzMnxhRyoJ0Og3lr/7Yj+iEKKk+wr+OxYeatgxTYu41xJb4HaRgHRtwuYZXf2FM7Y/VGcgrj0rJy+uu09TNSm430U7MXTWpn6NGeAOJWy4lQh/Dxsu+7ovq94lP30Cg/P9t40fOsxVSnXk9l31K6O8F9BlEVRZac/YhoNiPJZ9/GXvRQM4l35Kd5GsjChK7Tmn3QPnCYuQN+Did8bwP5Z1aOuNKtwA8jBiyQyGAunS27wBWnZXi9G8u3D3snKWBzW4BRfyvq4EAoLgJTfMTK1JhurFOUSgo0tVZYCn0glrc4XQK//FBbQYM22ToIbBxtOZvzhm5Xm3UwFsDIry9ZMHvTrZ9WBpTEydTgNqvH3TXUZqltaWfaOg1cVvmSs0V3l87vKeZbbevEEF4yy2a2Cb3MO3gLtOQjKQWEkNpKEiTJFriscsfST0FCYaZnaG3IAEVN5HnDuOqC3haMVrDhi2er2yLveGYQQNthJawiRv5YzWEtEja5uWaWBpgPGI5Ivsy62n5rZzgptAjI5M5EqYEiEHUguiIfzTO4JB9+Ac6c4MJLGZyB/4QqZRp3KtGZfjvI/Xu0ob6L/7sd3a3m+0NSsQ7dEIDceNu2Cfzu8Ap83Dml2XlaoMl1XNODXE+E4sxLxsdztXgPE8QCUieYbMRXYg57AcaIlysXpqC3o18c8D7hR7SZBMa/PkG+d6ECvZusQqW1YDKMPxGfT6AnAggv2pRJ/86ICS3mUgJA35RB0Alrz6AjkNEDRrNU7UfSoCPa0t0dVKArAlk9dPLM7J489ksVDg1UbCpCv2LzygDkzqPBWmOp+jR3ugq7yv1tKvQUpEXr5wB00lb9ytXlptSVD1DQoiDtxQ8388WnSsVFZbYg/O9GrOVmz7WuUwDuEKQEiNSJlzRtf6ZlbkDYgWsnlVMl5cA==';
+  function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
+    h=Math.imul(h,16777619)>>>0; } return h||1; }
+  var bin; try{ bin = atob(D); }catch(e){ return; }
+  var x = semilla('TALLER6'), out = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++){
+    x=(x^(x<<13))>>>0; x=(x^(x>>>17))>>>0; x=(x^(x<<5))>>>0;
+    out[i]=bin.charCodeAt(i)^(x&255);
+  }
+  var txt = new TextDecoder('utf-8').decode(out);
+  if(txt.slice(0,4)!=='S6OK') return;
+  var CLAVE = JSON.parse(txt.slice(4));
+
+  var hechas = 0, bien = 0;
+  var marc = document.getElementById('frMarc');
+  var porq = document.getElementById('frPorq');
+
+  document.querySelectorAll('.fr').forEach(function(fr){
+    var i = +fr.dataset.i - 1;
+    fr.querySelectorAll('.fb button').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(fr.dataset.hecho) return;
+        var v = +b.dataset.v, ok = (v === CLAVE[i].k);
+        fr.dataset.hecho = '1';
+        fr.className = 'fr ' + (ok ? 'si' : 'no');
+        b.classList.add('el');
+        hechas++; if(ok) bien++;
+        marc.textContent = bien + ' de ' + hechas + ' bien';
+        porq.className = 'porq ' + (ok ? 'si' : 'no');
+        porq.innerHTML = '<strong>' + fr.dataset.i + ' &middot; ' +
+          (ok ? 'Bien.' : 'No.') + '</strong> ' + CLAVE[i].w;
+      });
+    });
+  });
 })();
 </script>
 <script src="sql-lab-s6.js"></script>

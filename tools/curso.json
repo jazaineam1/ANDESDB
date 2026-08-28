@@ -13,11 +13,22 @@
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "diferenciacionTecnicaSesiones": [9, 11, 12, 13, 14, 15],
+    "diferenciacionTecnicaSesiones": [
+      9,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
-    "sesionesAutonomas": [7, 10, 13],
+    "sesionesAutonomas": [
+      7,
+      10,
+      13
+    ],
     "trabajoAutonomoMin": 60,
     "publicacionSolucionesAutonomas": "20:00 America/Bogota"
   },
@@ -94,8 +105,21 @@
           "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
-          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S2.sql", "download": true}]
+          "tags": [
+            "SELECT",
+            "DISTINCT",
+            "COUNT",
+            "WHERE",
+            "ORDER BY",
+            "LIMIT"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S2.sql",
+              "download": true
+            }
+          ]
         },
         {
           "n": 3,
@@ -103,8 +127,20 @@
           "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
-          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S3.sql", "download": true}]
+          "tags": [
+            "BETWEEN",
+            "IN",
+            "LIKE",
+            "GROUP BY",
+            "HAVING"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S3.sql",
+              "download": true
+            }
+          ]
         },
         {
           "n": 4,
@@ -112,8 +148,21 @@
           "estado": "completado",
           "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
           "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
-          "tags": ["UNION", "UNION ALL", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER"],
-          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S4.sql", "download": true}]
+          "tags": [
+            "UNION",
+            "UNION ALL",
+            "INNER JOIN",
+            "LEFT JOIN",
+            "RIGHT JOIN",
+            "FULL OUTER"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S4.sql",
+              "download": true
+            }
+          ]
         },
         {
           "n": 5,
@@ -121,8 +170,21 @@
           "estado": "completado",
           "desc": "Dibujar la tabla antes de escribirla, controlar el nivel de agregación y resumir antes de unir para que las cuentas no se inflen.",
           "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
-          "tags": ["WITH", "CTE", "COUNT(DISTINCT)", "COALESCE", "CASE", "nivel de agregación"],
-          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S5.sql", "download": true}]
+          "tags": [
+            "WITH",
+            "CTE",
+            "COUNT(DISTINCT)",
+            "COALESCE",
+            "CASE",
+            "nivel de agregación"
+          ],
+          "recursos": [
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S5.sql",
+              "download": true
+            }
+          ]
         }
       ]
     },
@@ -132,8 +194,11 @@
       "estado": "curso",
       "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
       "recursos": [
-        {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"},
-        {"txt": "🗄️ La base de datos (archivo)", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true}
+        {
+          "txt": "🗄️ La base de datos (archivo)",
+          "href": "Presentaciones/M2/base-datos/dvdrental.db",
+          "download": true
+        }
       ],
       "sesiones": [
         {
@@ -145,10 +210,20 @@
           "estado": "hoy",
           "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.",
           "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
-          "tags": ["reglas de negocio", "OLTP", "OLAP", "data lake", "data warehouse", "ETL / ELT"],
+          "tags": [
+            "reglas de negocio",
+            "OLTP",
+            "OLAP",
+            "data lake",
+            "data warehouse",
+            "ETL / ELT"
+          ],
           "recursos": [
-            {"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S6.sql", "download": true},
-            {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
+            {
+              "txt": "📄 Las consultas de la clase (archivo de texto)",
+              "href": "Scripts/S6.sql",
+              "download": true
+            }
           ]
         },
         {
@@ -160,7 +235,13 @@
           "titulo": "Certificaciones + taller de modelado",
           "estado": "pendiente",
           "desc": "Briefing corto y trabajo autónomo: convertir las reglas del Restaurante ABC en entidades, relaciones y cardinalidades. Bloque breve de rutas de certificación.",
-          "tags": ["entidades", "relaciones", "cardinalidad", "DP-900", "workshop"]
+          "tags": [
+            "entidades",
+            "relaciones",
+            "cardinalidad",
+            "DP-900",
+            "workshop"
+          ]
         },
         {
           "n": 8,
@@ -170,7 +251,13 @@
           "titulo": "Modelado y normalización",
           "estado": "pendiente",
           "desc": "Dependencias, redundancia y normalización sin perder las reglas del negocio.",
-          "tags": ["1FN", "2FN", "3FN", "dependencias", "modelo relacional"]
+          "tags": [
+            "1FN",
+            "2FN",
+            "3FN",
+            "dependencias",
+            "modelo relacional"
+          ]
         },
         {
           "n": 9,
@@ -180,7 +267,15 @@
           "titulo": "DDL + Azure SQL",
           "estado": "pendiente",
           "desc": "Convertir el modelo en CREATE TABLE y restricciones; comparar y mostrar la familia Azure SQL en servicio real.",
-          "tags": ["CREATE TABLE", "PK", "FK", "CHECK", "Azure SQL Database", "Managed Instance", "Azure VM"]
+          "tags": [
+            "CREATE TABLE",
+            "PK",
+            "FK",
+            "CHECK",
+            "Azure SQL Database",
+            "Managed Instance",
+            "Azure VM"
+          ]
         }
       ]
     },
@@ -200,7 +295,12 @@
           "titulo": "Taller de casos: ¿SQL o NoSQL?",
           "estado": "pendiente",
           "desc": "Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.",
-          "tags": ["SQL vs NoSQL", "casos", "trade-offs", "workshop"]
+          "tags": [
+            "SQL vs NoSQL",
+            "casos",
+            "trade-offs",
+            "workshop"
+          ]
         },
         {
           "n": 11,
@@ -210,7 +310,13 @@
           "titulo": "Firestore + Azure Cosmos DB",
           "estado": "pendiente",
           "desc": "Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.",
-          "tags": ["Firestore", "Cosmos DB", "documentos", "partition key", "Azure Storage"]
+          "tags": [
+            "Firestore",
+            "Cosmos DB",
+            "documentos",
+            "partition key",
+            "Azure Storage"
+          ]
         }
       ]
     },
@@ -229,7 +335,16 @@
           "titulo": "Fundamentos de data warehouse",
           "estado": "pendiente",
           "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.",
-          "tags": ["data warehouse", "modelo estrella", "hechos", "dimensiones", "batch", "streaming", "Fabric", "Databricks"]
+          "tags": [
+            "data warehouse",
+            "modelo estrella",
+            "hechos",
+            "dimensiones",
+            "batch",
+            "streaming",
+            "Fabric",
+            "Databricks"
+          ]
         },
         {
           "n": 13,
@@ -240,7 +355,13 @@
           "titulo": "Laboratorio BigQuery",
           "estado": "pendiente",
           "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
-          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"]
+          "tags": [
+            "BigQuery",
+            "cloud",
+            "warehouse",
+            "SQL",
+            "workshop"
+          ]
         },
         {
           "n": 14,
@@ -250,7 +371,14 @@
           "titulo": "BigQuery anidados + mapa Azure",
           "estado": "pendiente",
           "desc": "Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.",
-          "tags": ["nested", "JSON", "Parquet", "BigQuery", "Power BI", "Azure analytics"]
+          "tags": [
+            "nested",
+            "JSON",
+            "Parquet",
+            "BigQuery",
+            "Power BI",
+            "Azure analytics"
+          ]
         }
       ]
     },
@@ -270,7 +398,13 @@
           "titulo": "Desafío final integrador",
           "estado": "pendiente",
           "desc": "Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.",
-          "tags": ["desafío", "datos sucios", "modelado", "validación", "arquitectura"]
+          "tags": [
+            "desafío",
+            "datos sucios",
+            "modelado",
+            "validación",
+            "arquitectura"
+          ]
         },
         {
           "n": 16,
@@ -280,15 +414,27 @@
           "titulo": "Cierre + preparación DP-900",
           "estado": "pendiente",
           "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles y plan personal para presentar DP-900.",
-          "tags": ["DP-900", "cierre", "retrieval practice", "plan de estudio"]
+          "tags": [
+            "DP-900",
+            "cierre",
+            "retrieval practice",
+            "plan de estudio"
+          ]
         }
       ]
     }
   ],
   "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
   "materialesHoy": [
-    {"txt": "🗄️ La base de datos", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true},
-    {"txt": "📜 Las consultas de la clase", "href": "Scripts/S6.sql", "download": true},
-    {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
+    {
+      "txt": "🗄️ La base de datos",
+      "href": "Presentaciones/M2/base-datos/dvdrental.db",
+      "download": true
+    },
+    {
+      "txt": "📜 Las consultas de la clase",
+      "href": "Scripts/S6.sql",
+      "download": true
+    }
   ]
 }
