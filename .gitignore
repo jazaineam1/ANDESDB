@@ -42,3 +42,13 @@ desktop.ini
 __pycache__/
 *.pyc
 .session1_rewrite.ps1
+
+
+# ---------------------------------------------------------------------
+# RESPUESTAS de los concursos · el repo es publico
+# El banco lleva la respuesta correcta de cada pregunta en claro, y los
+# .xlsx que se importan a Kahoot tambien. En las paginas de estudiante
+# van cifradas; aqui no.
+# ---------------------------------------------------------------------
+tools/preguntas_s6.py
+tools/kahoot/
