@@ -5,9 +5,10 @@
     py tools/concurso-generar.py            las dos
     py tools/concurso-generar.py wayground  solo una
 
-Las quince preguntas van repartidas en CUATRO partidas, no en seis: cada
-partida es un codigo nuevo y con 38 personas cada entrada cuesta cerca de un
-minuto. Van colocadas donde la clase las necesita, no donde salen bonitas.
+Las quince preguntas van en DOS partidas. Cada partida es un codigo nuevo y
+con 38 personas la entrada sola cuesta un par de minutos, asi que menos
+partidas es mas tiempo real para responder y comentar. Van colocadas donde la
+clase las necesita, no donde salen bonitas.
 
 SOBRE LOS DOS FORMATOS
 ----------------------
@@ -37,14 +38,10 @@ MAX_PREGUNTA_KAHOOT = 95
 MAX_OPCION_KAHOOT = 60
 
 PARTIDAS = [
-    dict(letra='A', nombre='Los cuatro niveles', rondas=[1],
-         cuando='minuto ~27, ANTES del Taller 1'),
-    dict(letra='B', nombre='El esquema y la regla', rondas=[2, 3],
-         cuando='minuto ~88, justo antes de la pausa'),
-    dict(letra='C', nombre='OLTP u OLAP', rondas=[4],
-         cuando='minuto ~148, en lugar del Taller 4'),
-    dict(letra='D', nombre='Donde vive el dato', rondas=[5, 6],
-         cuando='minuto ~170, en el tramo final'),
+    dict(letra='1', nombre='Leer sin sobreinterpretar', rondas=[1],
+         cuando='minuto ~85, antes de la pausa'),
+    dict(letra='2', nombre='Operar analizar y guardar', rondas=[2],
+         cuando='minuto ~150, en el tramo final'),
 ]
 
 CAB_KAHOOT = ['Question - max 95 characters',
@@ -149,7 +146,7 @@ def main():
                   % (p['letra'], p['nombre'], len(filas), p['cuando']))
         print('  %d preguntas en %d partidas · %s' % (total, len(PARTIDAS), salida))
 
-    print('\nEl apodo tiene que ser EL MISMO en las cuatro partidas,')
+    print('\nEl apodo tiene que ser EL MISMO en las dos partidas,')
     print('o no hay forma de sumar los marcadores despues.')
 
 

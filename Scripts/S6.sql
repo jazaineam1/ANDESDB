@@ -81,7 +81,10 @@ ORDER BY n DESC;
 -- PG-13 223 · NC-17 210 · R 195 · PG 194 · G 178
 SELECT COUNT(*) AS sin_clasificar FROM film WHERE rating IS NULL;
 -- 0
--- NIVEL: RESTRICCIÓN implementada. En el original de PostgreSQL
+-- NIVEL: PATRÓN observado. Hoy salen cinco y ninguna vacía, pero la
+--        columna admite vacío y trae DEFAULT 'G': que no falte ninguna
+--        es costumbre, no ley. Lo de los cinco valores SÍ es restricción
+--        en el original de PostgreSQL
 --        mpaa_rating es un tipo enumerado: el motor solo acepta cinco.
 
 -- 1.5 · ¿Puede haber una película sin ninguna copia?
@@ -148,7 +151,9 @@ FROM   rental r
 LEFT JOIN payment p ON r.rental_id = p.rental_id
 WHERE  p.rental_id IS NULL;
 -- 1452
--- NIVEL: HIPÓTESIS. ¿Promoción? ¿Cobro pendiente? ¿Fallo de carga?
+-- El conteo es PATRÓN: 1.452 es cierto en todos los datos de hoy.
+-- La explicación es HIPÓTESIS: ¿promoción? ¿cobro pendiente? ¿fallo de
+-- carga? Ninguna consulta lo decide. Separa siempre el hecho del porqué.
 --        No se resuelve mirando la base. Va a «qué falta preguntar».
 
 -- 2.4 · Pagos registrados por importe cero.
@@ -156,7 +161,8 @@ SELECT COUNT(*) AS pagos_en_cero
 FROM   payment
 WHERE  amount = 0;
 -- 24
--- NIVEL: HIPÓTESIS. ¿Cortesías? ¿Anulaciones? Otra pregunta pendiente.
+-- Igual: los 24 son PATRÓN. Que sean cortesías o anulaciones es
+-- HIPÓTESIS, y va a la columna de preguntas pendientes.
 
 -- 2.5 · Toda la plantilla de la cadena.
 SELECT store_id, COUNT(*) AS empleados
