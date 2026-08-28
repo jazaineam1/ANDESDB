@@ -2,8 +2,16 @@
   "version": 1,
   "principios": {
     "actividad_cada_min": 15,
-    "progreso_local": true,
-    "nucleo_reto": true,
+    "progreso_persistente": false,
+    "diferenciacion_tecnica": true,
+    "diferenciacion_tecnica_sesiones": [
+      9,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     "dp900_transversal": true,
     "servicio_real_primero": true,
     "fallback_nunca_reemplaza_servicio_real": true
@@ -15,34 +23,45 @@
       "duracion_util": 165,
       "modo": "guiada",
       "objetivo": "Distinguir evidencia, permisos, patrones e hipótesis antes de diseñar una base.",
-      "nucleo": {
-        "titulo": "Leer la base sin inventar reglas",
-        "minutos": 35,
-        "instrucciones": "Ejecuta las consultas del Taller 1, clasifica cada hallazgo como restricción, permiso, patrón o hipótesis y completa ocho reglas del Restaurante ABC.",
-        "criterios": ["clasifica los 4 hallazgos", "redacta 8 reglas comprobables", "deja al menos 1 pregunta pendiente"]
-      },
-      "reto": {
-        "titulo": "Del hallazgo al diseño",
-        "minutos": 12,
-        "instrucciones": "Elige una hipótesis del caso y escribe: qué pregunta harías al negocio, cómo la comprobarías y dónde tendría sentido hacer cumplir la regla si fuera confirmada."
-      },
       "dp900": [
         {
           "dominio": "Core data concepts",
           "pregunta": "Una aplicación registra cientos de alquileres individuales durante el día. ¿Qué tipo de carga representa principalmente?",
-          "opciones": ["OLAP", "OLTP", "Data lake", "Procesamiento por lotes"],
+          "opciones": [
+            "OLAP",
+            "OLTP",
+            "Data lake",
+            "Procesamiento por lotes"
+          ],
           "correcta": 1,
           "explicacion": "OLTP está orientado a muchas transacciones pequeñas y frecuentes que sostienen la operación."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Un archivo JSON con campos y estructuras anidadas se clasifica normalmente como:",
-          "opciones": ["Dato estructurado exclusivamente", "Dato semiestructurado", "Dato no estructurado", "Una base relacional"],
+          "opciones": [
+            "Dato estructurado exclusivamente",
+            "Dato semiestructurado",
+            "Dato no estructurado",
+            "Una base relacional"
+          ],
           "correcta": 1,
           "explicacion": "JSON tiene estructura y claves, pero no exige el esquema tabular rígido de una tabla relacional."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      },
+      "actividad": {
+        "titulo": "Leer la base sin inventar reglas",
+        "minutos": 35,
+        "instrucciones": "Ejecuta las consultas del Taller 1, clasifica cada hallazgo como restricción, permiso, patrón o hipótesis y completa ocho reglas del Restaurante ABC.",
+        "criterios": [
+          "clasifica los 4 hallazgos",
+          "redacta 8 reglas comprobables",
+          "deja al menos 1 pregunta pendiente"
+        ]
+      }
     },
     "7": {
       "fecha": "2026-09-01",
@@ -51,34 +70,48 @@
       "modo": "autonomo_guiado",
       "trabajo_autonomo_min": 75,
       "objetivo": "Convertir reglas de negocio en entidades, relaciones y cardinalidades defendibles.",
-      "nucleo": {
-        "titulo": "Del Restaurante ABC al primer modelo",
-        "minutos": 75,
-        "instrucciones": "En equipo, transforma las reglas de la sesión 6 en un modelo conceptual. Identifica entidades, atributos clave, relaciones y cardinalidades; documenta tres decisiones que no eran obvias.",
-        "criterios": ["mínimo 6 entidades justificadas", "todas las relaciones tienen cardinalidad", "3 decisiones explicadas", "1 duda de negocio permanece explícita"]
-      },
-      "reto": {
-        "titulo": "Defiende una decisión polémica",
-        "minutos": 15,
-        "instrucciones": "Elige una relación discutible (por ejemplo pedido-pago, reserva-mesa o empleado-turno) y presenta dos modelos válidos con sus trade-offs."
-      },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué describe mejor una clave foránea?",
-          "opciones": ["Identifica de forma única cualquier fila de la misma tabla", "Relaciona una fila con una clave candidata de otra tabla", "Impide siempre valores NULL", "Reemplaza la normalización"],
+          "opciones": [
+            "Identifica de forma única cualquier fila de la misma tabla",
+            "Relaciona una fila con una clave candidata de otra tabla",
+            "Impide siempre valores NULL",
+            "Reemplaza la normalización"
+          ],
           "correcta": 1,
           "explicacion": "Una clave foránea expresa una referencia entre relaciones y permite implementar integridad referencial."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Cuál es la razón principal para normalizar un modelo operacional?",
-          "opciones": ["Aumentar duplicación", "Reducir redundancia y anomalías de actualización", "Eliminar todas las relaciones", "Convertirlo en un data lake"],
+          "opciones": [
+            "Aumentar duplicación",
+            "Reducir redundancia y anomalías de actualización",
+            "Eliminar todas las relaciones",
+            "Convertirlo en un data lake"
+          ],
           "correcta": 1,
           "explicacion": "La normalización busca reducir redundancia problemática y dependencias que producen anomalías."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:00", "zona": "America/Bogota"}
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:00",
+        "zona": "America/Bogota"
+      },
+      "actividad": {
+        "titulo": "Del Restaurante ABC al primer modelo",
+        "minutos": 75,
+        "instrucciones": "En equipo, transforma las reglas de la sesión 6 en un modelo conceptual. Identifica entidades, atributos clave, relaciones y cardinalidades; documenta tres decisiones que no eran obvias.",
+        "criterios": [
+          "mínimo 6 entidades justificadas",
+          "todas las relaciones tienen cardinalidad",
+          "3 decisiones explicadas",
+          "1 duda de negocio permanece explícita"
+        ]
+      }
     },
     "8": {
       "fecha": "2026-09-02",
@@ -86,34 +119,46 @@
       "duracion_util": 165,
       "modo": "guiada",
       "objetivo": "Detectar dependencias y transformar un modelo hasta una estructura relacional consistente.",
-      "nucleo": {
-        "titulo": "Normalizar sin perder el negocio",
-        "minutos": 35,
-        "instrucciones": "Parte de una tabla deliberadamente redundante del Restaurante ABC y llévala paso a paso a 1FN, 2FN y 3FN justificando cada separación.",
-        "criterios": ["identifica clave", "explica dependencias", "no pierde reglas del negocio", "comprueba que puede reconstruir la información"]
-      },
-      "reto": {
-        "titulo": "¿Normalizarías más?",
-        "minutos": 12,
-        "instrucciones": "Propón una separación adicional y argumenta si mejora el diseño o solo agrega complejidad."
-      },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "La normalización se usa principalmente para:",
-          "opciones": ["Reducir redundancia y dependencias problemáticas", "Eliminar SQL", "Acelerar siempre cualquier consulta analítica", "Guardar archivos sin esquema"],
+          "opciones": [
+            "Reducir redundancia y dependencias problemáticas",
+            "Eliminar SQL",
+            "Acelerar siempre cualquier consulta analítica",
+            "Guardar archivos sin esquema"
+          ],
           "correcta": 0,
           "explicacion": "DP-900 espera reconocer por qué se normalizan datos relacionales, no memorizar solo los nombres de las formas normales."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Cuál es un objeto común de una base relacional?",
-          "opciones": ["Tabla", "Bucket de objetos únicamente", "Notebook como única unidad", "Cola de mensajes"],
+          "opciones": [
+            "Tabla",
+            "Bucket de objetos únicamente",
+            "Notebook como única unidad",
+            "Cola de mensajes"
+          ],
           "correcta": 0,
           "explicacion": "Tablas, vistas e índices son ejemplos de objetos comunes en sistemas relacionales."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      },
+      "actividad": {
+        "titulo": "Normalizar sin perder el negocio",
+        "minutos": 35,
+        "instrucciones": "Parte de una tabla deliberadamente redundante del Restaurante ABC y llévala paso a paso a 1FN, 2FN y 3FN justificando cada separación.",
+        "criterios": [
+          "identifica clave",
+          "explica dependencias",
+          "no pierde reglas del negocio",
+          "comprueba que puede reconstruir la información"
+        ]
+      }
     },
     "9": {
       "fecha": "2026-09-03",
@@ -125,31 +170,51 @@
         "titulo": "Del diagrama al CREATE TABLE",
         "minutos": 40,
         "instrucciones": "Implementa una parte del Restaurante ABC con CREATE TABLE, PK, FK, NOT NULL, UNIQUE y CHECK; después compara Azure SQL Database, Managed Instance y SQL Server en Azure VM.",
-        "criterios": ["DDL ejecutable", "restricciones justificadas", "elige un servicio Azure SQL para un escenario"]
+        "criterios": [
+          "DDL ejecutable",
+          "restricciones justificadas",
+          "elige un servicio Azure SQL para un escenario"
+        ]
       },
       "reto": {
         "titulo": "Migración con restricciones",
         "minutos": 15,
         "instrucciones": "Dado un sistema legado, decide entre Azure SQL Database, Managed Instance o VM y justifica qué compatibilidad o control necesitas."
       },
-      "servicio_real": {"requerido": true, "nombre": "Microsoft Azure SQL", "fallback": "SQLite local solo para continuar el DDL si falla el acceso; no reemplaza la demostración del servicio real."},
+      "servicio_real": {
+        "requerido": true,
+        "nombre": "Microsoft Azure SQL",
+        "fallback": "SQLite local solo para continuar el DDL si falla el acceso; no reemplaza la demostración del servicio real."
+      },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué opción de la familia Azure SQL ofrece el mayor control sobre el sistema operativo y la instancia de SQL Server?",
-          "opciones": ["Azure SQL Database", "Azure SQL Managed Instance", "SQL Server on Azure Virtual Machines", "Azure Table Storage"],
+          "opciones": [
+            "Azure SQL Database",
+            "Azure SQL Managed Instance",
+            "SQL Server on Azure Virtual Machines",
+            "Azure Table Storage"
+          ],
           "correcta": 2,
           "explicacion": "SQL Server en Azure VM se acerca más a administrar una instalación completa y ofrece el mayor control de infraestructura."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Cuál es un servicio PaaS administrado de la familia Azure SQL orientado a bases individuales?",
-          "opciones": ["Azure SQL Database", "Azure Files", "Azure Blob Storage", "Cosmos DB"],
+          "opciones": [
+            "Azure SQL Database",
+            "Azure Files",
+            "Azure Blob Storage",
+            "Cosmos DB"
+          ],
           "correcta": 0,
           "explicacion": "Azure SQL Database es una opción PaaS de base relacional administrada."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      }
     },
     "10": {
       "fecha": "2026-09-08",
@@ -158,34 +223,48 @@
       "modo": "autonomo_guiado",
       "trabajo_autonomo_min": 75,
       "objetivo": "Elegir modelo y tecnología a partir de requisitos, no por moda.",
-      "nucleo": {
-        "titulo": "Arquitecto por una hora",
-        "minutos": 75,
-        "instrucciones": "Resuelve varios casos de negocio. Para cada uno decide relacional, documentos u otra alternativa; identifica el patrón de acceso, consistencia requerida y cómo evolucionará el esquema.",
-        "criterios": ["decisión explícita", "2 argumentos técnicos", "1 riesgo", "no usar 'NoSQL porque escala' como única justificación"]
-      },
-      "reto": {
-        "titulo": "Diseño híbrido",
-        "minutos": 15,
-        "instrucciones": "Escoge un caso y propón una arquitectura políglota donde dos tecnologías convivan sin duplicar responsabilidades innecesariamente."
-      },
       "dp900": [
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Cuál escenario favorece naturalmente un modelo documental?",
-          "opciones": ["Registros con estructura flexible y objetos anidados que se leen juntos", "Una relación N:N que requiere integridad estricta entre muchas tablas", "Un cálculo que solo vive en Excel", "Cualquier sistema por el hecho de tener muchos datos"],
+          "opciones": [
+            "Registros con estructura flexible y objetos anidados que se leen juntos",
+            "Una relación N:N que requiere integridad estricta entre muchas tablas",
+            "Un cálculo que solo vive en Excel",
+            "Cualquier sistema por el hecho de tener muchos datos"
+          ],
           "correcta": 0,
           "explicacion": "Los documentos son adecuados cuando los datos relacionados se consumen juntos y la estructura puede variar."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Elegir entre SQL y NoSQL debería empezar por:",
-          "opciones": ["La moda tecnológica", "Los requisitos, relaciones y patrones de acceso", "El logo del proveedor", "Usar siempre ambos"],
+          "opciones": [
+            "La moda tecnológica",
+            "Los requisitos, relaciones y patrones de acceso",
+            "El logo del proveedor",
+            "Usar siempre ambos"
+          ],
           "correcta": 1,
           "explicacion": "La tecnología sigue al problema: relaciones, consistencia, consultas y evolución del esquema."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:00", "zona": "America/Bogota"}
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:00",
+        "zona": "America/Bogota"
+      },
+      "actividad": {
+        "titulo": "Arquitecto por una hora",
+        "minutos": 75,
+        "instrucciones": "Resuelve varios casos de negocio. Para cada uno decide relacional, documentos u otra alternativa; identifica el patrón de acceso, consistencia requerida y cómo evolucionará el esquema.",
+        "criterios": [
+          "decisión explícita",
+          "2 argumentos técnicos",
+          "1 riesgo",
+          "no usar 'NoSQL porque escala' como única justificación"
+        ]
+      }
     },
     "11": {
       "fecha": "2026-09-09",
@@ -197,31 +276,52 @@
         "titulo": "Un caso, dos servicios reales",
         "minutos": 45,
         "instrucciones": "Modela una parte del caso como documento, realiza operaciones reales en Firestore y Azure Cosmos DB y compara qué decisiones de diseño cambian frente al modelo relacional.",
-        "criterios": ["documento coherente", "operación real ejecutada", "explica partición o clave de acceso", "compara con relacional"]
+        "criterios": [
+          "documento coherente",
+          "operación real ejecutada",
+          "explica partición o clave de acceso",
+          "compara con relacional"
+        ]
       },
       "reto": {
         "titulo": "Costo de una mala partición",
         "minutos": 15,
         "instrucciones": "Propón dos posibles partition keys para Cosmos DB y argumenta cuál distribuye y consulta mejor el caso."
       },
-      "servicio_real": {"requerido": true, "nombre": "Firebase Firestore + Azure Cosmos DB", "fallback": "Simulador/documentos locales solo si un estudiante queda bloqueado; el docente muestra ambos servicios reales."},
+      "servicio_real": {
+        "requerido": true,
+        "nombre": "Firebase Firestore + Azure Cosmos DB",
+        "fallback": "Simulador/documentos locales solo si un estudiante queda bloqueado; el docente muestra ambos servicios reales."
+      },
       "dp900": [
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué servicio Azure está diseñado como base distribuida NoSQL multimodelo?",
-          "opciones": ["Azure Cosmos DB", "Azure SQL Database", "Azure Files", "Power BI"],
+          "opciones": [
+            "Azure Cosmos DB",
+            "Azure SQL Database",
+            "Azure Files",
+            "Power BI"
+          ],
           "correcta": 0,
           "explicacion": "Cosmos DB es el servicio NoSQL distribuido de Azure que DP-900 espera reconocer."
         },
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué opción de Azure Storage está orientada a objetos como imágenes, archivos y grandes cantidades de datos no estructurados?",
-          "opciones": ["Azure Blob Storage", "Azure SQL Managed Instance", "Azure Table Storage exclusivamente", "Azure DNS"],
+          "opciones": [
+            "Azure Blob Storage",
+            "Azure SQL Managed Instance",
+            "Azure Table Storage exclusivamente",
+            "Azure DNS"
+          ],
           "correcta": 0,
           "explicacion": "Blob Storage almacena grandes cantidades de datos de objetos/no estructurados."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      }
     },
     "12": {
       "fecha": "2026-09-10",
@@ -233,31 +333,51 @@
         "titulo": "Del OLTP al modelo estrella",
         "minutos": 40,
         "instrucciones": "Parte de transacciones del Restaurante ABC y diseña un esquema estrella con hechos, dimensiones, grano y medidas; consulta una muestra analítica con DuckDB-Wasm.",
-        "criterios": ["declara el grano", "separa hechos y dimensiones", "define medidas", "explica por qué no usaría el OLTP directamente para todo"]
+        "criterios": [
+          "declara el grano",
+          "separa hechos y dimensiones",
+          "define medidas",
+          "explica por qué no usaría el OLTP directamente para todo"
+        ]
       },
       "reto": {
         "titulo": "Hecho acumulativo o transaccional",
         "minutos": 15,
         "instrucciones": "Compara dos granos posibles para el mismo proceso y explica qué preguntas habilita o impide cada uno."
       },
-      "fallback_analitico": {"motor": "DuckDB-Wasm", "uso": "práctica local y demostración de CSV/Parquet; no sustituye los servicios cloud reales de las sesiones 13 y 14"},
+      "fallback_analitico": {
+        "motor": "DuckDB-Wasm",
+        "uso": "práctica local y demostración de CSV/Parquet; no sustituye los servicios cloud reales de las sesiones 13 y 14"
+      },
       "dp900": [
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "En un modelo estrella, la tabla de hechos suele contener principalmente:",
-          "opciones": ["Medidas y claves hacia dimensiones", "Únicamente texto descriptivo", "Solo archivos binarios", "Usuarios del sistema"],
+          "opciones": [
+            "Medidas y claves hacia dimensiones",
+            "Únicamente texto descriptivo",
+            "Solo archivos binarios",
+            "Usuarios del sistema"
+          ],
           "correcta": 0,
           "explicacion": "Las tablas de hechos representan eventos o mediciones en un grano definido y se relacionan con dimensiones."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué diferencia básica hay entre procesamiento batch y streaming?",
-          "opciones": ["Batch procesa datos acumulados; streaming procesa eventos conforme llegan", "Streaming siempre usa SQL Server", "Batch no puede usar cloud", "No existe diferencia"],
+          "opciones": [
+            "Batch procesa datos acumulados; streaming procesa eventos conforme llegan",
+            "Streaming siempre usa SQL Server",
+            "Batch no puede usar cloud",
+            "No existe diferencia"
+          ],
           "correcta": 0,
           "explicacion": "DP-900 distingue cargas por lotes de procesamiento de eventos en tiempo real o casi real."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      }
     },
     "13": {
       "fecha": "2026-09-15",
@@ -270,31 +390,54 @@
         "titulo": "Laboratorio real en Google BigQuery",
         "minutos": 75,
         "instrucciones": "Sigue el briefing inicial, carga/abre el dataset indicado en BigQuery y resuelve las consultas de negocio. Documenta resultados y una validación por consulta.",
-        "criterios": ["trabaja en BigQuery real", "resuelve consultas núcleo", "valida resultados", "documenta un aprendizaje"]
+        "criterios": [
+          "trabaja en BigQuery real",
+          "resuelve consultas núcleo",
+          "valida resultados",
+          "documenta un aprendizaje"
+        ]
       },
       "reto": {
         "titulo": "Costo y lectura eficiente",
         "minutos": 15,
         "instrucciones": "Compara dos consultas equivalentes y razona cuál lee menos datos o aprovecha mejor particiones/columnas."
       },
-      "servicio_real": {"requerido": true, "nombre": "Google BigQuery", "fallback": "DuckDB-Wasm con el mismo dataset si una cuenta queda bloqueada. El docente debe mostrar BigQuery real y luego mapear conceptos a Azure."},
+      "servicio_real": {
+        "requerido": true,
+        "nombre": "Google BigQuery",
+        "fallback": "DuckDB-Wasm con el mismo dataset si una cuenta queda bloqueada. El docente debe mostrar BigQuery real y luego mapear conceptos a Azure."
+      },
       "dp900": [
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "Aunque el laboratorio use BigQuery, ¿qué concepto estás practicando que también aplica en Azure?",
-          "opciones": ["Consulta analítica sobre un almacén columnar/cloud", "Administración de DNS", "Desarrollo móvil", "Autenticación biométrica"],
+          "opciones": [
+            "Consulta analítica sobre un almacén columnar/cloud",
+            "Administración de DNS",
+            "Desarrollo móvil",
+            "Autenticación biométrica"
+          ],
           "correcta": 0,
           "explicacion": "El objetivo transferible es comprender almacenes analíticos y consultas de gran escala; luego se mapean los servicios del ecosistema Azure."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Cuál de estos productos aparece en la ruta de estudio DP-900 para cargas analíticas?",
-          "opciones": ["Azure Databricks", "Azure DNS", "Microsoft Paint", "Azure DevTest Labs como almacén principal"],
+          "opciones": [
+            "Azure Databricks",
+            "Azure DNS",
+            "Microsoft Paint",
+            "Azure DevTest Labs como almacén principal"
+          ],
           "correcta": 0,
           "explicacion": "Azure Databricks forma parte de los servicios que el candidato debe reconocer dentro del panorama analítico de Azure."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:00", "zona": "America/Bogota"}
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:00",
+        "zona": "America/Bogota"
+      }
     },
     "14": {
       "fecha": "2026-09-16",
@@ -306,31 +449,51 @@
         "titulo": "Nested data de verdad",
         "minutos": 45,
         "instrucciones": "Consulta datos anidados en BigQuery, explica qué cambia frente a una tabla relacional plana y construye el mapa conceptual hacia Fabric, Databricks, almacenamiento y Power BI.",
-        "criterios": ["consulta real ejecutada", "explica estructura anidada", "distingue almacenamiento, proceso y visualización"]
+        "criterios": [
+          "consulta real ejecutada",
+          "explica estructura anidada",
+          "distingue almacenamiento, proceso y visualización"
+        ]
       },
       "reto": {
         "titulo": "Aplanar o no aplanar",
         "minutos": 15,
         "instrucciones": "Compara almacenar una estructura anidada frente a normalizarla y defiende una elección según el patrón de consulta."
       },
-      "servicio_real": {"requerido": true, "nombre": "Google BigQuery", "fallback": "DuckDB-Wasm para JSON/Parquet si falla una cuenta individual; no reemplaza la demostración del servicio real."},
+      "servicio_real": {
+        "requerido": true,
+        "nombre": "Google BigQuery",
+        "fallback": "DuckDB-Wasm para JSON/Parquet si falla una cuenta individual; no reemplaza la demostración del servicio real."
+      },
       "dp900": [
         {
           "dominio": "Core data concepts",
           "pregunta": "¿Qué formato es columnar y suele usarse para analítica eficiente?",
-          "opciones": ["Parquet", "TXT sin estructura", "BMP", "WAV"],
+          "opciones": [
+            "Parquet",
+            "TXT sin estructura",
+            "BMP",
+            "WAV"
+          ],
           "correcta": 0,
           "explicacion": "Parquet es un formato columnar común en cargas analíticas y data lakes."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué producto Microsoft se usa principalmente para modelar, visualizar y compartir análisis de negocio?",
-          "opciones": ["Power BI", "Azure DNS", "GitHub Issues", "Azure Bastion"],
+          "opciones": [
+            "Power BI",
+            "Azure DNS",
+            "GitHub Issues",
+            "Azure Bastion"
+          ],
           "correcta": 0,
           "explicacion": "Power BI es la herramienta de BI y visualización que forma parte del panorama esperado en DP-900."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      }
     },
     "15": {
       "fecha": "2026-09-17",
@@ -343,7 +506,14 @@
         "titulo": "Diagnostica, modela, construye y valida",
         "minutos": 90,
         "instrucciones": "Con los datasets sucios del desafío final, identifica problemas, define un modelo, transforma lo necesario, produce consultas/indicadores y documenta cómo comprobaste que tus resultados son defendibles.",
-        "criterios": ["diagnóstico", "modelo", "transformación", "consultas", "validación", "decisión explicada"]
+        "criterios": [
+          "diagnóstico",
+          "modelo",
+          "transformación",
+          "consultas",
+          "validación",
+          "decisión explicada"
+        ]
       },
       "reto": {
         "titulo": "Arquitectura de producción",
@@ -354,19 +524,31 @@
         {
           "dominio": "Integración",
           "pregunta": "Tienes miles de transacciones operacionales y necesitas un tablero histórico pesado. ¿Qué principio es más adecuado?",
-          "opciones": ["Separar la carga analítica de la operación principal", "Ejecutar siempre todo sobre la tabla transaccional", "Eliminar las claves", "Convertir todos los datos en texto"],
+          "opciones": [
+            "Separar la carga analítica de la operación principal",
+            "Ejecutar siempre todo sobre la tabla transaccional",
+            "Eliminar las claves",
+            "Convertir todos los datos en texto"
+          ],
           "correcta": 0,
           "explicacion": "Separar cargas operacionales y analíticas evita competencia innecesaria y permite estructuras optimizadas para cada propósito."
         },
         {
           "dominio": "Integración",
           "pregunta": "Antes de elegir un datastore, lo primero es comprender:",
-          "opciones": ["Requisitos, relaciones y patrones de acceso", "El color de la interfaz", "Qué proveedor tiene más anuncios", "La herramienta que ya está abierta"],
+          "opciones": [
+            "Requisitos, relaciones y patrones de acceso",
+            "El color de la interfaz",
+            "Qué proveedor tiene más anuncios",
+            "La herramienta que ya está abierta"
+          ],
           "correcta": 0,
           "explicacion": "La arquitectura debe responder al problema y a sus cargas, no empezar por el producto."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      }
     },
     "16": {
       "fecha": "2026-09-22",
@@ -374,41 +556,57 @@
       "duracion_util": 145,
       "modo": "consolidacion",
       "objetivo": "Consolidar el mapa mental del curso, demostrar progreso y salir con un plan concreto para presentar DP-900.",
-      "nucleo": {
-        "titulo": "Demuestra el recorrido",
-        "minutos": 60,
-        "instrucciones": "Resuelve un conjunto acumulativo de escenarios que mezclan relacional, NoSQL, cargas analíticas y servicios Azure; revisa tus errores por dominio y construye tu plan personal de estudio.",
-        "criterios": ["responde escenarios acumulativos", "identifica dominio débil", "define siguiente paso de estudio"]
-      },
-      "reto": {
-        "titulo": "Explica como profesional",
-        "minutos": 15,
-        "instrucciones": "En 3 minutos explica a una persona no técnica cómo pasarías de una necesidad de negocio a una arquitectura de datos y qué decisiones validarías primero."
-      },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué servicio escogerías si necesitas alta compatibilidad con características de una instancia SQL Server administrada como PaaS?",
-          "opciones": ["Azure SQL Managed Instance", "Azure Blob Storage", "Azure Files", "Cosmos DB"],
+          "opciones": [
+            "Azure SQL Managed Instance",
+            "Azure Blob Storage",
+            "Azure Files",
+            "Cosmos DB"
+          ],
           "correcta": 0,
           "explicacion": "Managed Instance está orientado a alta compatibilidad con SQL Server manteniendo un modelo PaaS administrado."
         },
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué servicio escogerías para datos NoSQL globalmente distribuidos y de baja latencia?",
-          "opciones": ["Azure Cosmos DB", "Azure SQL Database exclusivamente", "Power BI", "Azure DNS"],
+          "opciones": [
+            "Azure Cosmos DB",
+            "Azure SQL Database exclusivamente",
+            "Power BI",
+            "Azure DNS"
+          ],
           "correcta": 0,
           "explicacion": "Cosmos DB está orientado a cargas NoSQL distribuidas globalmente."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué combinación distingue mejor el recorrido analítico?",
-          "opciones": ["Ingestar/procesar → almacenar para análisis → modelar/visualizar", "DNS → firewall → impresora", "Solo SELECT sobre producción", "Convertir todo a PDF"],
+          "opciones": [
+            "Ingestar/procesar → almacenar para análisis → modelar/visualizar",
+            "DNS → firewall → impresora",
+            "Solo SELECT sobre producción",
+            "Convertir todo a PDF"
+          ],
           "correcta": 0,
           "explicacion": "Una carga analítica combina ingestión/procesamiento, almacenamiento analítico y consumo/visualización."
         }
       ],
-      "solucion": {"modo": "manual"}
+      "solucion": {
+        "modo": "manual"
+      },
+      "actividad": {
+        "titulo": "Demuestra el recorrido",
+        "minutos": 60,
+        "instrucciones": "Resuelve un conjunto acumulativo de escenarios que mezclan relacional, NoSQL, cargas analíticas y servicios Azure; revisa tus errores por dominio y construye tu plan personal de estudio.",
+        "criterios": [
+          "responde escenarios acumulativos",
+          "identifica dominio débil",
+          "define siguiente paso de estudio"
+        ]
+      }
     }
   }
 }
