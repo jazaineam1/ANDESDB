@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Suma los informes de varias partidas de Kahoot en un solo marcador.
+"""Suma los informes de varias partidas en un solo marcador.
 
-Kahoot puntua cada partida por separado. Si la sesion se juega en cuatro
+Sirve para Wayground (antes Quizizz) y para Kahoot: las dos puntuan cada
+partida por separado. Si la sesion se juega en cuatro
 partidas, hacen falta cuatro PIN y salen cuatro marcadores sueltos. Esto los
 cruza por apodo y saca uno solo.
 
-    py tools/kahoot-marcador.py <carpeta-con-los-informes>
+    py tools/concurso-marcador.py <carpeta-con-los-informes>
 
-La carpeta lleva los .xlsx que Kahoot deja al pulsar «Download results» en cada
-partida. El orden no importa. Se puede usar con una sesion o con el curso
+La carpeta lleva los .xlsx que la plataforma deja al descargar el informe de
+cada partida. El orden no importa. Se puede usar con una sesion o con el curso
 entero: una carpeta por sesion, o todas juntas para el acumulado.
 
 Sobre los apodos: se normalizan (sin mayusculas, sin tildes, sin espacios) para
@@ -16,8 +17,9 @@ que «Ana P.» y «ana p» cuenten como la misma persona. Aun asi, quien entre c
 un apodo distinto en cada partida sale como personas distintas, y eso no lo
 puede arreglar ningun programa: hay que decirlo en voz alta antes de empezar.
 
-Kahoot ha cambiado el formato de sus informes varias veces, asi que en vez de
-dar por buena una plantilla, el guion busca en cada hoja una que tenga columna
+Las dos plataformas han cambiado el formato de sus informes varias veces, y
+el de Wayground no lo he podido comprobar contra un export real. Por eso, en
+vez de dar por buena una plantilla, el guion busca en cada hoja una que tenga columna
 de jugador y columna de puntos. Si no la encuentra, lo dice y sigue con las
 demas en lugar de fallar entero.
 """
@@ -27,9 +29,12 @@ import unicodedata
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-JUGADOR = ('player', 'jugador', 'nickname', 'apodo', 'name', 'nombre')
-PUNTOS = ('total score', 'score', 'puntuacion', 'puntos', 'puntaje')
-ACIERTOS = ('correct answers', 'correct', 'respuestas correctas', 'correctas')
+JUGADOR = ('player', 'jugador', 'nickname', 'apodo', 'name', 'nombre',
+           'student', 'estudiante', 'participant', 'participante')
+PUNTOS = ('total score', 'score', 'puntuacion', 'puntos', 'puntaje',
+          'accuracy', 'final score')
+ACIERTOS = ('correct answers', 'correct', 'respuestas correctas', 'correctas',
+            'questions correct')
 
 
 def limpia(x):
@@ -146,8 +151,10 @@ def main():
 
     faltan = [d for d in orden if d['jugadas'] < n]
     if faltan:
-        print('\n%d personas no jugaron las %d partidas. Puede ser que se cayera la'
-              % (len(faltan), n))
+        cuantas = ('1 persona no jugó' if len(faltan) == 1
+                   else '%d personas no jugaron' % len(faltan))
+        print('\n%s las %d partidas. Puede ser que se cayera la'
+              % (cuantas, n))
         print('conexion, o que entraran con otro apodo: eso las duplica en la lista.')
 
 
