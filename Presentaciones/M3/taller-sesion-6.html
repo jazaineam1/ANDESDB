@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tu p&aacute;gina de la sesi&oacute;n 6</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23124e78%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20text-anchor%3D%22middle%22%20font-size%3D%2219%22%3E%26%23127942%3B%3C/text%3E%3C/svg%3E">
-<meta name="description" content="El concurso y el taller de la sesion 6. Se guarda solo en tu navegador.">
+<title>El taller de la sesi&oacute;n 6</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23124e78%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20text-anchor%3D%22middle%22%20font-size%3D%2219%22%3E%26%23128220%3B%3C/text%3E%3C/svg%3E">
+<meta name="description" content="El taller de la sesion 6: reconocer una regla de negocio y escribir dos propias.">
 <style>
 :root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#2e7d32;--r:#c1121f;
 --ink:#1a1a1a;--soft:#5a5a5a;--s:#f5f3ee;--bl:#e9f4ff;--yl:#fff6c9;--line:#dfe6ec;--pill:999px}
@@ -17,57 +17,14 @@ code{font-family:Consolas,"Cascadia Mono",monospace;background:#f2f4f7;padding:.
 .head h1{margin:0;font-size:1.65rem;letter-spacing:-.01em}
 .head .sub{margin:.3rem 0 0;color:var(--soft);font-size:.95rem}
 h2{font-size:1.2rem;margin:1.9rem 0 .5rem;padding-left:.6rem;border-left:5px solid var(--y)}
+h2:first-of-type{margin-top:.4rem}
 h2 .lead{display:block;font-size:.86rem;font-weight:500;color:var(--soft);margin-top:.15rem}
-.marcador{position:sticky;top:0;z-index:20;background:var(--b);color:#fff;
-  border-radius:0 0 14px 14px;padding:.6rem 1rem;display:flex;flex-wrap:wrap;
-  justify-content:space-between;align-items:center;gap:.6rem;
-  box-shadow:0 4px 18px rgba(18,78,120,.28)}
-.marcador b{font-size:1.25rem}
-.marcador .pts{background:var(--y);color:#171717;font-weight:800;border-radius:var(--pill);
-  padding:.3em .95em;font-size:1.02rem}
-.ronda{border:2px solid var(--line);border-radius:14px;margin:.8rem 0;overflow:hidden}
-.ronda.abierta{border-color:var(--b)}
-.rh{background:var(--s);padding:.8rem 1.05rem}
-.ronda.abierta .rh{background:var(--bl)}
-.rh .num{font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--b);margin:0}
-.rh h3{margin:.1rem 0 0;font-size:1.08rem}
-.rh .cuando{margin:.15rem 0 0;font-size:.84rem;color:var(--soft)}
-.rb{padding:1rem 1.05rem}
-.cerr{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center}
-.cerr p{margin:0 0 .55rem;width:100%;font-size:.93rem;color:var(--soft)}
-input[type=text]{font:700 1.02rem/1 "Segoe UI",Arial,sans-serif;letter-spacing:.14em;
-  text-transform:uppercase;padding:.62em .85em;border:2px solid var(--line);
-  border-radius:10px;width:11rem;background:#fff;color:var(--ink)}
-input[type=text]:focus{outline:none;border-color:var(--b)}
 button{font:700 .95rem/1 "Segoe UI",Arial,sans-serif;padding:.68em 1.15em;border-radius:10px;
   border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
 button:hover{border-color:var(--b)}
 button.principal{background:var(--b);border-color:var(--b);color:#fff}
 button.principal:hover{background:#0e3f61}
 button.borrar{color:var(--r);border-color:#f0c8cc}
-.mal{color:var(--r);font-weight:700;font-size:.9rem;margin:.5rem 0 0}
-.preg{border-top:1px solid var(--line);padding:1rem 0 .3rem}
-.preg:first-child{border-top:none;padding-top:.2rem}
-.preg .en{margin:0 0 .7rem;font-size:1.04rem;font-weight:600}
-.preg .en .i{display:inline-block;background:var(--b);color:#fff;border-radius:var(--pill);
-  min-width:1.6em;text-align:center;font-size:.8rem;padding:.15em .5em;margin-right:.45em;
-  vertical-align:.1em}
-.ops{display:grid;gap:.45rem}
-.op{text-align:left;padding:.72em .95em;font-weight:500;font-size:.97rem;line-height:1.35;
-  border:2px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;width:100%}
-.op:hover{border-color:var(--b);background:var(--bl)}
-.op[disabled]{cursor:default}
-.op[disabled]:hover{background:#fff;border-color:var(--line)}
-.op.ok{border-color:var(--g);background:#e8f5e9}
-.op.ko{border-color:var(--r);background:#fdecee}
-.op .mk{font-weight:800;margin-right:.4em}
-.porque{margin:.6rem 0 0;padding:.7rem .9rem;border-radius:10px;font-size:.93rem;
-  background:var(--yl);border-left:5px solid var(--y)}
-.final{margin-top:1.2rem;padding:1.2rem;border-radius:14px;background:var(--bl);
-  border:2px solid var(--b);text-align:center}
-.final .big{font-size:2.4rem;font-weight:800;color:var(--b);line-height:1.1}
-.final p{margin:.4rem 0 .9rem;color:var(--soft)}
 .casos{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.55rem 0 .2rem}
 .caso{text-align:left;border:2px solid var(--line);border-radius:12px;padding:.85rem 1rem;
   background:#fff;cursor:pointer;font:inherit;color:inherit}
@@ -106,32 +63,20 @@ button.borrar{color:var(--r);border-color:#f0c8cc}
 .pie a{color:var(--b)}
 @media(max-width:680px){.grid,.casos{grid-template-columns:1fr}
   .frase{grid-template-columns:1fr}.dos{width:100%}.dos button{flex:1}}
-@media(max-width:560px){.sheet{padding:1.1rem .9rem 1.6rem}.head h1{font-size:1.35rem}
-  input[type=text]{width:100%}.cerr{flex-direction:column;align-items:stretch}}
+@media(max-width:560px){.sheet{padding:1.1rem .9rem 1.6rem}.head h1{font-size:1.35rem}}
 </style></head>
 <body>
 <div class="sheet">
-  <div class="marcador">
-    <span id="mtexto">&mdash;</span>
-    <span class="pts" id="mpts">0 / 15</span>
-  </div>
   <div class="head">
-    <h1>Tu p&aacute;gina de la sesi&oacute;n 6</h1>
-    <p class="sub">Reglas de negocio. Aqu&iacute; dentro est&aacute; todo lo que hoy haces t&uacute;:
-    el <strong>concurso</strong> y el <strong>taller</strong>. Se guarda solo en tu navegador,
-    as&iacute; que si se te cae la conexi&oacute;n no pierdes nada.</p>
+    <h1>El taller de la sesi&oacute;n 6</h1>
+    <p class="sub">Reglas de negocio. Primero <strong>reconocerlas</strong> con un clic;
+    solo despu&eacute;s, <strong>escribir dos</strong>. Lo que escribas aqu&iacute; es el
+    material de la sesi&oacute;n 7, y se guarda en este navegador para que no lo pierdas
+    si se te cae la conexi&oacute;n. <em>El concurso se juega aparte, en Kahoot.</em></p>
   </div>
 
-  <h2>El concurso<span class="lead">Seis rondas repartidas por la clase. Cada una se abre con
-  un c&oacute;digo que se dice en el momento, y el marcador se acumula hasta el final.</span></h2>
-  <div id="rondas"></div>
-  <div class="final" id="final" style="display:none">
-    <div class="big" id="fbig">&mdash;</div>
-    <p>Ese es tu marcador de la noche. P&eacute;galo en el chat.</p>
-  </div>
-
-  <h2>El taller<span class="lead">Primero marcas doce frases con un clic. Solo al final escribes
-  &mdash; y son dos, no ocho.</span></h2>
+  <h2>Elige tu caso<span class="lead">Los dos se trabajan igual. Puedes cambiar cuando
+  quieras: lo que escribas en uno no se pierde al pasar al otro.</span></h2>
   <div class="casos" id="casos"></div>
   <div class="grid">
     <div class="box">
@@ -167,18 +112,15 @@ button.borrar{color:var(--r);border-color:#f0c8cc}
   </div>
 </div>
 <script>
-var RONDAS = [{"n":1,"t":"Los cuatro niveles","c":"Bloque 1 &middot; justo despu&eacute;s de &laquo;Cuatro niveles de certeza&raquo;","nq":3,"d":"Xm21BZUViD/4GfUbW1wVRBCKJ2/EqPPIjwSzH8Gi1Wl6B5VFTLURs4Ui9mMpMPfVRI31wYL5UaF63FXJjcB+zM/jnrY9GS6heTHJ5tDdILatYgNP/oOuY2FxX9jOTfFNWmVJskrKrIW9N/tBP42RDfvtp+gHYWhxyPJoks46oQ380k5jX444hwaodaaNzz9w1rawGYFq+N0kwsBySciyZYFrM937pP5KYhJGMXoBt6qafkhzKgiuwzBtiyctZWHADuu85L+tf+Fh/l1OqwY/imbhv6NSEFxuWUT1v1ze+eWV2/f9vPhAq1zl2kvmgnphmHh7GaO8bViKfxwlsBMU5ipudjaYpCZ979+sr+yAmoIGpIopCsZ9YlyEi8sNXFrgWElciAHJAspzgF6DKq+06mGN9+rAhY+fPFOIx3wAfkMl98REbEYDdAEUAkCGffc4rTf1sJFMl0tB3/r2vF0vxhgVryQAa9t2BGA8/a8V+ebLVc+kZTExhrJwz/FGhpf8+126H3o1zTmgOPVESDJTdmxWzV6k17RPUhCfHnaQIhWe19x9B8t5kBHcZRN5L53ZeXbVO439VU6OnIEtFQfgLPxvsfRtETjo9X32r6akwI0PR9gYO3Eatfmesfo8AC5vT1U7omlamAxRB2P1ZmTeu0Bq8FGjotnbw+W/tep8e6Rli8CSIBzjqNaByRYsbXpzYX/02BMigdZ6XQAb34jGbl4ItdWlywCWuwacn/LAl+QTnLnjZ3Ei7z88wGXxGejXjPVdkkgpMGVoWeXw/KHxmkQpH+xBkVzMSWIBMm/ziQqO9hdc9hRgRqoXamd4xv3PmK2yU18cQWaamORugFGoLOgesO/EBxBEUEOJGEOLoq1TOMYF4CifGDTsC5YkZdwj34KqCBwzYDQmDWcdrpfduKYfdoVhV/8UWJra5vRGFid5yBA4H9DcmG0kn6ERAYRb65Kmqj5hLyuo2cGbwiPNMKMua7r5uKP1c09Gnu7sOqsyvdCp6i/7hOue3c9fu/cM9XFnR2y7q+WSfBwKuVIkwUQ/zh3f4kKimjS4zSHTjVYjzWkVc4LmmvQ7IV4kxld82U3T/pUvxthywuhN4kFmuHTyfCVV0eucG2K9y0xK9K9W/+m9vYGe7JwCbRK6YOqvXMbX4ehfGM24ZSoCyrZaWO91RPW1Mz3cOywe1wO07gJbu1IJPdJ/FQJcjNT2ghz1JxCMupvqrn0APh425pBPpNgRgpUenTM6rgSaITza3GrfkEfUEwMw1WsB5UoWgl0tIsgMmDbpQK4tsEvIxNePyGbHEyw/7VVIUN85S2biqQ/KWZnJx2MXEGVaqCrddLYE+p7TsoOkcQK57ATcrZzAJZAqJN+Y2TYNJSejueX3NIVG95OBX1CWRiOWUhHchmKd1oYk/tb5hW6kW1+DI58lKezso2iAMYIYMMDVN2mdqRP1t3n39WYMtUlqOjwEgPVciLQZQs17ixxJPc61Quxpk0Woci6JBqJYZvV1oszn1LL4u2y6tDmjtUXH/MQCP4HC7Bi/fBx4e1f8Cnp2E0gjZ1IrQRgZ6Kjf5xCkpZkYtzcdKKM3PnSmGyQmFIFr4sh/4CjY9MEspJfKXlhvSQ=="},{"n":2,"t":"Lo que dice el esquema","c":"Bloque 1 &middot; al cerrar &laquo;Las reglas del esquema&raquo;","nq":2,"d":"pidG0nqJsbCwpxdfW0sU0DqxqtdFC9yTkjC1fEEUsBCj4pb36hC6Gcqc8GqsPMAaa2OeOwykx8yRlbJfzq9DqwGA3X9YSqU2FKQDkYjLit7f2APdq9GfDM74zNY2H1qmUvIdwQEu0V056QsudFS7l2aouAGj8qQDfKuenqV3s+81Mx69VLqKHYjs0cAit7VZVmPyuJErEiMR8KbVMeV9Z3o4QXTLh95ZXeeem1D49jGrDdP3CMeVG+L7gL4FIJViEgvVkMIUCUPkXu9lwwGLVt1Yo/9xjFjFLHSVAAOyct4QvSrlOTErj5Q9prLZo0siI2YhcpGyx0835yxMpUPTR3pv47DtOisOS10Wqt2hCOdbpndkmzsjb1Xv5CJK+SXQrgJtGuwQiqoEw9osg/BmTvVBM1phpf5oLCvqCvpj+YMpgNUVlW4Xx4Bcj20mv1LrwRfQQHlo7kv4RUQGFN3+qVSfX50EV1L8+OZRvefIHh43foScj709umJKa2FfuUMojXcR3OkVFfSqJVhntrWJvStf4SfnlOmSyKC0z7x6W/5rXP8pbaL7mVbu4Y43PHJF0EYQE4NnZGNmNc8QIvccO70jZTLufK/2RNS8uovh07InKXWJK+LqkYR3Y/+5Am6VgGilOkQY1cr0SQgKtl1htbuc3kJV/5DZNsBYYd1AFspYab5x77Vbfh4GThwdZQg5+gW+h2hMgThhgGprCDYnjC8oXAfeUuDtbfFBEku5+dCjzF6a5w+HcE3PZ3Pkq6jHqQGkIcD9KHJA0donNy6/ektNnS+kW5rR1J+xFN7OmLqWfA1wrAb7v64gswZ0srCr/kZALWMcvlNTg21fWL4dlTjmm9HW14rTxy+87oCkDGvEeSgl9ysnwPrviWgnAr4mbbJ7y0n0pm8FUKvsQ59hAVXE1xPsIt+MjQNa/sLZW6BetoaWfW6FgQZ5KUCXqV2dpmSR/GsTCB5khixVg+XblzJI+fxbXlbr2L7Mm41+io9T2v0ISlCzByGTj6a+GALluw=="},{"n":3,"t":"Qu&eacute; es una regla","c":"Bloque 3 &middot; al terminar &laquo;C&oacute;mo se escribe una regla&raquo;, antes de la pausa","nq":2,"d":"G3wgikOaZMNx7/M/+QSevm0U+JWlgjYx/wQd+doUZdSP+pu7k/dC86FdZUPN3WQDMkvbFQA/HnaDMduXeZ3D5TTAdEkn403eXjOSPgfrrXc/qUeIUUQolAe/qPKOzuZxphSZBuFjfHBiPvWJ2bBo6TRkgbOvTjwRl01/b1bZyAzLnDoqISEUZ7fkuIs50ihLHINrimIyPUPoMOleP6AbChnzGrB0BC7MFDMCWKWgqGRM/zifeU+sKJANpnj+oZlzkx6r/XvUlXx8ovU14thxWsSHhtfrl8GPzmgcsZTTlLNHwW1vcC6xjC5z6npTCwCojhMrxlIz6idk6Jm2XQfnv96Ott0Za6QTAx+r+BgfmwZybPjgNq5SeLdBkEQ56Lt3ItsVcJTWOvv/5ptxfrvBKTn0eXEFhSGmre2iAaHAwMBAa16jlUGGqQfI0J2jGSpt3aTMnkEmxKstdYv4swMqpvJhDv83sJBKf25kLFQx2CuBSisMVZVJQf1PWM91e+RINVli5UmAZG5Ij1LN4lZJVAFpMPuIq+FznRBfygznusoxDrGfUVCgSPHxDuNsE+lOjg01aYjb+7KdkPUOC1cUwIN7e6PCK7lwSUceaB/uWtse78joKUip7Z2v9frTs2qfcFwWG08v2awOGs1/xn06zOi6n4E0J+yx3N/A7/Lxhvii3okR6nJBUFDlWEzY69k6A/YoYXob/ok3bTjd0DjCPAMPfsUG9Pw5HrKj+Ym2eFUZ9x+RKiwJ4dpkxLpUi5EiERxBf+J2UW7M106do1lPMQU8na57jgAoj93MWvI548V3lCeMaav39mRLWWOyjF6nI9iIs8nDLb3PrPUdm0NVl4+K013NsbjOvBeaiKu/sYw2uQZK5DhRRhFEQ7rMZFvsa/vGnoxNsymejWnRbxKnud4Aim4GYgh4OcxiuRTqepzRf1n6n80f3Zyc8JWO89ekT8q++AbREAkL98smqFQ6CnEzgjeReL9qTbh0rxsX7XqVra5fDhI1u5JFeS4AEQMlyXzlr258gSy6bAuhHwanVc4z3eJJsGyD9mnmXUF88eFWX53+5DCoZ1aRo0yMefItCtOoOP7Barox9MCeSjuRk+xZpGAG9H4PVV6buk7aXzTJhA=="},{"n":4,"t":"&iquest;OLTP u OLAP?","c":"Bloque 5 &middot; sustituye al Taller 4","nq":4,"d":"Kvpa0l2u5c2FTiPuq8IXR86nOnCIHn/zpBGqXHPkaaX8a3ou5UYJyclBAZn13fwj7D5/yaGJl3L+76ymPaVWsPhKjoCYYbu9uSKf9Njow7n1ktfuKkDCt7J6hg5/HNYCoc9j9wnAC2cdZ62xBQ2yP19lMp7z8Wv52s3y+jy+ZCGgoKqhfuW1qw77P3sKuwyUtuJM9dVb9w54cgBcIyohU+TdCsK6CcQLSltW4zyvZ/va8+JYhaSllVNEg9ekwhL82PylkxTD1aPqj7EtADCW6a3NRYobMEsZzX2p1laf9PD3NNQK1+2dyDaZZVA0WpaKCGzPWpJktY+gNvacXrOa4oOvZh7c1IDPN9XPQycx8t8I+7bj67nO3+5BlfmkXcq2e5p7cgV5AJ2N+dIB9cRDjztv6srThcWOc0c7/i/250MgllHMgxNIioPMo+ufcq+Rr/Nz1Drs6OKtacrkGi1BtQN3Um7Vy/H3hlpKGZUkqiKrp2g0hBMIumaiO9hwqOHiF6DuX4CuLWbHai1eYfjLrE1ZPnWDGHdejRkKduGzBgbBjNl3z06zzEpM8QLLnKipjHkMTrQgQOima49ZtQ9wSNo8AFilz5cRFLZkErmezm2dFvc5qIY2dbfdSynJz7cbnFnsBl/BPwdUBQFrbM5WZczHNFMqClLLsOJDD0SmGTspyyajaQi/ASm8RfsGRiJuIC8a0gmfd4LnD5QSzTGimG3zJZcggdtE8FbonMirsJjCMYFGji4s5Gz1XoE0fnlBlUb6nflwrX7WAW0NC0Iv/LR6F4WH93tTwoN0T5NofWQVvg4M7m8quPWd9qo+h4XmXKlb3CFH3xmf7xnJ9z0mjuhHpAeVNFTYwOmALPMqwsfz7vXiRW4sscgYQ3uIbwy65FYwV2tIcgqMXgtPVUXR1EYEyKOe/9WsjLIqKOGChkf7IiUW/fI8nqv0BQCI11GBqQVv1SFC6eAr0ncHiW9UqwDLgW4d+EVQ3Syemvi6rcnPB07/hA+YXofJe+SQ7b47LdnnPmUQLvLtHpw63llLcgfIYZSMtPMfL0twEA616wt8n8Xpc4HVxxMqYWzA3OJXHavVJt+R/x0X2DZk/p01PjI+iuTrhuxmANKeyk1zd6cSZMdYoVeTdm9aNBt5ALzUlo1czi1F4NChIY7L8cXlvvVKADfWTjUWHE98v2yXamLZLH2VS+rJHi24KWBjoZFrmn+EdhZFZrDXE5vbb2mxvqZXRNFL0NmZN7bqUk+W03qE40jGA+esf9uPLRMil0TRhyuYR/YGf7q3n6qGTxmEd0qMPgM="},{"n":5,"t":"D&oacute;nde vive el dato","c":"Bloque 6 &middot; en medio de &laquo;Laguna y bodega&raquo;","nq":3,"d":"UngNmEqsx4qhwLuln3M0SFfolXE0VnHTQFASqvz2NqFJl38onIU55U18maZqM8TlTcMoj5hvptddvvlOwpXuQYiLNzhFtPrtCV8k9owx9c/8TJree+ONoCuZDvsRCrjK80050FWzuGqd/QPjrHyHqLEHabDg+TtRhjYweLyPgNRMxVQmhBcULRRzqSMj10LMw0GrYFxAP2GimQQw+Vd8UGXRzRQ+G6KPBQPmA0pusxt3Uct18qeretmc+PIriUfwi/IErBBvqMMJj1VoPbnPKZyBHQ7YGAsEM+1zUR5aKE0hYJpFHpfuP6awAqNvRb3dFhZAw1SESa+Uy6attDAOXCfoNXjpBXpLgObKNUV2PLSmw2sIoUb+JEfza+2KpgFuQCDzJ3eQDraFmWCLEVUP8pmFuhKuEabaxeENH5Ax8WiOXwLvkdSRW1v01ou/EPJ/ka/yxLlWzVTes0doxg/f3xZAN3KyEZqo7O1r8HLMRtsvFqikvmd2Lt8H9G9yTdMqZfYbUtrOjy5jZI8WFiRh6XRzH7ZBP9rEma9iTZdOOV2CjbyJ5hypNQks6o1uCg3icVEyw5FKrvODBjdVuFfcT6EGK8pbH5LA++616BeVw4O7EuOALpDW8xAaRAXT1r1XIGXEMtnSdxp87FhhYG37bVxbzaZ3F8BAQ3082nrCP1V8g9+2TiyEOxUx498rjpwSKObpDjwF1huZ/Ba2BsqqVUkYTvAMgCj5RfpF+jEmumblxFzF+qOcL4d+RRyUFqpfFHTxySClulYQfJmKOLXy+k6JLfGuhNlQc5aUBNcZ0n3TXdXCBFcANgBowng72l1mmcwcI0EooDGvS0m8OL0D6nfAVxYDVk20UI4whQS+yNd5QDIAuLCF73/3oSN/A/kQ4Cqq38rLDRaNkAJIVYB/uNqyUKGUDvrdi3D/h1wiuoAgzTqHfu4EHVjpF/X/5/Knr26617gMoa26tjRII8ztWk+9fmSl5wHyr6dh5fG+whjr3wjXYZiV42OPZ/xTA1jd4Vo+Hb+vq43ayd3KlHx6mzH9HO+lXNKHR+lNNOWVM3/LOox6IP8XU4D5lqjhmjEIO5NGPDSB/62E3BlFm0/CLjPXtuirRtpzH+jcskYU1qSxf/8vDvQhvIu4j/LaoZKTfg=="},{"n":6,"t":"El remate","c":"Cierre &middot; con el marcador final","nq":1,"d":"ivpkw6AZ3hyg+CEbHK7Eha7Nf33fZxmLkJDNxpNc89eEPstgwyodkxhYr36+/uI/FbmqknT31Cc1K6UcX1Evc2k70qy7WP+YBxRdQhQpgGQIYOCVs/q21wurjEofAyZPEQxrO+qWRqmcgTSp7EnhR1t8Dw83rZUZflw7T8OJztCx3EZ16kNVbtpxKAftX2NG6YTXJBs773PO/qpuo6xGyZJoFeLLdyZfgpt/3HA3yqAyVZcv9UeAp/HxVRtTPLCKbDv4hT2bxtzSLwugzkQKyOE6EiqDgllMLJjDmLg90IQvm0wARZ1moYGTfJzW4kwLSZJHFXEF4p2H+RWWmu3vnxLrwivpUpC+Ovek5lk6bl2uZXacsacPFxJaQGrKBPBp9ZZBnGq4sh7a44PSXNft+ekDzgMBlTCZn5xmsAC6y12za+sq/RzdXy4h+71G17cLwIUhKYZD4i0SF30/hkCu/pobNaIeKnV5TBOxj4QhV8z+CnHCf6rMJkJKliPO9Zr8MnyFUhhcQYER9oplCQEz+prWphXS3hLFRF+LOg=="}];
-var CASOS  = [{"k":"abc","nombre":"Restaurante ABC","corto":"Doce mesas, dos turnos, la cuenta que se divide.","quien":"Lo que te cuenta la due&ntilde;a en media hora","pregunta":"&iquest;Qu&eacute; le preguntar&iacute;as a la due&ntilde;a?","relato":["<strong>Doce mesas</strong>, de 2, 4 y 6 puestos. Dos turnos: almuerzo y cena.","Se reserva por tel&eacute;fono y por WhatsApp. A veces la gente no llega.","La carta cambia cada temporada. Hay platos que se acaban a media noche.","Un pedido se toma en la mesa y se manda a cocina. Se puede a&ntilde;adir despu&eacute;s.","<strong>La cuenta se divide</strong>: cada uno paga lo suyo, o alguien invita.","Los ingredientes se compran a tres proveedores y algunos caducan r&aacute;pido.","Los meseros entran por turno y solo tocan sus propias mesas."],"alcance":"Solo <strong>lo que pasa en el local</strong>. Domicilios y pedidos para llevar <em>no se inventan</em>.","mias":[["Reservas o pedidos","&iquest;Qu&eacute; no puede pasar nunca con una reserva o un pedido?"],["Pagos o inventario","&iquest;Y con el dinero o con los ingredientes?"]],"f":"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"},{"k":"aula","nombre":"Aula Nueva","corto":"Una plataforma de cursos en l&iacute;nea. Cupos, pagos y certificados.","quien":"Lo que te cuenta la directora en media hora","pregunta":"&iquest;Qu&eacute; le preguntar&iacute;as a la directora?","relato":["Cada curso tiene <strong>cupo limitado</strong>, sesiones en vivo y material grabado.","La gente se matricula por la web. Paga con tarjeta o por transferencia, y <strong>la transferencia a veces llega dos d&iacute;as despu&eacute;s</strong>.","Hay convenios con empresas: la empresa paga y matricula a varios empleados de una vez.","Un estudiante puede retirarse la primera semana y se le devuelve el dinero.","Para el <strong>certificado</strong> hay que asistir a un m&iacute;nimo de sesiones y entregar el trabajo final.","Un profesor dicta varios cursos, y algunos cursos los dictan dos profesores.","El material grabado <strong>caduca</strong>: se ve hasta tres meses despu&eacute;s de terminar."],"alcance":"Solo <strong>lo que pasa en la plataforma</strong>. La contabilidad de la empresa y la publicidad <em>no se inventan</em>.","mias":[["Matr&iacute;cula o pagos","&iquest;Qu&eacute; no puede pasar nunca al matricularse o al pagar?"],["Asistencia o contenido","&iquest;Y con el certificado o con el material?"]],"f":"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"}];
-var TOTAL  = 15;
-var LT     = 'TALLER6';
-var LLAVE  = 'sesion6';
-var est = {resp:{}, abiertas:{}, clasif:{}, escrito:{}, caso:'abc'};
+var CASOS = [{"k":"abc","nombre":"Restaurante ABC","corto":"Doce mesas, dos turnos, la cuenta que se divide.","quien":"Lo que te cuenta la due&ntilde;a en media hora","pregunta":"&iquest;Qu&eacute; le preguntar&iacute;as a la due&ntilde;a?","relato":["<strong>Doce mesas</strong>, de 2, 4 y 6 puestos. Dos turnos: almuerzo y cena.","Se reserva por tel&eacute;fono y por WhatsApp. A veces la gente no llega.","La carta cambia cada temporada. Hay platos que se acaban a media noche.","Un pedido se toma en la mesa y se manda a cocina. Se puede a&ntilde;adir despu&eacute;s.","<strong>La cuenta se divide</strong>: cada uno paga lo suyo, o alguien invita.","Los ingredientes se compran a tres proveedores y algunos caducan r&aacute;pido.","Los meseros entran por turno y solo tocan sus propias mesas."],"alcance":"Solo <strong>lo que pasa en el local</strong>. Domicilios y pedidos para llevar <em>no se inventan</em>.","mias":[["Reservas o pedidos","&iquest;Qu&eacute; no puede pasar nunca con una reserva o un pedido?"],["Pagos o inventario","&iquest;Y con el dinero o con los ingredientes?"]],"f":"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"},{"k":"aula","nombre":"Aula Nueva","corto":"Una plataforma de cursos en l&iacute;nea. Cupos, pagos y certificados.","quien":"Lo que te cuenta la directora en media hora","pregunta":"&iquest;Qu&eacute; le preguntar&iacute;as a la directora?","relato":["Cada curso tiene <strong>cupo limitado</strong>, sesiones en vivo y material grabado.","La gente se matricula por la web. Paga con tarjeta o por transferencia, y <strong>la transferencia a veces llega dos d&iacute;as despu&eacute;s</strong>.","Hay convenios con empresas: la empresa paga y matricula a varios empleados de una vez.","Un estudiante puede retirarse la primera semana y se le devuelve el dinero.","Para el <strong>certificado</strong> hay que asistir a un m&iacute;nimo de sesiones y entregar el trabajo final.","Un profesor dicta varios cursos, y algunos cursos los dictan dos profesores.","El material grabado <strong>caduca</strong>: se ve hasta tres meses despu&eacute;s de terminar."],"alcance":"Solo <strong>lo que pasa en la plataforma</strong>. La contabilidad de la empresa y la publicidad <em>no se inventan</em>.","mias":[["Matr&iacute;cula o pagos","&iquest;Qu&eacute; no puede pasar nunca al matricularse o al pagar?"],["Asistencia o contenido","&iquest;Y con el certificado o con el material?"]],"f":"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"}];
+var LT    = 'TALLER6';
+var LLAVE = 'taller-s6';
+var est = {clasif:{}, escrito:{}, caso:'abc'};
 try{ var g = localStorage.getItem(LLAVE); if(g) est = JSON.parse(g); }catch(e){}
-['resp','abiertas','clasif','escrito'].forEach(function(k){ if(!est[k]) est[k] = {}; });
+['clasif','escrito'].forEach(function(k){ if(!est[k]) est[k] = {}; });
 if(!est.caso) est.caso = 'abc';
 function guarda(){ try{ localStorage.setItem(LLAVE, JSON.stringify(est)); }catch(e){} }
 
-function norm(c){ return (c||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
 function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
   h=Math.imul(h,16777619)>>>0; } return h||1; }
 function descifra(code, b64){
@@ -193,96 +135,6 @@ function descifra(code, b64){
   try{ return JSON.parse(txt.slice(4)); }catch(e){ return null; }
 }
 
-/* ===================== el concurso ===================== */
-function contestadas(){ return Object.keys(est.resp).length; }
-function aciertos(){ var n=0; for(var k in est.resp) if(est.resp[k].ok) n++; return n; }
-
-function pintaMarcador(){
-  var c = contestadas(), a = aciertos();
-  document.getElementById('mtexto').innerHTML = c === 0
-    ? 'El concurso empieza cuando el profesor diga el primer c&oacute;digo'
-    : '<b>' + a + '</b> ' + (a === 1 ? 'acierto' : 'aciertos') + ' de ' + c +
-      ' contestadas &middot; ' + TOTAL + ' en total';
-  document.getElementById('mpts').textContent = a + ' / ' + TOTAL;
-  var f = document.getElementById('final');
-  if(c >= TOTAL){ f.style.display = ''; document.getElementById('fbig').textContent = a + ' de ' + TOTAL; }
-  else { f.style.display = 'none'; }
-}
-
-function pintaPregunta(rid, idx, q){
-  var id = rid + '-' + idx;
-  var d = document.createElement('div'); d.className = 'preg';
-  var p = document.createElement('p'); p.className = 'en';
-  p.innerHTML = '<span class="i">' + (idx+1) + '</span>' + q.q;
-  d.appendChild(p);
-  var box = document.createElement('div'); box.className = 'ops';
-  var letras = ['A','B','C','D'], ya = est.resp[id];
-  q.o.forEach(function(txt, i){
-    var b = document.createElement('button'); b.className = 'op'; b.type = 'button';
-    b.innerHTML = '<span class="mk">' + letras[i] + '</span>' + txt;
-    if(ya){
-      b.disabled = true;
-      if(i === q.k) b.className = 'op ok';
-      else if(i === ya.e) b.className = 'op ko';
-    } else {
-      b.addEventListener('click', function(){
-        est.resp[id] = {e:i, ok:(i === q.k)}; guarda();
-        d.parentNode.replaceChild(pintaPregunta(rid, idx, q), d);
-        pintaMarcador();
-      });
-    }
-    box.appendChild(b);
-  });
-  d.appendChild(box);
-  if(ya){
-    var w = document.createElement('div'); w.className = 'porque';
-    w.innerHTML = (ya.ok ? '<b>Correcto.</b> ' : '<b>No era esa.</b> ') + q.w;
-    d.appendChild(w);
-  }
-  return d;
-}
-
-function abre(r, datos, cont){
-  cont.innerHTML = '';
-  datos.forEach(function(q, i){ cont.appendChild(pintaPregunta(r.n, i, q)); });
-  document.getElementById('ronda-' + r.n).className = 'ronda abierta';
-  pintaMarcador();
-}
-
-var pendientes = [];
-function pintaRonda(r){
-  var sec = document.createElement('section');
-  sec.className = 'ronda'; sec.id = 'ronda-' + r.n;
-  var h = document.createElement('div'); h.className = 'rh';
-  h.innerHTML = '<p class="num">Ronda ' + r.n + ' &middot; ' + r.nq +
-    (r.nq === 1 ? ' pregunta' : ' preguntas') + '</p><h3>' + r.t +
-    '</h3><p class="cuando">' + r.c + '</p>';
-  sec.appendChild(h);
-  var b = document.createElement('div'); b.className = 'rb'; sec.appendChild(b);
-  var gd = est.abiertas[r.n];
-  if(gd){ var d0 = descifra(gd, r.d); if(d0){ pendientes.push([r, d0, b]); return sec; } }
-  var wrap = document.createElement('div'); wrap.className = 'cerr';
-  wrap.innerHTML = '<p>&#128274; Cerrada. El c&oacute;digo lo dice el profesor cuando toca.</p>';
-  var inp = document.createElement('input');
-  inp.type = 'text'; inp.maxLength = 16; inp.placeholder = 'C\u00d3DIGO';
-  inp.setAttribute('aria-label', 'C\u00f3digo de la ronda ' + r.n);
-  var bt = document.createElement('button'); bt.className = 'principal';
-  bt.textContent = 'Abrir la ronda';
-  var er = document.createElement('p'); er.className = 'mal'; er.style.display = 'none';
-  er.textContent = 'Ese c\u00f3digo no abre esta ronda.';
-  function intenta(){
-    var c = norm(inp.value), d = c ? descifra(c, r.d) : null;
-    if(d){ est.abiertas[r.n] = c; guarda(); abre(r, d, b); }
-    else { er.style.display = ''; inp.select(); }
-  }
-  bt.addEventListener('click', intenta);
-  inp.addEventListener('keydown', function(e){ if(e.key === 'Enter') intenta(); });
-  wrap.appendChild(inp); wrap.appendChild(bt);
-  b.appendChild(wrap); b.appendChild(er);
-  return sec;
-}
-
-/* ======================== el taller ======================== */
 function caso(){ for(var i=0;i<CASOS.length;i++) if(CASOS[i].k === est.caso) return CASOS[i]; return CASOS[0]; }
 function frases(){ return descifra(LT, caso().f) || []; }
 
@@ -317,13 +169,11 @@ function marcadorTaller(){
   var e = document.getElementById('mclasif');
   e.textContent = hechas ? n + ' de ' + hechas + ' bien \u00b7 ' + fs.length + ' en total'
                          : 'Marca cada frase: o es una regla, o no lo es';
-  e.className = (hechas === fs.length && n === fs.length) ? 'estado ok' : 'estado';
 }
 
 function pintaFrases(){
   var cont = document.getElementById('frases'); cont.innerHTML = '';
-  var fs = frases();
-  fs.forEach(function(f, i){
+  frases().forEach(function(f, i){
     var mias = est.clasif[est.caso] || {}, v = mias[i];
     var d = document.createElement('div');
     d.className = 'frase' + (v === undefined ? '' : (v === f.k ? ' ok' : ' ko'));
@@ -386,13 +236,11 @@ function pintaTaller(){
   marcadorTaller(); vuelca();
 }
 
-/* ========================= salidas ========================= */
 function texto(){
   var c = caso(), fs = frases(), mias = est.clasif[est.caso] || {}, n = 0, hechas = 0;
   fs.forEach(function(f, i){ if(mias[i] !== undefined){ hechas++; if(mias[i] === f.k) n++; } });
   var d = est.escrito[est.caso] || {};
   var ls = ['SESION 6 \u00b7 ' + c.nombre.toUpperCase(), ''];
-  ls.push('Concurso ........ ' + aciertos() + ' de ' + TOTAL);
   ls.push('\u00bfEs una regla? .. ' + n + ' de ' + hechas + ' bien');
   ls.push('');
   ls.push('MIS DOS REGLAS');
@@ -422,15 +270,10 @@ document.getElementById('bajar').onclick = function(){
   avisa(this, 'Descargado');
 };
 document.getElementById('reiniciar').onclick = function(){
-  if(!window.confirm('Se borra todo: el concurso y el taller. No se puede deshacer.')) return;
-  est = {resp:{}, abiertas:{}, clasif:{}, escrito:{}, caso:'abc'}; guarda(); location.reload();
+  if(!window.confirm('Se borra el taller entero. No se puede deshacer.')) return;
+  est = {clasif:{}, escrito:{}, caso:'abc'}; guarda(); location.reload();
 };
 
-/* ========================= arranque ========================= */
-var cont = document.getElementById('rondas');
-RONDAS.forEach(function(r){ cont.appendChild(pintaRonda(r)); });
-pendientes.forEach(function(p){ abre(p[0], p[1], p[2]); });
-pintaMarcador();
 pintaTaller();
 </script>
 </body></html>

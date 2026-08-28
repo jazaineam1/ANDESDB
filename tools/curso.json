@@ -132,13 +132,13 @@
       "estado": "curso",
       "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
       "recursos": [
-        {"txt": "🏆 Tu página de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"},
+        {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"},
         {"txt": "🗄️ La base de datos (archivo)", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true}
       ],
       "sesiones": [
         {
           "n": 6,
-          "fecha": "2026-08-27",
+          "fecha": "2026-08-28",
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Reglas de negocio",
@@ -148,7 +148,7 @@
           "tags": ["reglas de negocio", "OLTP", "OLAP", "data lake", "data warehouse", "ETL / ELT"],
           "recursos": [
             {"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S6.sql", "download": true},
-            {"txt": "🏆 Tu página de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
+            {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
           ]
         },
         {
@@ -289,6 +289,6 @@
   "materialesHoy": [
     {"txt": "🗄️ La base de datos", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true},
     {"txt": "📜 Las consultas de la clase", "href": "Scripts/S6.sql", "download": true},
-    {"txt": "🏆 Tu página de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
+    {"txt": "📋 El taller de la sesión", "href": "Presentaciones/M3/taller-sesion-6.html"}
   ]
 }

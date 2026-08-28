@@ -29,14 +29,20 @@ MAX_OPCION = 60
 
 # Las cuatro partidas: que rondas lleva cada una y cuando se lanza.
 PARTIDAS = [
-    dict(letra='A', nombre='Leer sin sobreinterpretar', rondas=[1, 2],
-         cuando='minuto ~52, al cerrar el bloque 1'),
-    dict(letra='B', nombre='Que es una regla', rondas=[3],
-         cuando='minuto ~88, justo antes de la pausa'),
+    dict(letra='A', nombre='Los cuatro niveles', rondas=[1],
+         cuando='minuto ~27, ANTES del Taller 1',
+         porque='Los tres estudiantes simulados fallaron el Taller 1 por no separar '
+                'permiso de patron. Preguntarlo antes convierte el fallo en leccion.'),
+    dict(letra='B', nombre='El esquema y la regla', rondas=[2, 3],
+         cuando='minuto ~88, justo antes de la pausa',
+         porque='Cierra el bloque del esquema y ensaya el taller que viene despues.'),
     dict(letra='C', nombre='OLTP u OLAP', rondas=[4],
-         cuando='minuto ~148, en lugar del Taller 4'),
+         cuando='minuto ~148, en lugar del Taller 4',
+         porque='Sustituye al taller que ya existia: mismas cuatro situaciones.'),
     dict(letra='D', nombre='Donde vive el dato', rondas=[5, 6],
-         cuando='minuto ~170, en el tramo final'),
+         cuando='minuto ~170, en el tramo final',
+         porque='Es el tramo que los tres estudiantes senalaron como el mas muerto '
+                'de la noche: veinticuatro minutos de exposicion a las 8:35.'),
 ]
 
 

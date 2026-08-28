@@ -18,7 +18,7 @@
   },
   "sesiones": {
     "6": {
-      "fecha": "2026-08-27",
+      "fecha": "2026-08-28",
       "titulo": "Reglas de negocio",
       "duracion_util": 165,
       "modo": "guiada",
@@ -53,12 +53,13 @@
         "modo": "manual"
       },
       "actividad": {
-        "titulo": "Leer la base sin inventar reglas",
-        "minutos": 35,
-        "instrucciones": "Ejecuta las consultas del Taller 1, clasifica cada hallazgo como restricción, permiso, patrón o hipótesis y completa ocho reglas del Restaurante ABC.",
+        "titulo": "Reconocer una regla antes de escribirla",
+        "minutos": 12,
+        "instrucciones": "Ejecuta las consultas del Taller 1 y clasifica cada hallazgo como restricción, permiso, patrón o hipótesis. Después, en tu página de la sesión, marca con un clic cuáles de las doce frases del Restaurante ABC son reglas y cuáles no, y escribe dos reglas propias.",
         "criterios": [
-          "clasifica los 4 hallazgos",
-          "redacta 8 reglas comprobables",
+          "clasifica los 4 hallazgos del Taller 1",
+          "marca las 12 frases y entiende por qué falló las que falló",
+          "redacta 2 reglas comprobables, con sujeto y verbo de prohibición",
           "deja al menos 1 pregunta pendiente"
         ]
       }
