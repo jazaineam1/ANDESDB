@@ -12,6 +12,11 @@ on:
       - 'Scripts/**'
       - 'manifest.webmanifest'
       - 'service-worker.js'
+      - '.gitignore'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'docs/**'
+      - '.github/copilot-instructions.md'
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/workflows/validar-curso.yml'
 
@@ -25,6 +30,11 @@ jobs:
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ejecutar contrato pre-push de IA
+        run: python tools/pre_push_check.py
 
       - name: Validar estructura, pedagogía y recursos
         run: python tools/validar_curso.py
@@ -34,6 +44,10 @@ jobs:
           node --check assets/learning/learning-core.js
           node --check assets/pwa-install.js
           node --check service-worker.js
+          node --check Presentaciones/M3/sql-lab-s6.js
+          if [ -f assets/learning/analytics-fallback-link.js ]; then
+            node --check assets/learning/analytics-fallback-link.js
+          fi
 
       - name: Comprobar que la portada se puede regenerar
         run: |
