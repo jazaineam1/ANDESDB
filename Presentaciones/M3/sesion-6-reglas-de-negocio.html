@@ -727,7 +727,7 @@ FROM   pragma_table_info('rental');</pre>
 <div class="brand"><span>Bloque 1 &middot; Leer sin sobreinterpretar</span><span>Lo obligatorio y lo opcional son decisiones</span></div>
 </section>
 <section class="slide dense mid" data-title="Taller 1">
-<div class="ey">Taller 1 &middot; 10 minutos &middot; individual</div>
+<div class="ey">Taller 1 &middot; 12 minutos &middot; individual</div>
 <h2>Cuatro consultas: qu&eacute; demuestran y qu&eacute; no</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Las consultas te las doy hechas.</strong> Para cada una escribe <strong>dos cosas</strong>: la frase que sale de ella, y <strong>de qu&eacute; nivel es</strong> &mdash; restricci&oacute;n, permiso, patr&oacute;n o hip&oacute;tesis.</div>
@@ -819,7 +819,7 @@ SELECT COUNT(*) FROM (
 <div class="brand"><span>Bloque 2 &middot; Lo que el dato no dice</span><span>La base no decide por ti</span></div>
 </section>
 <section class="slide xdense mid" data-title="Taller 2">
-<div class="ey">Taller 2 &middot; 6 minutos &middot; se contesta por el chat</div>
+<div class="ey">Taller 2 &middot; 7 minutos &middot; se contesta por el chat</div>
 <h2>Pon el nivel a cada hallazgo</h2>
 <p class="lead" style="max-width:none">Seis hallazgos reales de esta base. Para cada uno, una letra: <strong>R</strong> restricci&oacute;n implementada &middot; <strong>P</strong> permiso del esquema &middot; <strong>O</strong> patr&oacute;n observado &middot; <strong>H</strong> hip&oacute;tesis.</p>
 <table class="res" style="margin-top:.7em"><caption>Escribe en el chat las seis letras seguidas &mdash; por ejemplo <code>P O H H O R</code></caption>
@@ -868,7 +868,7 @@ SELECT COUNT(*) FROM (
 <div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Sujeto, prohibici&oacute;n y forma de comprobarla</span></div>
 </section>
 <section class="slide yellow dense mid" data-title="Concurso 1">
-<div class="ey">Concurso &middot; partida 1 &middot; 7 minutos</div>
+<div class="ey">Concurso &middot; partida 1 &middot; 8 minutos</div>
 <h2>&#127942; Leer sin sobreinterpretar</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Entra en wayground.com</strong> con el PIN de la pantalla compartida. Sirve el tel&eacute;fono. <strong>Usa el mismo apodo</strong> en las dos partidas de hoy, o el marcador final no se puede sumar.</div>
@@ -886,27 +886,6 @@ WHERE  name = 'return_date';           -- 0 = admite vac&iacute;o
 -- Y tu archivo no tiene ni una clave for&aacute;nea
 SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="small" style="margin-top:.6em"><strong>Las otras dos no se comprueban con SQL, y por eso importan.</strong> Que los 1.452 alquileres no tengan pago <em>se cuenta</em>; que fueran una promoci&oacute;n, no sale de ninguna consulta. Y que el pago sobreviva al alquiler es <strong>falso</strong>: <code>rental_id</code> es <code>NOT NULL</code>, as&iacute; que el borrado falla.</p></div></div></div>
 <div class="brand"><span>Concurso &middot; partida 1</span><span>Comprobar, no creer</span></div>
-</section>
-<section class="slide mid " data-title="Calentamiento">
-<div class="ey">Bloque 3 &middot; 5 minutos &middot; lo hacemos juntos</div>
-<h2>Cuatro reglas de un restaurante, en voz alta</h2>
-<p class="lead" style="max-width:none">Un ensayo antes del taller grande. Para cada &aacute;rea, alguien dice una regla y entre todos la arreglamos hasta que pase las cuatro pruebas.</p>
-<div class="g2" style="margin-top:.9em">
-<div><div class="hintbox" style="margin:0"><strong>Las cuatro &aacute;reas</strong><ul>
-<li>&#128197; <strong>Reservas</strong> &mdash; mesas, horarios, personas</li>
-<li>&#127869; <strong>Pedidos</strong> &mdash; qu&eacute; se pide y a qu&eacute; mesa</li>
-<li>&#128179; <strong>Pagos</strong> &mdash; cu&aacute;nto, c&oacute;mo y cu&aacute;ndo</li>
-<li>&#129387; <strong>Inventario</strong> &mdash; ingredientes y caducidades</li>
-</ul></div></div>
-<div data-r><p><strong>Lo que suele salir, y c&oacute;mo queda al arreglarlo:</strong></p>
-<table class="res"><tr><th>Un requisito de datos</th><th>Una regla</th></tr>
-<tr><td>Registrar cada reserva con fecha, hora, personas y cliente.</td><td class="hl">Una mesa no puede tener dos reservas que se solapen en el tiempo.</td></tr>
-<tr><td>Registrar cada pedido con mesa, platos y estado.</td><td class="hl">Un pedido no puede enviarse a cocina sin al menos un plato.</td></tr>
-<tr><td>Registrar cada pago con monto, m&eacute;todo y fecha.</td><td class="hl">Un pedido no puede cerrarse sin pago.</td></tr>
-<tr><td>Registrar cada ingrediente con cantidad y vencimiento.</td><td class="hl">Un ingrediente vencido no puede usarse en ning&uacute;n plato.</td></tr>
-</table>
-<p class="small" style="margin-top:.6em">La izquierda dice <strong>qu&eacute; campos guardar</strong>. La derecha dice <strong>qu&eacute; no se permite</strong>. Solo la segunda es una regla.</p></div></div>
-<div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Campos no, prohibiciones s&iacute;</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
@@ -936,7 +915,7 @@ SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="sm
 <div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Del relato a las frases</span></div>
 </section>
 <section class="slide tiny mid" data-title="Taller 3">
-<div class="ey">Taller 3 &middot; 8 minutos &middot; se contesta aqu&iacute; mismo</div>
+<div class="ey">Taller 3 &middot; 10 minutos &middot; se contesta aqu&iacute; mismo</div>
 <h2>&iquest;Es una regla, o solo lo parece?</h2>
 <p class="lead" style="max-width:none">Doce frases sobre el Restaurante ABC. Para cada una, un clic:
 <strong>o es una regla de negocio, o no lo es</strong>. Seis lo son. Las que no, son listas de campos,
@@ -949,7 +928,7 @@ deseos o datos. <span class="marc" id="frMarc">0 contestadas</span></p>
 <div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Reconocerla antes de escribirla</span></div>
 </section>
 <section class="slide tiny mid" data-title="Las diez de referencia">
-<div class="ey">Taller 3 &middot; contraste &middot; 6 minutos</div>
+<div class="ey">Taller 3 &middot; contraste &middot; 7 minutos</div>
 <h2>Diez reglas que aguantan el examen</h2>
 <p class="lead" style="max-width:none"><strong>No es la respuesta correcta: es una lista de referencia.</strong> Compara con las tuyas y busca dos cosas: alguna que se te haya escapado, y alguna tuya que est&eacute; mejor escrita que la m&iacute;a.</p>
 <div class="g2" style="margin-top:.7em">
@@ -975,7 +954,7 @@ deseos o datos. <span class="marc" id="frMarc">0 contestadas</span></p>
 <div class="brand"><span>Bloque 4 &middot; Restaurante ABC</span><span>Una lista de referencia, no la respuesta</span></div>
 </section>
 <section class="slide dense mid" data-title="Corrige y publica">
-<div class="ey">Taller 3 &middot; correcci&oacute;n &middot; 7 minutos</div>
+<div class="ey">Taller 3 &middot; correcci&oacute;n &middot; 10 minutos</div>
 <h2>Arregla dos y qu&eacute;date con las dos versiones</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Vuelve a las que fallaste y m&iacute;ralas de nuevo.</strong> Casi siempre es lo mismo: falta un verbo de obligaci&oacute;n, o el sujeto era &laquo;el sistema&raquo;, o la frase ya estaba dise&ntilde;ando tablas. Ahora escribe <b>una</b> tuya, en el chat, con esas tres pruebas en la cabeza.</div>
@@ -1072,7 +1051,7 @@ deseos o datos. <span class="marc" id="frMarc">0 contestadas</span></p>
 <div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>A fondo en la sesi&oacute;n 12</span></div>
 </section>
 <section class="slide yellow dense mid" data-title="Concurso 2">
-<div class="ey">Concurso &middot; partida 2 &middot; 7 minutos</div>
+<div class="ey">Concurso &middot; partida 2 &middot; 8 minutos</div>
 <h2>&#127942; Operar, analizar y guardar</h2>
 <div class="g2">
 <div><div class="ctx" style="margin:0"><strong>Segundo PIN, mismo apodo.</strong> Al terminar, el marcador de las dos partidas se suma y se lee en voz alta.</div>

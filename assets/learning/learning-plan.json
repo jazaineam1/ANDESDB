@@ -54,7 +54,7 @@
       },
       "actividad": {
         "titulo": "Reconocer una regla antes de escribirla",
-        "minutos": 8,
+        "minutos": 10,
         "instrucciones": "Ejecuta las consultas del Taller 1 y clasifica cada hallazgo como restricción, permiso, patrón o hipótesis — recordando que el hecho es un patrón y su explicación una hipótesis. Después, en la propia presentación, marca con un clic cuáles de las doce frases del Restaurante ABC son reglas de negocio y cuáles no.",
         "criterios": [
           "clasifica los 4 hallazgos del Taller 1 separando el hecho de su explicación",
