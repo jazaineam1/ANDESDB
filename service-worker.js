@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v3-android-maskable-20260828';
+const VERSION = 'andesdb-v4-ruta-simple-20260828';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -37,7 +37,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k.startsWith('andesdb-') && ![CORE, RUNTIME].includes(k)).map(k => caches.delete(k)));
+    await Promise.all(
+      keys
+        .filter(k => k.startsWith('andesdb-') && ![CORE, RUNTIME].includes(k))
+        .map(k => caches.delete(k))
+    );
     await self.clients.claim();
   })());
 });
@@ -53,7 +57,9 @@ async function networkFirst(request) {
   const cache = await caches.open(RUNTIME);
   try {
     const fresh = await fetch(request);
-    if (fresh.ok && shouldCache(new URL(request.url))) cache.put(request, fresh.clone());
+    if (fresh.ok && shouldCache(new URL(request.url))) {
+      await cache.put(request, fresh.clone());
+    }
     return fresh;
   } catch (_) {
     const cached = await caches.match(request);
@@ -69,7 +75,7 @@ async function cacheFirst(request) {
     fetch(request).then(async fresh => {
       if (fresh.ok && shouldCache(new URL(request.url))) {
         const cache = await caches.open(RUNTIME);
-        cache.put(request, fresh.clone());
+        await cache.put(request, fresh.clone());
       }
     }).catch(() => {});
     return cached;
@@ -77,7 +83,7 @@ async function cacheFirst(request) {
   const fresh = await fetch(request);
   if (fresh.ok && shouldCache(new URL(request.url))) {
     const cache = await caches.open(RUNTIME);
-    cache.put(request, fresh.clone());
+    await cache.put(request, fresh.clone());
   }
   return fresh;
 }
@@ -89,8 +95,11 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:learning\/learning-core\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet)$/i.test(url.pathname);
 
-  if (isDocument) event.respondWith(networkFirst(request));
+  // La interfaz pedagógica cambia con frecuencia: preferimos la versión de red
+  // y usamos la caché solo si la conexión falla.
+  if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
   else if (isAsset) event.respondWith(cacheFirst(request));
 });
