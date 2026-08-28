@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Inyecta la capa común de aprendizaje en el sitio.
 
-- index.html: manifiesto PWA + learning-core.js
+- index.html: metadatos PWA + instalador visible + learning-core.js
 - sesiones HTML S6-S16: learning-core.js con ruta relativa correcta
 - S12-S14: enlace contextual al laboratorio analítico local
 - S2-S5 se dejan intactas deliberadamente.
@@ -16,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
+PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
 
 
@@ -38,14 +39,28 @@ def process_index() -> bool:
         return False
     text = path.read_text(encoding="utf-8")
     changed = False
-    manifest = '<link rel="manifest" href="manifest.webmanifest">'
-    if manifest not in text:
-        text, ok = inject_before(text, "</head>", manifest)
-        changed |= ok
-    script = '<script src="assets/learning/learning-core.js"></script>'
-    if script not in text:
-        text, ok = inject_before(text, "</body>", script)
-        changed |= ok
+
+    head_fragments = [
+        '<link rel="manifest" href="manifest.webmanifest">',
+        '<meta name="theme-color" content="#171717">',
+        '<meta name="mobile-web-app-capable" content="yes">',
+        '<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/andesdb-192.png">',
+        '<link rel="apple-touch-icon" sizes="192x192" href="assets/icons/andesdb-192.png">',
+    ]
+    for fragment in head_fragments:
+        if fragment not in text:
+            text, ok = inject_before(text, "</head>", fragment)
+            changed |= ok
+
+    body_scripts = [
+        '<script src="assets/pwa-install.js"></script>',
+        '<script src="assets/learning/learning-core.js"></script>',
+    ]
+    for fragment in body_scripts:
+        if fragment not in text:
+            text, ok = inject_before(text, "</body>", fragment)
+            changed |= ok
+
     if changed:
         path.write_text(text, encoding="utf-8")
     return changed
