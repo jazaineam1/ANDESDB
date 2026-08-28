@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Inyecta la capa común de aprendizaje en el sitio.
+"""Integra la experiencia común de ANDESDB.
 
-- index.html: metadatos PWA + instalador visible + learning-core.js
-- sesiones HTML S6-S16: learning-core.js con ruta relativa correcta
-- S12-S14: enlace contextual al laboratorio analítico local
+- index.html: metadatos PWA + instalador visible.
+- S9, S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
+- S12-S14: enlace contextual al laboratorio analítico local.
+- S6 conserva únicamente su laboratorio SQL específico.
+- S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
 - S2-S5 se dejan intactas deliberadamente.
 
 Es idempotente: puede ejecutarse en cada build.
@@ -18,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
 PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
+TECHNICAL_DIFFERENTIATION = {9, 11, 12, 13, 14, 15}
 
 
 def relative_url(from_file: Path, target: Path) -> str:
@@ -31,6 +34,16 @@ def inject_before(text: str, marker: str, fragment: str) -> tuple[str, bool]:
     if pos < 0:
         return text, False
     return text[:pos] + fragment + "\n" + text[pos:], True
+
+
+def remove_learning_script(text: str) -> tuple[str, bool]:
+    """Retira cualquier carga antigua de learning-core.js."""
+    pattern = re.compile(
+        r"\s*<script\s+[^>]*src=[\"'][^\"']*learning-core\.js(?:\?[^\"']*)?[\"'][^>]*>\s*</script>\s*",
+        re.I,
+    )
+    new = pattern.sub("\n", text)
+    return new, new != text
 
 
 def process_index() -> bool:
@@ -52,14 +65,15 @@ def process_index() -> bool:
             text, ok = inject_before(text, "</head>", fragment)
             changed |= ok
 
-    body_scripts = [
-        '<script src="assets/pwa-install.js"></script>',
-        '<script src="assets/learning/learning-core.js"></script>',
-    ]
-    for fragment in body_scripts:
-        if fragment not in text:
-            text, ok = inject_before(text, "</body>", fragment)
-            changed |= ok
+    # La portada instala la PWA, pero ya no mantiene progreso personal ni carga
+    # la capa de práctica técnica.
+    text, removed = remove_learning_script(text)
+    changed |= removed
+
+    installer = '<script src="assets/pwa-install.js"></script>'
+    if installer not in text:
+        text, ok = inject_before(text, "</body>", installer)
+        changed |= ok
 
     if changed:
         path.write_text(text, encoding="utf-8")
@@ -77,15 +91,20 @@ def process_session(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
     changed = False
 
-    if "learning-core.js" not in text:
-        src = relative_url(path, LEARNING)
-        text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
-        changed |= ok
+    if n in TECHNICAL_DIFFERENTIATION:
+        if "learning-core.js" not in text:
+            src = relative_url(path, LEARNING)
+            text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+            changed |= ok
+    else:
+        text, removed = remove_learning_script(text)
+        changed |= removed
 
-    if 12 <= n <= 14 and "analytics-fallback-link.js" not in text:
-        src = relative_url(path, ANALYTICS_FALLBACK)
-        text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
-        changed |= ok
+    if 12 <= n <= 14:
+        if "analytics-fallback-link.js" not in text:
+            src = relative_url(path, ANALYTICS_FALLBACK)
+            text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+            changed |= ok
 
     if changed:
         path.write_text(text, encoding="utf-8")
