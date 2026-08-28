@@ -14,9 +14,9 @@
       id: 'schema-rental',
       label: 'Esquema rental',
       marker: "pragma_table_info('rental')",
-      sql: `SELECT name, "notnull"\nFROM pragma_table_info('rental');`,
+      sql: `SELECT 'rental' AS tabla, name, "notnull" AS obligatorio\nFROM pragma_table_info('rental')\nUNION ALL\nSELECT 'payment', name, "notnull"\nFROM pragma_table_info('payment');`,
       level: null,
-      explanation: 'Esta consulta no mira filas del negocio: mira la forma de la tabla. Un NOT NULL es una restricción implementada; una columna que admite NULL expresa un permiso del esquema.'
+      explanation: 'Compara las dos tablas. En rental todo es obligatorio menos return_date: se puede empezar un alquiler sin saber cuando acaba. En payment no falta ni una, ni el importe: un pago no puede quedar a medias. El mismo equipo decidio las dos cosas, y eso es el negocio hablando, no un descuido.'
     },
     {
       id: 'special-features',
