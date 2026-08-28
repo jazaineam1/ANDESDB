@@ -13,8 +13,8 @@
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "nucleoRetoDesde": 6,
-    "progresoLocalDesde": 6,
+    "diferenciacionTecnicaSesiones": [9, 11, 12, 13, 14, 15],
+    "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
     "sesionesAutonomas": [7, 10, 13],
@@ -170,8 +170,7 @@
           "titulo": "Modelado y normalización",
           "estado": "pendiente",
           "desc": "Dependencias, redundancia y normalización sin perder las reglas del negocio.",
-          "tags": ["1FN", "2FN", "3FN", "dependencias", "modelo relacional"],
-          "recursos": [{"txt": "📊 Material heredado de normalización", "href": "Presentaciones/M3/Clase3/M3C3%20V2%20Modelado%20y%20Normalizacio%CC%81n.pptx", "download": true}]
+          "tags": ["1FN", "2FN", "3FN", "dependencias", "modelo relacional"]
         },
         {
           "n": 9,
@@ -181,8 +180,7 @@
           "titulo": "DDL + Azure SQL",
           "estado": "pendiente",
           "desc": "Convertir el modelo en CREATE TABLE y restricciones; comparar y mostrar la familia Azure SQL en servicio real.",
-          "tags": ["CREATE TABLE", "PK", "FK", "CHECK", "Azure SQL Database", "Managed Instance", "Azure VM"],
-          "recursos": [{"txt": "📊 Material heredado de DDL", "href": "Presentaciones/M3/Clase4/M3C4%20V2%20-%20SQL%20para%20creacio%CC%81n%20de%20tablas.pptx", "download": true}]
+          "tags": ["CREATE TABLE", "PK", "FK", "CHECK", "Azure SQL Database", "Managed Instance", "Azure VM"]
         }
       ]
     },
@@ -191,9 +189,7 @@
       "titulo": "Más allá de las tablas: NoSQL",
       "estado": "pendiente",
       "desc": "Elegir NoSQL por requisitos y practicar documentos en servicios reales.",
-      "recursos": [
-        {"txt": "📊 Introducción heredada a NoSQL", "href": "Presentaciones/M4/M4C1%20V4%20Introduccio%CC%81n%20a%20bases%20NoSQL.pptx", "download": true}
-      ],
+      "recursos": [],
       "sesiones": [
         {
           "n": 10,
@@ -214,8 +210,7 @@
           "titulo": "Firestore + Azure Cosmos DB",
           "estado": "pendiente",
           "desc": "Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.",
-          "tags": ["Firestore", "Cosmos DB", "documentos", "partition key", "Azure Storage"],
-          "recursos": [{"txt": "📄 Ejercicio heredado Firebase", "href": "Presentaciones/M4/M4C1%20Ejercicio%20Firebase.docx", "download": true}]
+          "tags": ["Firestore", "Cosmos DB", "documentos", "partition key", "Azure Storage"]
         }
       ]
     },
@@ -245,8 +240,7 @@
           "titulo": "Laboratorio BigQuery",
           "estado": "pendiente",
           "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
-          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"],
-          "recursos": [{"txt": "📊 Laboratorio heredado BigQuery", "href": "Presentaciones/M5/M5C2%20V1%20Laboratorios%20Big%20Query.pptx", "download": true}]
+          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"]
         },
         {
           "n": 14,
@@ -256,8 +250,7 @@
           "titulo": "BigQuery anidados + mapa Azure",
           "estado": "pendiente",
           "desc": "Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.",
-          "tags": ["nested", "JSON", "Parquet", "BigQuery", "Power BI", "Azure analytics"],
-          "recursos": [{"txt": "📊 Laboratorio heredado", "href": "Presentaciones/M5/M5C3%20V1%20Laboratorios.pptx", "download": true}]
+          "tags": ["nested", "JSON", "Parquet", "BigQuery", "Power BI", "Azure analytics"]
         }
       ]
     },
@@ -266,9 +259,7 @@
       "titulo": "Desafío final y consolidación",
       "estado": "pendiente",
       "desc": "Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.",
-      "recursos": [
-        {"txt": "📄 Taller final integrador", "href": "Presentaciones/M6/Taller%20final%20integrador%20-%20D%C3%ADa%201.pdf"}
-      ],
+      "recursos": [],
       "sesiones": [
         {
           "n": 15,
@@ -294,7 +285,7 @@
       ]
     }
   ],
-  "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde la sesión 6 cada clase tiene Núcleo, Reto, progreso local y recuperación DP-900.",
+  "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
   "materialesHoy": [
     {"txt": "🗄️ La base de datos", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true},
     {"txt": "📜 Las consultas de la clase", "href": "Scripts/S6.sql", "download": true},
