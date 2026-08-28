@@ -27,12 +27,14 @@ button.principal:hover{background:#0e3f61}
 button.borrar{color:var(--r);border-color:#f0c8cc}
 .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:1.1rem;align-items:start;margin-top:.6rem}
 .box{background:var(--s);border-radius:12px;padding:.95rem 1.1rem}
-.box.warn{background:#fff4e0;border-left:5px solid var(--o)}
 .box h3{margin:0 0 .45rem;font-size:1rem}
 .box ul{margin:.35rem 0 0;padding-left:1.15rem}
 .box li{margin:.35rem 0;font-size:.93rem}
 .frase{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;
-  border:2px solid var(--line);border-radius:11px;padding:.62rem .8rem;margin:.42rem 0}
+  border:1.5px solid var(--line);border-radius:11px;padding:.5rem .8rem;margin:.3rem 0;
+  background:#fff;transition:background .12s}
+.frase:nth-child(even){background:#fafbfc}
+.frase:hover{border-color:#c3ced8}
 .frase.ok{border-color:var(--g);background:#e8f5e9}
 .frase.ko{border-color:var(--r);background:#fdecee}
 .frase .txt{font-size:.98rem}
@@ -48,6 +50,24 @@ button.borrar{color:var(--r);border-color:#f0c8cc}
   padding:.6rem .75rem;border:2px solid var(--line);border-radius:10px;resize:vertical;
   color:var(--ink);background:#fff}
 .mia textarea:focus{outline:none;border-color:var(--b)}
+.tira{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+.tira span{font-size:.82rem;font-weight:600;color:var(--soft);background:var(--s);
+  border:1.5px solid var(--line);border-radius:var(--pill);padding:.3em .8em}
+h2 .paso{display:inline-grid;place-items:center;min-width:1.7em;height:1.7em;padding:0 .45em;
+  border-radius:999px;background:var(--b);color:#fff;font-size:.72em;font-weight:800;
+  margin-right:.55em;vertical-align:.12em}
+.box.relato{margin-top:.6rem}
+.box.relato ul{columns:2;column-gap:1.6rem;margin:.4rem 0 0}
+.box.relato li{break-inside:avoid;margin:.32rem 0}
+.alcance{margin:.6rem 0 0;padding:.7rem .95rem;font-size:.92rem;
+  background:#fff4e0;border-left:5px solid var(--o);border-radius:10px}
+@media(max-width:680px){.box.relato ul{columns:1}}
+.porque-bajar{width:100%;margin:.55rem 0 0;font-size:.85rem;color:var(--soft)}
+.pruebas{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem}
+.prueba{font-size:.8rem;font-weight:700;padding:.24em .7em;border-radius:var(--pill);
+  background:#eef1f4;color:var(--soft);border:1.5px solid transparent}
+.prueba.si{background:#e8f5e9;color:#1b5e20;border-color:#a5d6a7}
+.prueba.no{background:#fdecee;color:#8e1119;border-color:#f0b8bd;cursor:help}
 .niveles{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.45rem}
 .niveles .etq{font-size:.87rem;color:var(--soft);margin-right:.2rem}
 button.niv{padding:.4em .85em;font-size:.86rem;font-weight:700;border-radius:var(--pill)}
@@ -69,34 +89,31 @@ button.niv.sel.n-hiptesis{background:var(--r);border-color:var(--r);color:#fff}
 <div class="sheet">
   <div class="head">
     <h1>El taller de la sesi&oacute;n 6</h1>
-    <p class="sub">Reglas de negocio. Primero <strong>reconocerlas</strong> con un clic;
-    solo despu&eacute;s, <strong>escribir dos</strong>. Lo que escribas aqu&iacute; es el
-    material de la sesi&oacute;n 7, y se guarda en este navegador para que no lo pierdas
-    si se te cae la conexi&oacute;n. <em>El concurso se juega aparte, en Wayground.</em>
-    Esta p&aacute;gina es <strong>tuya</strong>: no se entrega, se guarda &mdash; la vas a
-    necesitar delante el martes.</p>
+    <p class="sub">Primero <strong>reconocer</strong> una regla con un clic. Solo despu&eacute;s,
+    <strong>escribir dos</strong>.</p>
+    <div class="tira">
+      <span>&#128190; Se guarda solo en este navegador</span>
+      <span>&#128274; No se entrega: es tuya</span>
+      <span>&#128197; La necesitas el martes, en la sesi&oacute;n 7</span>
+      <span>&#127942; El concurso va aparte, en Wayground</span>
+    </div>
   </div>
 
-  <h2>El encargo<span class="lead">Media hora de conversaci&oacute;n con la due&ntilde;a
+  <h2><b class="paso">1</b>El encargo<span class="lead">Media hora de conversaci&oacute;n con la due&ntilde;a
   del Restaurante ABC. Este caso vuelve en las sesiones 7 a 12: lo que escribas hoy
   es con lo que vas a modelar.</span></h2>
-  <div class="grid">
-    <div class="box">
-      <h3 id="relato-h">&mdash;</h3>
-      <ul id="relato"></ul>
-    </div>
-    <div class="box warn">
-      <h3>El alcance de hoy</h3>
-      <p id="alcance" style="margin:0;font-size:.93rem"></p>
-      <p style="margin:.65rem 0 0;font-size:.93rem">Si algo no te lo han contado,
-      <strong>no lo supongas</strong>. Una pregunta bien hecha vale tanto como una regla.</p>
-    </div>
+  <div class="box relato">
+    <h3 id="relato-h">&mdash;</h3>
+    <ul id="relato"></ul>
   </div>
+  <p class="alcance"><strong>El alcance de hoy:</strong> <span id="alcance"></span>
+  Y si algo no te lo han contado, <strong>no lo supongas</strong>: una pregunta bien hecha
+  vale tanto como una regla.</p>
 
-  <h2>&iquest;Es una regla?<span class="lead" id="mclasif">&mdash;</span></h2>
+  <h2><b class="paso">2</b>&iquest;Es una regla?<span class="lead" id="mclasif">&mdash;</span></h2>
   <div id="frases"></div>
 
-  <h2>Ahora dos tuyas<span class="lead">Sujeto concreto, una condici&oacute;n, obligaci&oacute;n
+  <h2><b class="paso">3</b>Ahora dos tuyas<span class="lead">Sujeto concreto, una condici&oacute;n, obligaci&oacute;n
   o acci&oacute;n expl&iacute;cita, y una forma de comprobarla. Para cada una, indica
   <strong>cu&aacute;nto respaldo tiene</strong>. Al final guarda tambi&eacute;n la pregunta que
   el dato no puede responder.</span></h2>
@@ -111,6 +128,9 @@ button.niv.sel.n-hiptesis{background:var(--r);border-color:var(--r);color:#fff}
     <button class="principal" id="copiar">Copiar mi trabajo</button>
     <button id="bajar">Descargar como texto</button>
     <span class="estado" id="mestado"></span>
+    <p class="porque-bajar">Lo escrito vive en <em>este</em> navegador. Si el martes te sientas
+    en otro computador o en el tel&eacute;fono, el archivo es lo &uacute;nico que se lo lleva
+    &mdash; y en la sesi&oacute;n 7 lo vas a necesitar delante para modelar.</p>
   </div>
 
   <div class="pie">
@@ -146,6 +166,28 @@ function descifra(code, b64){
   var txt; try{ txt = new TextDecoder('utf-8').decode(out); }catch(e){ return null; }
   if(txt.slice(0,4) !== 'S6OK') return null;
   try{ return JSON.parse(txt.slice(4)); }catch(e){ return null; }
+}
+
+/* Nadie va a leer 38 reglas escritas a mano. Asi que las revisa la pagina:
+   tres de las cuatro pruebas de la diapositiva son comprobables sobre el
+   propio texto. La cuarta —«es comprobable con una consulta»— no lo es, y por
+   eso se deja como recordatorio y no como marca. */
+function limpia(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+var OBLIGACION = ['no puede','no pueden','no debe','no deben','no se puede',
+                  'debe ','deben ','solo si','solo puede','solo pueden','tiene que'];
+var IMPLEMENTACION = ['tabla','columna','campo','pantalla','boton','formulario',
+                      'base de datos','checkbox','men'];
+var VAGO = ['el sistema','la aplicacion','la plataforma','el software','el programa'];
+
+function revisa(txt){
+  var s = limpia(txt);
+  return {
+    sujeto: /^\s*(un|una|el|la|los|las)\s+[a-z]{3,}/.test(s) && !VAGO.some(function(v){ return s.indexOf(v) === 0 || s.indexOf(' ' + v) >= 0; }),
+    verbo:  OBLIGACION.some(function(v){ return s.indexOf(v) >= 0; }),
+    limpio: s.length > 0 && !IMPLEMENTACION.some(function(v){ return s.indexOf(v) >= 0; })
+  };
 }
 
 function caso(){ return CASO; }
@@ -211,8 +253,24 @@ function pintaMias(){
     var ta = document.createElement('textarea'); ta.id = 'mia-' + i;
     ta.placeholder = 'Un/Una \u2026 no puede \u2026 si \u2026';
     ta.value = gd[i] || '';
-    ta.addEventListener('input', function(){ clearTimeout(tm); tm = setTimeout(vuelca, 400); });
-    d.appendChild(l); d.appendChild(p); d.appendChild(ta);
+    var marcas = document.createElement('div'); marcas.className = 'pruebas';
+    function pinta(){
+      var r = revisa(ta.value), hay = ta.value.trim().length > 0;
+      marcas.innerHTML = '';
+      [['sujeto concreto', r.sujeto, 'Empieza por «Un/Una…» y no por «el sistema»'],
+       ['verbo de obligación', r.verbo, 'Le falta un «no puede», «debe» o «solo si»'],
+       ['sin implementación', r.limpio, 'Nombra tablas, campos o pantallas: eso viene después']
+      ].forEach(function(par){
+        var e = document.createElement('span');
+        e.className = 'prueba' + (!hay ? '' : (par[1] ? ' si' : ' no'));
+        e.textContent = (hay ? (par[1] ? '✓ ' : '✕ ') : '') + par[0];
+        if(hay && !par[1]) e.title = par[2];
+        marcas.appendChild(e);
+      });
+    }
+    ta.addEventListener('input', function(){ pinta(); clearTimeout(tm); tm = setTimeout(vuelca, 400); });
+    d.appendChild(l); d.appendChild(p); d.appendChild(ta); d.appendChild(marcas);
+    pinta();
 
     /* el nivel: lo que separa una regla de un deseo bien redactado */
     var nv = document.createElement('div'); nv.className = 'niveles';
