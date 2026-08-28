@@ -51,6 +51,10 @@
           "txt": "📊 Introducción al curso",
           "download": true,
           "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"
+        },
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
         }
       ],
       "sesiones": []
@@ -73,6 +77,10 @@
         {
           "txt": "📘 Guía para repasar en casa",
           "href": "Presentaciones/M2/referencia-modulo-2.html"
+        },
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
         }
       ],
       "sesiones": [
@@ -95,6 +103,10 @@
               "txt": "📄 Las consultas de la clase (archivo de texto)",
               "href": "Scripts/S2.sql",
               "download": true
+            },
+            {
+              "txt": "🏆 Tu página de la sesión",
+              "href": "Presentaciones/M3/taller-sesion-6.html"
             }
           ]
         },
@@ -116,6 +128,10 @@
               "txt": "📄 Las consultas de la clase (archivo de texto)",
               "href": "Scripts/S3.sql",
               "download": true
+            },
+            {
+              "txt": "🏆 Tu página de la sesión",
+              "href": "Presentaciones/M3/taller-sesion-6.html"
             }
           ]
         },
@@ -138,6 +154,10 @@
               "txt": "📄 Las consultas de la clase (archivo de texto)",
               "href": "Scripts/S4.sql",
               "download": true
+            },
+            {
+              "txt": "🏆 Tu página de la sesión",
+              "href": "Presentaciones/M3/taller-sesion-6.html"
             }
           ]
         },
@@ -160,6 +180,10 @@
               "txt": "📄 Las consultas de la clase (archivo de texto)",
               "href": "Scripts/S5.sql",
               "download": true
+            },
+            {
+              "txt": "🏆 Tu página de la sesión",
+              "href": "Presentaciones/M3/taller-sesion-6.html"
             }
           ]
         }
@@ -172,13 +196,13 @@
       "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones y las tablas que salen de ahí.",
       "recursos": [
         {
-          "txt": "📋 El caso y la plantilla de reglas",
-          "href": "Presentaciones/M3/caso-restaurante-abc.html"
-        },
-        {
           "txt": "🗄️ La base de datos (archivo)",
           "href": "Presentaciones/M2/base-datos/dvdrental.db",
           "download": true
+        },
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
         }
       ],
       "sesiones": [
@@ -203,8 +227,8 @@
               "download": true
             },
             {
-              "txt": "📋 El caso y la plantilla de reglas",
-              "href": "Presentaciones/M3/caso-restaurante-abc.html"
+              "txt": "🏆 Tu página de la sesión",
+              "href": "Presentaciones/M3/taller-sesion-6.html"
             }
           ]
         }
@@ -215,7 +239,12 @@
       "titulo": "Más allá de las tablas: NoSQL",
       "estado": "pendiente",
       "desc": "Documentos, colecciones y clave-valor. Cuándo conviene cada uno.",
-      "recursos": [],
+      "recursos": [
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
+        }
+      ],
       "sesiones": []
     },
     {
@@ -223,7 +252,12 @@
       "titulo": "Ingesta y transformación",
       "estado": "pendiente",
       "desc": "De la fuente a la tabla BI, con prácticas en la nube.",
-      "recursos": [],
+      "recursos": [
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
+        }
+      ],
       "sesiones": []
     },
     {
@@ -231,7 +265,12 @@
       "titulo": "Desafío final",
       "estado": "pendiente",
       "desc": "Diagnosticar, modelar y construir una solución completa.",
-      "recursos": [],
+      "recursos": [
+        {
+          "txt": "🏆 Tu página de la sesión",
+          "href": "Presentaciones/M3/taller-sesion-6.html"
+        }
+      ],
       "sesiones": []
     }
   ],
@@ -254,6 +293,10 @@
     {
       "txt": "📘 Guía para repasar",
       "href": "Presentaciones/M2/referencia-modulo-2.html"
+    },
+    {
+      "txt": "🏆 Tu página de la sesión",
+      "href": "Presentaciones/M3/taller-sesion-6.html"
     }
   ]
 }
