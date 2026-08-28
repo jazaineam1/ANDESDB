@@ -1,0 +1,44 @@
+name: Sincronizar sitio desde manifiestos
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/curso.json'
+      - 'tools/estilo-portada.css'
+      - 'tools/construir-index.py'
+      - 'tools/integrar-experiencia.py'
+      - 'assets/learning/learning-core.js'
+      - 'assets/learning/learning-plan.json'
+      - '.github/workflows/sincronizar-sitio.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Generar portada desde curso.json
+        run: python tools/construir-index.py
+
+      - name: Integrar PWA y experiencia S6+
+        run: python tools/integrar-experiencia.py
+
+      - name: Validar curso
+        run: python tools/validar_curso.py
+
+      - name: Publicar cambios generados
+        run: |
+          if git diff --quiet -- index.html Presentaciones; then
+            echo 'Sitio ya sincronizado'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html Presentaciones
+          git commit -m 'Sincronizar sitio con el manifiesto del curso'
+          git push
