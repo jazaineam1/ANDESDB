@@ -15,6 +15,7 @@ from urllib.parse import unquote, urlparse
 ROOT = Path(__file__).resolve().parent.parent
 COURSE = ROOT / "tools" / "curso.json"
 LEARNING = ROOT / "assets" / "learning" / "learning-plan.json"
+TECHNICAL_DIFFERENTIATION = {9, 11, 12, 13, 14, 15}
 
 ERRORS: list[str] = []
 WARNINGS: list[str] = []
@@ -47,6 +48,16 @@ def validate_course_manifest(course: dict) -> None:
     if course.get("totalSesiones") != 16:
         err("tools/curso.json debe declarar totalSesiones = 16")
 
+    method = course.get("metodologia", {})
+    if method.get("progresoPersistente") is not False:
+        err("metodologia.progresoPersistente debe ser false: los estudiantes cambian de dispositivo")
+    declared = set(method.get("diferenciacionTecnicaSesiones", []))
+    if declared != TECHNICAL_DIFFERENTIATION:
+        err(
+            "diferenciacionTecnicaSesiones debe ser "
+            f"{sorted(TECHNICAL_DIFFERENTIATION)}, no {sorted(declared)}"
+        )
+
     numbers = []
     for module in course.get("modulos", []):
         for resource in module.get("recursos", []):
@@ -65,14 +76,14 @@ def validate_course_manifest(course: dict) -> None:
                 p = local_path(resource.get("href", ""))
                 if p and not p.exists():
                     err(f"S{n}: recurso inexistente: {resource.get('href')}")
+                label = str(resource.get("txt", "")).lower()
+                if "heredad" in label:
+                    err(f"S{n}: el material heredado no debe publicarse en la página del curso")
 
     duplicates = sorted({n for n in numbers if numbers.count(n) > 1})
     if duplicates:
         err(f"Sesiones repetidas en curso.json: {duplicates}")
 
-    # S1 es introductoria y se conserva como recurso del módulo 1. El manifiesto
-    # debe describir formalmente S2-S16 para que el camino completo tenga una
-    # única fuente de verdad.
     expected = set(range(2, 17))
     missing = sorted(expected - set(n for n in numbers if isinstance(n, int)))
     if missing:
@@ -88,10 +99,11 @@ def validate_learning_plan(plan: dict) -> None:
 
     for n in range(6, 17):
         s = sessions[str(n)]
-        if not s.get("nucleo") or not s.get("reto"):
-            err(f"S{n}: falta Núcleo o Reto")
         if len(s.get("dp900", [])) < 2:
             err(f"S{n}: debe tener al menos 2 micro-preguntas DP-900")
+        if n in TECHNICAL_DIFFERENTIATION:
+            if not s.get("nucleo") or not s.get("reto"):
+                err(f"S{n}: práctica técnica debe tener base y extensión")
 
     for n in (7, 10, 13):
         s = sessions[str(n)]
@@ -118,9 +130,14 @@ def validate_published_html() -> None:
         text = path.read_text(encoding="utf-8", errors="replace")
         if "data-title=" not in text:
             warn(f"S{n}: {path.name} no contiene data-title")
-        if n >= 6 and "learning-core.js" not in text and n != 6:
-            # S6 puede cargarlo desde sql-lab-s6.js para conservar el deck.
-            err(f"S{n}: una sesión publicada desde S6 debe cargar learning-core.js")
+
+        # S6 conserva únicamente su laboratorio SQL; no debe reaparecer una
+        # capa de Ruta/progreso. La diferenciación técnica se inyecta solo en
+        # las sesiones donde realmente aporta por velocidad de ejecución.
+        if n == 6 and "learning-core.js" in text:
+            err("S6 no debe cargar learning-core.js ni una capa de Ruta/Núcleo-Reto")
+        if n in TECHNICAL_DIFFERENTIATION and "learning-core.js" not in text:
+            err(f"S{n}: la práctica técnica publicada debe cargar learning-core.js")
 
 
 def validate_required_files() -> None:
@@ -129,14 +146,15 @@ def validate_required_files() -> None:
         "service-worker.js",
         "assets/learning/learning-core.js",
         "assets/learning/learning-plan.json",
+        "assets/icons/andesdb-192.png",
+        "assets/icons/andesdb-512.png",
+        "assets/icons/andesdb-maskable-512.png",
         ".github/ISSUE_TEMPLATE/problema-clase.yml",
     ]
     for item in required:
         if not (ROOT / item).exists():
             err(f"Falta archivo requerido: {item}")
 
-    # Los binarios llegan por vendor-wasm.yml. Mientras el workflow inicial
-    # está corriendo se reporta advertencia; una vez desplegado deben existir.
     wasm = [
         "assets/vendor/sqljs/sql-wasm.js",
         "assets/vendor/sqljs/sql-wasm.wasm",
