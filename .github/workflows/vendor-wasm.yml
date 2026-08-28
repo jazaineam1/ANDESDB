@@ -1,0 +1,66 @@
+name: Preparar motores WebAssembly locales
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/vendor-wasm.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Descargar sql.js 1.14.1
+        run: |
+          set -euo pipefail
+          mkdir -p assets/vendor/sqljs
+          curl --fail --location --retry 3 \
+            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.js \
+            -o assets/vendor/sqljs/sql-wasm.js
+          curl --fail --location --retry 3 \
+            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.wasm \
+            -o assets/vendor/sqljs/sql-wasm.wasm
+
+      - name: Descargar DuckDB-Wasm 1.32.0 estable
+        run: |
+          set -euo pipefail
+          mkdir -p assets/vendor/duckdb
+          base=https://cdnjs.cloudflare.com/ajax/libs/duckdb-wasm/1.32.0
+          for file in \
+            duckdb-browser.mjs \
+            duckdb-browser-mvp.worker.js \
+            duckdb-mvp.wasm \
+            duckdb-browser-eh.worker.js \
+            duckdb-eh.wasm
+          do
+            curl --fail --location --retry 3 "$base/$file" -o "assets/vendor/duckdb/$file"
+          done
+
+      - name: Registrar versiones
+        run: |
+          cat > assets/vendor/VERSIONS.md <<'EOF'
+          # Motores WebAssembly usados por ANDESDB
+
+          - sql.js: 1.14.1
+          - DuckDB-Wasm: 1.32.0 (versión estable; bundles MVP y EH)
+
+          Los archivos se sirven desde el mismo GitHub Pages del curso para reducir dependencias externas durante una clase. El workflow `vendor-wasm.yml` es la fuente de reproducción.
+          EOF
+
+      - name: Publicar si cambiaron los binarios
+        run: |
+          if git diff --quiet -- assets/vendor && git status --porcelain assets/vendor | grep -q '^$'; then
+            echo 'Sin cambios'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/vendor
+          git commit -m 'Añadir motores WebAssembly locales para laboratorios'
+          git push
