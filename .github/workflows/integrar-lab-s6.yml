@@ -1,0 +1,49 @@
+name: Integrar laboratorio SQL S6
+
+on:
+  push:
+    paths:
+      - '.github/workflows/integrar-lab-s6.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Insertar laboratorio en la sesión 6
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('Presentaciones/M3/sesion-6-reglas-de-negocio.html')
+          text = path.read_text(encoding='utf-8')
+          tag = '<script src="sql-lab-s6.js"></script>'
+
+          if tag in text:
+              print('El laboratorio ya estaba integrado.')
+          else:
+              if '</body>' not in text:
+                  raise SystemExit('No se encontró </body> en la sesión 6.')
+              text = text.replace('</body>', f'{tag}\n</body>', 1)
+              path.write_text(text, encoding='utf-8')
+              print('Laboratorio integrado correctamente.')
+          PY
+
+      - name: Publicar cambio
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No hay cambios por publicar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Presentaciones/M3/sesion-6-reglas-de-negocio.html
+          git commit -m "Integrar laboratorio SQL interactivo en sesión 6"
+          git push

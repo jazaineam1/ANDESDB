@@ -1,0 +1,86 @@
+name: Preparar motores WebAssembly locales
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/vendor-wasm.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Descargar sql.js 1.14.1
+        run: |
+          set -euo pipefail
+          mkdir -p assets/vendor/sqljs
+          curl --fail --location --retry 3 \
+            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.js \
+            -o assets/vendor/sqljs/sql-wasm.js
+          curl --fail --location --retry 3 \
+            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.wasm \
+            -o assets/vendor/sqljs/sql-wasm.wasm
+
+      - name: Descargar DuckDB-Wasm 1.32.0 estable
+        run: |
+          set -euo pipefail
+          mkdir -p assets/vendor/duckdb
+          base=https://cdnjs.cloudflare.com/ajax/libs/duckdb-wasm/1.32.0
+          for file in \
+            duckdb-browser.mjs \
+            duckdb-browser-mvp.worker.js \
+            duckdb-mvp.wasm \
+            duckdb-browser-eh.worker.js \
+            duckdb-eh.wasm
+          do
+            curl --fail --location --retry 3 "$base/$file" -o "assets/vendor/duckdb/$file"
+          done
+
+      - name: Registrar versiones
+        run: |
+          cat > assets/vendor/VERSIONS.md <<'EOF'
+          # Motores WebAssembly usados por ANDESDB
+
+          - sql.js: 1.14.1
+          - DuckDB-Wasm: 1.32.0 (versión estable; bundles MVP y EH)
+
+          Los archivos se sirven desde el mismo GitHub Pages del curso para reducir dependencias externas durante una clase. El workflow `vendor-wasm.yml` es la fuente de reproducción.
+          EOF
+
+      - name: Cambiar S6 de CDN a sql.js local
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Presentaciones/M3/sql-lab-s6.js')
+          t=p.read_text(encoding='utf-8')
+          old="  const SQLJS_VERSION = '1.14.1';\n  const SQLJS_BASE = `https://cdn.jsdelivr.net/npm/sql.js@${SQLJS_VERSION}/dist/`;"
+          new="  const SQLJS_VERSION = '1.14.1';\n  const SQLJS_BASE = new URL('../../assets/vendor/sqljs/', location.href).href;"
+          if old in t:
+              t=t.replace(old,new)
+          t=t.replace('No se pudo cargar sql.js desde el CDN.', 'No se pudo cargar el motor SQL local.')
+          p.write_text(t, encoding='utf-8')
+          PY
+
+      - name: Publicar motores y ajuste del laboratorio
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- assets/vendor Presentaciones/M3/sql-lab-s6.js)" ]; then
+            echo 'Sin cambios'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/vendor Presentaciones/M3/sql-lab-s6.js
+          git commit -m 'Servir motores WebAssembly desde GitHub Pages'
+          git pull --rebase origin main
+          git push origin main

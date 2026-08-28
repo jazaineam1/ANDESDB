@@ -16,6 +16,15 @@ Encuesta*.xlsx
 
 
 # ---------------------------------------------------------------------
+# SOLUCIONES ANTES DE LA HORA DE PUBLICACIÓN
+# Nunca subir la versión en texto plano. Para S7/S10/S13 se cifra y se
+# versiona solamente soluciones_cifradas/SN.sql.enc; el Action la publica
+# a las 20:00 America/Bogota.
+# ---------------------------------------------------------------------
+soluciones_privadas/
+
+
+# ---------------------------------------------------------------------
 # MATERIAL DOCENTE generado por los agentes de evaluacion
 # Libretos: llevan el guion hablado completo y las respuestas.
 # Evaluacion: diagnostico interno de las sesiones.

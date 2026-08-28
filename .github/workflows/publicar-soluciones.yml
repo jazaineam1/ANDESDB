@@ -1,0 +1,117 @@
+name: Publicar soluciones programadas
+
+on:
+  schedule:
+    # Se dispara a las 19:45 de Bogotá (00:45 UTC del día siguiente) y el
+    # runner espera internamente hasta las 20:00. Esto reduce el riesgo de
+    # retraso de los cron programados justo al inicio de la hora.
+    - cron: '45 0 * * *'
+  workflow_dispatch:
+    inputs:
+      session:
+        description: 'Número de sesión a publicar manualmente (ej. 7)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Bogota
+      SOLUTIONS_PASSPHRASE: ${{ secrets.SOLUTIONS_PASSPHRASE }}
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Determinar sesión que corresponde publicar
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          manual='${{ inputs.session }}'
+          if [ -n "$manual" ]; then
+            echo "session=$manual" >> "$GITHUB_OUTPUT"
+            echo "manual=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          session=$(python - <<'PY'
+          import json
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          plan=json.load(open('assets/learning/learning-plan.json', encoding='utf-8'))
+          today=datetime.now(ZoneInfo('America/Bogota')).strftime('%Y-%m-%d')
+          for n,s in plan['sesiones'].items():
+              sol=s.get('solucion', {})
+              if s.get('fecha')==today and sol.get('modo')=='programada' and sol.get('publicar')=='20:00':
+                  print(n)
+                  break
+          PY
+          )
+          echo "session=$session" >> "$GITHUB_OUTPUT"
+          echo "manual=false" >> "$GITHUB_OUTPUT"
+
+      - name: No hay publicación para hoy
+        if: steps.target.outputs.session == ''
+        run: echo 'Hoy no hay una solución programada para las 20:00.'
+
+      - name: Verificar secreto y archivo cifrado
+        if: steps.target.outputs.session != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          n='${{ steps.target.outputs.session }}'
+          if [ -z "${SOLUTIONS_PASSPHRASE:-}" ]; then
+            echo '::error::Falta configurar el secret SOLUTIONS_PASSPHRASE en Settings > Secrets and variables > Actions.'
+            exit 1
+          fi
+          if [ ! -f "soluciones_cifradas/S${n}.sql.enc" ]; then
+            echo "::error::No existe soluciones_cifradas/S${n}.sql.enc"
+            exit 1
+          fi
+
+      - name: Esperar hasta las 20:00 Bogotá
+        if: steps.target.outputs.session != '' && steps.target.outputs.manual != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          seconds=$(python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          tz=ZoneInfo('America/Bogota')
+          now=datetime.now(tz)
+          target=now.replace(hour=20, minute=0, second=0, microsecond=0)
+          print(max(0, int((target-now).total_seconds())))
+          PY
+          )
+          echo "Esperando ${seconds}s para publicar a las 20:00 Bogotá."
+          sleep "$seconds"
+
+      - name: Descifrar y publicar solución
+        if: steps.target.outputs.session != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          n='${{ steps.target.outputs.session }}'
+          mkdir -p Scripts
+          openssl enc -d -aes-256-cbc -pbkdf2 \
+            -in "soluciones_cifradas/S${n}.sql.enc" \
+            -out "Scripts/S${n}-solucion.sql" \
+            -pass env:SOLUTIONS_PASSPHRASE
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "Scripts/S${n}-solucion.sql"
+          if git diff --cached --quiet; then
+            echo "La solución S${n} ya estaba publicada."
+            exit 0
+          fi
+          git commit -m "Publicar solución S${n} · 20:00 Bogotá"
+          git pull --rebase origin main
+          git push origin main
