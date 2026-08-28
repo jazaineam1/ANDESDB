@@ -2,7 +2,7 @@
   'use strict';
 
   const SQLJS_VERSION = '1.14.1';
-  const SQLJS_BASE = `https://cdn.jsdelivr.net/npm/sql.js@${SQLJS_VERSION}/dist/`;
+  const SQLJS_BASE = new URL('../../assets/vendor/sqljs/', location.href).href;
   const DB_URL = '../M2/base-datos/dvdrental.db';
   const MAX_ROWS = 200;
 
@@ -198,7 +198,7 @@
       s.src = src;
       s.async = true;
       s.onload = resolve;
-      s.onerror = () => reject(new Error('No se pudo cargar sql.js desde el CDN.'));
+      s.onerror = () => reject(new Error('No se pudo cargar el motor SQL local.'));
       document.head.appendChild(s);
     });
   }
