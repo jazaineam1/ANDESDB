@@ -19,6 +19,14 @@
       explanation: 'Esta consulta no mira filas del negocio: mira la forma de la tabla. Un NOT NULL es una restricción implementada; una columna que admite NULL expresa un permiso del esquema.'
     },
     {
+      id: 'special-features',
+      label: 'Dato dentro del dato',
+      marker: 'special_features',
+      sql: `SELECT title, special_features\nFROM film\nLIMIT 3;`,
+      level: null,
+      explanation: 'Mira el valor: {"Deleted Scenes","Behind the Scenes"}. Es una lista metida dentro de una celda de texto — dato semiestructurado escondido en una tabla relacional. Para contar cuántas películas tienen tráiler hay que partirlo primero.'
+    },
+    {
       id: 'foreign-keys',
       label: 'Claves foráneas',
       marker: 'pragma_foreign_key_list',
