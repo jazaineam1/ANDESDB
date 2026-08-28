@@ -636,6 +636,21 @@ pre:hover .copybtn{opacity:1}
   padding:.6em 1.1em;border-radius:999px;font-weight:800;cursor:pointer}
 .panel .libre button:hover{background:#111;color:var(--y)}
 
+.cgrid{margin-top:.45em}
+.cq{border:1.5px solid var(--line,#dfe6ec);border-radius:.6em;padding:.34em .6em;margin:.28em 0;
+  background:#fff}
+.cq:nth-child(even){background:#fafbfc}
+.cq.si{border-color:var(--g);background:#e8f5e9}
+.cq.no{border-color:var(--r);background:#fdecee}
+.cq .cn{font-weight:800;color:var(--b);margin-right:.4em}
+.cq .ce{font-size:.95em}
+.cq .co{display:flex;flex-wrap:wrap;gap:.3em;margin-top:.25em}
+.cq .co button{font:700 .8em/1.15 inherit;padding:.3em .7em;border-radius:999px;text-align:left;
+  border:1.5px solid var(--line,#dfe6ec);background:#fff;color:var(--ink);cursor:pointer}
+.cq .co button:hover{border-color:var(--b)}
+.cq .co button.el{background:var(--b);border-color:var(--b);color:#fff}
+.cq[data-hecho] .co button{cursor:default}
+.cq[data-hecho] .co button.ok{background:#e8f5e9;border-color:var(--g);color:#1b5e20}
 </style></head>
 <body><main class="stage">
 
@@ -882,25 +897,13 @@ SELECT COUNT(*) FROM (
 <svg class="joinviz" style="max-height:30cqh" viewBox="0 0 1010 228" role="img" aria-label="La plantilla de cinco columnas: area, regla, fuente o evidencia, como se comprueba y que falta preguntar"><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LA PLANTILLA &mdash; Y LAS DOS &Uacute;LTIMAS COLUMNAS SON LAS QUE NADIE RELLENA</text><rect x="6" y="30" width="92" height="28" rx="7" fill="#124e78"/><text x="52.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">&Aacute;REA</text><rect x="6" y="62" width="92" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="16" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Reservas</text><rect x="102" y="30" width="296" height="28" rx="7" fill="#124e78"/><text x="250.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">LA REGLA</text><rect x="102" y="62" width="296" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="112" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Una mesa no puede tener dos reservas que se</text><text x="112" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">solapen.</text><rect x="402" y="30" width="186" height="28" rx="7" fill="#124e78"/><text x="495.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">FUENTE O EVIDENCIA</text><rect x="402" y="62" width="186" height="54" rx="7" fill="#f7f9fb" stroke="#124e78" stroke-width="1.6"/><text x="412" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Entrevista con la</text><text x="412" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">due&ntilde;a</text><rect x="592" y="30" width="212" height="28" rx="7" fill="#ff8a24"/><text x="698.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">C&Oacute;MO SE COMPRUEBA</text><rect x="592" y="62" width="212" height="54" rx="7" fill="#fff5e6" stroke="#ff8a24" stroke-width="1.6"/><text x="602" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Buscar solapes por mesa y franja</text><rect x="808" y="30" width="186" height="28" rx="7" fill="#ff8a24"/><text x="901.0" y="49" text-anchor="middle" font-size="11" fill="#fff" font-weight="800" font-family="Segoe UI,Arial,sans-serif">QU&Eacute; FALTA PREGUNTAR</text><rect x="808" y="62" width="186" height="54" rx="7" fill="#fff5e6" stroke="#ff8a24" stroke-width="1.6"/><text x="818" y="80" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&iquest;Hay margen entre</text><text x="818" y="95" font-size="11.2" fill="#171717" font-family="Segoe UI,Arial,sans-serif">turnos?</text><rect x="6" y="128" width="998" height="52" rx="8" fill="#fff" stroke="#d7dde3" stroke-width="1.6"/><text x="20" y="148" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Reservas</text><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="0" y1="0" x2="0" y2="0" stroke="none"/><line x1="102" y1="128" x2="102" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="116" y1="158" x2="380" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="402" y1="128" x2="402" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="416" y1="158" x2="570" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="592" y1="128" x2="592" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="606" y1="158" x2="786" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><line x1="808" y1="128" x2="808" y2="180" stroke="#d7dde3" stroke-width="1.4"/><line x1="822" y1="158" x2="976" y2="158" stroke="#d7dde3" stroke-width="1.4" stroke-dasharray="4 4"/><text x="20" y="172" font-size="11" fill="#d7dde3" font-family="Segoe UI,Arial,sans-serif">la tuya&hellip;</text><rect x="6" y="190" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="209" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La quinta columna vale tanto como la segunda.</tspan> Una regla que todav&iacute;a no puedes confirmar no es un fracaso: es la pregunta que llevas a la siguiente reuni&oacute;n.</text></svg>
 <div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Sujeto, prohibici&oacute;n y forma de comprobarla</span></div>
 </section>
-<section class="slide yellow dense mid" data-title="Concurso 1">
-<div class="ey">Concurso &middot; partida 1 &middot; 8 minutos</div>
-<h2>&#127942; Leer sin sobreinterpretar</h2>
-<div class="g2">
-<div><div class="ctx" style="margin:0"><strong>Entra en wayground.com</strong> con el PIN de la pantalla compartida. Sirve el tel&eacute;fono. <strong>Usa el mismo apodo</strong> en las dos partidas de hoy, o el marcador final no se puede sumar.</div>
-<div class="hintbox" style="margin-top:.7em"><strong>5 preguntas &middot; dos minutos para entrar, una por pregunta</strong><ul>
-<li>Los cuatro niveles de certeza.</li>
-<li>Lo que se perdi&oacute; al convertir tu archivo.</li>
-<li>Qu&eacute; frase es una regla y qu&eacute; frase no lo es.</li>
-</ul></div>
-<p class="small" style="margin-top:.6em">Hay tiempo para comentar cada una. Si fallas, mejor: el taller de despu&eacute;s de la pausa es exactamente esto.</p></div>
-<div><p class="ctx" style="margin:0"><strong>Y ahora la parte que importa: comprob&aacute;rselo.</strong></p>
-<div data-r style="margin-top:.5em"><pre>-- La devoluci&oacute;n PUEDE faltar: lo dice el esquema, no los datos
-SELECT "notnull" FROM pragma_table_info('rental')
-WHERE  name = 'return_date';           -- 0 = admite vac&iacute;o
-
--- Y tu archivo no tiene ni una clave for&aacute;nea
-SELECT COUNT(*) FROM pragma_foreign_key_list('rental');   -- 0</pre><p class="small" style="margin-top:.6em"><strong>Las otras dos no se comprueban con SQL, y por eso importan.</strong> Que los 1.452 alquileres no tengan pago <em>se cuenta</em>; que fueran una promoci&oacute;n, no sale de ninguna consulta. Y que el pago sobreviva al alquiler es <strong>falso</strong>: <code>rental_id</code> es <code>NOT NULL</code>, as&iacute; que el borrado falla.</p></div></div></div>
-<div class="brand"><span>Concurso &middot; partida 1</span><span>Comprobar, no creer</span></div>
+<section class="slide xdense mid " data-title="Concurso 1">
+<div class="ey">Bloque 3 &middot; 7 minutos &middot; se contesta aqu&iacute; mismo</div>
+<h2>&#127942; Cinco preguntas antes de la pausa</h2>
+<p class="lead" style="max-width:none">Todo lo del bloque 1 y del 3, en cinco clics. <strong>Se responde en la pantalla, no hace falta entrar a ning&uacute;n sitio.</strong> Si fallas alguna, mejor: el taller de despu&eacute;s es exactamente esto. <span class="marc" id="cMarc1">0 contestadas</span></p>
+<div class="cgrid" data-p="1"><div class="cq" data-i="0"><span class="ce"><span class="cn">1</span><code>return_date</code> admite quedarse vac&iacute;a. &laquo;Un alquiler puede no tener devoluci&oacute;n&raquo; es&hellip;</span><span class="co"><button type="button">Una restricci&oacute;n implementada</button><button type="button">Un permiso del esquema</button><button type="button">Un patr&oacute;n observado</button><button type="button">Una hip&oacute;tesis</button></span></div><div class="cq" data-i="1"><span class="ce"><span class="cn">2</span>Cuentas los solapes de una copia y sale <b>0</b>. &iquest;Qu&eacute; puedes afirmar?</span><span class="co"><button type="button">Que hoy no ha pasado nunca</button><button type="button">Que el motor lo impide</button><button type="button">Que est&aacute; prohibido y no puede pasar</button><button type="button">Que los datos est&aacute;n mal cargados</button></span></div><div class="cq" data-i="2"><span class="ce"><span class="cn">3</span>&laquo;1.452 alquileres no tienen ning&uacute;n pago.&raquo; &iquest;Cu&aacute;l de estas frases es la <b>hip&oacute;tesis</b>?</span><span class="co"><button type="button">Que son 1.452</button><button type="button">Que ninguno tiene pago registrado</button><button type="button">Que fueron una promoci&oacute;n</button><button type="button">Que se pueden contar con un COUNT</button></span></div><div class="cq" data-i="3"><span class="ce"><span class="cn">4</span>En tu <code>dvdrental.db</code>, &iquest;cu&aacute;ntas de las 18 claves for&aacute;neas del original sobrevivieron?</span><span class="co"><button type="button">Las 18</button><button type="button">14</button><button type="button">Solo 1</button><button type="button">Ninguna</button></span></div><div class="cq" data-i="4"><span class="ce"><span class="cn">5</span>&iquest;Cu&aacute;l de estas cuatro <b>s&iacute;</b> es una regla de negocio?</span><span class="co"><button type="button">El sistema debe ser r&aacute;pido</button><button type="button">Guardar el tel&eacute;fono del cliente</button><button type="button">Una mesa no puede tener dos reservas a la misma hora</button><button type="button">Hay doce mesas en el sal&oacute;n</button></span></div></div>
+<p class="porq" id="cPorq1">Contesta cualquiera y aqu&iacute; aparece por qu&eacute;.</p>
+<div class="brand"><span>Bloque 3 &middot; Levantar reglas</span><span>Comprobar, no creer</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
@@ -1065,23 +1068,13 @@ deseos o datos. <span class="marc" id="frMarc">0 contestadas</span></p>
 <svg class="joinviz" style="max-height:48cqh" viewBox="0 0 1010 306" role="img" aria-label="ETL y ELT explicados con naranjas: exprimir antes de llevar, o llevar las naranjas y exprimir en destino"><defs><marker id="j6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7480"/></marker></defs><text x="6" y="20" font-size="12.5" fill="#6b7480" font-weight="800" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".1em">LO MISMO, EN OTRO ORDEN &mdash; Y ESO LO CAMBIA TODO</text><text x="6" y="46" font-size="15" fill="#124e78" font-weight="800" font-family="Consolas,monospace">ETL</text><text x="72" y="46" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">transformar antes de guardar</text><rect x="6" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="76" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#127818;</text><text x="76" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Extract</text><text x="76" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">coges las naranjas</text><line x1="150" y1="91" x2="174" y2="91" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="178" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="248" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129380;</text><text x="248" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Transform</text><text x="248" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">las exprimes fuera</text><line x1="322" y1="91" x2="346" y2="91" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="350" y="60" width="140" height="62" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/><text x="420" y="84" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129371;</text><text x="420" y="104" text-anchor="middle" font-size="12.5" fill="#124e78" font-weight="800" font-family="Consolas,monospace">Load</text><text x="420" y="138" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">llega el zumo hecho</text><text x="534" y="88" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Llega listo para usar.</text><text x="534" y="108" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Cuesta m&aacute;s antes, y solo tienes</text><text x="534" y="125" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">el zumo que decidiste hacer.</text><text x="6" y="162" font-size="15" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">ELT</text><text x="72" y="162" font-size="12.3" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">guardar antes de transformar</text><rect x="6" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="76" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#127818;</text><text x="76" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Extract</text><text x="76" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">coges las naranjas</text><line x1="150" y1="207" x2="174" y2="207" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="178" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="248" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#128230;</text><text x="248" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Load</text><text x="248" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">las llevas tal cual</text><line x1="322" y1="207" x2="346" y2="207" stroke="#6b7480" stroke-width="2" marker-end="url(#j6)"/><rect x="350" y="176" width="140" height="62" rx="10" fill="#fff" stroke="#ff8a24" stroke-width="2"/><text x="420" y="200" text-anchor="middle" font-size="20" fill="#171717" font-family="Segoe UI,Arial,sans-serif">&#129380;</text><text x="420" y="220" text-anchor="middle" font-size="12.5" fill="#ff8a24" font-weight="800" font-family="Consolas,monospace">Transform</text><text x="420" y="254" text-anchor="middle" font-size="11.5" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">exprimes all&iacute;, a la carta</text><text x="534" y="204" font-size="12.3" fill="#171717" font-weight="800" font-family="Segoe UI,Arial,sans-serif">Llega crudo, y decides luego.</text><text x="534" y="224" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">Necesitas sitio y potencia,</text><text x="534" y="241" font-size="12" fill="#6b7480" font-family="Segoe UI,Arial,sans-serif">pero puedes cambiar de idea.</text><rect x="6" y="268" width="998" height="30" rx="15" fill="#fff8e1" stroke="#ffd600" stroke-width="2"/><text x="22" y="287" font-size="13" fill="#171717" font-family="Segoe UI,Arial,sans-serif"><tspan font-weight="800">La ETL llega lista; la ELT transforma en el destino</tspan> &mdash; y suele hacerse contra una bodega, no solo contra una laguna. A fondo en la sesi&oacute;n 12.</text></svg>
 <div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>A fondo en la sesi&oacute;n 12</span></div>
 </section>
-<section class="slide yellow dense mid" data-title="Concurso 2">
-<div class="ey">Concurso &middot; partida 2 &middot; 8 minutos</div>
-<h2>&#127942; Operar, analizar y guardar</h2>
-<div class="g2">
-<div><div class="ctx" style="margin:0"><strong>Segundo PIN, mismo apodo.</strong> Al terminar, el marcador de las dos partidas se suma y se lee en voz alta.</div>
-<div class="hintbox" style="margin-top:.7em"><strong>5 preguntas &middot; dos minutos para entrar, una por pregunta</strong><ul>
-<li>Tres situaciones: &iquest;OLTP, OLAP, las dos o ninguna?</li>
-<li>Qu&eacute; clase de dato es un v&iacute;deo.</li>
-<li>Y una de ETL contra ELT.</li>
-</ul></div></div>
-<div><p class="warn" style="margin:0"><strong>Aqu&iacute; casi nada se comprueba con una consulta</strong>, y eso tambi&eacute;n hay que saberlo.</p>
-<div class="hintbox" data-r style="margin-top:.7em"><strong>Lo que se decide, no se consulta</strong><ul>
-<li><strong>OLTP u OLAP</strong> no sale de ninguna tabla: se decide por c&oacute;mo se usa el sistema &mdash; cu&aacute;ntas escrituras, cu&aacute;nta historia, cu&aacute;nta prisa.</li>
-<li>Y ojo con los absolutos: <strong>s&iacute; se puede</strong> analizar sobre la base que opera &mdash; en una r&eacute;plica, o de madrugada. Lo que se evita es la consulta pesada en hora punta.</li>
-<li>La tercera situaci&oacute;n es <strong>las dos cosas</strong>. La mayor&iacute;a de los sistemas reales lo son.</li>
-</ul></div></div></div>
-<div class="brand"><span>Concurso &middot; partida 2</span><span>Lo que se decide, no se consulta</span></div>
+<section class="slide xdense mid " data-title="Concurso 2">
+<div class="ey">Bloque 6 &middot; 7 minutos &middot; se contesta aqu&iacute; mismo</div>
+<h2>&#127942; Cinco preguntas para cerrar</h2>
+<p class="lead" style="max-width:none">Operar, analizar y guardar. <strong>Aqu&iacute; casi nada se comprueba con una consulta</strong>, y eso tambi&eacute;n hay que saberlo: hay cosas que se deciden, no se consultan. <span class="marc" id="cMarc2">0 contestadas</span></p>
+<div class="cgrid" data-p="2"><div class="cq" data-i="0"><span class="ce"><span class="cn">1</span>Compras en Amazon: registra el pedido, descuenta inventario y genera el env&iacute;o.</span><span class="co"><button type="button">OLTP</button><button type="button">OLAP</button><button type="button">Las dos cosas</button><button type="button">Ninguna de las dos</button></span></div><div class="cq" data-i="1"><span class="ce"><span class="cn">2</span>Netflix analiza doce meses de h&aacute;bitos para decidir qu&eacute; series produce.</span><span class="co"><button type="button">OLTP</button><button type="button">OLAP</button><button type="button">Las dos cosas</button><button type="button">Ninguna de las dos</button></span></div><div class="cq" data-i="2"><span class="ce"><span class="cn">3</span>Una app de viajes: cientos de personas a la vez, y adem&aacute;s analizan los trayectos.</span><span class="co"><button type="button">OLTP</button><button type="button">OLAP</button><button type="button">Las dos cosas</button><button type="button">Ninguna de las dos</button></span></div><div class="cq" data-i="3"><span class="ce"><span class="cn">4</span>El v&iacute;deo de las c&aacute;maras del supermercado, &iquest;qu&eacute; clase de dato es?</span><span class="co"><button type="button">Estructurado</button><button type="button">Semiestructurado</button><button type="button">No estructurado</button><button type="button">No es un dato</button></span></div><div class="cq" data-i="4"><span class="ce"><span class="cn">5</span>Guardas el archivo crudo hoy y lo ordenas la semana que viene. Eso es:</span><span class="co"><button type="button">ETL</button><button type="button">ELT</button><button type="button">Las dos a la vez</button><button type="button">Ninguna de las dos</button></span></div></div>
+<p class="porq" id="cPorq2">Contesta cualquiera y aqu&iacute; aparece por qu&eacute;.</p>
+<div class="brand"><span>Bloque 6 &middot; D&oacute;nde vive el dato</span><span>Lo que se decide, no se consulta</span></div>
 </section>
 <section class="slide dense mid" data-title="Repaso">
 <div class="ey">Cierre &middot; 5 minutos</div>
@@ -1304,6 +1297,47 @@ document.querySelectorAll('.slide pre').forEach(function(pre){
         porq.className = 'porq ' + (ok ? 'si' : 'no');
         porq.innerHTML = '<strong>' + fr.dataset.i + ' &middot; ' +
           (ok ? 'Bien.' : 'No.') + '</strong> ' + CLAVE[i].w;
+      });
+    });
+  });
+})();
+</script>
+<script>
+/* Las diez preguntas, dentro de la presentacion. Respuestas cifradas. */
+(function(){
+  var D = '+a4yvWrcek4Q7jsAFv40eKfGCUHmkPZ3GDWqzp4y4UvalJtHyld8pcO6WFFYaewaCo2wR2v3Ia4GJr7Mb/rrcjpQ5PV082Rc38CDIhHA0M50HD3k24t+Jx7j4SJ1blUKcOysYORTjgN3zYbSuTputgZ+tjzS7BXGF7r0XkuHAD4TB5YTYOBG7UFXnOTbxjhKvhP/WRHGEXzgzwMSbv6oEh7HBAxwB24sMm1FDn+LFoNKK6JW2iQGtCxLd44q2XjKohUY/vNqH0fm9YcF4F8RsfL6oG7fbdGZ+GRWyk2qeiUYBBGAIDUBdXq+w5Q0Si4qu+cPYko7JYkHPNh/E6wqGDI6clsG3Eo/HVW/B1QQXsAvG+jNk5QWGun7GG7W16Y86X+qIWy0wBvra5BziZfy7GEgzMkdqSfOIfYD9IdlQjD0qoB1zbSe+ELE+fgyxXYCixYPqOeHs7PzRB/OssrFmiE1Fj8E/zUhuZWjYvbUyGf62YYN/g3ejGoomq/xTgi8s/Ajj58T4jJ9ep5x/KgzFxA38F5tmKfo7VWSZdAoHZcbmdCrQ2svJTiILM82a3jIm9xQz1Xv59spuMlaEYVbJ8U7DkrzDI/1a9o4LyzvnulAZHaY8odC80ohEdzNWJdpdOtHHfo/dr0aNyjuawyN7YUXLIVQ8BF/HKCFAPVFbqRHUj2sQYg9dwqmiu6omnDlmkIkJHwyT+eeLsFXx8AvPmaIh99dzqa4LO22JX98QyyyH15PAZ21f33himacESwhtgEXSHQJBohiiSskk7RRHf89ZO3d7zuMYVeJCdBQgUHL9PGeW076HOSGatI5wYpnuhRKEsJRNwoUhyvQZuvEnN/11u4wCzRIoVoRkBGDbA/mS3hbsRCDJ14by0NwG4WnAUZZxxkyOy64V9znunOqJ8Ln49FsDvYtWFllNJjeerJz3SKxPBaPgVbuA47N1QXr7jLP944CJprhtRJF+Tn6YgPi05tCNplbovM7pXNgMkwKCNudUdpbv3NAQT/ic4SgozU25CbYoDDLuDWPs9uTWAZE5vr3QTgHGh9ocIRDi2jgj3SqzfjZJ58y6fX/c0Gdzqr87c4QF9Z7XgwMuA03+4n9xRLphsQ1DnG9VtQ3rOl9KFWIdpqoB1qZfWEAPVJkS1Us9Tb6/vf02IuVLVosklbiI3NN2/BUzKmE7e+Cq9a4wulmvBaFawR+CIQjFQe54YBlbzbJnRz/fEnzOwvtpentfTNJ/rDthQmW+xVk0Ad8voPtObjkFrtKdQK7jvrOqu8wpntNnLhy/62akvbxvIK19Z+ZopH7QegrBwUIyExVNk/oFPnDH+jW5YxjdXhQLcZorCDtBdumKlwceSKgN727EniOvTtsmX8UU34Q7HFdyuicSDCfOswIppG+38JmlAVwLJZ8oasos2VZChByvfGNn6evF9pt7/10lhURJYcvp/INUeVNFgbyaBdnFiI7vkvkgVBNHTrm6rVDo0CIoI0Ci8JihZnnukvHQuZ68JTMtuZizVRMUjkkgP0tcscepUWE7XIqN2vXjH2GHQ+UxDG6X0VY6pEOoEcFf5TctdoipAFopwOkLQZkgS2355CArBRKHmKKsn6y7RdzdAlMMxF06l68LCILlV9QgWnYKPHVNycMdZleZqbQGn/9uVvlJuHva/TeGBcjCEa9AeX0pZ8fWxnGapiCKmIOJm2LUG2ghA==';
+  function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
+    h=Math.imul(h,16777619)>>>0; } return h||1; }
+  var bin; try{ bin = atob(D); }catch(e){ return; }
+  var x = semilla('CONCURSO6'), out = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++){
+    x=(x^(x<<13))>>>0; x=(x^(x>>>17))>>>0; x=(x^(x<<5))>>>0;
+    out[i]=bin.charCodeAt(i)^(x&255);
+  }
+  var txt = new TextDecoder('utf-8').decode(out);
+  if(txt.slice(0,4)!=='S6OK') return;
+  var CLAVE = JSON.parse(txt.slice(4));
+
+  document.querySelectorAll('.cgrid').forEach(function(g){
+    var p = g.dataset.p, hechas = 0, bien = 0;
+    var marc = document.getElementById('cMarc'+p);
+    var porq = document.getElementById('cPorq'+p);
+    g.querySelectorAll('.cq').forEach(function(cq){
+      var i = +cq.dataset.i;
+      cq.querySelectorAll('.co button').forEach(function(b, j){
+        b.addEventListener('click', function(){
+          if(cq.dataset.hecho) return;
+          var k = CLAVE[p][i], ok = (j === k);
+          cq.dataset.hecho = '1';
+          cq.className = 'cq ' + (ok ? 'si' : 'no');
+          b.classList.add('el');
+          cq.querySelectorAll('.co button')[k].classList.add('ok');
+          hechas++; if(ok) bien++;
+          marc.textContent = bien + ' de ' + hechas + ' bien';
+          porq.className = 'porq ' + (ok ? 'si' : 'no');
+          porq.innerHTML = '<strong>' + (i+1) + ' &middot; ' + (ok ? 'Bien.' : 'No.') +
+            '</strong> ' + CLAVE[p][i+'w'];
+        });
       });
     });
   });
