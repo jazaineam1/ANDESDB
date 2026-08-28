@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
 jobs:
   vendor:
     runs-on: ubuntu-latest
@@ -69,6 +73,7 @@ jobs:
 
       - name: Publicar motores y ajuste del laboratorio
         run: |
+          set -euo pipefail
           if [ -z "$(git status --porcelain -- assets/vendor Presentaciones/M3/sql-lab-s6.js)" ]; then
             echo 'Sin cambios'
             exit 0
@@ -77,4 +82,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets/vendor Presentaciones/M3/sql-lab-s6.js
           git commit -m 'Servir motores WebAssembly desde GitHub Pages'
-          git push
+          git pull --rebase origin main
+          git push origin main
