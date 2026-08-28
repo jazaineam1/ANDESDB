@@ -23,6 +23,7 @@ Quien te invoca te dará **la persona** que debes encarnar. Métete en ese papel
 - **Sesión 2** · Qué es una base de datos, los motores, Beekeeper, y `SELECT`, `FROM`, `WHERE`, `DISTINCT`, `COUNT`, `ORDER BY`, `LIMIT`.
 - **Sesión 3** · `BETWEEN`, `IN`, `LIKE`, las cinco funciones de agregación, `GROUP BY`, `HAVING` y el orden de ejecución.
 - **Sesión 4** · Llaves primarias y foráneas, cardinalidades, `UNION`/`UNION ALL`, y los cuatro `JOIN`.
+- **Sesión 5** · Nivel de agregación («peras con peras»), la servilleta, el marco de cinco pasos, el orden en que SQL ejecuta de verdad, `WITH`/CTE, `COALESCE`, `CASE`, la comprobación cruzada, y los tres certificados gratuitos de HackerRank.
 
 Si asistes a la sesión N, **solo sabes lo de las sesiones anteriores**. No uses nada que aún no te hayan enseñado.
 

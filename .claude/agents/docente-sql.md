@@ -31,8 +31,8 @@ El bloque grande de certificación va en la **sesión 7**.
 | 2 · De la decisión a la primera consulta | dictada · 33 diapositivas |
 | 3 · Filtrar mejor y resumir | dictada · 23 diapositivas |
 | 4 · Uniones de tablas | dictada · 28 diapositivas |
-| 5 · Algorítmica de tablas + HackerRank | la próxima |
-| 6 · Reglas de negocio · OLTP vs OLAP | |
+| 5 · Algorítmica de tablas + HackerRank | dictada · 28 diapositivas |
+| **6 · Reglas de negocio · OLTP vs OLAP** | **la próxima** · 32 diapositivas · abre el módulo 3 |
 | **7 · Certificaciones + taller de modelado** | 🔒 martes corto |
 | 8 · Normalización · 9 · DDL + Azure SQL | |
 | **10 · Taller de casos: ¿SQL o NoSQL?** | 🔒 martes corto |
