@@ -1,14 +1,26 @@
 {
-  "_comentario": "Manifiesto del curso. Para añadir una sesión o un recurso NO se toca index.html: se edita este archivo y se ejecuta 'py tools/construir-index.py'. Estados válidos: completado, curso, pendiente. En sesiones además: proxima, hoy. Si ninguna está marcada 'hoy', la marcada 'proxima' es la que sale en el botón principal.",
+  "_comentario": "Manifiesto único del curso. Para cambiar el recorrido se edita este archivo y se regenera index.html. La experiencia pedagógica detallada S6-S16 vive en assets/learning/learning-plan.json y se valida en CI.",
   "titulo": "Diseño y Gestión de Bases de Datos con SQL",
   "institucion": "Universidad de los Andes · Colsubsidio",
-  "subtitulo": "Aprende a hacerle preguntas a una base de datos y a obtener respuestas. Empezamos desde cero y practicamos con datos reales en cada clase.",
+  "subtitulo": "Aprende a entender un problema de datos, modelarlo, consultarlo y elegir la tecnología adecuada. Practicamos con datos reales y servicios cloud reales.",
   "datos": [
     "48 horas · 16 sesiones",
-    "Clases en vivo por videollamada"
+    "Clases virtuales sincrónicas",
+    "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 5,
+  "sesionActual": 6,
   "totalSesiones": 16,
+  "learningPlan": "assets/learning/learning-plan.json",
+  "metodologia": {
+    "actividadCadaMin": 15,
+    "nucleoRetoDesde": 6,
+    "progresoLocalDesde": 6,
+    "dp900TransversalDesde": 6,
+    "servicioRealPrimero": true,
+    "sesionesAutonomas": [7, 10, 13],
+    "trabajoAutonomoMin": 60,
+    "publicacionSolucionesAutonomas": "20:00 America/Bogota"
+  },
   "herramientas": [
     {
       "icono": "💻",
@@ -58,7 +70,7 @@
     {
       "n": 2,
       "titulo": "Explorando bases de datos con SQL",
-      "estado": "curso",
+      "estado": "completado",
       "desc": "Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
       "recursos": [
         {
@@ -82,21 +94,8 @@
           "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": [
-            "SELECT",
-            "DISTINCT",
-            "COUNT",
-            "WHERE",
-            "ORDER BY",
-            "LIMIT"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S2.sql",
-              "download": true
-            }
-          ]
+          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
+          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S2.sql", "download": true}]
         },
         {
           "n": 3,
@@ -104,20 +103,8 @@
           "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": [
-            "BETWEEN",
-            "IN",
-            "LIKE",
-            "GROUP BY",
-            "HAVING"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S3.sql",
-              "download": true
-            }
-          ]
+          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
+          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S3.sql", "download": true}]
         },
         {
           "n": 4,
@@ -125,88 +112,77 @@
           "estado": "completado",
           "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
           "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
-          "tags": [
-            "UNION",
-            "UNION ALL",
-            "INNER JOIN",
-            "LEFT JOIN",
-            "RIGHT JOIN",
-            "FULL OUTER"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S4.sql",
-              "download": true
-            }
-          ]
+          "tags": ["UNION", "UNION ALL", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER"],
+          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S4.sql", "download": true}]
         },
         {
           "n": 5,
           "titulo": "Algorítmica de tablas",
-          "estado": "hoy",
-          "desc": "Dibujar la tabla antes de escribirla y llegar a ella por pedazos. El nivel de agregación, el orden en que SQL ejecuta de verdad, y cómo resumir antes de unir para que las cuentas no se inflen.",
+          "estado": "completado",
+          "desc": "Dibujar la tabla antes de escribirla, controlar el nivel de agregación y resumir antes de unir para que las cuentas no se inflen.",
           "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
-          "tags": [
-            "WITH",
-            "CTE",
-            "COUNT(DISTINCT)",
-            "COALESCE",
-            "CASE",
-            "nivel de agregación"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S5.sql",
-              "download": true
-            }
-          ]
+          "tags": ["WITH", "CTE", "COUNT(DISTINCT)", "COALESCE", "CASE", "nivel de agregación"],
+          "recursos": [{"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S5.sql", "download": true}]
         }
       ]
     },
     {
       "n": 3,
       "titulo": "Modelos de datos útiles",
-      "estado": "pendiente",
-      "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones y las tablas que salen de ahí.",
+      "estado": "curso",
+      "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
       "recursos": [
-        {
-          "txt": "📋 El caso y la plantilla de reglas",
-          "href": "Presentaciones/M3/caso-restaurante-abc.html"
-        },
-        {
-          "txt": "🗄️ La base de datos (archivo)",
-          "href": "Presentaciones/M2/base-datos/dvdrental.db",
-          "download": true
-        }
+        {"txt": "📋 El caso y la plantilla de reglas", "href": "Presentaciones/M3/caso-restaurante-abc.html"},
+        {"txt": "🗄️ La base de datos (archivo)", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true}
       ],
       "sesiones": [
         {
           "n": 6,
+          "fecha": "2026-08-27",
+          "duracionUtil": 165,
+          "modo": "guiada",
           "titulo": "Reglas de negocio",
-          "estado": "proxima",
-          "desc": "Toda base de datos es una opinión sobre cómo funciona un negocio. Leer esa opinión con SQL, distinguir lo que es certeza de lo que es suposición, y escribir las reglas de un caso nuevo.",
+          "estado": "hoy",
+          "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.",
           "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
-          "tags": [
-            "reglas de negocio",
-            "OLTP",
-            "OLAP",
-            "data lake",
-            "data warehouse",
-            "ETL / ELT"
-          ],
+          "tags": ["reglas de negocio", "OLTP", "OLAP", "data lake", "data warehouse", "ETL / ELT"],
           "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S6.sql",
-              "download": true
-            },
-            {
-              "txt": "📋 El caso y la plantilla de reglas",
-              "href": "Presentaciones/M3/caso-restaurante-abc.html"
-            }
+            {"txt": "📄 Las consultas de la clase (archivo de texto)", "href": "Scripts/S6.sql", "download": true},
+            {"txt": "📋 El caso y la plantilla de reglas", "href": "Presentaciones/M3/caso-restaurante-abc.html"}
           ]
+        },
+        {
+          "n": 7,
+          "fecha": "2026-09-01",
+          "duracionUtil": 145,
+          "modo": "autonomo_guiado",
+          "trabajoAutonomoMin": 75,
+          "titulo": "Certificaciones + taller de modelado",
+          "estado": "pendiente",
+          "desc": "Briefing corto y trabajo autónomo: convertir las reglas del Restaurante ABC en entidades, relaciones y cardinalidades. Bloque breve de rutas de certificación.",
+          "tags": ["entidades", "relaciones", "cardinalidad", "DP-900", "workshop"]
+        },
+        {
+          "n": 8,
+          "fecha": "2026-09-02",
+          "duracionUtil": 165,
+          "modo": "guiada",
+          "titulo": "Modelado y normalización",
+          "estado": "pendiente",
+          "desc": "Dependencias, redundancia y normalización sin perder las reglas del negocio.",
+          "tags": ["1FN", "2FN", "3FN", "dependencias", "modelo relacional"],
+          "recursos": [{"txt": "📊 Material heredado de normalización", "href": "Presentaciones/M3/Clase3/M3C3%20V2%20Modelado%20y%20Normalizacio%CC%81n.pptx", "download": true}]
+        },
+        {
+          "n": 9,
+          "fecha": "2026-09-03",
+          "duracionUtil": 165,
+          "modo": "guiada_con_servicio_real",
+          "titulo": "DDL + Azure SQL",
+          "estado": "pendiente",
+          "desc": "Convertir el modelo en CREATE TABLE y restricciones; comparar y mostrar la familia Azure SQL en servicio real.",
+          "tags": ["CREATE TABLE", "PK", "FK", "CHECK", "Azure SQL Database", "Managed Instance", "Azure VM"],
+          "recursos": [{"txt": "📊 Material heredado de DDL", "href": "Presentaciones/M3/Clase4/M3C4%20V2%20-%20SQL%20para%20creacio%CC%81n%20de%20tablas.pptx", "download": true}]
         }
       ]
     },
@@ -214,46 +190,114 @@
       "n": 4,
       "titulo": "Más allá de las tablas: NoSQL",
       "estado": "pendiente",
-      "desc": "Documentos, colecciones y clave-valor. Cuándo conviene cada uno.",
-      "recursos": [],
-      "sesiones": []
+      "desc": "Elegir NoSQL por requisitos y practicar documentos en servicios reales.",
+      "recursos": [
+        {"txt": "📊 Introducción heredada a NoSQL", "href": "Presentaciones/M4/M4C1%20V4%20Introduccio%CC%81n%20a%20bases%20NoSQL.pptx", "download": true}
+      ],
+      "sesiones": [
+        {
+          "n": 10,
+          "fecha": "2026-09-08",
+          "duracionUtil": 145,
+          "modo": "autonomo_guiado",
+          "trabajoAutonomoMin": 75,
+          "titulo": "Taller de casos: ¿SQL o NoSQL?",
+          "estado": "pendiente",
+          "desc": "Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.",
+          "tags": ["SQL vs NoSQL", "casos", "trade-offs", "workshop"]
+        },
+        {
+          "n": 11,
+          "fecha": "2026-09-09",
+          "duracionUtil": 165,
+          "modo": "guiada_con_servicio_real",
+          "titulo": "Firestore + Azure Cosmos DB",
+          "estado": "pendiente",
+          "desc": "Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.",
+          "tags": ["Firestore", "Cosmos DB", "documentos", "partition key", "Azure Storage"],
+          "recursos": [{"txt": "📄 Ejercicio heredado Firebase", "href": "Presentaciones/M4/M4C1%20Ejercicio%20Firebase.docx", "download": true}]
+        }
+      ]
     },
     {
       "n": 5,
-      "titulo": "Ingesta y transformación",
+      "titulo": "Data warehouse, analítica y cloud",
       "estado": "pendiente",
-      "desc": "De la fuente a la tabla BI, con prácticas en la nube.",
+      "desc": "Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.",
       "recursos": [],
-      "sesiones": []
+      "sesiones": [
+        {
+          "n": 12,
+          "fecha": "2026-09-10",
+          "duracionUtil": 165,
+          "modo": "guiada",
+          "titulo": "Fundamentos de data warehouse",
+          "estado": "pendiente",
+          "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.",
+          "tags": ["data warehouse", "modelo estrella", "hechos", "dimensiones", "batch", "streaming", "Fabric", "Databricks"]
+        },
+        {
+          "n": 13,
+          "fecha": "2026-09-15",
+          "duracionUtil": 145,
+          "modo": "autonomo_guiado_con_servicio_real",
+          "trabajoAutonomoMin": 75,
+          "titulo": "Laboratorio BigQuery",
+          "estado": "pendiente",
+          "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
+          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"],
+          "recursos": [{"txt": "📊 Laboratorio heredado BigQuery", "href": "Presentaciones/M5/M5C2%20V1%20Laboratorios%20Big%20Query.pptx", "download": true}]
+        },
+        {
+          "n": 14,
+          "fecha": "2026-09-16",
+          "duracionUtil": 165,
+          "modo": "guiada_con_servicio_real",
+          "titulo": "BigQuery anidados + mapa Azure",
+          "estado": "pendiente",
+          "desc": "Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.",
+          "tags": ["nested", "JSON", "Parquet", "BigQuery", "Power BI", "Azure analytics"],
+          "recursos": [{"txt": "📊 Laboratorio heredado", "href": "Presentaciones/M5/M5C3%20V1%20Laboratorios.pptx", "download": true}]
+        }
+      ]
     },
     {
       "n": 6,
-      "titulo": "Desafío final",
+      "titulo": "Desafío final y consolidación",
       "estado": "pendiente",
-      "desc": "Diagnosticar, modelar y construir una solución completa.",
-      "recursos": [],
-      "sesiones": []
+      "desc": "Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.",
+      "recursos": [
+        {"txt": "📄 Taller final integrador", "href": "Presentaciones/M6/Taller%20final%20integrador%20-%20D%C3%ADa%201.pdf"}
+      ],
+      "sesiones": [
+        {
+          "n": 15,
+          "fecha": "2026-09-17",
+          "duracionUtil": 165,
+          "modo": "autonomo_guiado",
+          "trabajoAutonomoMin": 90,
+          "titulo": "Desafío final integrador",
+          "estado": "pendiente",
+          "desc": "Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.",
+          "tags": ["desafío", "datos sucios", "modelado", "validación", "arquitectura"]
+        },
+        {
+          "n": 16,
+          "fecha": "2026-09-22",
+          "duracionUtil": 145,
+          "modo": "consolidacion",
+          "titulo": "Cierre + preparación DP-900",
+          "estado": "pendiente",
+          "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles y plan personal para presentar DP-900.",
+          "tags": ["DP-900", "cierre", "retrieval practice", "plan de estudio"]
+        }
+      ]
     }
   ],
-  "glosario": "Un <b>módulo</b> es un tema grande del curso; una <b>sesión</b> es una clase de tres horas. El módulo 2 son las sesiones 2 a 5; el módulo 3 empieza en la 6.",
+  "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde la sesión 6 cada clase tiene Núcleo, Reto, progreso local y recuperación DP-900.",
   "materialesHoy": [
-    {
-      "txt": "🗄️ La base de datos",
-      "href": "Presentaciones/M2/base-datos/dvdrental.db",
-      "download": true
-    },
-    {
-      "txt": "📜 Las consultas de la clase",
-      "href": "Scripts/S5.sql",
-      "download": true
-    },
-    {
-      "txt": "📄 Hoja de ayuda",
-      "href": "Presentaciones/M2/chuleta-taller.html"
-    },
-    {
-      "txt": "📘 Guía para repasar",
-      "href": "Presentaciones/M2/referencia-modulo-2.html"
-    }
+    {"txt": "🗄️ La base de datos", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true},
+    {"txt": "📜 Las consultas de la clase", "href": "Scripts/S6.sql", "download": true},
+    {"txt": "📋 Restaurante ABC", "href": "Presentaciones/M3/caso-restaurante-abc.html"}
   ]
 }
