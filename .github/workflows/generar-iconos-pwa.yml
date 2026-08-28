@@ -1,0 +1,51 @@
+name: Generar iconos PWA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'assets/andesdb-icon.svg'
+      - '.github/workflows/generar-iconos-pwa.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  icons:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Instalar rasterizador SVG
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin
+
+      - name: Generar iconos Android
+        run: |
+          set -euo pipefail
+          mkdir -p assets/icons
+          rsvg-convert -w 192 -h 192 assets/andesdb-icon.svg -o assets/icons/andesdb-192.png
+          rsvg-convert -w 512 -h 512 assets/andesdb-icon.svg -o assets/icons/andesdb-512.png
+          file assets/icons/andesdb-192.png assets/icons/andesdb-512.png
+
+      - name: Publicar iconos si cambiaron
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/icons/andesdb-192.png assets/icons/andesdb-512.png
+          if git diff --cached --quiet; then
+            echo 'Los iconos PWA ya están actualizados.'
+            exit 0
+          fi
+          git commit -m 'Generar iconos PWA para Android'
+          git pull --rebase origin main
+          git push origin main
