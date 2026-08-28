@@ -1,0 +1,19 @@
+{
+  "name": "Diseño y Gestión de Bases de Datos con SQL",
+  "short_name": "ANDESDB",
+  "description": "Curso interactivo de Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#171717",
+  "lang": "es-CO",
+  "icons": [
+    {
+      "src": "assets/andesdb-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
