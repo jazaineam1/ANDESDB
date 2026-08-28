@@ -2,22 +2,24 @@
 
 ## Propósito
 
-Desde la sesión 6 el curso deja de ser una secuencia de temas y se convierte explícitamente en una **ruta de decisiones profesionales**:
+Desde la sesión 6 el curso avanza como una ruta de decisiones profesionales:
 
 > entender el negocio → distinguir evidencia de suposición → modelar → implementar → elegir SQL/NoSQL → separar operación de analítica → trabajar en cloud → integrar y validar.
 
 GitHub es infraestructura invisible. El estudiante no tiene que aprender Git para aprender bases de datos.
 
-## Ocho principios no negociables
+## Principios
 
-### 1. Núcleo + Reto
+### 1. Diferenciación solo cuando aporta
 
-Cada actividad tiene dos velocidades:
+La heterogeneidad del grupo se atiende con dos velocidades **principalmente en prácticas de codificación o ejecución técnica**:
 
-- **🟢 Núcleo:** resultado que todos deberían intentar producir.
-- **🔵 Reto:** extensión para quien termina antes o necesita mayor dificultad.
+- **Práctica base:** lo que todos deberían intentar completar.
+- **Extensión:** dificultad adicional para quien termina antes.
 
-No se separa al grupo por “buenos” y “malos”; se ofrece profundidad adicional sin aumentar la ansiedad del principiante.
+No se fuerza este patrón en actividades conceptuales o de interpretación. Por ejemplo, S6 (reglas de negocio) no necesita una capa artificial de Núcleo/Reto; allí el valor está en discutir evidencia, hipótesis y decisiones.
+
+Sesiones previstas para diferenciación técnica: **S9, S11, S12, S13, S14 y S15**. Puede ajustarse al construir cada sesión.
 
 ### 2. Ejemplo trabajado → completar → resolver
 
@@ -25,27 +27,16 @@ La ayuda se retira gradualmente:
 
 1. el docente muestra una decisión completa;
 2. el estudiante completa una parte;
-3. el estudiante resuelve un caso con menos pistas;
-4. al final debe defender el porqué, no solo mostrar código.
-
-Esto evita que el curso se convierta en copiar consultas de una diapositiva.
+3. el estudiante resuelve con menos pistas;
+4. debe defender el porqué, no solo mostrar código.
 
 ### 3. Recuperación espaciada DP-900
 
-Desde S6 cada sesión termina con 2–3 micro-preguntas de recuperación. No son un bloque separado de certificación: recuperan conceptos que acaban de usarse.
+Desde S6 se incorporan 2–3 micro-preguntas relacionadas con los conceptos realmente trabajados. Son de baja presión y no dependen de una cuenta ni de un progreso guardado en un dispositivo.
 
-El objetivo es llegar a S16 habiendo practicado repetidamente los cuatro dominios de DP-900, en vez de intentar memorizarlos al final.
+### 4. Sin progreso local como eje pedagógico
 
-### 4. Progreso privado y visible
-
-El navegador guarda con `localStorage`:
-
-- Núcleo completado;
-- Reto completado;
-- respuestas DP-900;
-- nivel de confianza.
-
-No se requiere login y el progreso no sale del dispositivo. La intención es que el estudiante vea continuidad entre sesiones, no crear vigilancia.
+No se usa `localStorage` para construir una narrativa de “avance del estudiante”, porque una misma persona puede alternar entre computador, teléfono u otro equipo. Las actividades pueden funcionar localmente, pero no se presentan como un expediente de progreso persistente.
 
 ### 5. Autenticidad tecnológica
 
@@ -56,85 +47,51 @@ Cuando el aprendizaje depende de un servicio cloud, se usa el **servicio real**:
 - S13: Google BigQuery;
 - S14: Google BigQuery.
 
-Los laboratorios WebAssembly son **fallback de continuidad**, nunca sustituto. Si una cuenta individual se bloquea, esa persona puede seguir razonando mientras el docente mantiene visible el servicio real.
+Los laboratorios WebAssembly son fallback de continuidad, nunca sustituto del servicio real.
 
 ### 6. Productive failure
 
-Antes de revelar la solución se permite que aparezca el error que enseña el concepto:
-
-- un JOIN multiplica filas;
-- un cero observado no constituye una regla;
-- una tabla redundante produce anomalías;
-- una mala elección de grano limita preguntas;
-- una tecnología elegida por moda no resuelve requisitos.
-
-La corrección viene después de que exista una hipótesis del estudiante.
+Antes de revelar la solución se permite que aparezca el error que enseña el concepto: JOIN que multiplica filas, cero observado que no es regla, redundancia que produce anomalías, grano mal elegido o tecnología seleccionada por moda.
 
 ### 7. Validación como hábito profesional
 
-No basta con que una consulta ejecute. Toda actividad importante debe pedir alguna forma de comprobación:
-
-- conteo contra la fuente;
-- resultado obtenido por un segundo camino;
-- spot check de filas concretas;
-- criterio de negocio;
-- comparación entre alternativas.
+No basta con que una consulta ejecute. Toda actividad importante debe pedir alguna comprobación: conteo contra la fuente, segundo camino, spot check, criterio de negocio o comparación entre alternativas.
 
 ### 8. Explicación antes que memoria
 
-El cierre metacognitivo es siempre:
+El cierre conceptual recurrente es:
 
 > “¿podría explicar la decisión que tomé sin mirar el código?”
 
-El curso busca transferencia: que el estudiante pueda resolver un problema distinto del visto en clase.
+No hace falta almacenar esa respuesta: sirve como pausa metacognitiva en la sesión.
 
 ---
 
-## Estructura de una sesión regular · 165 minutos útiles
+## Sesión regular · 165 minutos útiles
 
-La distribución es flexible, pero debe preservar actividad frecuente:
+La distribución es flexible, pero debe preservar actividad frecuente. Ningún tramo expositivo debería superar aproximadamente 15 minutos sin una predicción, decisión, ejecución, clasificación o explicación del estudiante.
 
-| Bloque | Min | Función |
-|---|---:|---|
-| Recuperación inicial | 10 | 2–3 preguntas de sesiones anteriores, sin notas |
-| Problema / demostración | 15 | crear necesidad antes de formalizar el concepto |
-| Práctica breve | 15 | primer intento del estudiante |
-| Formalización + contraste | 20 | poner nombre al patrón observado |
-| Práctica Núcleo | 25 | ejecución con ayuda decreciente |
-| Pausa | 15 | fuera de los 165 útiles según planificación del curso |
-| Workshop / caso | 45 | producción sostenida y decisiones |
-| Debrief | 20 | comparar estrategias y errores productivos |
-| DP-900 + salida | 15 | recuperación + “qué puedo explicar ahora” |
+## S7, S10 y S13 · sesiones cortas
 
-Ningún tramo expositivo debería superar aproximadamente 15 minutos sin una predicción, decisión, ejecución, clasificación o explicación del estudiante.
+Estas sesiones funcionan como estudios/laboratorios supervisados:
 
----
+| Hora | Actividad |
+|---|---|
+| 18:00–18:15 | briefing: objetivo, entregable, criterios y recursos |
+| 18:15–19:30 | 75 min de trabajo autónomo guiado |
+| 19:30–19:45 | pausa |
+| 19:45–20:00 | finalizar y validar |
+| 20:00 | publicación de referencia/solución |
+| 20:00–20:30 | debrief: comparar estrategias |
+| 20:30–20:40 | DP-900 + cierre |
 
-## Estructura de S7, S10 y S13 · martes cortos
-
-Horario: 18:00–20:40. Con 15 minutos de pausa quedan aproximadamente 145 minutos útiles.
-
-Estas sesiones no son clases magistrales abreviadas. Son **estudios/laboratorios supervisados**.
-
-| Hora | Min útiles | Actividad |
-|---|---:|---|
-| 18:00–18:15 | 15 | briefing: objetivo, entregable, criterios y recursos |
-| 18:15–19:30 | 75 | **trabajo autónomo guiado**; docente observa, pregunta y desbloquea, no resuelve |
-| 19:30–19:45 | — | pausa |
-| 19:45–20:00 | 15 | finalizar, validar y preparar comparación |
-| **20:00** | — | **se publica la solución/referencia** |
-| 20:00–20:30 | 30 | debrief: comparar estrategias contra referencia, no copiarla |
-| 20:30–20:40 | 10 | DP-900 + exit ticket |
-
-La solución a las 20:00 funciona como **feedback demorado**: llega después de un intento prolongado, cuando ya hay decisiones que comparar.
+En S7 y S10 el trabajo autónomo no necesita “Reto” separado si la actividad ya ofrece suficiente apertura conceptual. En S13 sí puede usarse una extensión técnica para estudiantes que avanzan rápido en BigQuery.
 
 ---
 
 ## Hilo conductor S6–S12: Restaurante ABC
 
-Para reducir carga cognitiva, el negocio se mantiene mientras cambia el lente técnico:
-
-| Sesión | El mismo negocio se mira como… |
+| Sesión | Lente |
 |---|---|
 | S6 | reglas, evidencia y preguntas pendientes |
 | S7 | entidades, relaciones y cardinalidades |
@@ -144,81 +101,23 @@ Para reducir carga cognitiva, el negocio se mantiene mientras cambia el lente t�
 | S11 | documentos y partición |
 | S12 | hechos, dimensiones, medidas y grano analítico |
 
-El estudiante aprende una tecnología nueva sin tener que reaprender simultáneamente un dominio de negocio nuevo.
+## S13–S16: transferencia
+
+- S13: warehouse cloud real en BigQuery;
+- S14: datos anidados/semiestructurados + mapa Azure;
+- S15: datos imperfectos sin herramienta prescrita;
+- S16: escenarios acumulativos y preparación DP-900.
 
 ---
 
-## Hilo conductor S13–S16: transferencia
+## Material heredado
 
-A partir de S13 se cambia deliberadamente el contexto para comprobar transferencia:
-
-- **S13:** warehouse cloud real en BigQuery;
-- **S14:** datos anidados/semiestructurados + mapa Azure;
-- **S15:** datos imperfectos sin herramienta prescrita;
-- **S16:** escenarios acumulativos y plan DP-900.
-
-La pregunta cambia de “¿qué comando uso?” a “¿qué arquitectura puedo defender?”.
+Las presentaciones y ejercicios de versiones anteriores se conservan en GitHub como **archivo de trabajo del docente**, pero no se enlazan desde la página pública del curso mientras se reconstruyen. Solo se publica en la navegación el material que haya sido revisado y aprobado para la cohorte actual.
 
 ---
 
-## Evaluación formativa sin convertir el curso en una tarea permanente
-
-La página comercial promete que el trabajo ocurre durante las sesiones. Se preserva esa promesa.
-
-La evidencia de aprendizaje se recoge dentro de clase mediante:
-
-1. predicciones antes de ejecutar;
-2. entregables de Núcleo;
-3. Retos opcionales;
-4. quizzes DP-900 de baja presión;
-5. explicación entre pares / chat;
-6. debrief contra una referencia;
-7. desafío final integrador.
-
-La solución no se evalúa solo por sintaxis: se considera el **modelo mental**, la validación y la justificación.
-
----
-
-## Diseño motivacional
-
-El estudiante debería poder contestar al final de cada sesión dos preguntas:
-
-1. **¿Qué puedo hacer hoy que no podía hacer al empezar?**
-2. **¿Para qué me sirve profesionalmente?**
-
-La portada y la capa `Ruta` hacen visible la progresión. Los productos de cada sesión deberían ser acumulables: una consulta validada, un modelo, una decisión arquitectónica o un resultado cloud real.
+## Señal de éxito
 
 La sensación buscada no es “vi muchos temas”, sino:
 
 > “cada clase agregó una capacidad concreta y entiendo por qué la siguiente existe”.
-
----
-
-## Accesibilidad y resiliencia
-
-- Las prácticas fundamentales deben tener versión que no dependa de un login cloud.
-- Los servicios cloud reales siguen siendo obligatorios cuando son objetivo de aprendizaje.
-- PWA/service worker reduce impacto de conexión intermitente.
-- `sql.js` y DuckDB-Wasm se sirven desde el propio GitHub Pages para evitar dependencias externas durante la clase.
-- Los resultados deben ser legibles en móvil, pero las actividades extensas se diseñan para computador.
-- Ningún progreso personal se envía a un servidor por defecto.
-
----
-
-## Señales de éxito del curso
-
-Al cerrar S16 un estudiante debería poder:
-
-- transformar una necesidad en preguntas y reglas;
-- identificar qué representa una fila;
-- consultar y unir datos sin inflar métricas inadvertidamente;
-- diseñar y normalizar un modelo relacional;
-- implementar restricciones básicas con DDL;
-- justificar SQL vs NoSQL;
-- distinguir OLTP de cargas analíticas;
-- reconocer hechos, dimensiones y grano;
-- ejecutar análisis en un servicio cloud real;
-- reconocer los servicios y conceptos centrales de DP-900;
-- validar un resultado antes de defenderlo.
-
-Ese conjunto de capacidades es el contrato pedagógico que debe proteger `tools/validar_curso.py` y la revisión docente de cada nueva sesión.
