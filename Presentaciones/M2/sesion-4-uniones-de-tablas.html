@@ -418,7 +418,7 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 
 /* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
 .minitimer{
-  position:fixed; left:1rem; bottom:1rem; z-index:90;
+  position:fixed; left:1.1rem; bottom:1.1rem; z-index:90;
   display:none; align-items:center; gap:.55rem;
   padding:.5rem .6rem .5rem .9rem;
   background:rgba(17,17,17,.94); color:#fff;
@@ -430,17 +430,17 @@ kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-r
 .minitimer.on{display:flex}
 .minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
 .minitimer .mt{
-  font:900 1.5rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
-  letter-spacing:-.02em; min-width:3.6em; text-align:center;
+  font:900 2.1rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.5em; text-align:center;
 }
 .minitimer button{
-  border:0; width:2rem; height:2rem; border-radius:50%;
+  border:0; width:2.4rem; height:2.4rem; border-radius:50%;
   background:rgba(255,255,255,.14); color:#fff;
   font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
 }
 .minitimer button:hover{background:rgba(255,255,255,.28)}
 .minitimer .lbl{
-  font-size:.62rem; text-transform:uppercase; letter-spacing:.12em;
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.12em;
   color:var(--y); font-weight:800; margin-right:.1rem;
 }
 /* últimos 60 segundos */
@@ -597,6 +597,18 @@ pre:hover .copybtn{opacity:1}
 .copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
 .copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
 @media (prefers-reduced-motion:reduce){.copybtn{transition:none}}
+/* --- minutos a mano: los botones fijos nunca cuadran con el taller --- */
+.panel .libre{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:.5rem;margin-top:.8rem}
+.panel .libre label{font-size:.9rem;font-weight:700}
+.panel .libre input{width:4.6rem;font:900 1.15rem/1 Consolas,monospace;text-align:center;
+  padding:.5rem .4rem;border-radius:999px;border:2px solid #111;background:#fff;color:#111}
+.panel .libre input:focus{outline:3px solid var(--y);outline-offset:1px}
+.panel .libre span{font-size:.9rem;font-weight:700;margin-left:-.15rem}
+.panel .libre button{border:2px solid #111;background:var(--y);color:#111;
+  padding:.6em 1.1em;border-radius:999px;font-weight:800;cursor:pointer}
+.panel .libre button:hover{background:#111;color:var(--y)}
+
 </style></head>
 <body><main class="stage">
 
@@ -1181,7 +1193,7 @@ LIMIT    5;</pre>
 
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 25</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-4-uniones-de-tablas.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
-<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
 <div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
 <div class="sr" id="announce" aria-live="assertive"></div>
 <script>
@@ -1220,7 +1232,7 @@ function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.class
 function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);
  if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
 function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
-document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});const inpLibre=document.getElementById('minLibre'),btnLibre=document.getElementById('ponLibre');if(inpLibre&&btnLibre){const ponLibre=()=>{let m=parseFloat(String(inpLibre.value).replace(',','.'));if(!isFinite(m)||m<=0)return inpLibre.focus();m=Math.min(180,m);inpLibre.value=m;setTimer(m,false);if(miniLbl)miniLbl.textContent=m+' min';start();};btnLibre.onclick=ponLibre;inpLibre.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ponLibre();}});}
 const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
 document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
 if(mini){
