@@ -1,0 +1,42 @@
+name: Validar curso
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/**'
+      - 'assets/learning/**'
+      - 'Presentaciones/**/*.html'
+      - 'Scripts/**'
+      - 'manifest.webmanifest'
+      - 'service-worker.js'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/workflows/validar-curso.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Course QA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Validar estructura, pedagogía y recursos
+        run: python tools/validar_curso.py
+
+      - name: Comprobar que la portada se puede regenerar
+        run: |
+          python tools/construir-index.py
+          python tools/integrar-experiencia.py
+
+      - name: Detectar archivos generados desincronizados
+        run: |
+          if ! git diff --quiet -- index.html Presentaciones; then
+            echo '::error::Hay archivos generados desincronizados. El workflow Sincronizar sitio debe regenerarlos.'
+            git diff -- index.html Presentaciones
+            exit 1
+          fi
