@@ -19,6 +19,15 @@
       explanation: 'Esta consulta no mira filas del negocio: mira la forma de la tabla. Un NOT NULL es una restricción implementada; una columna que admite NULL expresa un permiso del esquema.'
     },
     {
+      id: 'foreign-keys',
+      label: 'Claves foráneas',
+      marker: 'pragma_foreign_key_list',
+      sql: `SELECT COUNT(*) AS claves_foraneas\nFROM pragma_foreign_key_list('rental');`,
+      level: null,
+      expected: '0',
+      explanation: 'Cero. El original de PostgreSQL tenía 18 claves foráneas y ninguna sobrevivió a la conversión. Pruébalo con cualquier tabla: film, payment, inventory… todas dan 0.'
+    },
+    {
       id: 'sin-devolver',
       label: '1 · Sin devolver',
       marker: 'sin_devolver',
