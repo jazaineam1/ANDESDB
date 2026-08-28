@@ -53,14 +53,28 @@ jobs:
           Los archivos se sirven desde el mismo GitHub Pages del curso para reducir dependencias externas durante una clase. El workflow `vendor-wasm.yml` es la fuente de reproducción.
           EOF
 
-      - name: Publicar si cambiaron los binarios
+      - name: Cambiar S6 de CDN a sql.js local
         run: |
-          if git diff --quiet -- assets/vendor && git status --porcelain assets/vendor | grep -q '^$'; then
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Presentaciones/M3/sql-lab-s6.js')
+          t=p.read_text(encoding='utf-8')
+          old="  const SQLJS_VERSION = '1.14.1';\n  const SQLJS_BASE = `https://cdn.jsdelivr.net/npm/sql.js@${SQLJS_VERSION}/dist/`;"
+          new="  const SQLJS_VERSION = '1.14.1';\n  const SQLJS_BASE = new URL('../../assets/vendor/sqljs/', location.href).href;"
+          if old in t:
+              t=t.replace(old,new)
+          t=t.replace('No se pudo cargar sql.js desde el CDN.', 'No se pudo cargar el motor SQL local.')
+          p.write_text(t, encoding='utf-8')
+          PY
+
+      - name: Publicar motores y ajuste del laboratorio
+        run: |
+          if [ -z "$(git status --porcelain -- assets/vendor Presentaciones/M3/sql-lab-s6.js)" ]; then
             echo 'Sin cambios'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/vendor
-          git commit -m 'Añadir motores WebAssembly locales para laboratorios'
+          git add assets/vendor Presentaciones/M3/sql-lab-s6.js
+          git commit -m 'Servir motores WebAssembly desde GitHub Pages'
           git push
