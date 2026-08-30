@@ -1,0 +1,22 @@
+# Tasks · Spec 002
+
+- [x] T001 detectar y retirar del árbol piloto la connection string con password encontrada.
+- [ ] T002 rotar/revocar la credencial expuesta en el proveedor y registrar evidencia sin valor secreto.
+- [x] T003 crear baseline `docs/SEGURIDAD-PROYECTO.md`.
+- [x] T004 crear `tools/security_gate.py`.
+- [x] T005 añadir Dependency Review.
+- [x] T006 añadir OpenSSF Scorecard.
+- [x] T007 configurar Dependabot para GitHub Actions (su activación efectiva depende de la rama por defecto).
+- [ ] T008 fijar por SHA todas las Actions existentes de la rama.
+- [x] T009 reemplazar vendoring por versiones npm exactas, `--ignore-scripts` y checksums SHA-256.
+- [ ] T010 aislar S7 en origen de laboratorio separado.
+- [ ] T011 validar protocolo `postMessage` por origin/source y timeout/request-id.
+- [ ] T012 actualizar configurador para exigir URL Supabase y lab origin exactos.
+- [ ] T013 incorporar `security_gate.py` al workflow del piloto.
+- [ ] T014 ampliar constitución SDD y `SECURITY.md` a todo el proyecto.
+- [ ] T015 ejecutar CI y corregir todos los fallos del gate.
+- [ ] T016 activar ruleset/branch protection para piloto y `main` antes de usuarios reales.
+- [ ] T017 aplicar Supabase real, Security Advisor y matriz RLS adversarial.
+- [ ] T018 habilitar MFA teacher/admin.
+- [ ] T019 ejecutar restore drill.
+- [ ] T020 completar `verify.md` y decisión GO/NO-GO.
