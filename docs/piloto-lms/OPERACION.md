@@ -1,207 +1,134 @@
 # Operación · Piloto LMS ANDESDB
 
-Este runbook es para un **proyecto Supabase aislado del piloto**. No usar una base institucional ni mezclar datos reales antes de superar todos los gates.
+Runbook para entorno **aislado**. No usar datos reales antes de superar `specs/001-lms-pilot/verify.md` y `specs/002-project-security/verify.md`.
 
-## 0. Precondiciones
+## 0. Bloqueadores previos
 
-- trabajar en `piloto-lms-sdd-secure`;
-- `main` permanece sin cambios del LMS;
-- nunca versionar `.env`, secret keys, service role, contraseñas o listados de estudiantes;
-- usar URL HTTPS del proyecto;
-- el navegador recibe únicamente una clave `sb_publishable_...`.
+- trabajar solo en `piloto-lms-sdd-secure`;
+- **rotar/revocar la credencial de BD detectada durante el hardening** antes de reutilizar ese servicio;
+- no versionar passwords, connection strings, secret keys, service role ni listados de estudiantes;
+- activar ruleset/branch protection antes de piloto humano;
+- disponer de dos orígenes HTTPS distintos: uno LMS y otro laboratorio.
 
-## 1. Crear proyecto de prueba
+## 1. Infraestructura
 
-Crear un proyecto Supabase dedicado, por ejemplo `andesdb-lms-pilot-dev`.
+Crear:
 
-Durante pruebas técnicas puede usarse el plan gratuito. **Antes de estudiantes reales** debe existir una decisión explícita de backup/retención y una prueba de restauración acorde con el plan contratado.
+1. proyecto Supabase exclusivo del piloto;
+2. deployment LMS, p. ej. `https://andesdb-pilot.example`;
+3. deployment laboratorio, p. ej. `https://andesdb-lab-pilot.example`.
 
-## 2. Aplicar migraciones
+Ambos deployments pueden salir de la misma rama, pero **no pueden compartir origen**. El laboratorio no recibe configuración Supabase.
 
-En un proyecto vacío, aplicar exactamente en orden:
+## 2. Base de datos
+
+Aplicar desde un proyecto vacío, en orden:
 
 1. `supabase/migrations/202608300001_lms_pilot.sql`
 2. `supabase/migrations/202608300002_lms_pilot_hardening.sql`
 3. `supabase/migrations/202608300003_lms_pilot_rpc.sql`
 4. `supabase/migrations/202608300004_lms_pilot_catalog.sql`
 
-No continuar si alguna migración falla. Corregir en un proyecto desechable y repetir desde cero.
+Si una falla, descartar entorno de prueba/corregir y repetir desde cero. Después ejecutar Supabase Security Advisor.
 
-Después ejecutar Supabase Security Advisor y revisar cualquier hallazgo antes de usuarios reales.
+## 3. Auth
 
-## 3. Configurar Auth
+- registro abierto deshabilitado;
+- cuentas creadas/invitadas administrativamente;
+- email OTP con `{{ .Token }}`;
+- redirects exactos del origen LMS, sin wildcards amplios;
+- `create_user:false` del cliente es defensa adicional, no control principal;
+- MFA obligatorio para teacher/admin antes de usuarios reales.
 
-### Registro
+## 4. Identidades de prueba
 
-El piloto es cerrado. Deshabilitar la creación abierta de cuentas desde el cliente. Las cuentas se crean/invitan administrativamente.
+Crear al menos `student-a`, `student-b`, `student-no-enrollment`, `teacher-a`, `teacher-b` y, si hace falta, `admin-test`. Correos de prueba nunca se versionan.
 
-La llamada del frontend usa `create_user: false`, pero eso es defensa adicional y **no reemplaza** la configuración cerrada del proyecto.
+Usar `supabase/pilot-admin.sql` para matrículas/asignaciones. Nunca realizar estas operaciones desde el navegador.
 
-### Email OTP
+## 5. Autorización adversarial
 
-El template de email debe incluir el token OTP (`{{ .Token }}`), no solo un enlace de confirmación. El participante introduce el código en `/pilot/index.html`.
+Ejecutar `supabase/tests/rls-adversarial.sql` y `docs/piloto-lms/PRUEBAS-ADVERSARIALES.md`.
 
-Configurar límites de envío razonables y un proveedor SMTP adecuado si se supera la capacidad de prueba del correo por defecto.
+Gate: A/B cross-user = 0 accesos, no-enrollment = 0 datos académicos, `anon` = 0 datos, student no eleva rol ni crea enrollment, teacher A no ve cohorte B, submission inmutable, payload >512 KiB rechazado y revisión obsoleta produce conflicto.
 
-### URLs
+## 6. Configurar frontend
 
-Registrar únicamente los orígenes necesarios del piloto. No añadir comodines amplios de redirect si no son necesarios.
-
-## 4. Crear las identidades de laboratorio
-
-Antes de personas reales crear al menos:
-
-- `student-a`;
-- `student-b`;
-- `student-no-enrollment`;
-- `teacher-a`;
-- `teacher-b`;
-- `admin-test` si se necesita probar administración.
-
-Usar correos de prueba controlados. No versionarlos.
-
-El trigger de `auth.users` debe crear `profiles` y `user_roles` con rol `student`; no debe matricular automáticamente.
-
-## 5. Matricular/asignar
-
-Usar `supabase/pilot-admin.sql` desde SQL Editor para:
-
-- activar matrícula de `student-a` y `student-b` en `piloto-2026`;
-- asignar `teacher-a` a la cohorte piloto;
-- dejar `student-no-enrollment` autenticable pero sin matrícula;
-- crear una segunda cohorte de prueba si se quiere demostrar aislamiento entre docentes.
-
-Nunca ejecutar estas operaciones desde el navegador.
-
-## 6. Probar la frontera de autorización
-
-Ejecutar la matriz de `supabase/tests/rls-adversarial.sql` y `docs/piloto-lms/PRUEBAS-ADVERSARIALES.md`.
-
-Gate mínimo:
-
-- A no lee ni modifica B;
-- un usuario sin matrícula ve 0 datos académicos;
-- `anon` ve 0 datos académicos;
-- student no puede asignarse teacher/admin;
-- student no puede crear enrollment;
-- teacher A no consulta cohorte B;
-- submission no admite UPDATE/DELETE del estudiante;
-- payload > 512 KiB falla;
-- dos autosaves con la misma revisión producen un conflicto, no pérdida silenciosa.
-
-## 7. Activar frontend de forma reproducible
-
-No editar tres CSP a mano. Usar el configurador:
+No editar CSP/configuración manualmente:
 
 ```bash
 python tools/configurar_piloto_lms.py \
   --project-ref PROJECT_REF \
   --publishable-key sb_publishable_... \
+  --lms-origin https://LMS_HOST \
+  --lab-origin https://LAB_HOST \
   --enable
 ```
 
-El script:
+El script exige HTTPS, rechaza claves secretas, exige orígenes distintos y configura:
 
-- valida el formato de project ref;
-- rechaza secret/service keys;
-- activa `assets/lms/config.js`;
-- escribe URL + publishable key;
-- sustituye `https://*.supabase.co` por el origen exacto del proyecto en las tres CSP.
+- `connect-src` al Supabase exacto;
+- `frame-src` de S7 al laboratorio exacto;
+- `frame-ancestors` del bridge al LMS exacto;
+- `s7SandboxOrigin`.
 
-La publishable key es pública por diseño. **No sustituirla por `sb_secret_...` ni por service role.**
+La publishable key es pública; nunca usar `sb_secret_*`/service role.
 
-Después ejecutar el workflow `Security · piloto LMS SDD`. Cuando `enabled:true`, CI bloquea un CSP que conserve wildcard.
+## 7. Desplegar de forma separada
 
-Para apagar el piloto conservando configuración:
+### LMS origin
+
+Debe servir `/pilot/**` y `assets/lms/**`. Verificar desde respuesta HTTP real CSP/cabeceras; el meta-CSP del HTML no sustituye las cabeceras del hosting.
+
+### Lab origin
+
+Debe servir `/pilot-lab/**`, `Presentaciones/M3/constructor-abc.html` y los assets requeridos por ese taller. **No desplegar secretos/configuración privada allí.**
+
+El iframe del shell usa sandbox. El bridge valida padre/origen exacto y el shell valida bridge/origen exacto.
+
+## 8. Pruebas cross-origin obligatorias
+
+- mensaje con `event.origin` falso hacia el host: ignorado;
+- mensaje desde ventana diferente: ignorado;
+- mensaje hacia bridge desde padre/origen no autorizado: ignorado;
+- XSS/control total del lab no permite leer `sessionStorage` del LMS;
+- Network del lab no contiene Authorization/JWT ni publishable/secret Supabase;
+- el estado sigue guardando/restaurando por bridge.
+
+## 9. Recorrido estudiante
+
+Con `student-a`: login -> S7 -> modificar -> esperar Guardado -> cerrar -> dispositivo B -> login -> restaurar mismo paso/modelo -> continuar -> entregar. Repetir 10 veces; gate 10/10.
+
+## 10. Recorrido docente
+
+Con `teacher-a`: ver solo cohorte asignada, revisar progreso/entrega, probar payload XSS literal, intentar cohorte B y confirmar denegación.
+
+## 11. Supply chain
+
+Antes del GO:
 
 ```bash
-python tools/configurar_piloto_lms.py \
-  --project-ref PROJECT_REF \
-  --publishable-key sb_publishable_... \
-  --disable
+python tools/security_gate.py
 ```
 
-## 8. Recorrido funcional
+Y verificar CI:
 
-Con `student-a`:
+- Security · piloto LMS SDD;
+- CodeQL;
+- OpenSSF Scorecard;
+- Dependency Review en PR;
+- vendoring WASM reproducible con SHA-256.
 
-1. abrir `/pilot/`;
-2. solicitar OTP;
-3. entrar a S7;
-4. modificar el modelo;
-5. esperar `Guardado`;
-6. anotar el paso;
-7. cerrar navegador A;
-8. abrir navegador/dispositivo B;
-9. volver a autenticarse;
-10. comprobar que servidor reconstruye el mismo modelo/paso;
-11. continuar y entregar;
-12. comprobar que aparece el intento de entrega.
+No promover con Critical/High abierto.
 
-Repetir 10 veces con cambios diferentes. El gate es 10/10 sin pérdida.
+## 12. Backup/restore
 
-## 9. Recorrido docente
+Configurar backup según plan, generar un registro de prueba, restaurar en entorno seguro y documentar resultado. Un backup no restaurado no cuenta.
 
-Con `teacher-a`:
+## 13. Privacidad/retención
 
-1. abrir `/pilot/teacher.html`;
-2. seleccionar cohorte asignada;
-3. comprobar progreso de A/B;
-4. abrir última entrega;
-5. insertar previamente payloads XSS como texto de estudiante y comprobar que se muestran como texto, nunca se ejecutan;
-6. intentar acceder a cohorte no asignada y confirmar denegación.
+Completar `PRIVACIDAD-PILOTO.md`: responsable, contacto, base aplicable, proveedor/región, fechas y retención. A los 90 días del cierre decidir exportar, anonimizar o eliminar; no conservar indefinidamente por defecto.
 
-## 10. Backups
+## 14. Rollback / kill switch
 
-Antes de participantes reales:
-
-- configurar backup según plan;
-- tomar snapshot/backup de prueba;
-- introducir un registro de laboratorio;
-- probar restauración en entorno seguro;
-- documentar fecha, responsable y resultado en `specs/001-lms-pilot/verify.md`.
-
-Un backup no probado no cuenta como gate superado.
-
-## 11. Observabilidad
-
-Para el piloto registrar solo métricas operativas agregadas. Nunca registrar:
-
-- access tokens;
-- refresh tokens;
-- OTP;
-- snapshot JSON completo;
-- correos en logs públicos;
-- claves API secretas.
-
-## 12. Privacidad
-
-Antes de participantes reales completar/revisar `PRIVACIDAD-PILOTO.md`, especialmente:
-
-- responsable del tratamiento;
-- canal de contacto;
-- base/autorización aplicable;
-- región/proveedor;
-- fecha de inicio/cierre;
-- retención de 90 días.
-
-## 13. Cierre/retención
-
-A los 90 días del cierre del piloto se debe decidir explícitamente:
-
-- exportar lo necesario;
-- anonimizar;
-- o eliminar estados/entregas y cuentas de prueba.
-
-No asumir conservación indefinida.
-
-## 14. Rollback
-
-Si ocurre un incidente:
-
-1. desactivar `enabled` y/o retirar deployment;
-2. revocar/rotar sesiones o claves si aplica;
-3. deshabilitar matrículas afectadas;
-4. preservar evidencia mínima del incidente;
-5. mantener `main` y el curso público operativos;
-6. no reabrir el piloto hasta repetir la matriz adversarial y el Verify relevante.
+Ante incidente: retirar/deshabilitar deployment o `enabled:false`, revocar sesiones/secretos, deshabilitar matrículas si aplica, preservar evidencia mínima, corregir en rama, añadir regresión y repetir Verify completo antes de reabrir.
