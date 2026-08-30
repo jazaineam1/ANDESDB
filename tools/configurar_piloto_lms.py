@@ -103,7 +103,7 @@ def replace_csp(project_ref: str, lms_origin: str, lab_origin: str) -> None:
 
     replace_exact_origin(
         ROOT / "pilot/s7.html",
-        [r"https://lab-pilot\.invalid", r"https://[a-z0-9.-]+(?=[;\s][^\"]*object-src)"],
+        [r"https://lab-pilot\.invalid", r"(?<=frame-src )https://[^;\"\s]+"],
         lab_origin,
     )
     replace_exact_origin(
