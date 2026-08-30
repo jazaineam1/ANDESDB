@@ -10,15 +10,17 @@ El texto plano vive en `soluciones_privadas/`, que está en `.gitignore`. De est
 
 | Sesión | Fecha | Publica | Texto plano | Cifrada |
 |---|---|---|---|---|
-| **S7** · De las reglas al modelo | 2026-09-01 | **20:15** | `soluciones_privadas/S7.sql` ✅ | **pendiente de cifrar** |
+| **S7** · De las reglas al modelo | 2026-09-01 | **20:15** | `soluciones_privadas/S7.sql` ✅ | **`S7.sql.enc` ✅ lista** |
 | S10 · ¿SQL o NoSQL? | 2026-09-08 | 20:00 | — | — |
 | S13 · Laboratorio BigQuery | 2026-09-15 | 20:00 | — | — |
 
-La S7 ya tiene su modelo de referencia escrito y probado contra SQLite. **Falta un solo comando**, el de cifrar, que solo puedes ejecutar tú porque hace falta la contraseña.
+**La S7 está lista y no hay que hacer nada más.** El secret `SOLUTIONS_PASSPHRASE` está configurado y `S7.sql.enc` versionada. Comprobado antes de subirla: se descifra byte a byte idéntica al original **pasando la frase por variable de entorno**, que es exactamente como lo hace el workflow, y el modelo resultante corre en SQLite (11 tablas, 10 claves foráneas).
+
+> **Cuidado al generar la contraseña en Windows.** Git Bash deja pegado un retorno de carro que `tr -d` no quita si solo le pides el salto de línea. La frase del archivo deja de ser la misma que la del secret, y el descifrado falla con `bad decrypt` **el día de la clase**, sin que nadie lo vea venir. Quita los dos caracteres y comprueba la longitud antes de cifrar: 48 para `openssl rand -hex 24`, ni uno más.
 
 ---
 
-## Lo que hay que hacer para la S7
+## Para la S10 y la S13, cuando toque
 
 Desde Git Bash, con el secret ya configurado en tu máquina:
 
