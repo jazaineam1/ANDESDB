@@ -36,6 +36,12 @@ def run(cmd: list[str], *, capture: bool = False) -> subprocess.CompletedProcess
             cmd,
             cwd=ROOT,
             text=True,
+            # Sin esto, Python decodifica con la codificación local (cp1252 en
+            # Windows) archivos que son UTF-8: el hilo lector lanza
+            # UnicodeDecodeError, la salida se pierde y las comprobaciones que
+            # comparan stdout pasan sin haber comparado nada.
+            encoding="utf-8",
+            errors="replace",
             capture_output=capture,
             check=False,
         )
@@ -74,7 +80,10 @@ def check_git_hygiene() -> None:
             text = path.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue
-        if any(mark in text for mark in ("<<<<<<<", ">>>>>>>")):
+        # Los marcadores se construyen en vez de escribirse: si aparecieran
+        # literalmente aquí, este archivo se acusaría a sí mismo en cuanto
+        # alguien lo modificara, y ya no se podría volver a tocar.
+        if any(mark * 7 in text for mark in ("<", ">")):
             err(f"Marcadores de conflicto en {path.relative_to(ROOT)}")
 
 

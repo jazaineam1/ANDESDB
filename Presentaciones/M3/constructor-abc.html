@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>De la frase a la tabla · Restaurante ABC</title>
+<link rel="icon" href="../../assets/andesdb-icon.svg">
+<style>
+:root{
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+  --paper:#fff; --s:#f5f3ee; --bl:#e9f4ff; --gl:#e9f8ef; --rl:#fff1f0;
+  --yl:#fff6c9; --ol:#fff3e7;
+  --ink:#1a1a1a; --ink-soft:#5a5a5a; --line:#dfe6ec;
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --r-sm:8px; --r-md:14px; --r-lg:18px; --pill:999px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink); background:var(--s); line-height:1.45; font-size:15.5px;
+}
+code,kbd,pre{font-family:Consolas,"Cascadia Mono",monospace}
+button{font:inherit;cursor:pointer}
+h1,h2,h3{line-height:1.2;margin:0}
+a{color:var(--b)}
+
+/* ---------- cabecera y pasos ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:var(--paper);
+  border-bottom:1px solid var(--line);box-shadow:var(--sh)
+}
+.hbar{max-width:1280px;margin:0 auto;padding:.55rem 1rem;display:flex;
+  align-items:center;gap:1rem;flex-wrap:wrap}
+.marca{font-weight:800;color:var(--b);letter-spacing:-.01em;white-space:nowrap}
+.marca small{display:block;font-weight:600;color:var(--ink-soft);font-size:.72rem;
+  letter-spacing:.02em}
+.pasos{display:flex;gap:.3rem;flex-wrap:wrap;flex:1}
+.pasos button{
+  border:1.5px solid var(--line);background:var(--paper);color:var(--ink-soft);
+  border-radius:var(--pill);padding:.28em .8em;font-size:.83rem;font-weight:700;
+  display:flex;align-items:center;gap:.4em
+}
+.pasos button .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:1.45em;height:1.45em;border-radius:50%;background:var(--line);
+  color:var(--ink);font-size:.82em;font-weight:800
+}
+.pasos button:hover{border-color:var(--b)}
+.pasos button.on{background:var(--b);border-color:var(--b);color:#fff}
+.pasos button.on .num{background:rgba(255,255,255,.25);color:#fff}
+.pasos button.listo .num{background:var(--g);color:#fff}
+.pasos button.on.listo .num{background:rgba(255,255,255,.3);color:#fff}
+
+/* ---------- disposición ---------- */
+.envoltura{max-width:1280px;margin:0 auto;padding:1rem;
+  display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1rem;align-items:start}
+@media (max-width:1080px){.envoltura{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--sh);padding:1.1rem 1.2rem;margin-bottom:1rem}
+.panel>h2{font-size:1.28rem;color:var(--b);margin-bottom:.15em}
+.ey{font-size:.74rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--o);margin-bottom:.25em}
+.lead{color:var(--ink-soft);margin:.35em 0 1em;max-width:62ch}
+.lead strong{color:var(--ink)}
+
+/* ---------- costado ---------- */
+aside{position:sticky;top:60px}
+@media (max-width:1080px){aside{position:static}}
+.contador{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.7rem}
+.chip{background:var(--s);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:.3em .6em;font-size:.8rem;font-weight:700;flex:1;min-width:80px;text-align:center}
+.chip b{display:block;font-size:1.3rem;color:var(--b);line-height:1.1}
+.chip.aviso b{color:var(--o)}
+.bt{display:block;width:100%;border:0;border-radius:var(--r-sm);padding:.62em 1em;
+  font-weight:800;text-align:center;margin-bottom:.45rem}
+.bt.p{background:var(--b);color:#fff}
+.bt.v{background:var(--g);color:#fff}
+.bt.s{background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
+.bt.s:hover{border-color:var(--b)}
+.bt[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- tarjetas de regla ---------- */
+.regla{border:1.5px solid var(--line);border-radius:var(--r-md);padding:.6rem .8rem;
+  margin-bottom:.55rem;background:var(--paper);display:grid;
+  grid-template-columns:2.2em minmax(0,1fr);gap:.2em .7em}
+.regla.hecha{border-color:#c8d8e4;background:#fcfdfe}
+.regla .rn{grid-row:span 3;font-size:1.4rem;font-weight:800;color:var(--b);
+  text-align:center;line-height:1.1}
+.regla .rt{font-weight:600}
+.regla .opts{display:flex;gap:.3em;flex-wrap:wrap;margin-top:.35em}
+.regla .opts button{border:1.5px solid var(--line);background:var(--paper);
+  border-radius:var(--pill);padding:.22em .7em;font-size:.78rem;font-weight:800;
+  color:var(--ink-soft)}
+.regla .opts button:hover{border-color:var(--b);color:var(--ink)}
+.regla .opts button.el{color:#fff}
+.regla .opts button.el[data-v=ESTRUCTURA]{background:var(--b);border-color:var(--b)}
+.regla .opts button.el[data-v=RESTRICCION]{background:var(--g);border-color:var(--g)}
+.regla .opts button.el[data-v=APLICACION]{background:var(--o);border-color:var(--o)}
+.regla .opts button.el[data-v=PENDIENTE]{background:var(--ink-soft);border-color:var(--ink-soft)}
+.nivsel{font:inherit;font-size:.78rem;font-weight:700;border:1.5px solid var(--line);
+  border-radius:var(--pill);padding:.2em .5em;color:var(--ink-soft);background:var(--paper)}
+
+/* ---------- tablas ---------- */
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:.38em .5em;text-align:left;vertical-align:top}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);
+  border-bottom:1.5px solid var(--line)}
+tbody tr:hover{background:#fcfdfe}
+td.c,th.c{text-align:center}
+.tabla-envuelta{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- controles ---------- */
+select,input[type=text]{font:inherit;font-size:.86rem;border:1.5px solid var(--line);
+  border-radius:var(--r-sm);padding:.24em .45em;background:var(--paper);color:var(--ink);
+  max-width:100%}
+select:focus,input:focus{outline:2px solid var(--b);outline-offset:1px}
+.sw{display:inline-flex;align-items:center;gap:.3em;font-size:.82rem;font-weight:700;
+  cursor:pointer;user-select:none}
+.sw input{margin:0;width:1.05em;height:1.05em;accent-color:var(--b)}
+
+/* ---------- entidad ---------- */
+.ecard{border:1.5px solid var(--line);border-radius:var(--r-md);margin-bottom:.7rem;
+  overflow:hidden}
+.ecard>h3{background:var(--bl);color:var(--b);padding:.42em .8em;font-size:.95rem;
+  font-family:Consolas,monospace;letter-spacing:.02em;display:flex;
+  justify-content:space-between;align-items:center;gap:.6em;flex-wrap:wrap}
+.ecard>h3 span.n{font-family:"Segoe UI",Arial,sans-serif;font-size:.74rem;
+  font-weight:700;color:var(--ink-soft)}
+.ecard .cuerpo{padding:.5em .8em .7em}
+.sinregla{background:var(--ol);border-radius:var(--r-sm)}
+
+/* ---------- mensajes ---------- */
+.nota{border-left:4px solid var(--b);background:var(--bl);border-radius:0 var(--r-sm) var(--r-sm) 0;
+  padding:.55em .8em;margin:.7em 0;font-size:.9rem}
+.nota.o{border-color:var(--o);background:var(--ol)}
+.nota.g{border-color:var(--g);background:var(--gl)}
+.nota.r{border-color:var(--r);background:var(--rl)}
+.nota p{margin:.3em 0}
+.nota p:first-child{margin-top:0}
+.nota p:last-child{margin-bottom:0}
+
+/* ---------- código ---------- */
+pre{background:var(--dark,#0e1a24);color:#e8eef4;border-radius:var(--r-md);
+  padding:.85em 1em;overflow-x:auto;font-size:.83rem;line-height:1.55;margin:.6em 0;
+  white-space:pre;tab-size:2}
+pre .kw{color:#7fd1ff;font-weight:700}
+pre .st{color:#ffd98a}
+pre .cm{color:#8ba3b5;font-style:italic}
+pre .fk{color:#9ae6a0}
+pre.mas{max-height:none}
+.copiar{border:1.5px solid var(--line);background:var(--paper);border-radius:var(--pill);
+  padding:.24em .8em;font-size:.8rem;font-weight:800;color:var(--b)}
+
+/* ---------- pruebas ---------- */
+.prueba{border:1.5px solid var(--line);border-radius:var(--r-md);padding:.55em .75em;
+  margin-bottom:.5rem;display:grid;grid-template-columns:2em minmax(0,1fr);gap:.1em .6em}
+.prueba .ic{grid-row:span 2;font-size:1.35rem;text-align:center;line-height:1.1}
+.prueba .pt{font-weight:700}
+.prueba .pd{font-size:.86rem;color:var(--ink-soft);margin-top:.15em}
+.prueba .pd b{color:var(--ink)}
+.prueba.ok{border-color:var(--g);background:var(--gl)}
+.prueba.no{border-color:var(--r);background:var(--rl)}
+.prueba.duda{border-color:var(--o);background:var(--ol)}
+.prueba.na{opacity:.62}
+.prueba code{background:rgba(0,0,0,.05);border-radius:4px;padding:0 .25em;font-size:.86em}
+
+/* ---------- diagrama ---------- */
+.lienzo{border:1px solid var(--line);border-radius:var(--r-md);background:var(--paper);
+  overflow:auto;max-width:100%}
+.lienzo svg{display:block;min-width:720px}
+
+/* ---------- pestañas ---------- */
+.pest{display:flex;gap:.3rem;border-bottom:1.5px solid var(--line);margin-bottom:.8rem;
+  flex-wrap:wrap}
+.pest button{border:0;background:none;padding:.45em .85em;font-weight:800;font-size:.9rem;
+  color:var(--ink-soft);border-bottom:3px solid transparent;margin-bottom:-1.5px}
+.pest button.on{color:var(--b);border-bottom-color:var(--b)}
+
+.oculto{display:none !important}
+.pie{max-width:1280px;margin:0 auto;padding:.6rem 1rem 2.5rem;color:var(--ink-soft);
+  font-size:.82rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.cargando{padding:2rem;text-align:center;color:var(--ink-soft);font-weight:700}
+.codigo-modelo{width:100%;font-family:Consolas,monospace;font-size:.78rem;
+  border:1.5px solid var(--line);border-radius:var(--r-sm);padding:.5em;min-height:5.5em;
+  resize:vertical;background:var(--s);color:var(--ink)}
+.dif{font-family:Consolas,monospace;font-size:.82rem;white-space:pre;overflow-x:auto;
+  border-radius:var(--r-md);border:1px solid var(--line);padding:.7em .9em;background:var(--paper)}
+.dif .mas{background:var(--gl);color:#0b4a2c;display:block}
+.dif .men{background:var(--rl);color:#7a1f1f;display:block;text-decoration:line-through}
+.dif .ig{color:var(--ink-soft);display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="marca">De la frase a la tabla<small>Restaurante ABC · sesiones 7 a 12</small></div>
+    <nav class="pasos" id="pasos"></nav>
+  </div>
+</header>
+
+<div class="envoltura">
+  <main id="main"><div class="cargando">Preparando el motor de base de datos…</div></main>
+
+  <aside>
+    <div class="panel" style="padding:.9rem">
+      <div class="contador" id="contador"></div>
+      <button class="bt v" id="btProbar">Probar mi base ahora</button>
+      <button class="bt s" id="btDDL">Ver el SQL que llevas</button>
+      <button class="bt s" id="btCodigo">Mi código de modelo</button>
+      <p style="font-size:.79rem;color:var(--ink-soft);margin:.6em 0 0">
+        Puedes probar cuando quieras, incluso con el modelo a medias.
+        Empezará casi todo en rojo: eso es normal y es el punto.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<div class="pie">
+  <span>Universidad de los Andes × Colsubsidio · Diseño y Gestión de Bases de Datos con SQL</span>
+  <span>La base corre entera en tu navegador. No se envía nada a ningún sitio.</span>
+</div>
+
+<script src="../../assets/vendor/sqljs/sql-wasm.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   1 · EL MATERIAL DE LA SESIÓN 6
+   Las diez reglas, tal como quedaron el 28 de agosto. No se reescriben:
+   si aquí dijeran otra cosa, el hilo se rompería justo donde lo cosemos.
+   ===================================================================== */
+
+var REGLAS = [
+  {n:1,  txt:'Una reserva no puede confirmarse sin fecha, hora, número de personas y un cliente identificado.', nivel:'candidata'},
+  {n:2,  txt:'Una mesa no puede tener dos reservas que se solapen en el tiempo.', nivel:'candidata'},
+  {n:3,  txt:'Una reserva no puede aceptar más personas de las que caben en la mesa.', nivel:'confirmada'},
+  {n:4,  txt:'Un pedido no puede asignarse a más de una mesa.', nivel:'confirmada'},
+  {n:5,  txt:'Un pedido no puede enviarse a cocina sin al menos un plato.', nivel:'candidata'},
+  {n:6,  txt:'Un plato no puede pedirse si alguno de sus ingredientes está agotado.', nivel:'hipotesis'},
+  {n:7,  txt:'Un ingrediente vencido no puede usarse en ningún plato.', nivel:'confirmada'},
+  {n:8,  txt:'Un pedido no puede cerrarse sin pago.', nivel:'candidata'},
+  {n:9,  txt:'Un pago puede repartirse entre varias personas, pero la suma debe igualar el total del pedido.', nivel:'candidata'},
+  {n:10, txt:'Un pedido solo puede modificarlo el mesero asignado a esa mesa.', nivel:'confirmada'}
+];
+
+var NIVELES = {confirmada:'confirmada', candidata:'candidata', hipotesis:'hipótesis'};
+
+var ACCIONES = [
+  {v:'ESTRUCTURA',  t:'Estructura',   d:'Cambia el modelo: crea una entidad, una relación o una cardinalidad.'},
+  {v:'RESTRICCION', t:'Restricción',  d:'El motor la puede hacer cumplir: NOT NULL, UNIQUE, CHECK, FOREIGN KEY.'},
+  {v:'APLICACION',  t:'Aplicación',   d:'Ninguna tabla la impide. Hace falta código o un disparador.'},
+  {v:'PENDIENTE',   t:'Pendiente',    d:'Falta preguntarle a la dueña.'}
+];
+
+/* Los sustantivos que aparecen en las reglas. Los ocho que la sesión 6 ya
+   señaló, más cinco que están ahí y que casi nadie ve. */
+var SUSTANTIVOS = [
+  {k:'cliente',     t:'cliente',          reglas:[1],        pista:'La dueña dijo "un cliente identificado".'},
+  {k:'mesa',        t:'mesa',             reglas:[2,3,4,10], pista:'Doce, de 2, 4 y 6 puestos.'},
+  {k:'reserva',     t:'reserva',          reglas:[1,2,3],    pista:''},
+  {k:'pedido',      t:'pedido',           reglas:[4,5,8,9,10], pista:''},
+  {k:'plato',       t:'plato',            reglas:[5,6,7],    pista:''},
+  {k:'ingrediente', t:'ingrediente',      reglas:[6,7],      pista:''},
+  {k:'pago',        t:'pago',             reglas:[8,9],      pista:''},
+  {k:'mesero',      t:'mesero',           reglas:[10],       pista:''},
+  {k:'turno',       t:'turno',            reglas:[],         pista:'No sale en ninguna regla, pero la dueña habló de almuerzo y cena. ¿Entidad, o solo una palabra en la reserva?'},
+  {k:'linea_pedido',t:'línea de pedido',  reglas:[5],        pista:'"Al menos un plato" y "se puede añadir después". ¿Hace falta algo entre pedido y plato?'},
+  {k:'fecha',       t:'fecha',            reglas:[1],        pista:'Sale en la regla 1. ¿Es una cosa del negocio, o un dato de la reserva?'},
+  {k:'personas',    t:'número de personas', reglas:[1,3],    pista:''},
+  {k:'total',       t:'total',            reglas:[9],        pista:''}
+];
+
+/* =====================================================================
+   2 · EL CATÁLOGO
+   Atributos y relaciones candidatas, con el generador de datos de
+   ejemplo de cada uno. La semilla se construye con lo que el estudiante
+   haya elegido, no con un guion fijo: por eso cada atributo trae su gen.
+   ===================================================================== */
+
+var CAT = {
+  cliente: {label:'CLIENTE', col:0, attrs:[
+    {k:'nombre',   t:'TEXTO',  sug:{obl:1}, regla:1, gen:function(i){return "'"+NOMBRES[i%NOMBRES.length]+"'";}},
+    {k:'telefono', t:'TEXTO',  sug:{obl:1}, regla:1, gen:function(i){return "'300"+(1000000+i*37%8999999)+"'";}},
+    {k:'correo',   t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'cliente"+i+"@correo.co'";}}
+  ]},
+  mesa: {label:'MESA', col:0, attrs:[
+    {k:'numero',  t:'ENTERO', sug:{obl:1,uni:1}, regla:null, gen:function(i){return i+1;}},
+    {k:'puestos', t:'ENTERO', sug:{obl:1},       regla:3,    gen:function(i){return [2,4,6][i%3];}},
+    {k:'zona',    t:'TEXTO',  sug:{},            regla:null, gen:function(i){return "'"+(i<6?'salón':'terraza')+"'";}}
+  ]},
+  mesero: {label:'MESERO', col:0, attrs:[
+    {k:'nombre',    t:'TEXTO', sug:{obl:1},       regla:10,   gen:function(i){return "'"+['Luis','Marta','Andrés','Sofía'][i%4]+"'";}},
+    {k:'documento', t:'TEXTO', sug:{obl:1,uni:1}, regla:null, gen:function(i){return "'CC"+(80000000+i*1117)+"'";}}
+  ]},
+  turno: {label:'TURNO', col:0, attrs:[
+    {k:'nombre', t:'TEXTO', sug:{obl:1,uni:1}, regla:null, gen:function(i){return "'"+['almuerzo','cena'][i%2]+"'";}}
+  ]},
+  reserva: {label:'RESERVA', col:1, attrs:[
+    {k:'fecha',    t:'FECHA',  sug:{obl:1}, regla:1, gen:function(i){return "'2026-09-"+pad(1+(i%12))+"'";}},
+    {k:'hora',     t:'TEXTO',  sug:{obl:1}, regla:1, gen:function(i){return "'"+(i%2?'20':'12')+":"+(i%2?'30':'00')+"'";}},
+    {k:'fin',      t:'TEXTO',  sug:{},      regla:2, gen:function(i){return "'"+(i%2?'22':'14')+":"+(i%2?'30':'00')+"'";}},
+    {k:'personas', t:'ENTERO', sug:{obl:1}, regla:1, gen:function(i){return 1+(i%6);}},
+    {k:'estado',   t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'"+(i%7===0?'no llegó':'confirmada')+"'";}}
+  ]},
+  pedido: {label:'PEDIDO', col:1, attrs:[
+    {k:'abierto_en', t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'2026-09-"+pad(1+(i%12))+" "+pad(12+(i%9))+":00'";}},
+    {k:'estado',     t:'TEXTO',  sug:{obl:1}, regla:8,    gen:function(i){return "'"+['abierto','en cocina','cerrado'][i%3]+"'";}},
+    {k:'total',      t:'DECIMAL',sug:{obl:1}, regla:9,    gen:function(i){return (20000+i*1500)%90000+5000;}}
+  ]},
+  plato: {label:'PLATO', col:2, attrs:[
+    {k:'nombre',    t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'"+PLATOS[i%PLATOS.length]+"'";}},
+    {k:'precio',    t:'DECIMAL',sug:{obl:1}, regla:9,    gen:function(i){return 18000+(i%9)*4000;}},
+    {k:'temporada', t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'"+(i%2?'actual':'anterior')+"'";}},
+    {k:'agotado',   t:'ENTERO', sug:{},      regla:6,    gen:function(i){return i%9===0?1:0;}}
+  ]},
+  ingrediente: {label:'INGREDIENTE', col:2, attrs:[
+    {k:'nombre',      t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'"+INGRED[i%INGRED.length]+"'";}},
+    {k:'vencimiento', t:'FECHA',  sug:{},      regla:7,    gen:function(i){return "'2026-"+(i%4===0?'08':'10')+"-"+pad(1+(i%27))+"'";}},
+    {k:'existencias', t:'DECIMAL',sug:{},      regla:6,    gen:function(i){return i%11===0?0:(2+i%40);}}
+  ]},
+  pago: {label:'PAGO', col:1, attrs:[
+    {k:'monto',  t:'DECIMAL', sug:{obl:1}, regla:9, gen:function(i){return 10000+(i%7)*3000;}},
+    {k:'metodo', t:'TEXTO',   sug:{},      regla:null, gen:function(i){return "'"+['efectivo','tarjeta','transferencia'][i%3]+"'";}}
+  ]},
+  linea_pedido: {label:'LINEA_PEDIDO', col:1, attrs:[
+    {k:'cantidad',        t:'ENTERO', sug:{obl:1}, regla:5, gen:function(i){return 1+(i%3);}},
+    {k:'precio_unitario', t:'DECIMAL',sug:{},      regla:9, gen:function(i){return 18000+(i%9)*4000;}}
+  ]}
+};
+
+var NOMBRES = ['Ana Restrepo','Carlos Mejía','Luisa Parra','Jorge Cifuentes','Marta Ruiz',
+  'Diego Ospina','Paula Ríos','Andrés Gómez','Sara Villa','Iván Cárdenas','Ana Restrepo',
+  'Nora Beltrán','Hugo Salas','Elena Pardo','Ruth Amaya','Óscar Lemus','Clara Nieto',
+  'Tomás Vera','Irene Cano','Pedro Lago'];
+var PLATOS = ['Ajiaco','Bandeja paisa','Sancocho','Trucha al ajillo','Lomo al trapo',
+  'Arepa de huevo','Sopa de guineo','Posta cartagenera','Mote de queso','Cazuela de mariscos',
+  'Tamal tolimense','Sudado de pollo','Patacón con hogao','Flan de coco'];
+var INGRED = ['Pollo','Papa criolla','Guasca','Mazorca','Frijol','Chicharrón','Arroz',
+  'Trucha','Ajo','Queso costeño','Ñame','Yuca','Plátano','Coco','Cebolla','Tomate',
+  'Cilantro','Aguacate'];
+
+function pad(n){ return (n<10?'0':'')+n; }
+
+/* Relaciones candidatas. Cada una nace de una regla concreta: si el
+   estudiante no puede citar la regla, la relación no debería existir. */
+var RELS = [
+  {id:'reserva_cliente',   a:'reserva', b:'cliente',     verbo:'la hace',      sug:'N:1', regla:1,  frase:'Una RESERVA la hace un CLIENTE'},
+  {id:'reserva_mesa',      a:'reserva', b:'mesa',        verbo:'ocupa',        sug:'N:1', regla:2,  frase:'Una RESERVA ocupa una MESA'},
+  {id:'reserva_turno',     a:'reserva', b:'turno',       verbo:'es en',        sug:'N:1', regla:null, frase:'Una RESERVA es en un TURNO'},
+  {id:'pedido_mesa',       a:'pedido',  b:'mesa',        verbo:'se sirve en',  sug:'N:1', regla:4,  frase:'Un PEDIDO se sirve en una MESA'},
+  {id:'pedido_mesero',     a:'pedido',  b:'mesero',      verbo:'lo atiende',   sug:'N:1', regla:10, frase:'Un PEDIDO lo atiende un MESERO'},
+  {id:'pedido_plato',      a:'pedido',  b:'plato',       verbo:'contiene',     sug:'N:N', regla:5,  frase:'Un PEDIDO contiene PLATOS', puente:'linea_pedido'},
+  {id:'pago_pedido',       a:'pago',    b:'pedido',      verbo:'salda',        sug:'N:1', regla:9,  frase:'Un PAGO salda un PEDIDO'},
+  {id:'plato_ingrediente', a:'plato',   b:'ingrediente', verbo:'lleva',        sug:'N:N', regla:7,  frase:'Un PLATO lleva INGREDIENTES', puente:'receta'},
+  {id:'mesero_mesa',       a:'mesero',  b:'mesa',        verbo:'atiende',      sug:'N:N', regla:10, frase:'Un MESERO atiende MESAS', puente:'asignacion'}
+];
+
+var CARDS = [
+  {v:'',    t:'no existe',  d:'Estas dos cosas no se relacionan en mi modelo.'},
+  {v:'N:1', t:'N : 1',      d:'Muchos A para un B. La clave foránea va en A.'},
+  {v:'1:1', t:'1 : 1',      d:'Uno y solo uno de cada lado.'},
+  {v:'N:N', t:'N : N',      d:'Muchos de cada lado. Hace falta una tabla puente.'}
+];
+
+var FILAS = {cliente:20, mesa:12, mesero:4, turno:2, plato:14, ingrediente:18,
+             reserva:30, pedido:40, pago:45, linea_pedido:90};
+
+/* =====================================================================
+   3 · EL ESTADO
+   ===================================================================== */
+
+var S = {
+  paso: 1,
+  reglas: {},     // n -> {nivel, accion}
+  sust:   {},     // k -> 'entidad' | 'atributo' | 'no'
+  ents:   {},     // k -> {attrs: {k -> {obl,uni,regla}}}
+  rels:   {},     // id -> {card, oblA, oblB, regla}
+  pest:   'ddl'
+};
+
+REGLAS.forEach(function(r){ S.reglas[r.n] = {nivel:r.nivel, accion:null}; });
+SUSTANTIVOS.forEach(function(s){ S.sust[s.k] = null; });
+RELS.forEach(function(r){ S.rels[r.id] = {card:'', oblA:false, oblB:false, regla:null}; });
+
+var SQL = null;      // el módulo sql.js, una vez cargado
+var ultimoDDL = '';
+
+/* --------- utilidades --------- */
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                  .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+/* Ojo con esto: un <tr> o un <td> dentro de un <div> los descarta el parser de
+   HTML, porque solo son válidos dentro de una tabla. <template> los admite. */
+function el(html){
+  var t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+function entidades(){
+  return Object.keys(S.sust).filter(function(k){
+    return S.sust[k]==='entidad' && CAT[k];
+  });
+}
+function tieneEnt(k){ return entidades().indexOf(k) >= 0; }
+
+function relsVivas(){
+  return RELS.filter(function(r){
+    var e = S.rels[r.id];
+    return e.card && tieneEnt(r.a) && tieneEnt(r.b);
+  });
+}
+
+/* =====================================================================
+   4 · GENERAR EL SQL
+   ===================================================================== */
+
+var TIPOS = {TEXTO:'TEXT', ENTERO:'INTEGER', DECIMAL:'REAL', FECHA:'TEXT', BOOLEANO:'INTEGER'};
+
+function nombreTabla(k){ return k; }
+function pk(k){ return k + '_id'; }
+
+/* Las N:1 que salen de la entidad k: cada una pone una clave foránea aquí. */
+function fksDe(k){
+  return relsVivas().filter(function(r){
+    var e = S.rels[r.id];
+    if (e.card === 'N:1' || e.card === '1:1') return r.a === k;
+    return false;
+  });
+}
+
+function puentesVivos(){
+  return relsVivas().filter(function(r){ return S.rels[r.id].card === 'N:N'; })
+    .map(function(r){
+      var nombre = r.puente || (r.a+'_'+r.b);
+      /* Si el estudiante ya marcó ese nombre como entidad, la entidad ES la
+         tabla puente: no se crea dos veces, se le meten dentro las dos claves
+         foráneas. Y eso es justo la lección — una tabla puente con datos
+         propios (cantidad, precio) ha dejado de ser un puente. */
+      return {nombre:nombre, a:r.a, b:r.b, rel:r, absorbido:tieneEnt(nombre)};
+    });
+}
+
+/* Los puentes que viven dentro de la entidad k. */
+function puentesDe(k){
+  return puentesVivos().filter(function(p){ return p.absorbido && p.nombre === k; });
+}
+
+/* Las entidades ordenadas de forma que ninguna aparezca antes que aquellas a
+   las que apunta. Hace falta para sembrar: si se inserta una reserva antes que
+   su turno, la clave foránea la rechaza y la base se queda medio vacía sin que
+   nadie entienda por qué. */
+function ordenEntidades(){
+  var ents = entidades(), fila = [], puesto = {};
+  function apunta(k){
+    var d = fksDe(k).map(function(r){ return r.b; });
+    puentesDe(k).forEach(function(p){ d.push(p.a); d.push(p.b); });
+    return d.filter(function(x){ return x !== k && tieneEnt(x); });
+  }
+  for (var v = 0; v < ents.length + 2 && fila.length < ents.length; v++) {
+    ents.forEach(function(k){
+      if (puesto[k]) return;
+      var faltan = apunta(k).filter(function(d){ return !puesto[d]; });
+      if (!faltan.length) { puesto[k] = 1; fila.push(k); }
+    });
+  }
+  /* Si quedan ciclos (A apunta a B y B a A), van al final: se sembrarán mal y
+     el propio banco de pruebas lo dirá. No se esconde. */
+  ents.forEach(function(k){ if (!puesto[k]) fila.push(k); });
+  return fila;
+}
+
+function generarDDL(){
+  var L = [];
+  L.push('-- Restaurante ABC · modelo generado desde tus decisiones');
+  L.push('-- Cada tabla y cada restricción cita la regla que la justifica.');
+  L.push('');
+  L.push('PRAGMA foreign_keys = ON;');
+  L.push('');
+
+  var ents = ordenEntidades();
+  if (!ents.length) {
+    L.push('-- Todavía no has marcado ninguna entidad. Ve al paso 2.');
+    return L.join('\n');
+  }
+
+  ents.forEach(function(k){
+    var def = CAT[k], est = S.ents[k] || {attrs:{}};
+    var cols = [];
+    cols.push({sql: pad2(pk(k)) + ' INTEGER PRIMARY KEY', cm:''});
+
+    def.attrs.forEach(function(a){
+      var sel = est.attrs[a.k];
+      if (!sel) return;
+      var t = TIPOS[a.t] || 'TEXT';
+      var s = pad2(a.k) + ' ' + t;
+      if (sel.obl) s += ' NOT NULL';
+      if (sel.uni) s += ' UNIQUE';
+      var cm = '';
+      if (sel.obl || sel.uni) {
+        cm = sel.regla ? '  -- regla ' + sel.regla
+                       : '  -- sin regla que lo justifique';
+      }
+      cols.push({sql:s, cm:cm});
+    });
+
+    fksDe(k).forEach(function(r){
+      var e = S.rels[r.id];
+      var s = pad2(pk(r.b)) + ' INTEGER';
+      if (e.oblA) s += ' NOT NULL';
+      s += ' REFERENCES ' + nombreTabla(r.b) + '(' + pk(r.b) + ')';
+      cols.push({sql:s, cm: e.regla ? '  -- regla ' + e.regla : '  -- sin regla'});
+    });
+
+    puentesDe(k).forEach(function(p){
+      var e = S.rels[p.rel.id];
+      [p.a, p.b].forEach(function(otro){
+        cols.push({
+          sql: pad2(pk(otro)) + ' INTEGER NOT NULL REFERENCES ' + otro + '(' + pk(otro) + ')',
+          cm: '  -- ' + (e.regla ? 'regla ' + e.regla + ', ' : '') + 'relación N:N'
+        });
+      });
+    });
+
+    L.push('CREATE TABLE ' + nombreTabla(k) + ' (');
+    cols.forEach(function(c, i){
+      L.push('  ' + c.sql + (i < cols.length-1 ? ',' : '') + c.cm);
+    });
+    L.push(');');
+    L.push('');
+  });
+
+  puentesVivos().filter(function(p){ return !p.absorbido; }).forEach(function(p){
+    var e = S.rels[p.rel.id];
+    L.push('-- Tabla puente: la relación ' + p.a.toUpperCase() + ' ↔ ' +
+           p.b.toUpperCase() + ' es N:N' + (e.regla ? ' (regla '+e.regla+')' : ''));
+    L.push('-- Nadie la pidió. La exige el N:N.');
+    L.push('CREATE TABLE ' + p.nombre + ' (');
+    L.push('  ' + pad2(pk(p.a)) + ' INTEGER NOT NULL REFERENCES ' + p.a + '(' + pk(p.a) + '),');
+    L.push('  ' + pad2(pk(p.b)) + ' INTEGER NOT NULL REFERENCES ' + p.b + '(' + pk(p.b) + '),');
+    L.push('  PRIMARY KEY (' + pk(p.a) + ', ' + pk(p.b) + ')');
+    L.push(');');
+    L.push('');
+  });
+
+  return L.join('\n').replace(/\n{3,}/g,'\n\n').trim() + '\n';
+}
+
+function pad2(s){ while (s.length < 18) s += ' '; return s; }
+
+/* --------- la semilla, construida a la medida del modelo --------- */
+function generarSemilla(){
+  var out = [];
+  var ents = ordenEntidades();
+
+  ents.forEach(function(k){
+    var def = CAT[k], est = S.ents[k] || {attrs:{}};
+    var n = FILAS[k] || 10;
+    var attrs = def.attrs.filter(function(a){ return est.attrs[a.k]; });
+    var fks = fksDe(k);
+    for (var i = 0; i < n; i++) {
+      var cols = [pk(k)], vals = [i+1];
+      attrs.forEach(function(a){ cols.push(a.k); vals.push(a.gen(i)); });
+      fks.forEach(function(r){
+        var destino = FILAS[r.b] || 10;
+        cols.push(pk(r.b));
+        vals.push(1 + (i % destino));
+      });
+      puentesDe(k).forEach(function(p){
+        [p.a, p.b].forEach(function(otro){
+          cols.push(pk(otro));
+          vals.push(1 + (i % (FILAS[otro] || 10)));
+        });
+      });
+      out.push({t:k, sql:'INSERT INTO '+k+' ('+cols.join(', ')+') VALUES ('+vals.join(', ')+');'});
+    }
+  });
+
+  puentesVivos().filter(function(p){ return !p.absorbido; }).forEach(function(p){
+    var na = FILAS[p.a] || 10, nb = FILAS[p.b] || 10;
+    /* Una rejilla de verdad: cada A con unos cuantos B distintos. Antes se
+       repetían los pares y la tabla puente salía casi vacía. */
+    var n = Math.min(na * 4, na * nb, 70);
+    for (var i = 0; i < n; i++) {
+      var x = 1 + (i % na), y = 1 + (Math.floor(i / na) % nb);
+      out.push({t:p.nombre, sql:'INSERT INTO '+p.nombre+' ('+pk(p.a)+', '+pk(p.b)+
+                ') VALUES ('+x+', '+y+');'});
+    }
+  });
+
+  return out;
+}
+
+/* =====================================================================
+   5 · CONSTRUIR LA BASE Y CORRER EL BANCO DE PRUEBAS
+   ===================================================================== */
+
+function construir(apagarFK){
+  var ddl = generarDDL();
+  ultimoDDL = ddl;
+  if (apagarFK) ddl = ddl.replace('PRAGMA foreign_keys = ON;', 'PRAGMA foreign_keys = OFF;');
+  var db, err = null, rechazadas = [];
+  try {
+    db = new SQL.Database();
+    db.run(ddl);
+  } catch(e){
+    return {error:'El SQL no se pudo crear: ' + e.message, ddl:ddl};
+  }
+  var semilla = generarSemilla();
+  semilla.forEach(function(s){
+    try { db.run(s.sql); }
+    catch(e){ rechazadas.push({t:s.t, sql:s.sql, msg:e.message}); }
+  });
+  return {db:db, ddl:ddl, rechazadas:rechazadas, sembradas:semilla.length};
+}
+
+function cuenta(db, tabla){
+  try { var r = db.exec('SELECT COUNT(*) FROM ' + tabla); return r[0].values[0][0]; }
+  catch(e){ return null; }
+}
+
+/* Cada prueba dice qué regla la motiva, qué necesita para poder correr, y
+   qué significa cada desenlace. La herramienta nunca dice "mal": dice qué
+   pasó y qué dice la regla. */
+var PRUEBAS = [
+  {
+    n:1, regla:1, req:['reserva'],
+    t:'Guardar una reserva sin fecha',
+    sql:function(){ return ins('reserva', {fecha:null}); },
+    debe:'rechazar',
+    siRechaza:'Tu modelo la exige. <b>NOT NULL</b> es de las poquísimas reglas que el esquema sí puede hacer cumplir entero.',
+    siPasa:'Entró una reserva sin fecha. La regla 1 dice que no puede confirmarse sin fecha: marca <code>fecha</code> como obligatoria en el paso 3.'
+  },
+  {
+    n:2, regla:2, req:['reserva','mesa'],
+    t:'Dos reservas que se solapan en la misma mesa',
+    sql:function(){ return solape(); },
+    debe:'rechazar',
+    siRechaza:'Lo impidió… casi seguro con un <code>UNIQUE</code> que además prohíbe cosas que la regla permite. Mira la prueba de abajo.',
+    siPasa:'Entraron las dos. <b>Y así es como tiene que ser:</b> <code>UNIQUE</code> compara valores iguales, no intervalos que se cruzan. Esta regla es de <b>aplicación</b> — se comprueba con la consulta de solapes de la sesión 6, no con el esquema.'
+  },
+  {
+    n:3, regla:3, req:['reserva','mesa'],
+    t:'Una reserva de 6 personas en una mesa de 2',
+    sql:function(){ return ins('reserva', {personas:6}, {mesa_id:2}); },
+    debe:'rechazar',
+    siRechaza:'Lo impidió. Comprueba con qué: si fue un <code>CHECK</code> sobre <code>personas</code>, estás prohibiendo grupos de 6 en <b>todas</b> las mesas, también en las de 6.',
+    siPasa:'Entró. Un <code>CHECK</code> solo mira su propia fila, y <code>puestos</code> vive en <b>otra tabla</b>. Regla confirmada por la dueña que el esquema no puede defender.'
+  },
+  {
+    n:4, regla:4, req:['pedido','mesa'],
+    t:'Un pedido asignado a una mesa que no existe',
+    sql:function(){ return ins('pedido', {}, {mesa_id:9999}); },
+    debe:'rechazar',
+    siRechaza:'La <b>clave foránea</b> hizo su trabajo. Esta sí: la cardinalidad <i>es</i> la regla.',
+    siPasa:'Entró un pedido en la mesa 9999. Te falta declarar la relación PEDIDO–MESA en el paso 4.'
+  },
+  {
+    n:5, regla:5, req:['pedido'],
+    t:'Mandar a cocina un pedido sin ningún plato',
+    sql:function(){ return "UPDATE pedido SET estado = 'en cocina' WHERE pedido_id = 1;"; },
+    debe:'rechazar',
+    siRechaza:'Curioso: mira qué lo impidió, porque el DDL no sabe expresar «al menos uno».',
+    siPasa:'Pasó. <b>«Al menos uno» no se escribe en DDL.</b> Ninguna restricción de tabla puede exigir que exista una fila en otra tabla. Es de aplicación.'
+  },
+  {
+    n:6, regla:7, req:['plato','ingrediente'],
+    t:'Usar un ingrediente vencido en un plato nuevo',
+    sql:function(){ return recetaVencida(); },
+    debe:'rechazar',
+    siRechaza:'Comprueba por qué falló. Si fue por la clave primaria repetida, no cuenta: eso no es la regla del vencimiento.',
+    siPasa:'Entró. El vencimiento depende del <b>momento en que se usa</b>, no de la fila que se guarda. Regla confirmada, imposible de escribir en el esquema.'
+  },
+  {
+    n:7, regla:8, req:['pedido'],
+    t:'Cerrar un pedido sin ningún pago',
+    sql:function(){ return "UPDATE pedido SET estado = 'cerrado' WHERE pedido_id = 2;"; },
+    debe:'rechazar',
+    siRechaza:'Mira con qué. Una transición de estado no se defiende con restricciones de columna.',
+    siPasa:'Pasó. Es una <b>transición de estado</b>, no la forma de una fila. El esquema no distingue «abierto» de «cerrado» más que como texto.'
+  },
+  {
+    n:8, regla:9, req:['pago','pedido'],
+    t:'Pagos que suman menos que el total del pedido',
+    sql:function(){ return ins('pago', {monto:1000}, {pedido_id:1}); },
+    debe:'rechazar',
+    siRechaza:'Revisa qué lo impidió: un <code>CHECK</code> no admite subconsultas, así que no puede sumar los pagos.',
+    siPasa:'Pasó. Para comprobarlo hay que <b>sumar otras filas</b>, y un <code>CHECK</code> no puede hacerlo en SQLite. Aplicación.'
+  },
+  {
+    n:9, regla:10, req:['pedido','mesero'],
+    t:'Que un mesero toque el pedido de otro',
+    sql:function(){ return 'UPDATE pedido SET mesero_id = 2 WHERE pedido_id = 1;'; },
+    debe:'rechazar',
+    siRechaza:'Mira con qué lo impediste — y si con eso no impides también cambios legítimos.',
+    siPasa:'Pasó. Es un permiso sobre <b>quién</b> hace la operación, no sobre la forma del dato. Eso vive en la aplicación o en los permisos del motor.'
+  },
+  {
+    n:10, regla:1, req:['cliente','reserva'],
+    t:'Borrar un cliente que tiene reservas',
+    sql:function(){ return 'DELETE FROM cliente WHERE cliente_id = 1;'; },
+    debe:'rechazar',
+    especial:'huerfanas',
+    siRechaza:'La clave foránea lo impidió. Declarada <b>y</b> con <code>PRAGMA foreign_keys = ON</code>: hacen falta las dos.',
+    siPasa:''  /* se compone en vivo con el conteo de huérfanas */
+  },
+  {
+    n:11, regla:2, req:['reserva','mesa'],
+    t:'La misma mesa, el mismo día, en turnos distintos',
+    sql:function(){ return dosTurnos(); },
+    debe:'pasar',
+    siPasa:'Entra, y debe entrar: almuerzo y cena son dos reservas legítimas el mismo día.',
+    siRechaza:'<b>Tu modelo prohíbe algo que la regla no prohibía.</b> Seguramente pusiste <code>UNIQUE(mesa_id, fecha)</code> intentando cubrir la regla 2. Un modelo demasiado estricto rompe el negocio el día que la dueña quiere una excepción.'
+  },
+  {
+    n:12, regla:6, req:[],
+    t:'Un plato con un ingrediente agotado',
+    hipotesis:true,
+    siPasa:'', siRechaza:''
+  }
+];
+
+/* --- constructores de SQL para las pruebas --- */
+function colsDe(k){
+  var def = CAT[k], est = S.ents[k] || {attrs:{}};
+  var c = [];
+  def.attrs.forEach(function(a){ if (est.attrs[a.k]) c.push(a); });
+  return c;
+}
+function ins(k, forzar, fks){
+  forzar = forzar || {}; fks = fks || {};
+  var cols = [pk(k)], vals = [900001];
+  colsDe(k).forEach(function(a){
+    if (forzar.hasOwnProperty(a.k)) {
+      if (forzar[a.k] === null) return;      /* se omite a propósito */
+      cols.push(a.k); vals.push(typeof forzar[a.k]==='string' ? "'"+forzar[a.k]+"'" : forzar[a.k]);
+    } else { cols.push(a.k); vals.push(a.gen(0)); }
+  });
+  fksDe(k).forEach(function(r){
+    var col = pk(r.b);
+    cols.push(col);
+    vals.push(fks.hasOwnProperty(col) ? fks[col] : 1);
+  });
+  return 'INSERT INTO '+k+' ('+cols.join(', ')+') VALUES ('+vals.join(', ')+');';
+}
+function solape(){
+  var f = {fecha:'2026-09-01', hora:'12:00', fin:'14:00'};
+  var a = ins('reserva', f, {mesa_id:1});
+  var f2 = {fecha:'2026-09-01', hora:'13:00', fin:'15:00'};
+  var b = ins('reserva', f2, {mesa_id:1}).replace('900001','900002');
+  return a + '\n' + b;
+}
+function dosTurnos(){
+  var a = ins('reserva', {fecha:'2026-09-20', hora:'12:00', fin:'14:00'}, {mesa_id:1});
+  var b = ins('reserva', {fecha:'2026-09-20', hora:'20:00', fin:'22:00'}, {mesa_id:1})
+            .replace('900001','900002');
+  return a + '\n' + b;
+}
+function recetaVencida(){
+  var p = puentesVivos().filter(function(x){ return x.nombre==='receta'; })[0];
+  if (!p) return null;
+  /* El ingrediente 5 está vencido (agosto) y la semilla no llega a emparejarlo
+     con ningún plato. Importa elegir un par libre: si se elige uno que ya
+     existe, lo rechaza la clave primaria y la prueba saldría verde por un
+     motivo que no tiene nada que ver con el vencimiento. */
+  var t = p.absorbido ? 'receta' : p.nombre;
+  return 'INSERT INTO '+t+' ('+pk('plato')+', '+pk('ingrediente')+') VALUES (1, 5);';
+}
+
+function correrPruebas(){
+  var b = construir();
+  if (b.error) return {error:b.error};
+  var db = b.db, res = [];
+
+  PRUEBAS.forEach(function(p){
+    if (p.hipotesis) {
+      res.push({p:p, estado:'hipotesis'});
+      return;
+    }
+    var falta = p.req.filter(function(k){ return !tieneEnt(k); });
+    if (falta.length) {
+      res.push({p:p, estado:'na', falta:falta});
+      return;
+    }
+    var sql = p.sql();
+    if (!sql) { res.push({p:p, estado:'na', falta:['la tabla puente']}); return; }
+
+    var antes = p.especial === 'huerfanas' ? cuenta(db, 'reserva') : null;
+    var error = null;
+    try { db.run('SAVEPOINT prueba;'); db.run(sql); }
+    catch(e){ error = e.message; }
+
+    var extra = null;
+    if (!error && p.especial === 'huerfanas') {
+      var h = null;
+      try {
+        var q = db.exec('SELECT COUNT(*) FROM reserva r WHERE NOT EXISTS ' +
+                        '(SELECT 1 FROM cliente c WHERE c.cliente_id = r.cliente_id)');
+        h = q[0].values[0][0];
+      } catch(e){}
+      extra = {huerfanas:h, total:cuenta(db,'reserva'), antes:antes};
+    }
+    try { db.run('ROLLBACK TO prueba; RELEASE prueba;'); } catch(e){}
+
+    var rechazo = error !== null;
+    var esperaRechazo = p.debe === 'rechazar';
+    var estado;
+    if (rechazo && esperaRechazo) estado = 'ok';
+    else if (!rechazo && !esperaRechazo) estado = 'ok';
+    else if (!rechazo && esperaRechazo) estado = 'no';
+    else estado = 'exceso';
+    res.push({p:p, estado:estado, error:error, extra:extra, sql:sql});
+  });
+
+  db.close();
+
+  /* Y ahora el mismo borrado, pero con las claves foráneas APAGADAS — que es
+     como viene SQLite de fábrica. Es la explicación de lo que pasó en la
+     sesión 6 con dvdrental: las claves estaban escritas y no impedían nada. */
+  var apagado = null;
+  if (tieneEnt('cliente') && tieneEnt('reserva')) {
+    var b2 = construir(true);
+    if (b2.db) {
+      var err2 = null;
+      try { b2.db.run('DELETE FROM cliente WHERE cliente_id = 1;'); }
+      catch(e){ err2 = e.message; }
+      var h = null;
+      try {
+        h = b2.db.exec('SELECT COUNT(*) FROM reserva r WHERE NOT EXISTS ' +
+                       '(SELECT 1 FROM cliente c WHERE c.cliente_id = r.cliente_id)')[0].values[0][0];
+      } catch(e){}
+      apagado = {error:err2, huerfanas:h, total:cuenta(b2.db, 'reserva')};
+      b2.db.close();
+    }
+  }
+
+  return {res:res, rechazadas:b.rechazadas, sembradas:b.sembradas, ddl:b.ddl, apagado:apagado};
+}
+
+/* =====================================================================
+   6 · EL DIAGRAMA · SVG generado, nunca dibujos de texto
+   ===================================================================== */
+
+function generarSVG(){
+  var ents = entidades();
+  if (!ents.length) return '<p class="lead">Marca alguna entidad en el paso 2 y aquí aparece el diagrama.</p>';
+
+  var cols = [[],[],[]];
+  ents.forEach(function(k){ cols[CAT[k].col].push({k:k, puente:false}); });
+  puentesVivos().filter(function(p){ return !p.absorbido; }).forEach(function(p){
+    var c = p.nombre === 'receta' ? 2 : 1;
+    cols[c].push({k:p.nombre, puente:true, p:p});
+  });
+
+  var AN = 200, X = [40, 400, 760], caja = {};
+  var alto = 40;
+  cols.forEach(function(col, ci){
+    var y = 30;
+    col.forEach(function(item){
+      var filas = item.puente ? 2
+        : (colsDe(item.k).length + 1 + fksDe(item.k).length + puentesDe(item.k).length * 2);
+      var h = 30 + filas * 17 + 8;
+      caja[item.k] = {x:X[ci], y:y, w:AN, h:h, item:item};
+      y += h + 26;
+    });
+    alto = Math.max(alto, y);
+  });
+
+  var svg = [];
+  svg.push('<svg viewBox="0 0 1000 '+alto+'" width="100%" height="'+alto+'" '+
+           'xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">');
+  svg.push('<defs><marker id="pt" markerWidth="7" markerHeight="7" refX="6" refY="3.5" '+
+           'orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#124e78"/></marker></defs>');
+
+  /* líneas primero, para que las cajas queden encima */
+  relsVivas().forEach(function(r){
+    var e = S.rels[r.id];
+    var origen, destino, etA, etB;
+    if (e.card === 'N:N') {
+      var pn = r.puente || (r.a+'_'+r.b);
+      if (!caja[pn]) return;
+      linea(svg, caja[r.a], caja[pn], 'N', '1', r);
+      linea(svg, caja[r.b], caja[pn], 'N', '1', r);
+      return;
+    }
+    if (!caja[r.a] || !caja[r.b]) return;
+    linea(svg, caja[r.a], caja[r.b], e.card === '1:1' ? '1' : 'N', '1', r);
+  });
+
+  /* cajas */
+  Object.keys(caja).forEach(function(k){
+    var c = caja[k], it = c.item;
+    var titulo = it.puente ? k.toUpperCase() : CAT[k].label;
+    var fondo  = it.puente ? '#fff6c9' : '#e9f4ff';
+    var borde  = it.puente ? '#ff8a24' : '#124e78';
+    svg.push('<rect x="'+c.x+'" y="'+c.y+'" width="'+c.w+'" height="'+c.h+'" rx="10" '+
+             'fill="#fff" stroke="'+borde+'" stroke-width="1.6"/>');
+    svg.push('<path d="M'+c.x+','+(c.y+26)+' v-16 a10,10 0 0 1 10,-10 h'+(c.w-20)+
+             ' a10,10 0 0 1 10,10 v16 z" fill="'+fondo+'"/>');
+    svg.push('<text x="'+(c.x+10)+'" y="'+(c.y+19)+'" font-size="12.5" font-weight="800" '+
+             'fill="'+borde+'" font-family="Consolas,monospace">'+esc(titulo)+'</text>');
+
+    var y = c.y + 42, lineas = [];
+    if (it.puente) {
+      lineas.push({t:pk(it.p.a), k:'fk'});
+      lineas.push({t:pk(it.p.b), k:'fk'});
+    } else {
+      lineas.push({t:pk(k), k:'pk'});
+      colsDe(k).forEach(function(a){
+        var sel = S.ents[k].attrs[a.k];
+        lineas.push({t:a.k + (sel.obl?' *':'') + (sel.uni?' u':''), k:'at'});
+      });
+      fksDe(k).forEach(function(r){ lineas.push({t:pk(r.b), k:'fk'}); });
+      puentesDe(k).forEach(function(p){
+        lineas.push({t:pk(p.a), k:'fk'});
+        lineas.push({t:pk(p.b), k:'fk'});
+      });
+    }
+    lineas.forEach(function(l){
+      var col = l.k==='pk' ? '#124e78' : (l.k==='fk' ? '#146c43' : '#1a1a1a');
+      var pesa = l.k==='at' ? '600' : '800';
+      svg.push('<text x="'+(c.x+12)+'" y="'+y+'" font-size="11" font-weight="'+pesa+'" '+
+               'fill="'+col+'" font-family="Consolas,monospace">'+esc(l.t)+'</text>');
+      y += 17;
+    });
+  });
+
+  svg.push('</svg>');
+  return svg.join('');
+}
+
+function linea(svg, A, B, cardA, cardB, r){
+  var ax, bx, ay = A.y + A.h/2, by = B.y + B.h/2;
+  if (A.x < B.x) { ax = A.x + A.w; bx = B.x; }
+  else           { ax = A.x;       bx = B.x + B.w; }
+  var mx = (ax + bx) / 2;
+  var d = 'M'+ax+','+ay+' C'+mx+','+ay+' '+mx+','+by+' '+bx+','+by;
+  svg.push('<path d="'+d+'" fill="none" stroke="#124e78" stroke-width="1.4" opacity=".75"/>');
+  var dir = A.x < B.x ? 1 : -1;
+  svg.push('<text x="'+(ax+14*dir)+'" y="'+(ay-6)+'" font-size="11" font-weight="800" '+
+           'fill="#124e78" text-anchor="middle">'+cardA+'</text>');
+  svg.push('<text x="'+(bx-14*dir)+'" y="'+(by-6)+'" font-size="11" font-weight="800" '+
+           'fill="#124e78" text-anchor="middle">'+cardB+'</text>');
+  var e = S.rels[r.id];
+  if (e.regla) {
+    svg.push('<text x="'+mx+'" y="'+((ay+by)/2 - 5)+'" font-size="10" font-weight="700" '+
+             'fill="#ff8a24" text-anchor="middle">regla '+e.regla+'</text>');
+  }
+}
+
+/* =====================================================================
+   7 · LOS PASOS
+   ===================================================================== */
+
+var PASOS = [
+  {n:1, t:'Las reglas',    pinta:paso1},
+  {n:2, t:'Los sustantivos',pinta:paso2},
+  {n:3, t:'Los atributos', pinta:paso3},
+  {n:4, t:'Las relaciones',pinta:paso4},
+  {n:5, t:'La base',       pinta:paso5},
+  {n:6, t:'Las pruebas',   pinta:paso6},
+  {n:7, t:'La llamada',    pinta:paso7}
+];
+
+function listo(n){
+  if (n===1) return REGLAS.every(function(r){ return S.reglas[r.n].accion; });
+  if (n===2) return SUSTANTIVOS.every(function(s){ return S.sust[s.k]; });
+  if (n===3) return entidades().length > 0 && entidades().every(function(k){
+    return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; });
+  if (n===4) return relsVivas().length >= 3;
+  return false;
+}
+
+function pintarPasos(){
+  var nav = $('#pasos');
+  nav.innerHTML = '';
+  PASOS.forEach(function(p){
+    var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(p.t)+'</button>');
+    if (S.paso === p.n) b.className = 'on';
+    if (listo(p.n)) b.className += ' listo';
+    b.onclick = function(){ S.paso = p.n; pintar(); window.scrollTo(0,0); };
+    nav.appendChild(b);
+  });
+}
+
+function pintar(){
+  pintarPasos();
+  var m = $('#main');
+  m.innerHTML = '';
+  PASOS.filter(function(p){ return p.n === S.paso; })[0].pinta(m);
+  pintarContador();
+}
+
+function pintarContador(){
+  var c = $('#contador');
+  var sinRegla = 0;
+  entidades().forEach(function(k){
+    var e = S.ents[k]||{attrs:{}};
+    Object.keys(e.attrs).forEach(function(a){
+      var s = e.attrs[a];
+      if ((s.obl || s.uni) && !s.regla) sinRegla++;
+    });
+  });
+  relsVivas().forEach(function(r){ if (!S.rels[r.id].regla) sinRegla++; });
+  var clasificadas = REGLAS.filter(function(r){ return S.reglas[r.n].accion; }).length;
+  c.innerHTML =
+    '<div class="chip">reglas<b>'+clasificadas+'/10</b></div>' +
+    '<div class="chip">entidades<b>'+entidades().length+'</b></div>' +
+    '<div class="chip">relaciones<b>'+relsVivas().length+'</b></div>' +
+    '<div class="chip'+(sinRegla?' aviso':'')+'">sin regla<b>'+sinRegla+'</b></div>';
+}
+
+/* --------------------------- PASO 1 --------------------------- */
+function paso1(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 1 · de 7</div>'+
+    '<h2>¿Qué se puede hacer con cada regla?</h2>'+
+    '<p class="lead">Estas son tus diez reglas del jueves, sin tocar. El nivel de certeza viene '+
+    'precargado y <strong>puedes cambiarlo</strong>. Lo nuevo es la segunda decisión: de las cuatro '+
+    'cosas que se pueden hacer con una regla, ¿cuál es? Nadie te va a decir aquí si acertaste — '+
+    'eso lo dirá la base de datos en el paso 6.</p>'+
+    '<div class="nota"><p><strong>Las cuatro:</strong> ' +
+      ACCIONES.map(function(a){ return '<b>'+a.t+'</b> — '+a.d; }).join(' · ') +
+    '</p></div>'+
+    '<div id="listaReglas"></div>'+
+    '</div>'));
+
+  var L = $('#listaReglas', m);
+  REGLAS.forEach(function(r){
+    var e = S.reglas[r.n];
+    var card = el('<div class="regla'+(e.accion?' hecha':'')+'">'+
+      '<div class="rn">'+r.n+'</div>'+
+      '<div class="rt">'+esc(r.txt)+'</div>'+
+      '<div><label class="sw">Nivel: <select class="nivsel"></select></label></div>'+
+      '<div class="opts"></div>'+
+    '</div>');
+
+    var sel = $('select', card);
+    Object.keys(NIVELES).forEach(function(k){
+      var o = document.createElement('option');
+      o.value = k; o.textContent = NIVELES[k];
+      if (e.nivel === k) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = function(){ e.nivel = sel.value; };
+
+    var opts = $('.opts', card);
+    ACCIONES.forEach(function(a){
+      var b = el('<button type="button" data-v="'+a.v+'">'+a.t+'</button>');
+      if (e.accion === a.v) b.className = 'el';
+      b.title = a.d;
+      b.onclick = function(){ e.accion = a.v; pintar(); };
+      opts.appendChild(b);
+    });
+    L.appendChild(card);
+  });
+
+  if (listo(1)) {
+    var apl = REGLAS.filter(function(r){ return S.reglas[r.n].accion === 'APLICACION'; }).length;
+    var res = REGLAS.filter(function(r){ return S.reglas[r.n].accion === 'RESTRICCION'; }).length;
+    m.appendChild(el('<div class="panel"><div class="nota o">'+
+      '<p><strong>Ya están las diez.</strong> Dijiste que <b>'+res+'</b> las puede hacer cumplir el '+
+      'motor y que <b>'+apl+'</b> necesitan código.</p>'+
+      '<p>Guárdate esos dos números. En el paso 6 tu propia base de datos va a opinar, y casi nunca '+
+      'coincide con lo que uno esperaba.</p></div></div>'));
+  }
+}
+
+/* --------------------------- PASO 2 --------------------------- */
+function paso2(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 2 · de 7</div>'+
+    '<h2>De los sustantivos a las entidades</h2>'+
+    '<p class="lead">La sesión 6 cerró diciendo que las reglas ya nombraban ocho cosas que '+
+    '<strong>tú no elegiste: las eligió el negocio</strong>. Aquí están, y cinco más que también '+
+    'aparecen. De cada una: ¿es una <strong>entidad</strong> (una tabla), un <strong>atributo</strong> '+
+    'de otra, o no es ninguna de las dos?</p>'+
+    '<div class="tabla-envuelta"><table><thead><tr>'+
+    '<th>Sustantivo</th><th>Sale en</th><th class="c">Entidad</th><th class="c">Atributo</th>'+
+    '<th class="c">Ni una ni otra</th></tr></thead><tbody id="tsus"></tbody></table></div>'+
+    '</div>'));
+
+  var tb = $('#tsus', m);
+  SUSTANTIVOS.forEach(function(s){
+    var tr = el('<tr><td><b>'+esc(s.t)+'</b>'+
+      (s.pista?'<div style="font-size:.82em;color:var(--ink-soft)">'+esc(s.pista)+'</div>':'')+
+      '</td><td style="font-size:.85em;color:var(--ink-soft)">'+
+      (s.reglas.length?'reglas '+s.reglas.join(', '):'—')+'</td></tr>');
+    ['entidad','atributo','no'].forEach(function(v){
+      var td = el('<td class="c"></td>');
+      var inp = el('<input type="radio" name="sus_'+s.k+'">');
+      if (S.sust[s.k] === v) inp.checked = true;
+      if (v !== 'entidad' && !CAT[s.k]) { /* solo hay tabla para los del catálogo */ }
+      inp.onchange = function(){
+        S.sust[s.k] = v;
+        if (v === 'entidad' && !S.ents[s.k] && CAT[s.k]) {
+          S.ents[s.k] = {attrs:{}};
+          CAT[s.k].attrs.forEach(function(a){
+            if (a.sug.obl || a.sug.uni)
+              S.ents[s.k].attrs[a.k] = {obl:!!a.sug.obl, uni:!!a.sug.uni, regla:null};
+          });
+        }
+        pintar();
+      };
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+
+  var noCat = Object.keys(S.sust).filter(function(k){
+    return S.sust[k]==='entidad' && !CAT[k]; });
+  if (noCat.length) {
+    m.appendChild(el('<div class="panel"><div class="nota o"><p><strong>Ojo con '+
+      noCat.map(esc).join(', ')+'.</strong> Los has marcado como entidad. Puede ser defendible, '+
+      'pero pregúntate: ¿tiene vida propia, o es un dato de otra cosa? Esta herramienta solo '+
+      'construye tablas para las diez del catálogo, así que esa no va a aparecer en el SQL — '+
+      'pero la decisión queda anotada y es de las que hay que defender en el debrief.</p></div></div>'));
+  }
+  if (listo(2)) {
+    m.appendChild(el('<div class="panel"><div class="nota g"><p><strong>'+
+      entidades().length+' entidades.</strong> Sigue al paso 3: cada una necesita atributos, y cada '+
+      'obligatorio necesita una regla que lo justifique.</p></div></div>'));
+  }
+}
+
+/* --------------------------- PASO 3 --------------------------- */
+function paso3(m){
+  var ents = entidades();
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 3 · de 7</div>'+
+    '<h2>Los atributos, y quién los justifica</h2>'+
+    '<p class="lead">Marca los atributos de cada entidad. De los que sean '+
+    '<strong>obligatorios</strong> o <strong>únicos</strong>, la herramienta te va a pedir '+
+    '<strong>qué regla lo justifica</strong>. Si ninguna lo hace, dilo: se pinta en ámbar, '+
+    'no en rojo. No es un error — es una decisión que tomaste tú y no el negocio, y conviene '+
+    'saber cuántas de esas llevas.</p>'+
+    (ents.length ? '' : '<div class="nota o"><p>Todavía no hay entidades. Vuelve al paso 2.</p></div>')+
+    '<div id="listaEnts"></div></div>'));
+
+  var L = $('#listaEnts', m);
+  ents.forEach(function(k){
+    var def = CAT[k];
+    if (!S.ents[k]) S.ents[k] = {attrs:{}};
+    var est = S.ents[k];
+    var card = el('<div class="ecard"><h3>'+esc(def.label)+
+      '<span class="n">clave primaria: <code>'+pk(k)+'</code>, automática</span></h3>'+
+      '<div class="cuerpo"><div class="tabla-envuelta"><table><thead><tr>'+
+      '<th class="c">va</th><th>atributo</th><th>tipo</th><th class="c">obligatorio</th>'+
+      '<th class="c">único</th><th>regla que lo justifica</th>'+
+      '</tr></thead><tbody></tbody></table></div></div></div>');
+    var tb = $('tbody', card);
+
+    def.attrs.forEach(function(a){
+      var sel = est.attrs[a.k];
+      var tr = el('<tr></tr>');
+
+      var td0 = el('<td class="c"></td>');
+      var chk = el('<input type="checkbox">');
+      chk.checked = !!sel;
+      chk.onchange = function(){
+        if (chk.checked) est.attrs[a.k] = {obl:!!a.sug.obl, uni:!!a.sug.uni, regla:null};
+        else delete est.attrs[a.k];
+        pintar();
+      };
+      td0.appendChild(chk); tr.appendChild(td0);
+
+      tr.appendChild(el('<td><code>'+esc(a.k)+'</code></td>'));
+      tr.appendChild(el('<td style="font-size:.85em;color:var(--ink-soft)">'+esc(a.t)+'</td>'));
+
+      ['obl','uni'].forEach(function(campo){
+        var td = el('<td class="c"></td>');
+        var i = el('<input type="checkbox">');
+        i.disabled = !sel;
+        i.checked = !!(sel && sel[campo]);
+        i.onchange = function(){ sel[campo] = i.checked; pintar(); };
+        td.appendChild(i); tr.appendChild(td);
+      });
+
+      var tdr = el('<td></td>');
+      if (sel && (sel.obl || sel.uni)) {
+        var s = document.createElement('select');
+        var o0 = document.createElement('option');
+        o0.value = ''; o0.textContent = '— ninguna regla lo justifica —';
+        s.appendChild(o0);
+        REGLAS.forEach(function(r){
+          var o = document.createElement('option');
+          o.value = r.n; o.textContent = 'Regla ' + r.n + ' · ' + r.txt.slice(0,46) + '…';
+          if (sel.regla === r.n) o.selected = true;
+          s.appendChild(o);
+        });
+        s.onchange = function(){ sel.regla = s.value ? +s.value : null; pintar(); };
+        if (!sel.regla) tdr.className = 'sinregla';
+        tdr.appendChild(s);
+      } else {
+        tdr.innerHTML = '<span style="color:var(--ink-soft);font-size:.85em">—</span>';
+      }
+      tr.appendChild(tdr);
+      tb.appendChild(tr);
+    });
+    L.appendChild(card);
+  });
+}
+
+/* --------------------------- PASO 4 --------------------------- */
+function paso4(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 4 · de 7</div>'+
+    '<h2>Las relaciones y la cardinalidad</h2>'+
+    '<p class="lead">Di en palabras cómo se conectan. <strong>N:1</strong> pone una clave foránea; '+
+    '<strong>N:N</strong> obliga a una tabla puente y la herramienta te la crea a la vista. '+
+    'Si eliges N:N, mira lo que aparece: es <code>film_category</code> de la sesión 5, otra vez.</p>'+
+    '<div id="listaRels"></div></div>'));
+
+  var L = $('#listaRels', m);
+  RELS.forEach(function(r){
+    if (!tieneEnt(r.a) || !tieneEnt(r.b)) return;
+    var e = S.rels[r.id];
+    var card = el('<div class="ecard"><h3>'+esc(r.frase)+'</h3><div class="cuerpo"></div></div>');
+    var cu = $('.cuerpo', card);
+
+    var fila = el('<div class="opts" style="display:flex;gap:.35em;flex-wrap:wrap;margin-bottom:.5em"></div>');
+    CARDS.forEach(function(c){
+      var b = el('<button type="button" style="border:1.5px solid var(--line);background:var(--paper);'+
+        'border-radius:var(--pill);padding:.25em .8em;font-size:.83rem;font-weight:800;'+
+        'color:var(--ink-soft)">'+esc(c.t)+'</button>');
+      if (e.card === c.v) { b.style.background='var(--b)'; b.style.borderColor='var(--b)'; b.style.color='#fff'; }
+      b.title = c.d;
+      b.onclick = function(){ e.card = c.v; pintar(); };
+      fila.appendChild(b);
+    });
+    cu.appendChild(fila);
+
+    if (e.card) {
+      var obl = el('<div style="display:flex;gap:1.2em;flex-wrap:wrap;margin-bottom:.5em"></div>');
+      [[0,'oblA','Todo '+r.a.toUpperCase()+' tiene '+r.b.toUpperCase()],
+       [1,'oblB','Todo '+r.b.toUpperCase()+' tiene '+r.a.toUpperCase()]].forEach(function(x){
+        var lab = el('<label class="sw"><input type="checkbox"> '+esc(x[2])+'</label>');
+        var i = $('input', lab);
+        i.checked = !!e[x[1]];
+        i.onchange = function(){ e[x[1]] = i.checked; pintar(); };
+        obl.appendChild(lab);
+      });
+      cu.appendChild(obl);
+
+      var lr = el('<label class="sw" style="font-weight:600">¿Qué regla la justifica? <select></select></label>');
+      var s = $('select', lr);
+      var o0 = document.createElement('option');
+      o0.value=''; o0.textContent='— ninguna —';
+      s.appendChild(o0);
+      REGLAS.forEach(function(rg){
+        var o = document.createElement('option');
+        o.value = rg.n; o.textContent = 'Regla '+rg.n+' · '+rg.txt.slice(0,40)+'…';
+        if (e.regla === rg.n) o.selected = true;
+        s.appendChild(o);
+      });
+      s.onchange = function(){ e.regla = s.value ? +s.value : null; pintar(); };
+      if (!e.regla) lr.classList.add('sinregla');
+      cu.appendChild(lr);
+
+      if (e.card === 'N:N') {
+        var pn = r.puente || (r.a+'_'+r.b);
+        if (tieneEnt(pn)) {
+          cu.appendChild(el('<div class="nota g" style="margin-bottom:0"><p><strong>Este puente ya '+
+            'lo habías marcado como entidad: <code>'+esc(pn)+'</code>.</strong> Bien visto. '+
+            'No se crea otra tabla: las dos claves foráneas se meten dentro de la tuya, junto a '+
+            'sus atributos.</p>'+
+            '<p>Y esa es la diferencia que casi nadie sabe explicar: <strong>una tabla puente con '+
+            'datos propios ha dejado de ser un puente y es una entidad.</strong> Si necesitas '+
+            'guardar la cantidad o el precio de ese plato en ese pedido, ya no te vale un puente '+
+            'pelado.</p></div>'));
+        } else {
+          cu.appendChild(el('<div class="nota o" style="margin-bottom:0"><p><strong>Acaba de nacer '+
+            'una tabla: <code>'+esc(pn)+'</code>.</strong> No la pediste tú: la exige el N:N. '+
+            'Dos claves foráneas y una clave primaria compuesta.</p>'+
+            '<p>Es exactamente <code>film_category</code> de la sesión 5. Aquella tampoco la eligió '+
+            'nadie: la exigía que una película tuviera varias categorías y una categoría varias '+
+            'películas.</p></div>'));
+        }
+      }
+    }
+    L.appendChild(card);
+  });
+
+  if (!L.children.length) {
+    L.appendChild(el('<div class="nota o"><p>Marca al menos dos entidades en el paso 2 para poder '+
+      'relacionarlas.</p></div>'));
+  }
+}
+
+/* --------------------------- PASO 5 --------------------------- */
+function paso5(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 5 · de 7</div>'+
+    '<h2>Tu modelo, hecho base de datos</h2>'+
+    '<p class="lead">Esto ya no es un dibujo: es SQLite corriendo en tu navegador con tus tablas '+
+    'y con datos del restaurante dentro.</p>'+
+    '<div class="pest" id="pest"></div>'+
+    '<div id="cuerpoPaso5"></div></div>'));
+
+  var pestañas = [['ddl','El SQL'],['er','El diagrama'],['datos','Los datos']];
+  var nav = $('#pest', m);
+  pestañas.forEach(function(p){
+    var b = el('<button type="button">'+esc(p[1])+'</button>');
+    if (S.pest === p[0]) b.className = 'on';
+    b.onclick = function(){ S.pest = p[0]; pintar(); };
+    nav.appendChild(b);
+  });
+
+  var c = $('#cuerpoPaso5', m);
+  if (S.pest === 'ddl') {
+    var ddl = generarDDL();
+    var bt = el('<button class="copiar">Copiar el SQL entero</button>');
+    bt.onclick = function(){ copiar(ddl, bt); };
+    c.appendChild(bt);
+    c.appendChild(el('<pre>'+pintaSQL(ddl)+'</pre>'));
+  } else if (S.pest === 'er') {
+    c.appendChild(el('<div class="lienzo">'+generarSVG()+'</div>'));
+    c.appendChild(el('<p class="lead" style="margin-top:.6em">Azul, las entidades. Ámbar, las tablas '+
+      'puente que nadie pidió y que el N:N obliga. <code>*</code> obligatorio, <code>u</code> único. '+
+      'Cada línea lleva encima la regla que la justifica — y las que no llevan ninguna se ven solas.</p>'));
+  } else {
+    var b = construir();
+    if (b.error) { c.appendChild(el('<div class="nota r"><p>'+esc(b.error)+'</p></div>')); return; }
+    var t = ['<div class="tabla-envuelta"><table><thead><tr><th>tabla</th><th class="c">filas</th></tr></thead><tbody>'];
+    entidades().forEach(function(k){ t.push('<tr><td><code>'+k+'</code></td><td class="c">'+cuenta(b.db,k)+'</td></tr>'); });
+    puentesVivos().filter(function(p){ return !p.absorbido; }).forEach(function(p){ t.push('<tr><td><code>'+p.nombre+'</code></td><td class="c">'+cuenta(b.db,p.nombre)+'</td></tr>'); });
+    t.push('</tbody></table></div>');
+    c.appendChild(el(t.join('')));
+    if (b.rechazadas.length) {
+      var porTabla = {};
+      b.rechazadas.forEach(function(r){ porTabla[r.t] = (porTabla[r.t]||0)+1; });
+      c.appendChild(el('<div class="nota o"><p><strong>Tu modelo rechazó '+b.rechazadas.length+
+        ' filas de datos reales del restaurante</strong> ('+
+        Object.keys(porTabla).map(function(k){ return porTabla[k]+' de <code>'+k+'</code>'; }).join(', ')+').</p>'+
+        '<p>El motor dijo: <code>'+esc(b.rechazadas[0].msg)+'</code></p>'+
+        '<p>No es un fallo de los datos. Es que tu modelo prohíbe algo que en el restaurante '+
+        'pasa de verdad — dos clientes que se llaman igual, una reserva sin correo, lo que sea. '+
+        '<strong>Así se descubre una restricción de más.</strong></p></div>'));
+    }
+    b.db.close();
+  }
+}
+
+/* --------------------------- PASO 6 --------------------------- */
+function paso6(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 6 · de 7</div>'+
+    '<h2>El banco de pruebas</h2>'+
+    '<p class="lead">Doce intentos reales de <code>INSERT</code>, <code>UPDATE</code> y '+
+    '<code>DELETE</code> contra <strong>tu</strong> base. Cada uno cita la regla que lo motiva. '+
+    'No se te dice si acertaste: se te dice <strong>qué hizo tu base</strong> y qué dice la regla. '+
+    'Sacar conclusiones es tu trabajo.</p>'+
+    '<div id="resPruebas"><div class="cargando">Corriendo…</div></div></div>'));
+
+  setTimeout(function(){
+    var r = correrPruebas();
+    var c = $('#resPruebas', m);
+    c.innerHTML = '';
+    if (r.error) { c.appendChild(el('<div class="nota r"><p>'+esc(r.error)+'</p></div>')); return; }
+
+    var buenas = 0, fallos = 0, excesos = 0;
+    r.res.forEach(function(x){
+      if (x.estado === 'ok') buenas++;
+      if (x.estado === 'no') fallos++;
+      if (x.estado === 'exceso') excesos++;
+    });
+
+    c.appendChild(el('<div class="nota"><p><strong>'+buenas+'</strong> como dice la regla · '+
+      '<strong>'+fallos+'</strong> que tu base permite y la regla prohíbe · '+
+      '<strong>'+excesos+'</strong> que tu base prohíbe y la regla permitía.</p>'+
+      '<p>Si la columna del medio es grande, <strong>no has hecho nada mal</strong>: acabas de '+
+      'descubrir cuántas reglas de negocio no caben en un esquema. Es el hallazgo de la sesión.</p></div>'));
+
+    r.res.forEach(function(x){
+      var p = x.p, clase, ic, texto;
+      if (x.estado === 'hipotesis') {
+        clase='na'; ic='💬';
+        texto='Es una <b>hipótesis</b>: nadie la ha confirmado. No se implementa lo que la dueña '+
+              'no ha dicho — se le pregunta. Esta va a la lista de preguntas pendientes.';
+      } else if (x.estado === 'na') {
+        clase='na'; ic='—';
+        texto='No se puede probar: tu modelo no tiene '+x.falta.map(function(f){
+          return '<code>'+esc(f)+'</code>'; }).join(' ni ')+'.';
+      } else if (x.estado === 'ok' && p.debe === 'rechazar') {
+        clase='ok'; ic='✅'; texto=p.siRechaza;
+      } else if (x.estado === 'ok') {
+        clase='ok'; ic='✅'; texto=p.siPasa;
+      } else if (x.estado === 'exceso') {
+        clase='duda'; ic='⚠️'; texto=p.siRechaza;
+      } else {
+        clase='no'; ic='❌';
+        texto = p.siPasa;
+        if (x.extra) {
+          texto = 'Se borró. <b>Sin ningún error.</b> Y ahora tienes <b>'+x.extra.huerfanas+
+            ' reservas huérfanas</b> — reservas de un cliente que ya no existe. '+
+            'El total de reservas sigue diciendo <b>'+x.extra.total+'</b>, igual que antes. '+
+            'Nadie te va a avisar nunca. Es la sesión 6, en tu propia base.';
+        }
+      }
+      var d = el('<div class="prueba '+clase+'">'+
+        '<div class="ic">'+ic+'</div>'+
+        '<div class="pt">'+esc(p.t)+' <span style="font-weight:600;color:var(--ink-soft);'+
+        'font-size:.85em">· regla '+p.regla+'</span></div>'+
+        '<div class="pd">'+texto+
+        (x.error ? '<div style="margin-top:.3em"><code>'+esc(x.error)+'</code></div>' : '')+
+        '</div></div>');
+      c.appendChild(d);
+    });
+
+    if (r.apagado && r.apagado.huerfanas !== null) {
+      var a = r.apagado;
+      c.appendChild(el('<div class="prueba '+(a.error?'ok':'no')+'" style="margin-top:1em">'+
+        '<div class="ic">'+(a.error?'✅':'❌')+'</div>'+
+        '<div class="pt">El mismo borrado, con las claves foráneas apagadas '+
+        '<span style="font-weight:600;color:var(--ink-soft);font-size:.85em">· la trampa</span></div>'+
+        '<div class="pd">'+ (a.error
+          ? 'Lo impidió igual.'
+          : 'Se borró. <b>Sin ningún error.</b> Y ahora tienes <b>'+a.huerfanas+
+            ' reservas huérfanas</b> — reservas de un cliente que ya no existe. '+
+            'El total de reservas sigue diciendo <b>'+a.total+'</b>. Nadie te va a avisar nunca.'+
+            '<br><br><b>Y la clave foránea estaba escrita.</b> Lo único que cambió es una línea: '+
+            '<code>PRAGMA foreign_keys = OFF</code>, que es como viene SQLite de fábrica. '+
+            'Escribir la restricción no basta: hay que encenderla. '+
+            '<b>Esto es exactamente lo que viste en la sesión 6 con dvdrental.</b>')+
+        '</div></div>'));
+    }
+  }, 30);
+}
+
+/* --------------------------- PASO 7 --------------------------- */
+var LLAMADAS = [
+  {
+    id:'juntar',
+    quien:'La dueña, un jueves a las 7 de la tarde',
+    dice:'«Se me olvidó decirte una cosa. Cuando viene un grupo grande, juntamos dos mesas y les tomamos un solo pedido.»',
+    cambia:'La regla 4 —“un pedido no puede asignarse a más de una mesa”— deja de ser cierta.',
+    aplicar:function(){ S.rels.pedido_mesa.card = 'N:N'; S.rels.pedido_mesa.regla = 4; }
+  },
+  {
+    id:'telefono',
+    quien:'La dueña, revisando reservas',
+    dice:'«Los clientes de toda la vida reservan y no me dan el teléfono. Los conozco.»',
+    cambia:'Si marcaste el teléfono como obligatorio, tu base acaba de dejar fuera a los mejores clientes.',
+    aplicar:function(){ if (S.ents.cliente && S.ents.cliente.attrs.telefono) S.ents.cliente.attrs.telefono.obl = false; }
+  },
+  {
+    id:'turnos',
+    quien:'La dueña, con la libreta en la mano',
+    dice:'«Claro que una mesa se usa dos veces el mismo día. Almuerzo y cena, todos los días.»',
+    cambia:'Si intentaste cubrir la regla 2 con un UNIQUE por mesa y fecha, acabas de prohibir el negocio entero.',
+    aplicar:function(){
+      if (S.ents.reserva && S.ents.reserva.attrs.fecha) S.ents.reserva.attrs.fecha.uni = false;
+      if (S.ents.reserva && S.ents.reserva.attrs.hora)  S.ents.reserva.attrs.hora.uni  = false;
+    }
+  }
+];
+
+function paso7(m){
+  m.appendChild(el(
+    '<div class="panel">'+
+    '<div class="ey">Paso 7 · de 7</div>'+
+    '<h2>La llamada de la dueña</h2>'+
+    '<p class="lead">El modelo está. Y entonces suena el teléfono. <strong>Una frase</strong>, '+
+    'y hay que ver qué le pasa al esquema, a los datos que ya hay dentro y a las pruebas que '+
+    'pasaban. Esto es lo que de verdad ocurre en un proyecto, y es la razón de ser de la '+
+    'sesión 8.</p>'+
+    '<div id="llamadas"></div></div>'));
+
+  var L = $('#llamadas', m);
+  LLAMADAS.forEach(function(ll){
+    var card = el('<div class="ecard"><h3>'+esc(ll.quien)+'</h3><div class="cuerpo">'+
+      '<p style="font-size:1.05rem;margin:.2em 0 .5em">'+esc(ll.dice)+'</p>'+
+      '<p class="lead" style="margin:.2em 0 .7em">'+esc(ll.cambia)+'</p>'+
+      '</div></div>');
+    var cu = $('.cuerpo', card);
+    var b = el('<button class="bt p" style="width:auto;display:inline-block">Ver qué le pasa a mi base</button>');
+    b.onclick = function(){ verImpacto(ll, cu, b); };
+    cu.appendChild(b);
+    L.appendChild(card);
+  });
+}
+
+function verImpacto(ll, cu, boton){
+  var antesDDL = generarDDL();
+  var antesR = correrPruebas();
+  var antesFilas = {}, bAntes = construir();
+  if (bAntes.db) {
+    entidades().forEach(function(k){ antesFilas[k] = cuenta(bAntes.db, k); });
+    bAntes.db.close();
+  }
+
+  var copia = JSON.parse(JSON.stringify({r:S.rels, e:S.ents}));
+  ll.aplicar();
+
+  var despuesDDL = generarDDL();
+  var despuesR = correrPruebas();
+  var bDesp = construir(), despFilas = {};
+  if (bDesp.db) {
+    entidades().forEach(function(k){ despFilas[k] = cuenta(bDesp.db, k); });
+    bDesp.db.close();
+  }
+
+  /* se restaura: la llamada es una demostración, no un cambio permanente */
+  S.rels = copia.r; S.ents = copia.e;
+
+  var cambios = [];
+  if (antesR.res && despuesR.res) {
+    antesR.res.forEach(function(a, i){
+      var d = despuesR.res[i];
+      if (a.estado !== d.estado) cambios.push({t:a.p.t, de:a.estado, a:d.estado});
+    });
+  }
+
+  var perdidas = [];
+  Object.keys(antesFilas).forEach(function(k){
+    var dif = (antesFilas[k]||0) - (despFilas[k]||0);
+    if (dif > 0) perdidas.push(k + ': ' + dif + ' filas');
+  });
+
+  var caja = el('<div style="margin-top:.8em"></div>');
+  caja.appendChild(el('<h3 style="font-size:.95rem;color:var(--b);margin:.6em 0 .3em">1 · El esquema</h3>'));
+  caja.appendChild(el('<div class="dif">'+difDDL(antesDDL, despuesDDL)+'</div>'));
+
+  caja.appendChild(el('<h3 style="font-size:.95rem;color:var(--b);margin:.9em 0 .3em">2 · Los datos que ya estaban</h3>'));
+  if (ll.id === 'juntar') {
+    caja.appendChild(el('<div class="nota o"><p>La columna <code>pedido.mesa_id</code> desaparece '+
+      'y su contenido se va a una tabla nueva. <strong>Los '+(antesFilas.pedido||0)+' pedidos que '+
+      'ya hay dentro tienen que migrarse fila a fila</strong>: nadie lo hace solo, y mientras '+
+      'dura la migración el sistema no puede estar tomando pedidos.</p></div>'));
+  } else if (perdidas.length) {
+    caja.appendChild(el('<div class="nota o"><p>Cambian filas: '+esc(perdidas.join(' · '))+'</p></div>'));
+  } else {
+    caja.appendChild(el('<div class="nota g"><p>Ninguna fila se pierde. Este cambio <strong>relaja</strong> '+
+      'una restricción, y relajar siempre es barato. Apretarla después ya no lo es.</p></div>'));
+  }
+
+  caja.appendChild(el('<h3 style="font-size:.95rem;color:var(--b);margin:.9em 0 .3em">3 · Las pruebas</h3>'));
+  if (!cambios.length) {
+    caja.appendChild(el('<div class="nota"><p>Ninguna prueba cambió de color. Puede que esta llamada '+
+      'no te afecte porque tu modelo ya lo tenía en cuenta — o porque no llegaste a modelar '+
+      'esa parte.</p></div>'));
+  } else {
+    var ul = ['<div class="nota"><p><strong>'+cambios.length+' pruebas cambiaron:</strong></p><ul style="margin:.3em 0 0;padding-left:1.2em">'];
+    cambios.forEach(function(c){
+      ul.push('<li>'+esc(c.t)+' — de <b>'+nombreEstado(c.de)+'</b> a <b>'+nombreEstado(c.a)+'</b></li>');
+    });
+    ul.push('</ul></div>');
+    caja.appendChild(el(ul.join('')));
+  }
+
+  caja.appendChild(el('<div class="nota g"><p><strong>Una frase de la dueña.</strong> Eso es todo lo '+
+    'que hizo falta para mover el esquema, los datos y las pruebas a la vez. '+
+    'Por eso el modelo se escribe en lápiz, y por eso existe la sesión 8.</p></div>'));
+
+  boton.disabled = true;
+  boton.textContent = 'Ya lo viste';
+  cu.appendChild(caja);
+}
+
+function nombreEstado(e){
+  return {ok:'✅ como dice la regla', no:'❌ la base lo permite',
+          exceso:'⚠️ la base se pasa', na:'no se puede probar',
+          hipotesis:'hipótesis'}[e] || e;
+}
+
+/* Diferencia de verdad, por subsecuencia común más larga.
+   Con un simple "¿está esta línea en el otro texto?" no funcionaba: la línea
+   de mesa_id que desaparece de PEDIDO sigue existiendo, idéntica, dentro de
+   RESERVA, así que el borrado no se veía. Aquí se comparan posiciones. */
+function difDDL(a, b){
+  var A = a.split('\n'), B = b.split('\n');
+  var n = A.length, m = B.length, i, j;
+  var L = [];
+  for (i = 0; i <= n; i++) L.push(new Array(m+1).fill(0));
+  for (i = n-1; i >= 0; i--)
+    for (j = m-1; j >= 0; j--)
+      L[i][j] = (A[i] === B[j]) ? L[i+1][j+1] + 1 : Math.max(L[i+1][j], L[i][j+1]);
+
+  var out = [];
+  i = 0; j = 0;
+  while (i < n && j < m) {
+    if (A[i] === B[j]) { out.push({t:'=', l:A[i]}); i++; j++; }
+    else if (L[i+1][j] >= L[i][j+1]) { out.push({t:'-', l:A[i]}); i++; }
+    else { out.push({t:'+', l:B[j]}); j++; }
+  }
+  while (i < n) { out.push({t:'-', l:A[i++]}); }
+  while (j < m) { out.push({t:'+', l:B[j++]}); }
+
+  /* Solo lo que cambia, con una línea de contexto a cada lado. */
+  var marcar = {};
+  out.forEach(function(x, k){
+    if (x.t !== '=') { marcar[k-1]=1; marcar[k]=1; marcar[k+1]=1; }
+  });
+  var html = [], hueco = false;
+  out.forEach(function(x, k){
+    if (!marcar[k]) { if (!hueco) { html.push('<span class="ig">  ⋮</span>'); hueco = true; } return; }
+    hueco = false;
+    if (x.t === '+') html.push('<span class="mas">+ '+esc(x.l)+'</span>');
+    else if (x.t === '-') html.push('<span class="men">- '+esc(x.l)+'</span>');
+    else html.push('<span class="ig">  '+esc(x.l)+'</span>');
+  });
+  return html.join('\n') || '<span class="ig">  (el esquema no cambia)</span>';
+}
+
+/* =====================================================================
+   8 · EL CÓDIGO DEL MODELO
+   Sin cuentas y sin guardar nada en el servidor: el modelo viaja como
+   texto, se pega en el chat y se lee de vuelta. Funciona entre el
+   portátil y el teléfono, que es justo lo que pide la metodología.
+   ===================================================================== */
+
+function exportar(){
+  var min = {
+    v:1,
+    g: REGLAS.map(function(r){ return [S.reglas[r.n].nivel[0], (S.reglas[r.n].accion||'-')[0]]; }),
+    s: SUSTANTIVOS.map(function(x){ return (S.sust[x.k]||'-')[0]; }),
+    e: {},
+    r: {}
+  };
+  entidades().forEach(function(k){
+    min.e[k] = {};
+    var at = (S.ents[k]||{attrs:{}}).attrs;
+    Object.keys(at).forEach(function(a){
+      min.e[k][a] = [at[a].obl?1:0, at[a].uni?1:0, at[a].regla||0];
+    });
+  });
+  Object.keys(S.rels).forEach(function(id){
+    var e = S.rels[id];
+    if (e.card) min.r[id] = [e.card, e.oblA?1:0, e.oblB?1:0, e.regla||0];
+  });
+  var txt = JSON.stringify(min);
+  return 'ABC7-' + btoa(unescape(encodeURIComponent(txt)));
+}
+
+function importar(codigo){
+  try {
+    var t = codigo.trim().replace(/\s+/g,'');
+    if (t.indexOf('ABC7-') !== 0) throw new Error('no empieza por ABC7-');
+    var min = JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));
+    var NIV = {c:'confirmada', a:'candidata', h:'hipotesis'};
+    var ACC = {E:'ESTRUCTURA', R:'RESTRICCION', A:'APLICACION', P:'PENDIENTE'};
+    REGLAS.forEach(function(r, i){
+      var g = min.g[i] || ['a','-'];
+      /* 'c' de confirmada y 'candidata' chocan en la inicial: se desambigua */
+      S.reglas[r.n].nivel = g[0]==='c' ? 'confirmada' : (g[0]==='h' ? 'hipotesis' : 'candidata');
+      S.reglas[r.n].accion = ACC[g[1]] || null;
+    });
+    SUSTANTIVOS.forEach(function(x, i){
+      var v = min.s[i];
+      S.sust[x.k] = v==='e' ? 'entidad' : (v==='a' ? 'atributo' : (v==='n' ? 'no' : null));
+    });
+    S.ents = {};
+    Object.keys(min.e || {}).forEach(function(k){
+      S.ents[k] = {attrs:{}};
+      Object.keys(min.e[k]).forEach(function(a){
+        var v = min.e[k][a];
+        S.ents[k].attrs[a] = {obl:!!v[0], uni:!!v[1], regla:v[2]||null};
+      });
+    });
+    Object.keys(S.rels).forEach(function(id){ S.rels[id] = {card:'',oblA:false,oblB:false,regla:null}; });
+    Object.keys(min.r || {}).forEach(function(id){
+      var v = min.r[id];
+      if (S.rels[id]) S.rels[id] = {card:v[0], oblA:!!v[1], oblB:!!v[2], regla:v[3]||null};
+    });
+    return null;
+  } catch(e){ return e.message; }
+}
+
+/* Solo para no perder el trabajo si se recarga sin querer. Nunca es un
+   expediente de progreso: el modelo de verdad viaja en el código. */
+function guardarLocal(){
+  try { localStorage.setItem('abc7', exportar()); } catch(e){}
+}
+function leerLocal(){
+  try { return localStorage.getItem('abc7'); } catch(e){ return null; }
+}
+
+/* =====================================================================
+   9 · DIÁLOGOS DEL COSTADO
+   ===================================================================== */
+
+function pintaSQL(s){
+  return esc(s)
+    .replace(/(--[^\n]*)/g, '<span class="cm">$1</span>')
+    .replace(/\b(CREATE TABLE|PRIMARY KEY|FOREIGN KEY|REFERENCES|NOT NULL|UNIQUE|CHECK|PRAGMA|INTEGER|TEXT|REAL|DEFAULT)\b/g,
+             '<span class="kw">$1</span>');
+}
+
+function copiar(txt, boton){
+  var listo = function(){ var v=boton.textContent; boton.textContent='Copiado';
+                          setTimeout(function(){ boton.textContent=v; }, 1400); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(listo, function(){ manual(txt, listo); });
+  } else manual(txt, listo);
+}
+function manual(txt, listo){
+  var t = document.createElement('textarea');
+  t.value = txt; t.style.position='fixed'; t.style.opacity='0';
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); listo(); } catch(e){}
+  document.body.removeChild(t);
+}
+
+function dialogo(titulo, contenido){
+  var d = el('<div style="position:fixed;inset:0;background:rgba(10,20,28,.55);z-index:90;'+
+    'display:flex;align-items:center;justify-content:center;padding:1rem">'+
+    '<div style="background:var(--paper);border-radius:var(--r-lg);max-width:900px;width:100%;'+
+    'max-height:88vh;overflow:auto;padding:1.2rem 1.3rem;box-shadow:var(--sh)">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:1em;margin-bottom:.6em">'+
+    '<h2 style="color:var(--b);font-size:1.2rem">'+esc(titulo)+'</h2>'+
+    '<button class="copiar" data-x>Cerrar</button></div>'+
+    '<div data-c></div></div></div>');
+  $('[data-c]', d).appendChild(contenido);
+  $('[data-x]', d).onclick = function(){ document.body.removeChild(d); };
+  d.onclick = function(ev){ if (ev.target === d) document.body.removeChild(d); };
+  document.body.appendChild(d);
+}
+
+/* =====================================================================
+   10 · ARRANQUE
+   ===================================================================== */
+
+$('#btProbar').onclick = function(){ S.paso = 6; pintar(); window.scrollTo(0,0); };
+
+$('#btDDL').onclick = function(){
+  var ddl = generarDDL();
+  var c = document.createElement('div');
+  var b = el('<button class="copiar">Copiar el SQL entero</button>');
+  b.onclick = function(){ copiar(ddl, b); };
+  c.appendChild(b);
+  c.appendChild(el('<pre>'+pintaSQL(ddl)+'</pre>'));
+  dialogo('El SQL que llevas', c);
+};
+
+$('#btCodigo').onclick = function(){
+  var c = document.createElement('div');
+  c.appendChild(el('<p class="lead">Este texto <strong>es</strong> tu modelo. Pégalo en el chat de la '+
+    'clase y no hace falta subir ningún archivo. Sirve también para seguir en otro computador o '+
+    'en el teléfono, y para retomarlo en la sesión 8.</p>'));
+  var ta = el('<textarea class="codigo-modelo" spellcheck="false"></textarea>');
+  ta.value = exportar();
+  c.appendChild(ta);
+  var fila = el('<div style="display:flex;gap:.5em;flex-wrap:wrap;margin-top:.6em"></div>');
+  var bc = el('<button class="copiar">Copiar mi código</button>');
+  bc.onclick = function(){ copiar(ta.value, bc); };
+  var bi = el('<button class="copiar" style="color:var(--g);border-color:var(--g)">Cargar el código que hay escrito</button>');
+  bi.onclick = function(){
+    var err = importar(ta.value);
+    if (err) { alert('Ese código no se pudo leer: ' + err); return; }
+    guardarLocal(); pintar();
+    bi.textContent = 'Cargado';
+  };
+  fila.appendChild(bc); fila.appendChild(bi);
+  c.appendChild(fila);
+  dialogo('Mi código de modelo', c);
+};
+
+document.addEventListener('change', guardarLocal);
+document.addEventListener('click', function(e){
+  if (e.target.closest && e.target.closest('.opts')) setTimeout(guardarLocal, 0);
+});
+
+initSqlJs({ locateFile: function(f){ return '../../assets/vendor/sqljs/' + f; } })
+  .then(function(mod){
+    SQL = mod;
+    var g = leerLocal();
+    if (g) importar(g);
+    pintar();
+  })
+  .catch(function(e){
+    $('#main').innerHTML = '<div class="panel"><div class="nota r">'+
+      '<p><strong>No se pudo cargar el motor de base de datos.</strong> '+esc(e.message)+'</p>'+
+      '<p>Los pasos 1 a 4 funcionan igual: puedes modelar y sacar tu código de modelo. '+
+      'Lo que no va a poder correr es el banco de pruebas.</p></div></div>';
+    pintarPasos();
+  });
+
+})();
+</script>
+</body>
+</html>

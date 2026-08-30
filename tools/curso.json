@@ -232,15 +232,21 @@
           "duracionUtil": 145,
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
-          "titulo": "Certificaciones + taller de modelado",
+          "titulo": "De las reglas al modelo",
           "estado": "pendiente",
-          "desc": "Briefing corto y trabajo autónomo: convertir las reglas del Restaurante ABC en entidades, relaciones y cardinalidades. Bloque breve de rutas de certificación.",
+          "desc": "Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.",
           "tags": [
             "entidades",
             "relaciones",
             "cardinalidad",
-            "DP-900",
+            "modelo ER",
             "workshop"
+          ],
+          "recursos": [
+            {
+              "txt": "🧱 El constructor: de la frase a la tabla",
+              "href": "Presentaciones/M3/constructor-abc.html"
+            }
           ]
         },
         {
@@ -413,7 +419,7 @@
           "modo": "consolidacion",
           "titulo": "Cierre + preparación DP-900",
           "estado": "pendiente",
-          "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles y plan personal para presentar DP-900.",
+          "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.",
           "tags": [
             "DP-900",
             "cierre",
