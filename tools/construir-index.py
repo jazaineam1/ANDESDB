@@ -79,21 +79,47 @@ def construir():
 
     datos = ''.join('<span>%s</span>' % e(x) for x in c['datos'])
 
-    # todas las sesiones publicadas, agrupadas por módulo: al avanzar el curso
-    # no puede desaparecer de la página lo que ya se dictó
+    # Todas las sesiones publicadas siguen estando: al avanzar el curso no
+    # puede desaparecer de la página lo que ya se dictó. Pero solo se abre el
+    # módulo en curso; lo cursado y lo que falta se pliega, porque con 15
+    # sesiones a la vista había que bajar media pantalla para encontrar la de
+    # esta semana.
     grupos = [m for m in c['modulos'] if m.get('sesiones')]
-    if len(grupos) > 1:
-        sesiones = ''.join(
-            '<h3 class="grupo-mod">M&oacute;dulo %s &middot; %s</h3>'
-            '<div class="sessions">%s</div>'
-            % (m['n'], e(m['titulo']),
-               ''.join(tarjeta_sesion(s) for s in m['sesiones']))
-            for m in grupos)
+    activo = next((m for m in c['modulos'] if m.get('estado') == 'curso'), None)
+
+    def bloque_abierto(m):
+        return ('<h3 class="grupo-mod">M&oacute;dulo %s &middot; %s</h3>'
+                '<div class="sessions">%s</div>'
+                % (m['n'], e(m['titulo']),
+                   ''.join(tarjeta_sesion(s) for s in m['sesiones'])))
+
+    def bloque_plegado(m):
+        ses = m['sesiones']
+        cursado = m.get('estado') == 'completado'
+        nums = ', '.join(str(s['n']) for s in ses)
+        return ('<details class="grupo %s"><summary>'
+                '<span class="fl" aria-hidden="true">&#9654;</span>'
+                '<span class="gm">M&oacute;dulo %s &middot; %s</span>'
+                '<span class="gc">%s &middot; %s</span></summary>'
+                '<div class="sessions">%s</div></details>'
+                % ('visto' if cursado else 'porvenir',
+                   m['n'], e(m['titulo']),
+                   'Ya cursado' if cursado else 'Por venir',
+                   ('sesi&oacute;n ' if len(ses) == 1 else 'sesiones ') + nums,
+                   ''.join(tarjeta_sesion(s) for s in ses)))
+
+    if activo and activo.get('sesiones') and len(grupos) > 1:
+        resto = [m for m in grupos if m['n'] != activo['n']]
+        sesiones = bloque_abierto(activo)
+        if resto:
+            sesiones += ('<h3 class="grupo-mod otros">El resto del recorrido</h3>'
+                         + ''.join(bloque_plegado(m) for m in resto))
+    elif len(grupos) > 1:
+        sesiones = ''.join(bloque_abierto(m) for m in grupos)
     else:
         sesiones = ('<div class="sessions">%s</div>'
                     % ''.join(tarjeta_sesion(s)
                               for m in grupos for s in m['sesiones']))
-    activo = next((m for m in c['modulos'] if m.get('estado') == 'curso'), None)
     tit_ses = 'M&oacute;dulo %s &middot; %s' % (activo['n'], e(activo['titulo'])) if activo else 'Sesiones'
 
     modulos = ''.join(paso_ruta(m) for m in c['modulos'])
@@ -227,9 +253,14 @@ def construir():
 
     # comprobación de enlaces
     import re
+    # El archivo es lo que va antes de ? y de #: un enlace puede llevar
+    # parámetros (?caso=dvd) sin que eso lo convierta en un enlace roto.
+    def archivo(l):
+        return urllib.parse.unquote(urllib.parse.urlparse(l).path)
+
     rotos = [l for l in re.findall(r'(?:href|src)="([^"]+)"', doc)
              if not l.startswith(('http', '#'))
-             and not (RAIZ / urllib.parse.unquote(l)).exists()]
+             and not (RAIZ / archivo(l)).exists()]
     n_ses = sum(len(m.get('sesiones', [])) for m in c['modulos'])
     n_rec = sum(len(m.get('recursos', [])) + sum(len(s.get('recursos', [])) for s in m.get('sesiones', []))
                 for m in c['modulos'])

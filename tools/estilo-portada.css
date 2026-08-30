@@ -186,3 +186,40 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 .grupo-mod:first-of-type{margin-top:0}
 .grupo-mod:before{content:"";width:.9rem;height:.9rem;border-radius:50%;
   background:var(--y);flex:0 0 auto}
+
+/* ===== lo cursado y lo que falta, plegado =====
+   Con 15 sesiones abiertas había que bajar media pantalla para llegar a la de
+   esta semana. Nada se quita: solo deja de estorbar. */
+.grupo-mod.otros{margin-top:2.6rem;color:var(--ink-soft);border-bottom-color:var(--line)}
+.grupo-mod.otros:before{background:var(--line)}
+
+details.grupo{border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--paper);margin:.5rem 0;overflow:hidden}
+details.grupo+details.grupo{margin-top:.5rem}
+/* Rejilla y no flex: con flex-wrap la flecha se caía sola a la primera línea
+   cuando el título era largo, y cada módulo quedaba alineado distinto. */
+details.grupo>summary{
+  list-style:none;cursor:pointer;padding:.8rem 1rem;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;column-gap:.65rem;row-gap:.35rem}
+details.grupo>summary::-webkit-details-marker{display:none}
+details.grupo>summary::marker{content:""}
+details.grupo>summary:hover{background:var(--s)}
+details.grupo>summary:focus-visible{outline:2px solid var(--b);outline-offset:-2px}
+details.grupo>summary .fl{
+  width:1.35rem;height:1.35rem;border-radius:50%;background:var(--s);color:var(--b);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:800;flex:0 0 auto;transition:transform .18s}
+details.grupo[open]>summary .fl{transform:rotate(90deg)}
+details.grupo>summary .gm{font-weight:800;color:var(--b);font-size:.95rem;
+  letter-spacing:-.01em}
+details.grupo>summary .gc{font-size:.78rem;font-weight:700;color:var(--ink-soft);
+  white-space:nowrap;justify-self:end;
+  border:1px solid var(--line);border-radius:var(--pill);padding:.16em .7em}
+details.grupo.visto>summary .gc{color:var(--g);border-color:#bfe3ce;background:var(--gl)}
+details.grupo.visto>summary .gm{color:var(--ink-soft)}
+details.grupo .sessions{padding:.1rem 1rem 1.1rem}
+@media(max-width:620px){
+  details.grupo>summary{grid-template-columns:auto minmax(0,1fr)}
+  details.grupo>summary .gc{grid-column:2;justify-self:start}
+}

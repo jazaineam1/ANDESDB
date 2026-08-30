@@ -177,6 +177,39 @@ pre.mas{max-height:none}
   color:var(--ink-soft);border-bottom:3px solid transparent;margin-bottom:-1.5px}
 .pest button.on{color:var(--b);border-bottom-color:var(--b)}
 
+/* ---------- selector de caso ---------- */
+.casos{display:flex;gap:.25rem;background:var(--s);border-radius:var(--pill);padding:.2rem}
+.casos button{border:0;background:none;border-radius:var(--pill);padding:.3em .85em;
+  font-size:.82rem;font-weight:800;color:var(--ink-soft);white-space:nowrap;line-height:1.25}
+.casos button small{display:block;font-size:.76em;font-weight:600;opacity:.75}
+.casos button.on{background:var(--paper);color:var(--b);box-shadow:var(--sh)}
+
+/* ---------- la guía de la práctica ---------- */
+.guia{border:1.5px solid var(--o);background:var(--ol);border-radius:var(--r-lg);
+  padding:.7rem .95rem;margin-bottom:1rem;display:grid;
+  grid-template-columns:auto minmax(0,1fr);gap:.2em .7em;align-items:start}
+.guia .gi{font-size:1.15rem;line-height:1.3}
+.guia .gt{font-size:.94rem}
+.guia .gt b{color:var(--ink)}
+.guia .gp{grid-column:2;font-size:.8rem;font-weight:700;color:#8a4b00;margin-top:.2em}
+.sig{display:flex;align-items:center;justify-content:flex-end;gap:.8rem;
+  flex-wrap:wrap;margin-top:.2rem}
+.sig .falta{font-size:.84rem;font-weight:700;color:var(--ink-soft)}
+.sig button{border:0;border-radius:var(--pill);padding:.55em 1.4em;font-weight:800;
+  background:var(--b);color:#fff}
+.sig button[disabled]{background:var(--line);color:var(--ink-soft);cursor:not-allowed}
+
+/* ---------- la corrección ---------- */
+.hall{border:1.5px solid var(--line);border-radius:var(--r-md);padding:.55em .8em;
+  margin-bottom:.5rem;display:grid;grid-template-columns:1.7em minmax(0,1fr);gap:.1em .6em}
+.hall .hi{grid-row:span 2;font-size:1.15rem;text-align:center}
+.hall .hq{font-weight:700}
+.hall .hd{font-size:.86rem;color:var(--ink-soft);margin-top:.15em}
+.hall .hd b{color:var(--ink)}
+.hall.bien{border-color:var(--g);background:var(--gl)}
+.hall.ojo{border-color:var(--o);background:var(--ol)}
+.hall.falta{border-color:var(--r);background:var(--rl)}
+
 .oculto{display:none !important}
 .pie{max-width:1280px;margin:0 auto;padding:.6rem 1rem 2.5rem;color:var(--ink-soft);
   font-size:.82rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
@@ -195,7 +228,8 @@ pre.mas{max-height:none}
 
 <header>
   <div class="hbar">
-    <div class="marca">De la frase a la tabla<small>Restaurante ABC · sesiones 7 a 12</small></div>
+    <div class="marca">De la frase a la tabla<small id="subMarca">Restaurante ABC</small></div>
+    <div class="casos" id="casos"></div>
     <nav class="pasos" id="pasos"></nav>
   </div>
 </header>
@@ -233,7 +267,7 @@ pre.mas{max-height:none}
    si aquí dijeran otra cosa, el hilo se rompería justo donde lo cosemos.
    ===================================================================== */
 
-var REGLAS = [
+var REGLAS_ABC = [
   {n:1,  txt:'Una reserva no puede confirmarse sin fecha, hora, número de personas y un cliente identificado.', nivel:'candidata'},
   {n:2,  txt:'Una mesa no puede tener dos reservas que se solapen en el tiempo.', nivel:'candidata'},
   {n:3,  txt:'Una reserva no puede aceptar más personas de las que caben en la mesa.', nivel:'confirmada'},
@@ -257,7 +291,7 @@ var ACCIONES = [
 
 /* Los sustantivos que aparecen en las reglas. Los ocho que la sesión 6 ya
    señaló, más cinco que están ahí y que casi nadie ve. */
-var SUSTANTIVOS = [
+var SUSTANTIVOS_ABC = [
   {k:'cliente',     t:'cliente',          reglas:[1],        pista:'La dueña dijo "un cliente identificado".'},
   {k:'mesa',        t:'mesa',             reglas:[2,3,4,10], pista:'Doce, de 2, 4 y 6 puestos.'},
   {k:'reserva',     t:'reserva',          reglas:[1,2,3],    pista:''},
@@ -280,7 +314,7 @@ var SUSTANTIVOS = [
    haya elegido, no con un guion fijo: por eso cada atributo trae su gen.
    ===================================================================== */
 
-var CAT = {
+var CAT_ABC = {
   cliente: {label:'CLIENTE', col:0, attrs:[
     {k:'nombre',   t:'TEXTO',  sug:{obl:1}, regla:1, gen:function(i){return "'"+NOMBRES[i%NOMBRES.length]+"'";}},
     {k:'telefono', t:'TEXTO',  sug:{obl:1}, regla:1, gen:function(i){return "'300"+(1000000+i*37%8999999)+"'";}},
@@ -346,7 +380,7 @@ function pad(n){ return (n<10?'0':'')+n; }
 
 /* Relaciones candidatas. Cada una nace de una regla concreta: si el
    estudiante no puede citar la regla, la relación no debería existir. */
-var RELS = [
+var RELS_ABC = [
   {id:'reserva_cliente',   a:'reserva', b:'cliente',     verbo:'la hace',      sug:'N:1', regla:1,  frase:'Una RESERVA la hace un CLIENTE'},
   {id:'reserva_mesa',      a:'reserva', b:'mesa',        verbo:'ocupa',        sug:'N:1', regla:2,  frase:'Una RESERVA ocupa una MESA'},
   {id:'reserva_turno',     a:'reserva', b:'turno',       verbo:'es en',        sug:'N:1', regla:null, frase:'Una RESERVA es en un TURNO'},
@@ -360,30 +394,45 @@ var RELS = [
 
 var CARDS = [
   {v:'',    t:'no existe',  d:'Estas dos cosas no se relacionan en mi modelo.'},
-  {v:'N:1', t:'N : 1',      d:'Muchos A para un B. La clave foránea va en A.'},
-  {v:'1:1', t:'1 : 1',      d:'Uno y solo uno de cada lado.'},
+  {v:'N:1', t:'N : 1',      d:'Muchos del primero para uno del segundo. La clave foránea va en el primero.'},
+  {v:'1:N', t:'1 : N',      d:'Al revés: muchos del segundo para uno del primero. La clave foránea va en el segundo.'},
+  {v:'1:1', t:'1 : 1',      d:'Uno y solo uno de cada lado. Se implementa con una clave foránea ÚNICA.'},
   {v:'N:N', t:'N : N',      d:'Muchos de cada lado. Hace falta una tabla puente.'}
 ];
 
-var FILAS = {cliente:20, mesa:12, mesero:4, turno:2, plato:14, ingrediente:18,
+var FILAS_ABC = {cliente:20, mesa:12, mesero:4, turno:2, plato:14, ingrediente:18,
              reserva:30, pedido:40, pago:45, linea_pedido:90};
 
 /* =====================================================================
    3 · EL ESTADO
    ===================================================================== */
 
-var S = {
-  paso: 1,
-  reglas: {},     // n -> {nivel, accion}
-  sust:   {},     // k -> 'entidad' | 'atributo' | 'no'
-  ents:   {},     // k -> {attrs: {k -> {obl,uni,regla}}}
-  rels:   {},     // id -> {card, oblA, oblB, regla}
-  pest:   'ddl'
-};
+/* El caso activo llena estos seis. Todo el resto del programa los usa sin
+   saber cuál está puesto, así que añadir un caso es añadir datos, no código. */
+var REGLAS, SUSTANTIVOS, CAT, RELS, FILAS, PRUEBAS, VERDAD, GUIA;
 
-REGLAS.forEach(function(r){ S.reglas[r.n] = {nivel:r.nivel, accion:null}; });
-SUSTANTIVOS.forEach(function(s){ S.sust[s.k] = null; });
-RELS.forEach(function(r){ S.rels[r.id] = {card:'', oblA:false, oblB:false, regla:null}; });
+var CASO = 'abc';
+var GUARDADO = {};   // el trabajo de cada caso se conserva al cambiar de caso
+
+var S = null;
+
+function estadoNuevo(){
+  var e = {paso:1, reglas:{}, sust:{}, ents:{}, rels:{}, pest:'ddl'};
+  REGLAS.forEach(function(r){ e.reglas[r.n] = {nivel:r.nivel, accion:null}; });
+  SUSTANTIVOS.forEach(function(s){ e.sust[s.k] = null; });
+  RELS.forEach(function(r){ e.rels[r.id] = {card:'', oblA:false, oblB:false, regla:null}; });
+  return e;
+}
+
+function cargarCaso(id, conservar){
+  if (S && CASOS[CASO]) GUARDADO[CASO] = S;
+  var c = CASOS[id];
+  REGLAS = c.reglas; SUSTANTIVOS = c.sustantivos; CAT = c.cat;
+  RELS = c.rels; FILAS = c.filas; PRUEBAS = c.pruebas;
+  VERDAD = c.verdad || null; GUIA = c.guia || null;
+  CASO = id;
+  S = (conservar && GUARDADO[id]) ? GUARDADO[id] : estadoNuevo();
+}
 
 var SQL = null;      // el módulo sql.js, una vez cargado
 var ultimoDDL = '';
@@ -426,13 +475,21 @@ var TIPOS = {TEXTO:'TEXT', ENTERO:'INTEGER', DECIMAL:'REAL', FECHA:'TEXT', BOOLE
 function nombreTabla(k){ return k; }
 function pk(k){ return k + '_id'; }
 
-/* Las N:1 que salen de la entidad k: cada una pone una clave foránea aquí. */
+/* Las claves foráneas que van DENTRO de la tabla k.
+   Devuelve {b, e, id}: b es la tabla a la que apunta, e el estado de la
+   relación. Se llama .b para que los seis sitios que ya usaban r.b sigan
+   funcionando igual. La dirección importa: en N:1 la clave va en A, y en 1:N
+   va en B — es la mitad de lo que hay que entender de una relación. */
 function fksDe(k){
-  return relsVivas().filter(function(r){
+  var out = [];
+  relsVivas().forEach(function(r){
     var e = S.rels[r.id];
-    if (e.card === 'N:1' || e.card === '1:1') return r.a === k;
-    return false;
+    if ((e.card === 'N:1' || e.card === '1:1') && r.a === k)
+      out.push({b:r.b, e:e, id:r.id, rel:r});
+    else if (e.card === '1:N' && r.b === k)
+      out.push({b:r.a, e:e, id:r.id, rel:r});
   });
+  return out;
 }
 
 function puentesVivos(){
@@ -511,9 +568,11 @@ function generarDDL(){
     });
 
     fksDe(k).forEach(function(r){
-      var e = S.rels[r.id];
+      var e = r.e;
       var s = pad2(pk(r.b)) + ' INTEGER';
       if (e.oblA) s += ' NOT NULL';
+      /* Un 1:1 sin UNIQUE no es un 1:1: no impide nada. */
+      if (e.card === '1:1') s += ' UNIQUE';
       s += ' REFERENCES ' + nombreTabla(r.b) + '(' + pk(r.b) + ')';
       cols.push({sql:s, cm: e.regla ? '  -- regla ' + e.regla : '  -- sin regla'});
     });
@@ -628,7 +687,7 @@ function cuenta(db, tabla){
 /* Cada prueba dice qué regla la motiva, qué necesita para poder correr, y
    qué significa cada desenlace. La herramienta nunca dice "mal": dice qué
    pasó y qué dice la regla. */
-var PRUEBAS = [
+var PRUEBAS_ABC = [
   {
     n:1, regla:1, req:['reserva'],
     t:'Guardar una reserva sin fecha',
@@ -726,6 +785,231 @@ var PRUEBAS = [
   }
 ];
 
+/* =====================================================================
+   EL CASO DE PRÁCTICA · dvdrental
+   Se aprende la herramienta aquí y no en el Restaurante ABC por una razón:
+   dvdrental TIENE respuesta correcta, porque alguien construyó esa base de
+   verdad. El ABC es un ejercicio de diseño y no la tiene. Así que aquí se
+   practica con red, y allí se trabaja sin ella.
+   ===================================================================== */
+
+var REGLAS_DVD = [
+  {n:1, txt:'Un alquiler no puede existir sin la copia que se llevó ni el cliente que se la llevó.', nivel:'confirmada'},
+  {n:2, txt:'Una copia pertenece a una sola película.', nivel:'confirmada'},
+  {n:3, txt:'Un cliente no puede registrarse sin nombre y sin apellido.', nivel:'confirmada'},
+  {n:4, txt:'Una película puede tener varios actores, y un actor puede salir en varias películas.', nivel:'confirmada'},
+  {n:5, txt:'Una película no puede existir sin título.', nivel:'confirmada'},
+  {n:6, txt:'Dos clientes distintos pueden llamarse igual.', nivel:'confirmada'},
+  {n:7, txt:'Un alquiler puede estar sin devolver.', nivel:'confirmada'},
+  {n:8, txt:'La misma película puede tener varias copias en el estante.', nivel:'confirmada'}
+];
+
+var SUSTANTIVOS_DVD = [
+  {k:'customer',   t:'cliente',   reglas:[1,3,6], pista:''},
+  {k:'rental',     t:'alquiler',  reglas:[1,7],   pista:''},
+  {k:'inventory',  t:'copia',     reglas:[1,2,8],
+   pista:'El videoclub no alquila «la película»: alquila un DVD concreto del estante.'},
+  {k:'film',       t:'película', reglas:[2,4,5,8], pista:''},
+  {k:'actor',      t:'actor',     reglas:[4],     pista:''},
+  {k:'titulo',     t:'título', reglas:[5],
+   pista:'¿Tiene vida propia, o es un dato de la película?'},
+  {k:'devolucion', t:'fecha de devolución', reglas:[7], pista:''},
+  {k:'tienda',     t:'tienda',    reglas:[],
+   pista:'Existe en la base real, pero queda fuera de esta práctica.'}
+];
+
+var NOMS = ['Mary','Patricia','Linda','Barbara','Elizabeth','Jennifer','Maria',
+            'Susan','Margaret','Dorothy','Lisa','Nancy','Karen','Betty','Helen',
+            'Sandra','Donna','Carol','Ruth','Sharon'];
+var APES = ['Smith','Johnson','Williams','Jones','Brown','Davis','Miller','Wilson',
+            'Moore','Taylor','Anderson','Thomas','Jackson','White','Harris',
+            'Martin','Thompson','Garcia','Martinez','Robinson'];
+var PELIS = ['Academy Dinosaur','Ace Goldfinger','Adaptation Holes','Affair Prejudice',
+             'African Egg','Agent Truman','Airplane Sierra','Airport Pollock',
+             'Alabama Devil','Aladdin Calendar','Alamo Videotape','Alaska Phantom',
+             'Ali Forever','Alice Fantasia','Alien Center'];
+
+var CAT_DVD = {
+  customer: {label:'CUSTOMER', col:0, attrs:[
+    {k:'first_name', t:'TEXTO',  sug:{obl:1}, regla:3, gen:function(i){return "'"+NOMS[i%NOMS.length]+"'";}},
+    {k:'last_name',  t:'TEXTO',  sug:{obl:1}, regla:3, gen:function(i){return "'"+APES[i%APES.length]+"'";}},
+    {k:'email',      t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'cliente"+(i+1)+"@sakila.com'";}},
+    {k:'activebool', t:'ENTERO', sug:{},      regla:null, gen:function(i){return i%40===0?0:1;}}
+  ]},
+  actor: {label:'ACTOR', col:0, attrs:[
+    {k:'first_name', t:'TEXTO', sug:{obl:1}, regla:null, gen:function(i){return "'"+NOMS[(i*3)%NOMS.length]+"'";}},
+    {k:'last_name',  t:'TEXTO', sug:{obl:1}, regla:null, gen:function(i){return "'"+APES[(i*7)%APES.length]+"'";}}
+  ]},
+  rental: {label:'RENTAL', col:1, attrs:[
+    {k:'rental_date', t:'FECHA', sug:{obl:1}, regla:1, gen:function(i){return "'2005-05-"+pad(1+(i%28))+"'";}},
+    {k:'return_date', t:'FECHA', sug:{},      regla:7,
+     gen:function(i){ return i%7===0 ? 'NULL' : "'2005-06-"+pad(1+(i%28))+"'"; }}
+  ]},
+  inventory: {label:'INVENTORY', col:1, attrs:[
+    {k:'store_id', t:'ENTERO', sug:{obl:1}, regla:null, gen:function(i){return 1+(i%2);}}
+  ]},
+  film: {label:'FILM', col:2, attrs:[
+    {k:'title',           t:'TEXTO',   sug:{obl:1}, regla:5, gen:function(i){return "'"+PELIS[i%PELIS.length]+"'";}},
+    {k:'description',     t:'TEXTO',   sug:{},      regla:null, gen:function(i){return "'Una historia numero "+(i+1)+"'";}},
+    {k:'release_year',    t:'ENTERO',  sug:{},      regla:null, gen:function(i){return 2006;}},
+    {k:'rental_rate',     t:'DECIMAL', sug:{},      regla:null, gen:function(i){return [0.99,2.99,4.99][i%3];}},
+    {k:'rental_duration', t:'ENTERO',  sug:{},      regla:null, gen:function(i){return 3+(i%5);}}
+  ]}
+};
+
+var RELS_DVD = [
+  {id:'rental_customer',  a:'rental',    b:'customer',  verbo:'lo hace',   sug:'N:1', regla:1,
+   frase:'Un RENTAL lo hace un CUSTOMER'},
+  {id:'rental_inventory', a:'rental',    b:'inventory', verbo:'se lleva',  sug:'N:1', regla:1,
+   frase:'Un RENTAL se lleva una copia (INVENTORY)'},
+  {id:'inventory_film',   a:'inventory', b:'film',      verbo:'es de',     sug:'N:1', regla:2,
+   frase:'Una copia (INVENTORY) es de una FILM'},
+  {id:'film_actor',       a:'film',      b:'actor',     verbo:'tiene',     sug:'N:N', regla:4,
+   frase:'Una FILM tiene ACTORES', puente:'film_actor'}
+];
+
+var FILAS_DVD = {customer:20, actor:12, film:15, inventory:30, rental:40};
+
+/* --- La verdad, sacada de dvdrental.db con pragma_table_info y contando
+   filas. No está escrita a mano: si lo estuviera, estaría mal. --- */
+var VERDAD_DVD = {
+  tablas: {
+    customer:  {obl:['first_name','last_name'], opc:['email','activebool']},
+    rental:    {obl:['rental_date'],            opc:['return_date']},
+    inventory: {obl:['store_id'],               opc:[]},
+    film:      {obl:['title'],                  opc:['description','release_year','rental_rate','rental_duration']},
+    actor:     {obl:['first_name','last_name'], opc:[]}
+  },
+  /* En toda la base no hay ni un solo índice único fuera de las claves
+     primarias: cualquier UNIQUE que marque el estudiante es cosa suya. */
+  unicos: {},
+  rels: {rental_customer:'N:1', rental_inventory:'N:1', inventory_film:'N:1', film_actor:'N:N'},
+  evid: {
+    'rental.return_date': '<b>183</b> de los 16.044 alquileres est&aacute;n sin devolver. ' +
+      'Con <code>NOT NULL</code>, tu base rechazar&iacute;a los 183.',
+    'film.title': 'Hay <b>1.000</b> t&iacute;tulos y <b>0</b> repetidos: hoy los datos te dan la raz&oacute;n. ' +
+      'Pero el esquema real <b>no</b> lo declara &uacute;nico. &iquest;Es una regla, o es un patr&oacute;n?',
+    'customer.first_name': 'Hay <b>8</b> nombres de pila compartidos entre los 599 clientes. ' +
+      'Con <code>UNIQUE</code> no habr&iacute;an podido registrarse.',
+    'customer.last_name': 'Los apellidos tambi&eacute;n se repiten entre 599 clientes.',
+    'customer.email': 'El esquema real no lo declara &uacute;nico, aunque parezca la columna m&aacute;s obvia para serlo.'
+  },
+  card: {
+    inventory_film: 'Una pel&iacute;cula llega a tener <b>8</b> copias en el estante, y cada copia ' +
+      'es de una sola pel&iacute;cula: por eso es N:1 desde <code>inventory</code>.',
+    film_actor: 'Hay <b>976</b> pel&iacute;culas con m&aacute;s de un actor <b>y 200</b> actores en ' +
+      'm&aacute;s de una pel&iacute;cula. Se cumple por los dos lados: es N:N.',
+    rental_customer: 'Un cliente hace muchos alquileres; cada alquiler es de un solo cliente.',
+    rental_inventory: 'Una copia se alquila muchas veces; cada alquiler se lleva una sola copia.'
+  }
+};
+
+var PRUEBAS_DVD = [
+  {
+    n:1, regla:5, req:['film'],
+    t:'Guardar una película sin título',
+    sql:function(){ return ins('film', {title:null}); },
+    debe:'rechazar',
+    siRechaza:'Bien. <code>NOT NULL</code> sobre <code>title</code>, igual que en la base real.',
+    siPasa:'Entr&oacute; una pel&iacute;cula sin t&iacute;tulo. En <code>dvdrental</code>, <code>title</code> es obligatorio.'
+  },
+  {
+    n:2, regla:7, req:['rental'],
+    t:'Registrar un alquiler que todavía no se ha devuelto',
+    sql:function(){ return ins('rental', {return_date:null}); },
+    debe:'pasar',
+    siPasa:'Entra, y debe entrar: en la base real hay <b>183</b> alquileres sin devolver.',
+    siRechaza:'<b>Tu modelo lo proh&iacute;be y la regla lo permit&iacute;a.</b> Marcaste ' +
+      '<code>return_date</code> obligatoria, y con eso dejas fuera los <b>183</b> alquileres ' +
+      'que hay ahora mismo en la calle.'
+  },
+  {
+    n:3, regla:6, req:['customer'],
+    t:'Dos clientes que se llaman igual',
+    sql:function(){ return dosIguales(); },
+    debe:'pasar',
+    siPasa:'Entran los dos, y as&iacute; debe ser: hay <b>8</b> nombres de pila compartidos entre los 599 clientes.',
+    siRechaza:'<b>Tu modelo lo proh&iacute;be y la regla lo permit&iacute;a.</b> Pusiste un ' +
+      '<code>UNIQUE</code> sobre el nombre. En la base real no existe.'
+  },
+  {
+    n:4, regla:1, req:['rental','customer'],
+    t:'Un alquiler de un cliente que no existe',
+    sql:function(){ return ins('rental', {}, {customer_id:99999}); },
+    debe:'rechazar',
+    siRechaza:'La clave for&aacute;nea lo impidi&oacute;. <b>Ojo: en el archivo real esto S&Iacute; pasa</b> &mdash; lo ver&aacute;s abajo.',
+    siPasa:'Entr&oacute;. Te falta declarar la relaci&oacute;n RENTAL&ndash;CUSTOMER en el paso 4.'
+  },
+  {
+    n:5, regla:8, req:['inventory','film'],
+    t:'Poner ocho copias de la misma película en el estante',
+    guarda:function(){
+      var hay = fksDe('inventory').some(function(x){ return x.b === 'film'; });
+      return hay ? null : 'la clave foránea hacia <code>film</code> dentro de <code>inventory</code>';
+    },
+    sql:function(){ return ochoCopias(); },
+    debe:'pasar',
+    siPasa:'Entran las ocho. Correcto: la pel&iacute;cula m&aacute;s repetida tiene <b>8</b> copias.',
+    siRechaza:'<b>Tu modelo lo proh&iacute;be y el negocio lo hace todos los d&iacute;as.</b> ' +
+      'Si marcaste 1:1 entre copia y pel&iacute;cula, o pusiste <code>UNIQUE</code> sobre ' +
+      '<code>film_id</code>, el videoclub no puede tener dos DVD de la misma pel&iacute;cula.'
+  },
+  {
+    n:6, regla:2, req:['inventory','film'],
+    t:'Una copia de una película que no está en el catálogo',
+    sql:function(){ return ins('inventory', {}, {film_id:99999}); },
+    debe:'rechazar',
+    siRechaza:'La clave for&aacute;nea hizo su trabajo.',
+    siPasa:'Entr&oacute;. Falta la relaci&oacute;n INVENTORY&ndash;FILM.'
+  }
+];
+
+/* --- La guía: solo en la práctica. En el taller del ABC no hay guía. --- */
+var GUIA_DVD = {
+  1: {di:'Clasifica las ocho reglas. Aqu&iacute; casi todas son <b>estructura</b> o ' +
+         '<b>restricci&oacute;n</b>: fíjate en la 6 y la 7, que est&aacute;n escritas ' +
+         'como <b>permisos</b> &mdash; dicen lo que S&Iacute; se puede hacer.',
+      hecho:function(){ return REGLAS.every(function(r){ return S.reglas[r.n].accion; }); },
+      falta:function(){ return 'Te faltan ' + REGLAS.filter(function(r){
+               return !S.reglas[r.n].accion; }).length + ' reglas por clasificar.'; }},
+  2: {di:'De estos ocho sustantivos, cinco son tablas de <code>dvdrental</code>. ' +
+         'El m&aacute;s dif&iacute;cil es <b>copia</b>: pi&eacute;nsalo antes de marcarlo.',
+      hecho:function(){ return SUSTANTIVOS.every(function(s){ return S.sust[s.k]; }); },
+      falta:function(){ return 'Te faltan ' + SUSTANTIVOS.filter(function(s){
+               return !S.sust[s.k]; }).length + ' por decidir.'; }},
+  3: {di:'Marca los atributos de cada tabla. Cuidado con dos: &iquest;es obligatoria ' +
+         'la fecha de devoluci&oacute;n? &iquest;es &uacute;nico el t&iacute;tulo de una pel&iacute;cula?',
+      hecho:function(){ return entidades().length > 0 && entidades().every(function(k){
+               return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; }); },
+      falta:function(){ return 'Hay tablas sin ning&uacute;n atributo marcado.'; }},
+  4: {di:'Cuatro relaciones. Tres son N:1 y una es N:N &mdash; y en las N:1 lo que ' +
+         'importa es <b>de qu&eacute; lado</b> queda la clave for&aacute;nea.',
+      hecho:function(){ return relsVivas().length >= 3; },
+      falta:function(){ return 'Llevas ' + relsVivas().length + ' de 4 relaciones.'; }},
+  5: {di:'Aqu&iacute; est&aacute; tu base montada. Mira el SQL y el diagrama, y luego pasa a las pruebas.',
+      hecho:function(){ return true; }, falta:function(){ return ''; }},
+  6: {di:'Seis intentos contra tu base. Dos de ellos <b>deben pasar</b>: si te salen ' +
+         'en &aacute;mbar, tu modelo es m&aacute;s estricto que el negocio.',
+      hecho:function(){ return true; }, falta:function(){ return ''; }},
+  7: {di:'Y ahora la parte que el Restaurante ABC no puede tener: comparar tu modelo ' +
+         'con la base que alguien construy&oacute; de verdad.',
+      hecho:function(){ return true; }, falta:function(){ return ''; }}
+};
+
+var CASOS = {
+  abc: {
+    id:'abc', nombre:'Restaurante ABC', sub:'el taller', prefijo:'ABC7-',
+    reglas:REGLAS_ABC, sustantivos:SUSTANTIVOS_ABC, cat:CAT_ABC,
+    rels:RELS_ABC, filas:FILAS_ABC, pruebas:PRUEBAS_ABC
+  },
+  dvd: {
+    id:'dvd', nombre:'dvdrental', sub:'pr&aacute;ctica guiada', prefijo:'DVD7-',
+    reglas:REGLAS_DVD, sustantivos:SUSTANTIVOS_DVD, cat:CAT_DVD,
+    rels:RELS_DVD, filas:FILAS_DVD, pruebas:PRUEBAS_DVD,
+    verdad:VERDAD_DVD, guia:GUIA_DVD
+  }
+};
+
 /* --- constructores de SQL para las pruebas --- */
 function colsDe(k){
   var def = CAT[k], est = S.ents[k] || {attrs:{}};
@@ -762,6 +1046,25 @@ function dosTurnos(){
             .replace('900001','900002');
   return a + '\n' + b;
 }
+/* Dos clientes con el mismo nombre y apellido. El correo se fuerza distinto
+   a propósito: si no, un UNIQUE sobre el correo haría fallar la prueba por un
+   motivo que no es el que se está probando. */
+function dosIguales(){
+  var a = ins('customer', {first_name:'Mary', last_name:'Smith', email:'una@sakila.com'});
+  var b = ins('customer', {first_name:'Mary', last_name:'Smith', email:'otra@sakila.com'})
+            .replace('900001', '900002');
+  return a + '\n' + b;
+}
+
+/* Ocho copias de la película 1, que es lo que tiene la más repetida de la
+   base real. Si el modelo dice 1:1, la octava (y la segunda) no entran. */
+function ochoCopias(){
+  var out = [];
+  for (var i = 0; i < 8; i++)
+    out.push(ins('inventory', {}, {film_id:1}).replace('900001', String(900010 + i)));
+  return out.join('\n');
+}
+
 function recetaVencida(){
   var p = puentesVivos().filter(function(x){ return x.nombre==='receta'; })[0];
   if (!p) return null;
@@ -787,6 +1090,13 @@ function correrPruebas(){
     if (falta.length) {
       res.push({p:p, estado:'na', falta:falta});
       return;
+    }
+    /* Además de las tablas, una prueba puede necesitar que la relación esté
+       puesta de cierta forma. Sin esto, un INSERT que no toca ninguna clave
+       foránea pasa siempre y la prueba sale verde sin haber probado nada. */
+    if (p.guarda) {
+      var razon = p.guarda();
+      if (razon) { res.push({p:p, estado:'na', falta:[razon]}); return; }
     }
     var sql = p.sql();
     if (!sql) { res.push({p:p, estado:'na', falta:['la tabla puente']}); return; }
@@ -854,8 +1164,10 @@ function generarSVG(){
   var cols = [[],[],[]];
   ents.forEach(function(k){ cols[CAT[k].col].push({k:k, puente:false}); });
   puentesVivos().filter(function(p){ return !p.absorbido; }).forEach(function(p){
-    var c = p.nombre === 'receta' ? 2 : 1;
-    cols[c].push({k:p.nombre, puente:true, p:p});
+    /* El puente se pone en la columna de en medio de las dos que une, en vez
+       de en una fijada por su nombre. */
+    var c = Math.floor(((CAT[p.a] || {col:1}).col + (CAT[p.b] || {col:1}).col) / 2);
+    cols[Math.max(0, Math.min(2, c))].push({k:p.nombre, puente:true, p:p});
   });
 
   var AN = 200, X = [40, 400, 760], caja = {};
@@ -890,7 +1202,8 @@ function generarSVG(){
       return;
     }
     if (!caja[r.a] || !caja[r.b]) return;
-    linea(svg, caja[r.a], caja[r.b], e.card === '1:1' ? '1' : 'N', '1', r);
+    if (e.card === '1:N') linea(svg, caja[r.a], caja[r.b], '1', 'N', r);
+    else linea(svg, caja[r.a], caja[r.b], e.card === '1:1' ? '1' : 'N', '1', r);
   });
 
   /* cajas */
@@ -981,7 +1294,8 @@ function pintarPasos(){
   var nav = $('#pasos');
   nav.innerHTML = '';
   PASOS.forEach(function(p){
-    var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(p.t)+'</button>');
+    var rot = (p.n === 7 && VERDAD) ? 'La correcci\u00f3n' : p.t;
+    var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(rot)+'</button>');
     if (S.paso === p.n) b.className = 'on';
     if (listo(p.n)) b.className += ' listo';
     b.onclick = function(){ S.paso = p.n; pintar(); window.scrollTo(0,0); };
@@ -991,10 +1305,55 @@ function pintarPasos(){
 
 function pintar(){
   pintarPasos();
+  pintarCasos();
   var m = $('#main');
   m.innerHTML = '';
+  pintarGuia(m);
   PASOS.filter(function(p){ return p.n === S.paso; })[0].pinta(m);
+  pintarSiguiente(m);
   pintarContador();
+}
+
+function pintarCasos(){
+  var c = $('#casos');
+  c.innerHTML = '';
+  Object.keys(CASOS).forEach(function(id){
+    var k = CASOS[id];
+    var b = el('<button type="button">' + k.nombre + '<small>' + k.sub + '</small></button>');
+    if (id === CASO) b.className = 'on';
+    b.onclick = function(){
+      if (id === CASO) return;
+      cargarCaso(id, true);
+      pintar();
+      window.scrollTo(0, 0);
+    };
+    c.appendChild(b);
+  });
+  $('#subMarca').innerHTML = CASOS[CASO].nombre + ' &middot; ' + CASOS[CASO].sub;
+}
+
+/* La banda naranja de la práctica. En el taller del ABC no aparece: allí no
+   hay respuesta correcta y llevar de la mano sería mentir. */
+function pintarGuia(m){
+  if (!GUIA || !GUIA[S.paso]) return;
+  var g = GUIA[S.paso], listo = g.hecho();
+  m.appendChild(el('<div class="guia">' +
+    '<div class="gi">' + (listo ? '&#9989;' : '&#128072;') + '</div>' +
+    '<div class="gt">' + g.di + '</div>' +
+    (listo ? '' : '<div class="gp">' + esc(g.falta()) + '</div>') +
+    '</div>'));
+}
+
+function pintarSiguiente(m){
+  if (!GUIA || !GUIA[S.paso] || S.paso >= PASOS.length) return;
+  var g = GUIA[S.paso], listo = g.hecho();
+  var fila = el('<div class="sig">' +
+    (listo ? '' : '<span class="falta">' + esc(g.falta()) + '</span>') +
+    '<button type="button">Siguiente paso &rarr;</button></div>');
+  var b = $('button', fila);
+  b.disabled = !listo;
+  b.onclick = function(){ S.paso = S.paso + 1; pintar(); window.scrollTo(0, 0); };
+  m.appendChild(fila);
 }
 
 function pintarContador(){
@@ -1010,7 +1369,7 @@ function pintarContador(){
   relsVivas().forEach(function(r){ if (!S.rels[r.id].regla) sinRegla++; });
   var clasificadas = REGLAS.filter(function(r){ return S.reglas[r.n].accion; }).length;
   c.innerHTML =
-    '<div class="chip">reglas<b>'+clasificadas+'/10</b></div>' +
+    '<div class="chip">reglas<b>'+clasificadas+'/'+REGLAS.length+'</b></div>' +
     '<div class="chip">entidades<b>'+entidades().length+'</b></div>' +
     '<div class="chip">relaciones<b>'+relsVivas().length+'</b></div>' +
     '<div class="chip'+(sinRegla?' aviso':'')+'">sin regla<b>'+sinRegla+'</b></div>';
@@ -1469,6 +1828,7 @@ var LLAMADAS = [
 ];
 
 function paso7(m){
+  if (VERDAD) return paso7Corregir(m);
   m.appendChild(el(
     '<div class="panel">'+
     '<div class="ey">Paso 7 · de 7</div>'+
@@ -1570,6 +1930,112 @@ function verImpacto(ll, cu, boton){
   cu.appendChild(caja);
 }
 
+/* =====================================================================
+   CORREGIR CONTRA LA BASE REAL
+   Solo existe en dvdrental, porque solo ahí hay contra qué corregir. No se
+   dice "mal": se dice qué hace la base de verdad y con qué evidencia.
+   ===================================================================== */
+
+function bonito(id){
+  var r = RELS.filter(function(x){ return x.id === id; })[0];
+  return r ? r.frase : id;
+}
+
+function corregir(){
+  var V = VERDAD, h = [];
+  if (!V) return h;
+
+  Object.keys(V.tablas).forEach(function(k){
+    if (!tieneEnt(k))
+      h.push({t:'falta', q:'Te falta la tabla <code>' + k + '</code>.',
+              d:(V.porque && V.porque[k]) || ''});
+  });
+  entidades().forEach(function(k){
+    if (!V.tablas[k])
+      h.push({t:'ojo', q:'<code>' + k + '</code> no es una tabla de esta base.',
+              d:'Puede ser defendible, pero en <code>dvdrental</code> no existe.'});
+  });
+
+  entidades().forEach(function(k){
+    var v = V.tablas[k];
+    if (!v) return;
+    var at = (S.ents[k] || {attrs:{}}).attrs;
+    Object.keys(at).forEach(function(a){
+      var sel = at[a], clave = k + '.' + a, esObl = v.obl.indexOf(a) >= 0;
+      if (sel.obl && !esObl)
+        h.push({t:'ojo', q:'Marcaste <code>' + clave + '</code> <b>obligatorio</b>, ' +
+                'y en la base real es opcional.', d:V.evid[clave] || ''});
+      if (!sel.obl && esObl)
+        h.push({t:'ojo', q:'<code>' + clave + '</code> es obligatorio en la base real, ' +
+                'y lo dejaste opcional.', d:V.evid[clave] || ''});
+      if (sel.uni)
+        h.push({t:'ojo', q:'Marcaste <code>' + clave + '</code> <b>único</b>. En toda ' +
+                '<code>dvdrental</code> no hay un solo <code>UNIQUE</code> fuera de las ' +
+                'claves primarias.', d:V.evid[clave] || ''});
+    });
+    v.obl.forEach(function(a){
+      if (!at[a])
+        h.push({t:'falta', q:'No pusiste <code>' + k + '.' + a + '</code>, que existe ' +
+                'y es obligatoria.', d:''});
+    });
+  });
+
+  Object.keys(V.rels).forEach(function(id){
+    var e = S.rels[id], real = V.rels[id], por = (V.card && V.card[id]) || '';
+    if (!e || !e.card) { h.push({t:'falta', q:'Falta la relación: ' + bonito(id), d:por}); return; }
+    if (e.card === real) h.push({t:'bien', q:bonito(id) + ' &middot; <b>' + real + '</b>', d:por});
+    else h.push({t:'ojo', q:'Pusiste <b>' + bonito(id) + '</b> como <b>' + e.card +
+                 '</b>, y es <b>' + real + '</b>.', d:por});
+  });
+
+  return h;
+}
+
+function paso7Corregir(m){
+  var h = corregir();
+  var bien = h.filter(function(x){ return x.t === 'bien'; }).length;
+  var mal = h.length - bien;
+
+  m.appendChild(el(
+    '<div class="panel">' +
+    '<div class="ey">Paso 7 · de 7</div>' +
+    '<h2>Corregir contra la base real</h2>' +
+    '<p class="lead">Aquí sí hay respuesta correcta, porque alguien construyó ' +
+    '<code>dvdrental</code> de verdad. <strong>Esto no es una nota</strong>: es lo que hace ' +
+    'la base real, y la evidencia que lo respalda. En el Restaurante ABC no vas a tener ' +
+    'esta pantalla — allí el que decide eres tú.</p>' +
+    '<div class="nota"><p><strong>' + bien + '</strong> coinciden con la base real &middot; ' +
+    '<strong>' + mal + '</strong> se apartan.</p></div>' +
+    '<div id="hallazgos"></div></div>'));
+
+  var c = $('#hallazgos', m);
+  if (!h.length) {
+    c.appendChild(el('<div class="nota o"><p>Todavía no hay nada que corregir: vuelve a ' +
+      'los pasos 2, 3 y 4.</p></div>'));
+  }
+  ['falta', 'ojo', 'bien'].forEach(function(tipo){
+    h.filter(function(x){ return x.t === tipo; }).forEach(function(x){
+      var ic = tipo === 'bien' ? '&#9989;' : (tipo === 'ojo' ? '&#9888;&#65039;' : '&#10060;');
+      c.appendChild(el('<div class="hall ' + tipo + '"><div class="hi">' + ic + '</div>' +
+        '<div class="hq">' + x.q + '</div>' +
+        (x.d ? '<div class="hd">' + x.d + '</div>' : '<div class="hd"></div>') + '</div>'));
+    });
+  });
+
+  m.appendChild(el('<div class="panel"><div class="nota o">' +
+    '<p><strong>Y ahora lo que de verdad importa de esta práctica.</strong> Ninguna de esas ' +
+    'relaciones está declarada en el archivo: <code>dvdrental.db</code> tiene <b>cero claves ' +
+    'foráneas</b>. Ni una, en toda la base.</p>' +
+    '<p>Existen en los datos y no en el esquema. <strong>Por eso en la sesión 6 se pudo borrar ' +
+    'un cliente y quedaron 46 alquileres huérfanos sin un solo error.</strong> Tú acabas de ' +
+    'escribir las claves foráneas que a esa base le faltan.</p>' +
+    '<p>Compruébalo tú, en el laboratorio de la sesión 6:</p></div>' +
+    '<pre>SELECT COUNT(*) AS claves_foraneas\nFROM   pragma_foreign_key_list(\'rental\');</pre>' +
+    '<div class="nota g"><p>Ya sabes usar la herramienta. Cambia arriba al ' +
+    '<strong>Restaurante ABC</strong>: allí no hay respuesta correcta, y por eso es el taller ' +
+    'de verdad.</p></div></div>'));
+}
+
 function nombreEstado(e){
   return {ok:'✅ como dice la regla', no:'❌ la base lo permite',
           exceso:'⚠️ la base se pasa', na:'no se puede probar',
@@ -1641,14 +2107,24 @@ function exportar(){
     var e = S.rels[id];
     if (e.card) min.r[id] = [e.card, e.oblA?1:0, e.oblB?1:0, e.regla||0];
   });
+  min.c = CASO;
   var txt = JSON.stringify(min);
-  return 'ABC7-' + btoa(unescape(encodeURIComponent(txt)));
+  return CASOS[CASO].prefijo + btoa(unescape(encodeURIComponent(txt)));
 }
 
 function importar(codigo){
   try {
     var t = codigo.trim().replace(/\s+/g,'');
-    if (t.indexOf('ABC7-') !== 0) throw new Error('no empieza por ABC7-');
+    var mio = CASOS[CASO].prefijo;
+    if (t.indexOf(mio) !== 0) {
+      /* Un código del otro caso no se importa a medias: los sustantivos y las
+         relaciones son otros y quedaría un modelo sin sentido. */
+      var otro = Object.keys(CASOS).filter(function(k){
+        return k !== CASO && t.indexOf(CASOS[k].prefijo) === 0; })[0];
+      if (otro) throw new Error('ese código es de ' + CASOS[otro].nombre +
+        '. Cambia de caso arriba y vuelve a pegarlo.');
+      throw new Error('no empieza por ' + mio);
+    }
     var min = JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));
     var NIV = {c:'confirmada', a:'candidata', h:'hipotesis'};
     var ACC = {E:'ESTRUCTURA', R:'RESTRICCION', A:'APLICACION', P:'PENDIENTE'};
@@ -1682,10 +2158,10 @@ function importar(codigo){
 /* Solo para no perder el trabajo si se recarga sin querer. Nunca es un
    expediente de progreso: el modelo de verdad viaja en el código. */
 function guardarLocal(){
-  try { localStorage.setItem('abc7', exportar()); } catch(e){}
+  try { localStorage.setItem('constructor7-' + CASO, exportar()); } catch(e){}
 }
 function leerLocal(){
-  try { return localStorage.getItem('abc7'); } catch(e){ return null; }
+  try { return localStorage.getItem('constructor7-' + CASO); } catch(e){ return null; }
 }
 
 /* =====================================================================
@@ -1773,11 +2249,16 @@ document.addEventListener('click', function(e){
   if (e.target.closest && e.target.closest('.opts')) setTimeout(guardarLocal, 0);
 });
 
+/* ?caso=dvd abre directamente en la práctica, para poder enlazarla desde la
+   portada del curso. */
+var pedido = (location.search.match(/[?&]caso=([a-z]+)/) || [])[1];
+cargarCaso(CASOS[pedido] ? pedido : 'abc');
+
 initSqlJs({ locateFile: function(f){ return '../../assets/vendor/sqljs/' + f; } })
   .then(function(mod){
     SQL = mod;
     var g = leerLocal();
-    if (g) importar(g);
+    if (g) { try { importar(g); } catch(e){} }
     pintar();
   })
   .catch(function(e){
