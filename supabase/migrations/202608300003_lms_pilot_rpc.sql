@@ -5,6 +5,9 @@
 begin;
 
 alter table public.activities
+  add column if not exists active boolean not null default true;
+
+alter table public.activities
   add column if not exists max_attempts smallint not null default 3;
 
 alter table public.activities
@@ -22,52 +25,6 @@ revoke insert on public.submissions from authenticated;
 -- Resolver la matrícula activa del usuario para una actividad.
 -- No se expone al cliente: es un helper de funciones SECURITY DEFINER.
 -- ---------------------------------------------------------------------------
-create or replace function public.resolve_own_enrollment_for_activity(p_activity_id uuid)
-returns uuid
-language plpgsql
-stable
-security definer
-set search_path = pg_catalog, public
-as $$
-declare
-  v_enrollment_id uuid;
-begin
-  if auth.uid() is null then
-    raise exception using errcode = '42501', message = 'authentication required';
-  end if;
-
-  select e.id
-    into v_enrollment_id
-  from public.activities a
-  join public.cohorts c
-    on c.course_id = a.course_id
-   and c.active = true
-  join public.enrollments e
-    on e.cohort_id = c.id
-   and e.user_id = auth.uid()
-   and e.status = 'active'
-  where a.id = p_activity_id
-    and a.active is distinct from false
-    and a.published = true
-    and (a.release_at is null or a.release_at <= now())
-  order by e.enrolled_at desc
-  limit 1;
-
-  if v_enrollment_id is null then
-    raise exception using errcode = '42501', message = 'activity not available for current user';
-  end if;
-
-  return v_enrollment_id;
-end;
-$$;
-
--- La columna active no existía en la primera versión de activities. Añadirla
--- antes de recompilar el helper anterior en instalaciones desde cero.
--- PostgreSQL valida nombres al crear la función, por eso hacemos el ajuste y
--- recreamos el helper de forma idempotente inmediatamente después.
-alter table public.activities
-  add column if not exists active boolean not null default true;
-
 create or replace function public.resolve_own_enrollment_for_activity(p_activity_id uuid)
 returns uuid
 language plpgsql
