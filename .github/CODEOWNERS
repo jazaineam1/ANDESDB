@@ -1,9 +1,18 @@
 # Propietario por defecto del curso
 * @jazaineam1
 
-# Infraestructura crítica
+# Infraestructura y seguridad críticas
 /.github/workflows/ @jazaineam1
+/.github/dependabot.yml @jazaineam1
+/.specify/ @jazaineam1
+/specs/ @jazaineam1
+/SECURITY.md @jazaineam1
+/docs/SEGURIDAD-PROYECTO.md @jazaineam1
 /tools/ @jazaineam1
 /assets/learning/ @jazaineam1
+/assets/lms/ @jazaineam1
+/pilot/ @jazaineam1
+/pilot-lab/ @jazaineam1
+/supabase/ @jazaineam1
 /service-worker.js @jazaineam1
 /manifest.webmanifest @jazaineam1
