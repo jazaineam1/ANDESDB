@@ -89,25 +89,37 @@ Gate mínimo:
 - payload > 512 KiB falla;
 - dos autosaves con la misma revisión producen un conflicto, no pérdida silenciosa.
 
-## 7. Activar frontend
+## 7. Activar frontend de forma reproducible
 
-Editar **solo en la rama piloto** `assets/lms/config.js`:
+No editar tres CSP a mano. Usar el configurador:
 
-```js
-window.ANDESDB_LMS_CONFIG = Object.freeze({
-  enabled: true,
-  supabaseUrl: 'https://PROJECT_REF.supabase.co',
-  supabasePublishableKey: 'sb_publishable_...',
-  courseSlug: 'andesdb',
-  cohortSlug: 'piloto-2026',
-  s7ActivitySlug: 's7-restaurante-abc',
-  s7ActivityVersion: 1,
-  authMode: 'email-otp',
-  sessionStorageKey: 'andesdb:lms:session:v1'
-});
+```bash
+python tools/configurar_piloto_lms.py \
+  --project-ref PROJECT_REF \
+  --publishable-key sb_publishable_... \
+  --enable
 ```
 
+El script:
+
+- valida el formato de project ref;
+- rechaza secret/service keys;
+- activa `assets/lms/config.js`;
+- escribe URL + publishable key;
+- sustituye `https://*.supabase.co` por el origen exacto del proyecto en las tres CSP.
+
 La publishable key es pública por diseño. **No sustituirla por `sb_secret_...` ni por service role.**
+
+Después ejecutar el workflow `Security · piloto LMS SDD`. Cuando `enabled:true`, CI bloquea un CSP que conserve wildcard.
+
+Para apagar el piloto conservando configuración:
+
+```bash
+python tools/configurar_piloto_lms.py \
+  --project-ref PROJECT_REF \
+  --publishable-key sb_publishable_... \
+  --disable
+```
 
 ## 8. Recorrido funcional
 
@@ -147,7 +159,7 @@ Antes de participantes reales:
 - tomar snapshot/backup de prueba;
 - introducir un registro de laboratorio;
 - probar restauración en entorno seguro;
-- documentar fecha, responsable y resultado.
+- documentar fecha, responsable y resultado en `specs/001-lms-pilot/verify.md`.
 
 Un backup no probado no cuenta como gate superado.
 
@@ -162,7 +174,18 @@ Para el piloto registrar solo métricas operativas agregadas. Nunca registrar:
 - correos en logs públicos;
 - claves API secretas.
 
-## 12. Cierre/retención
+## 12. Privacidad
+
+Antes de participantes reales completar/revisar `PRIVACIDAD-PILOTO.md`, especialmente:
+
+- responsable del tratamiento;
+- canal de contacto;
+- base/autorización aplicable;
+- región/proveedor;
+- fecha de inicio/cierre;
+- retención de 90 días.
+
+## 13. Cierre/retención
 
 A los 90 días del cierre del piloto se debe decidir explícitamente:
 
@@ -172,13 +195,13 @@ A los 90 días del cierre del piloto se debe decidir explícitamente:
 
 No asumir conservación indefinida.
 
-## 13. Rollback
+## 14. Rollback
 
 Si ocurre un incidente:
 
-1. desactivar `enabled` en la configuración del piloto;
+1. desactivar `enabled` y/o retirar deployment;
 2. revocar/rotar sesiones o claves si aplica;
 3. deshabilitar matrículas afectadas;
 4. preservar evidencia mínima del incidente;
 5. mantener `main` y el curso público operativos;
-6. no reabrir el piloto hasta repetir la matriz adversarial.
+6. no reabrir el piloto hasta repetir la matriz adversarial y el Verify relevante.
