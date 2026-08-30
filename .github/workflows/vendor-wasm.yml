@@ -16,48 +16,74 @@ concurrency:
 jobs:
   vendor:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Descargar repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
 
-      - name: Descargar sql.js 1.14.1
+      - name: Preparar Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Descargar paquetes fijados sin ejecutar scripts
+        shell: bash
         run: |
           set -euo pipefail
-          mkdir -p assets/vendor/sqljs
-          curl --fail --location --retry 3 \
-            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.js \
-            -o assets/vendor/sqljs/sql-wasm.js
-          curl --fail --location --retry 3 \
-            https://cdn.jsdelivr.net/npm/sql.js@1.14.1/dist/sql-wasm.wasm \
-            -o assets/vendor/sqljs/sql-wasm.wasm
+          rm -rf .vendor-tmp
+          mkdir -p .vendor-tmp assets/vendor/sqljs assets/vendor/duckdb
+          cd .vendor-tmp
 
-      - name: Descargar DuckDB-Wasm 1.32.0 estable
+          # npm pack valida el tarball contra la integridad publicada por el
+          # registry. --ignore-scripts evita ejecutar código del paquete.
+          npm pack --ignore-scripts --silent sql.js@1.14.1 > sqljs.tgz.name
+          npm pack --ignore-scripts --silent @duckdb/duckdb-wasm@1.32.0 > duckdb.tgz.name
+
+          SQL_TGZ="$(tail -n1 sqljs.tgz.name)"
+          DUCK_TGZ="$(tail -n1 duckdb.tgz.name)"
+          test -s "$SQL_TGZ"
+          test -s "$DUCK_TGZ"
+
+          mkdir sql duck
+          tar -xzf "$SQL_TGZ" -C sql
+          tar -xzf "$DUCK_TGZ" -C duck
+
+          cp sql/package/dist/sql-wasm.js ../assets/vendor/sqljs/sql-wasm.js
+          cp sql/package/dist/sql-wasm.wasm ../assets/vendor/sqljs/sql-wasm.wasm
+          cp duck/package/dist/duckdb-browser.mjs ../assets/vendor/duckdb/duckdb-browser.mjs
+          cp duck/package/dist/duckdb-browser-mvp.worker.js ../assets/vendor/duckdb/duckdb-browser-mvp.worker.js
+          cp duck/package/dist/duckdb-mvp.wasm ../assets/vendor/duckdb/duckdb-mvp.wasm
+          cp duck/package/dist/duckdb-browser-eh.worker.js ../assets/vendor/duckdb/duckdb-browser-eh.worker.js
+          cp duck/package/dist/duckdb-eh.wasm ../assets/vendor/duckdb/duckdb-eh.wasm
+
+          cd ..
+          rm -rf .vendor-tmp
+
+      - name: Registrar versiones e integridad del árbol vendorizado
+        shell: bash
         run: |
           set -euo pipefail
-          mkdir -p assets/vendor/duckdb
-          base=https://cdnjs.cloudflare.com/ajax/libs/duckdb-wasm/1.32.0
-          for file in \
-            duckdb-browser.mjs \
-            duckdb-browser-mvp.worker.js \
-            duckdb-mvp.wasm \
-            duckdb-browser-eh.worker.js \
-            duckdb-eh.wasm
-          do
-            curl --fail --location --retry 3 "$base/$file" -o "assets/vendor/duckdb/$file"
-          done
-
-      - name: Registrar versiones
-        run: |
           cat > assets/vendor/VERSIONS.md <<'EOF'
           # Motores WebAssembly usados por ANDESDB
 
           - sql.js: 1.14.1
-          - DuckDB-Wasm: 1.32.0 (versión estable; bundles MVP y EH)
+          - @duckdb/duckdb-wasm: 1.32.0
 
-          Los archivos se sirven desde el mismo GitHub Pages del curso para reducir dependencias externas durante una clase. El workflow `vendor-wasm.yml` es la fuente de reproducción.
+          Origen de reproducción: npm registry mediante `npm pack --ignore-scripts`
+          con versiones exactas. El cliente final sirve estos archivos desde el
+          mismo hosting del curso y no depende de un CDN en tiempo de ejecución.
           EOF
 
-      - name: Cambiar S6 de CDN a sql.js local
+          (
+            cd assets/vendor
+            find sqljs duckdb -type f -print0 | sort -z | xargs -0 sha256sum
+          ) > assets/vendor/SHA256SUMS.txt
+          sha256sum -c assets/vendor/SHA256SUMS.txt --directory assets/vendor
+
+      - name: Cambiar S6 a sql.js local
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -71,7 +97,7 @@ jobs:
           p.write_text(t, encoding='utf-8')
           PY
 
-      - name: Publicar motores y ajuste del laboratorio
+      - name: Publicar motores y checksums si cambiaron
         run: |
           set -euo pipefail
           if [ -z "$(git status --porcelain -- assets/vendor Presentaciones/M3/sql-lab-s6.js)" ]; then
@@ -81,6 +107,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets/vendor Presentaciones/M3/sql-lab-s6.js
-          git commit -m 'Servir motores WebAssembly desde GitHub Pages'
+          git commit -m 'Reproducir motores WebAssembly con integridad registrada'
           git pull --rebase origin main
           git push origin main
