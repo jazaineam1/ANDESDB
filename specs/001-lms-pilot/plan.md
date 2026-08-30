@@ -1,144 +1,177 @@
 # Plan técnico · Spec 001
 
+Estado: **IMPLEMENTACIÓN COMPLETA EN REPOSITORIO · VERIFY EXTERNO PENDIENTE**
+
 ## Decisión arquitectónica
 
-Frontend existente de ANDESDB + Supabase como backend gestionado para Auth/PostgreSQL/API/RLS. La rama no integra todavía credenciales ni proyecto productivo.
+Frontend existente de ANDESDB + Supabase como backend gestionado para Auth/PostgreSQL/API/RLS.
+
+El piloto mantiene el sitio estático y evita un servidor propio. No incorpora `supabase-js`: usa `fetch` nativo contra Auth y PostgREST/RPC para reducir dependencias runtime.
 
 ## Principios
 
 - conservar el frontend actual;
-- introducir una capa de persistencia reutilizable;
-- RLS como frontera de autorización principal;
-- no confiar en IDs, roles, timestamps ni porcentajes calculados por el cliente;
+- introducir persistencia reusable sin reescribir talleres;
+- RLS como frontera de aislamiento de filas;
+- RPC server-side para operaciones donde el cliente no debe elegir identidad/revisión/snapshot;
+- no confiar en IDs, roles, timestamps ni porcentajes suministrados por cliente;
 - separar estado mutable de entrega inmutable;
-- evitar servidor propio mientras no sea necesario;
-- usar funciones privilegiadas solo para operaciones que el cliente no deba poder ejecutar directamente.
+- usar solo publishable key en navegador;
+- conflictos multi-dispositivo explícitos, sin last-write-wins silencioso;
+- `main` no participa del piloto.
 
-## Componentes
+## Componentes implementados
 
 ### 1. Auth
 
-Supabase Auth con proveedor por decidir en `spec.md`.
+`assets/lms/auth-client.js`
 
-Resultado requerido:
-- sesión autenticada;
-- `auth.uid()` disponible para RLS;
-- login no implica matrícula.
+- email OTP;
+- `create_user:false`;
+- sesión en `sessionStorage`;
+- refresh de token;
+- logout;
+- publishable key únicamente;
+- errores de solicitud OTP mostrados de forma genérica para reducir enumeración.
+
+La cuenta y matrícula se crean administrativamente.
 
 ### 2. Persistencia académica
 
-Migraciones ya existentes en `supabase/migrations/` proporcionan:
-- profiles;
-- roles;
-- courses/cohorts;
-- enrollments;
-- activities;
-- activity_progress;
-- activity_state;
-- submissions;
-- feedback.
+Migraciones:
 
-Antes de implementación UI deben ejecutarse contra un proyecto de prueba y superarse pruebas adversariales.
+- `001_lms_pilot`: tablas, índices, triggers, RLS y grants base;
+- `002_lms_pilot_hardening`: roles/cohortes, campos de servidor y grants por columna;
+- `003_lms_pilot_rpc`: autosave atómico, control de revisión, submission, dashboards;
+- `004_lms_pilot_catalog`: curso/cohorte/S7 y lecturas seguras.
 
-### 3. SDK frontend LMS
-
-Crear módulo pequeño, sin framework obligatorio:
+### 3. Cliente LMS
 
 `assets/lms/lms-client.js`
 
 Responsabilidades:
-- obtener sesión;
-- resolver matrícula autorizada;
-- cargar estado;
-- guardar estado con revisión esperada;
-- marcar sincronización;
-- crear entrega mediante flujo permitido.
+- llamar RPC con JWT de usuario + publishable key;
+- dashboard propio;
+- resolver actividad por slug/versión;
+- cargar/guardar estado;
+- entregar;
+- consultar cohortes/progreso/submission docente.
 
-No debe:
-- conocer `service_role`;
-- decidir permisos;
-- aceptar HTML no confiable;
-- escribir roles/matrículas.
+No decide autorización final.
 
-### 4. Adaptador de actividad S7
+### 4. Adaptador S7
 
-Crear un adaptador específico:
+No se modifica la semántica del constructor. `pilot/s7.html` abre `constructor-abc.html` same-origin y `assets/lms/s7-host.js` usa las funciones existentes:
 
-`assets/lms/adapters/s7-constructor.js`
-
-Contrato propuesto:
-
-```js
-serialize() -> object
-hydrate(state) -> void
-validate(state) -> { ok, errors }
-getProgress() -> { step, percent }
+```text
+exportar() -> modelCode
+importar(modelCode) -> hidratar
+S.paso -> current_step
 ```
 
-La actividad no conoce detalles internos de Supabase; solo entrega/recibe estado.
+Estado v1:
+
+```json
+{
+  "schema": 1,
+  "activity": "s7-restaurante-abc",
+  "case": "abc",
+  "modelCode": "...",
+  "step": 4
+}
+```
 
 ### 5. Autosave
 
-- debounce inicial: 800 ms;
-- guardar únicamente con usuario autenticado y matrícula válida;
-- mostrar `Guardando…`, `Guardado`, `Error de sincronización`;
-- usar `revision` para control optimista;
-- conflicto => recargar/combinar mediante flujo visible, nunca last-write-wins silencioso.
+- debounce: 800 ms;
+- servidor deriva enrollment desde `auth.uid()`;
+- `SELECT ... FOR UPDATE` + revisión esperada;
+- conflicto SQLSTATE `40001`;
+- conflicto detiene autosave;
+- estudiante puede copiar su código local antes de recargar versión remota;
+- indicador Guardando/Guardado/Error/Conflicto.
 
 ### 6. Entrega
 
-La entrega se genera desde estado confirmado del servidor, no desde un objeto arbitrario suministrado por el navegador. Si la implementación requiere RPC/Edge Function, esa operación será privilegiada y validará identidad, matrícula, actividad y versión.
+`submit_activity(activity_id, expected_revision)`:
 
-### 7. Vista docente
+- valida usuario/matrícula/actividad;
+- bloquea estado actual;
+- valida revisión;
+- copia el snapshot desde PostgreSQL;
+- máximo inicial 3 intentos;
+- estudiante no tiene UPDATE/DELETE sobre submission.
 
-En piloto: lectura de progreso + snapshot de entrega. No se implementa analítica compleja.
+### 7. Portal estudiante
 
-Todo texto de estudiante se renderiza con APIs seguras (`textContent`) y se evita `innerHTML` salvo contenido estático controlado por el repositorio.
+`pilot/index.html`:
 
-## Secuencia de implementación
+- login OTP;
+- estado sin matrícula;
+- progreso;
+- “Continuar donde quedé”;
+- acceso a vista docente solo como UX cuando el rol leído lo permite; la seguridad real sigue en DB.
 
-1. Validar migraciones en Supabase aislado.
-2. Ejecutar matriz RLS con identidades ficticias.
-3. Resolver preguntas abiertas de Auth.
-4. Implementar `lms-client.js`.
-5. Implementar adaptador S7.
-6. Integrar autosave.
-7. Probar restauración entre dos navegadores/dispositivos.
-8. Implementar entrega inmutable.
-9. Implementar vista docente mínima.
-10. Pentest funcional/adversarial del piloto.
-11. Prueba con 3–5 usuarios ficticios.
-12. Solo después, piloto real pequeño.
+### 8. Vista docente
+
+`pilot/teacher.html` + `assets/lms/teacher.js`:
+
+- cohortes asignadas;
+- progreso;
+- última entrega;
+- contenido de estudiante con `textContent`;
+- RPC docente verifica asignación de cohorte.
+
+### 9. Seguridad frontend
+
+- CSP sin scripts remotos;
+- `object-src 'none'`;
+- publishable key validada;
+- rechazo explícito de secret/service keys;
+- sin `innerHTML` para contenido de estudiantes en vista docente;
+- ningún token/estado completo en logs.
+
+### 10. CI
+
+`.github/workflows/security-pilot.yml`:
+
+- rama correcta `piloto-lms-sdd-secure`;
+- validación ANDESDB;
+- sintaxis JavaScript;
+- contrato SDD;
+- presencia de migraciones/pruebas;
+- secret guards;
+- checks de CSP/frontera docente;
+- CodeQL JS/TS y Python;
+- Actions críticas fijadas por SHA.
+
+## Verify pendiente
+
+La siguiente secuencia requiere un proyecto Supabase aislado:
+
+1. aplicar 001–004 desde cero;
+2. Security Advisor;
+3. crear A/B/no-enrollment/teacher A/B;
+4. ejecutar `supabase/tests/rls-adversarial.sql`;
+5. probar OTP real;
+6. activar `assets/lms/config.js` con URL + publishable key;
+7. ejecutar 10 restauraciones A→B;
+8. probar submission inmutable;
+9. probar XSS almacenado;
+10. backup + restore drill;
+11. solo entonces incorporar <=10 participantes reales.
 
 ## Observabilidad mínima
 
-Registrar en servidor únicamente eventos necesarios para diagnóstico:
-- auth success/failure: usar proveedor, no replicar contraseñas;
-- autosave success/conflict/failure sin guardar contenido sensible en logs;
-- submission created;
-- authorization denied agregada cuando sea útil.
-
-Nunca loggear tokens completos ni `state_json` completo.
+Registrar únicamente errores/contadores necesarios. Nunca tokens, OTP, Authorization, correo en logs públicos ni `state_snapshot` completo.
 
 ## Rollback
 
-El piloto no modifica `main`. Si falla:
-- se deshabilita el deployment del branch;
-- el curso público actual sigue operando;
-- las migraciones se prueban en proyecto Supabase desechable/aislado;
-- no se mezclan datos de estudiantes reales con pruebas.
+- `assets/lms/config.js -> enabled:false`;
+- deshabilitar deployment/branch del piloto si aplica;
+- revocar sesiones/claves afectadas;
+- `main` continúa operando sin depender de Supabase.
 
-## Coste operativo esperado del piloto
+## Coste
 
-Objetivo: permanecer dentro del tier gratuito durante validación técnica. Pasar a plan con backups automáticos antes de tratar datos académicos reales si la política de retención/recuperación lo requiere.
-
-## Gates
-
-No pasar a usuarios reales hasta que:
-- RLS adversarial = PASS;
-- CodeQL = PASS;
-- secret scan = PASS;
-- no existan credenciales reales en repo;
-- restauración entre dispositivos = PASS;
-- entrega inmutable = PASS;
-- revisión manual de privacidad = PASS.
+El cómputo del piloto es pequeño. El criterio para pasar a plan de pago debe ser backup/recuperación/soporte, no volumen. Ver `docs/piloto-lms/ESTIMACION-PILOTO.md`.
