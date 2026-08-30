@@ -85,6 +85,19 @@ Estas sesiones funcionan como estudios/laboratorios supervisados:
 | 20:00–20:30 | debrief: comparar estrategias |
 | 20:30–20:40 | DP-900 + cierre |
 
+Es una plantilla, no un contrato: **la hora de publicación sale de
+`solucion.publicar` en `assets/learning/learning-plan.json`**, y el suelo —nunca
+antes de las 20:00— lo comprueba `tools/validar_curso.py`.
+
+**S7 se desvía a propósito.** Termina a las **20:45**, no a las 20:40, así que el
+reparto es 12 de briefing · 18 de ejemplo trabajado · 45 + 30 de taller · 20 de
+debrief · 9 + 5 de cierre conceptual · 6 de DP-900 y cierre. El debrief acaba a
+las 20:02 y **la referencia se publica a las 20:15**, detrás y no delante: a las
+20:00 quedaría disponible mientras todavía se está discutiendo.
+
+Además, el bloque de certificaciones que la S7 tenía previsto se traslada a la
+**S16**, donde es accionable. Nunca llegó a anunciarse al grupo.
+
 En S7 y S10 el trabajo autónomo no necesita “Reto” separado si la actividad ya ofrece suficiente apertura conceptual. En S13 sí puede usarse una extensión técnica para estudiantes que avanzan rápido en BigQuery.
 
 ---
