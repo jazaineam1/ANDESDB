@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Gate de seguridad del repositorio ANDESDB.
+"""Gate estático de seguridad del repositorio ANDESDB.
 
-No reemplaza CodeQL, RLS tests, secret scanning del proveedor ni una revisión
-manual. Bloquea regresiones de alta señal que el proyecto puede verificar sin
-dependencias externas.
+No reemplaza CodeQL, Security Advisor, pruebas RLS ni una revisión manual.
+Bloquea regresiones de alta señal verificables sin secretos ni servicios externos.
 """
 from __future__ import annotations
 
@@ -17,9 +16,6 @@ TEXT_EXTS = {
     ".md", ".txt", ".py", ".js", ".mjs", ".html", ".css", ".json", ".yml", ".yaml",
     ".sql", ".toml", ".ini", ".env", ".sh", ".webmanifest",
 }
-
-# Documentación puede mencionar nombres de secretos de forma literal. Los
-# patrones de valores reales se siguen buscando en el resto del repo.
 DOC_PREFIXES = ("docs/", "specs/", "SECURITY.md")
 
 SECRET_PATTERNS = [
@@ -27,7 +23,6 @@ SECRET_PATTERNS = [
     ("Supabase secret key", re.compile(r"\bsb_secret_[A-Za-z0-9_-]{12,}\b")),
     ("GitHub token", re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b")),
     ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
-    # URI de BD con user:password@host. Permite placeholders sin @ real.
     ("database URI with password", re.compile(
         r"\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?)://[^\s/:]+:[^\s/@]+@[^\s]+",
         re.I,
@@ -72,8 +67,8 @@ def check_secrets(files: list[Path], errors: list[str]) -> None:
             continue
         r = rel(path)
         for name, pattern in SECRET_PATTERNS:
-            # Los docs pueden escribir `sb_secret_...` como ejemplo. URI con
-            # password y private keys nunca se aceptan ni en material docente.
+            # Documentación puede nombrar formatos de tokens, pero una URI con
+            # contraseña o private key nunca es aceptable ni como material.
             if r.startswith(DOC_PREFIXES) and name in {"Supabase secret key", "GitHub token", "AWS access key"}:
                 continue
             if pattern.search(text):
@@ -113,16 +108,31 @@ def check_lms(files: list[Path], errors: list[str]) -> None:
                 fail(errors, f"{r}: sink peligroso prohibido en LMS: {name}")
 
     config = ROOT / "assets/lms/config.js"
-    if config.exists():
-        text = config.read_text(encoding="utf-8")
-        if re.search(r"supabasePublishableKey\s*:\s*['\"]sb_secret_", text):
-            fail(errors, "assets/lms/config.js: secret key en campo público")
-        if "s7SandboxOrigin" not in text:
-            fail(errors, "assets/lms/config.js: falta origen separado para el laboratorio S7")
+    config_text = config.read_text(encoding="utf-8") if config.exists() else ""
+    if re.search(r"supabasePublishableKey\s*:\s*['\"]sb_secret_", config_text):
+        fail(errors, "assets/lms/config.js: secret key en campo público")
+    if "s7SandboxOrigin" not in config_text:
+        fail(errors, "assets/lms/config.js: falta origen separado para S7")
 
-    required_csp = [
-        "script-src 'self'", "object-src 'none'", "form-action 'self'", "frame-ancestors",
-    ]
+    host = ROOT / "assets/lms/s7-host.js"
+    if host.exists():
+        h = host.read_text(encoding="utf-8")
+        forbidden_host = [".contentDocument", ".document", ".exportar", ".importar", "constructor-abc.html"]
+        for token in forbidden_host:
+            if token in h:
+                fail(errors, f"assets/lms/s7-host.js: acceso directo al lab prohibido: {token}")
+        if "event.origin !== bridgeOrigin" not in h or "event.source !== bridgeWindow()" not in h:
+            fail(errors, "assets/lms/s7-host.js: falta validación exacta origin/source")
+
+    bridge = ROOT / "assets/lms/s7-bridge.js"
+    if bridge.exists():
+        b = bridge.read_text(encoding="utf-8")
+        if "event.origin !== parentOrigin" not in b or "event.source !== window.parent" not in b:
+            fail(errors, "assets/lms/s7-bridge.js: falta validación exacta origin/source")
+        if "'*'" in b and "postMessage" in b:
+            fail(errors, "assets/lms/s7-bridge.js: wildcard de postMessage prohibido")
+
+    required_csp = ["script-src 'self'", "object-src 'none'", "form-action 'self'", "frame-ancestors"]
     for name in ("index.html", "s7.html", "teacher.html"):
         path = ROOT / "pilot" / name
         if not path.exists():
@@ -136,6 +146,35 @@ def check_lms(files: list[Path], errors: list[str]) -> None:
                 fail(errors, f"pilot/{name}: CSP sin {directive}")
         if re.search(r"<script\b[^>]*\bsrc=[\"']https?://", text, re.I):
             fail(errors, f"pilot/{name}: script remoto prohibido")
+        if re.search(r"\son[a-z]+\s*=", text, re.I):
+            fail(errors, f"pilot/{name}: handler inline prohibido")
+        if re.search(r"\sstyle\s*=", text, re.I):
+            fail(errors, f"pilot/{name}: estilo inline incompatible con CSP estricta")
+
+    s7 = ROOT / "pilot/s7.html"
+    if s7.exists() and 'sandbox="allow-scripts allow-same-origin"' not in s7.read_text(encoding="utf-8"):
+        fail(errors, "pilot/s7.html: iframe externo sin sandbox esperado")
+
+    bridge_page = ROOT / "pilot-lab/s7-bridge.html"
+    if not bridge_page.is_file():
+        fail(errors, "pilot-lab/s7-bridge.html: falta bridge aislado")
+
+
+def check_deploy_isolation(errors: list[str]) -> None:
+    builder = ROOT / "tools/build_pilot_deploy.py"
+    if not builder.is_file():
+        fail(errors, "falta tools/build_pilot_deploy.py")
+        return
+    text = builder.read_text(encoding="utf-8")
+    for marker in ("dist/pilot-lms", "dist/pilot-lab"):
+        # El código usa Path segments, por eso también aceptamos los nombres.
+        if marker not in text and marker.split("/")[-1] not in text:
+            fail(errors, f"build_pilot_deploy.py: no evidencia salida {marker}")
+    if '"s7-bridge.js"' in text.split("LMS_ASSETS", 1)[1].split("LAB_ASSETS", 1)[0]:
+        fail(errors, "build_pilot_deploy.py: el bridge no debe entrar al artefacto LMS")
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    if "dist/" not in gitignore:
+        fail(errors, ".gitignore: dist/ debe ser regenerable y no versionado")
 
 
 def check_required_security_files(errors: list[str]) -> None:
@@ -143,9 +182,11 @@ def check_required_security_files(errors: list[str]) -> None:
         "SECURITY.md",
         "docs/SEGURIDAD-PROYECTO.md",
         ".specify/memory/constitution.md",
+        ".github/CODEOWNERS",
         "docs/piloto-lms/THREAT-MODEL.md",
         "docs/piloto-lms/PRUEBAS-ADVERSARIALES.md",
         "supabase/tests/rls-adversarial.sql",
+        "tools/build_pilot_deploy.py",
         ".github/workflows/security-pilot.yml",
         ".github/workflows/dependency-review.yml",
         ".github/workflows/scorecard.yml",
@@ -161,6 +202,7 @@ def main() -> int:
     check_secrets(files, errors)
     check_workflows(files, errors)
     check_lms(files, errors)
+    check_deploy_isolation(errors)
     check_required_security_files(errors)
 
     if errors:
