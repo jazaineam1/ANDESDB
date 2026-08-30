@@ -696,14 +696,12 @@ sistema real</strong>: una factura lleva su total escrito.</p>
 <div class="ctx"><p style="margin:0"><strong>No es un error.</strong> Es una decisión —
 y toda decisión tiene un precio. Lo que pasa es que ese precio <strong>no se ve el día que
 se diseña</strong>: se ve meses después.</p></div>
-<p style="margin-top:.5em">Vamos a medirlo. El pedido 1 lleva dos ajiacos y una bandeja,
-el cajero cierra la cuenta y todo cuadra. Y entonces el cliente pide un ajiaco más:</p>
-<pre><code>UPDATE linea_pedido
-   SET cantidad = 3
- WHERE linea_id = 1;</code></pre>
+<p style="margin-top:.45em">Vamos a medirlo. El pedido 1 cuadra, y el cliente pide
+un ajiaco más:</p>
+<pre><code>UPDATE linea_pedido SET cantidad = 3 WHERE linea_id = 1;</code></pre>
 </div>
 <div><h3>El precio, en números</h3>
-<svg style="width:100%;height:auto;display:block;margin:.3em 0" viewBox="0 0 420 190" role="img" aria-label="El total guardado dice 102000 y las lineas suman 134000">
+<svg style="width:100%;max-width:372px;height:auto;display:block;margin:.3em auto" viewBox="0 0 420 190" role="img" aria-label="El total guardado dice 102000 y las lineas suman 134000">
 <rect x="10" y="16" width="188" height="76" rx="10" fill="#fff1f0" stroke="#a52a2a" stroke-width="2.2"/>
 <text x="104" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#a52a2a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">LA CUENTA DICE</text>
 <text x="104" y="72" text-anchor="middle" font-size="27" font-weight="800" fill="#a52a2a" font-family="Segoe UI,Arial,sans-serif">102.000</text>
@@ -715,9 +713,9 @@ el cajero cierra la cuenta y todo cuadra. Y entonces el cliente pide un ajiaco m
 <text x="210" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#171717" font-family="Segoe UI,Arial,sans-serif">El precio de guardar un total:</text>
 <text x="210" y="169" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">hay que acordarse de actualizarlo. Siempre.</text>
 </svg>
-<p class="small">Y se paga de otras dos formas: borren la única línea de un pedido y el
+<p class="small">Se paga de otras dos formas: borren la única línea de un pedido y el
 total sigue ahí; inserten uno de 95.000 <strong>sin ningún plato</strong> y lo acepta.
-<strong>Lo de hoy es ver ese precio antes de pagarlo</strong>, y decidir cuándo vale la pena.</p>
+<strong>Hoy vemos ese precio antes de pagarlo.</strong></p>
 </div>
 </div>
 <div class="brand"><span>Apertura</span><span>No es un error: es un precio</span></div>
@@ -817,12 +815,10 @@ identifican la fila &mdash; y de ahí sale todo lo demás.</p></div></div>
 <div class="g2">
 <div><h3>Cómo se hace, en dos preguntas</h3>
 <ol class="steps">
-<li><strong>¿De qué depende esta columna?</strong> Si depende solo del <b>pedido</b> —la
-    fecha, la mesa, el mesero, el cliente— no pinta nada en una fila por plato: sale a
-    <code>pedido</code>.</li>
-<li><strong>¿Y depende de algo que ya salió?</strong> Los <b>puestos</b> dependen de la
-    mesa, no del pedido. El <b>documento</b>, del mesero. El <b>teléfono</b>, del cliente.
-    Cada uno a su tabla.</li>
+<li><strong>¿De qué depende esta columna?</strong> Si depende solo del <b>pedido</b>
+    —fecha, mesa, mesero, cliente— sale a <code>pedido</code>.</li>
+<li><strong>¿Y depende de algo que ya salió?</strong> Los <b>puestos</b> son de la mesa;
+    el <b>documento</b>, del mesero; el <b>teléfono</b>, del cliente. Cada uno a su tabla.</li>
 </ol>
 <div class="ctx"><p style="margin:0">Y el <b>total</b>: pregúntense si hace falta guardarlo.
 Ya vieron lo que pasa cuando se guarda.</p></div></div>
@@ -834,9 +830,8 @@ Ya vieron lo que pasa cuando se guarda.</p></div></div>
     tablas lo tienen que poder decir.</li>
 <li>Y una comprobación: <strong>¿pueden reconstruir la hoja original?</strong></li>
 </ul>
-<div class="hintbox"><p style="margin:0">Esa última no es retórica. Si no se puede
-reconstruir, han perdido información — y eso <strong>no</strong> es normalizar: es
-romper.</p></div></div>
+<div class="hintbox"><p style="margin:0">Esa última no es retórica: si no se puede
+reconstruir, perdieron información — y eso <strong>no</strong> es normalizar.</p></div></div>
 </div>
 <div class="brand"><span>Taller &middot; 2FN y 3FN</span><span>Cada dato, donde depende</span></div>
 </section>
@@ -851,7 +846,7 @@ romper.</p></div></div>
 <section class="slide dense mid" data-title="A donde llegaron">
 <div class="ey">Debrief &middot; 10 minutos</div>
 <h2>Miren a dónde han llegado</h2>
-<p class="lead">Cuenten cuántas tablas os salieron. Y ahora compárenlas con las que
+<p class="lead">Cuenten cuántas tablas les salieron. Y ahora compárenlas con las que
 construyeron <strong>ayer</strong>, antes de haber oído la palabra «normalizar».</p>
 <svg style="width:100%;height:auto;display:block;margin:.4em 0" viewBox="0 0 1200 118" role="img" aria-label="La hoja de calculo se descompone en las mismas seis tablas del modelo de ayer">
 <rect x="4" y="30" width="250" height="58" rx="10" fill="#fff3e7" stroke="#ff8a24" stroke-width="2.2"/>
@@ -909,10 +904,10 @@ vuelve entero.</p>
 <div class="g2">
 <div><h3>El paso 8: la lente</h3>
 <ol class="steps">
-<li>Os <strong>señala</strong> qué datos guarda dos veces su modelo.</li>
-<li>Ejecuta el <code>UPDATE</code> que lo rompe <strong>contra su base</strong>, y os
+<li>Les <strong>señala</strong> qué datos guarda dos veces su modelo.</li>
+<li>Ejecuta el <code>UPDATE</code> que lo rompe <strong>contra su base</strong>, y les
     dice cuántos pedidos quedan mintiendo.</li>
-<li>Os deja <strong>quitarlo</strong>.</li>
+<li>Les deja <strong>quitarlo</strong>.</li>
 <li>Y vuelve a correr el banco de pruebas de ayer, para que vean que reparar
     <strong>no rompió nada</strong> de lo que ya funcionaba.</li>
 </ol></div>
@@ -1052,7 +1047,7 @@ viernes pasado de refilón. <strong>Es el camino que aparcamos</strong>, y llega
 <div><h3>El viernes, sesión 9</h3>
 <div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>DDL y Azure
 SQL.</strong> Su modelo —el de ayer, reparado hoy— se convierte en
-<code>CREATE TABLE</code> de verdad, contra un servicio en la nube. La herramienta os
+<code>CREATE TABLE</code> de verdad, contra un servicio en la nube. La herramienta les
 exporta el SQL al dialecto de Azure y lo ejecutan allí.</p></div>
 <p class="small" style="margin-top:.7em"><strong>Guarden el código del modelo</strong>, que
 es lo único que hace falta traer. Y si lo pierden, está en el chat de hoy.</p>
