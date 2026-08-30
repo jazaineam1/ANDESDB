@@ -1,10 +1,12 @@
-/* ANDESDB · Adaptador S7 para el piloto LMS.
- * La actividad original permanece aislada y reutilizable. Este host traduce su
- * estado mediante exportar()/importar() y lo persiste en el servidor.
+/* ANDESDB · Host S7 seguro.
+ * El shell autenticado NO accede al DOM ni a globals del laboratorio. Toda
+ * comunicación cruza un origen separado mediante postMessage validado.
  */
 (function () {
   'use strict';
 
+  var SOURCE_HOST = 'andesdb-s7-host-v1';
+  var SOURCE_BRIDGE = 'andesdb-s7-bridge-v1';
   var frame = document.getElementById('activityFrame');
   var syncText = document.getElementById('syncText');
   var submitButton = document.getElementById('submitActivity');
@@ -21,62 +23,118 @@
   var saveAgain = false;
   var conflict = false;
   var hydrated = false;
+  var bridgeReady = false;
+  var bridgeOrigin = '';
+  var pending = new Map();
+  var requestSeq = 0;
+  var readyWaiters = [];
 
-  function text(node, value) {
-    if (node) node.textContent = value;
-  }
+  function text(node, value) { if (node) node.textContent = value; }
 
   function setSync(label, state) {
     text(syncText, label);
     if (syncText) syncText.dataset.state = state || '';
   }
 
-  function child() {
-    try { return frame && frame.contentWindow; } catch (_) { return null; }
+  function validOrigin(raw) {
+    try {
+      var u = new URL(raw);
+      return u.protocol === 'https:' && u.origin === raw ? u.origin : '';
+    } catch (_) { return ''; }
   }
 
-  function childReady() {
-    var w = child();
-    return !!(w && w.SQL && w.S && typeof w.exportar === 'function' && typeof w.importar === 'function' && typeof w.pintar === 'function');
+  function bridgeWindow() {
+    return frame && frame.contentWindow ? frame.contentWindow : null;
   }
 
-  function waitChildReady(timeoutMs) {
+  function post(message) {
+    var target = bridgeWindow();
+    if (!target || !bridgeOrigin) throw new Error('BRIDGE_NOT_CONFIGURED');
+    target.postMessage(Object.assign({source:SOURCE_HOST}, message), bridgeOrigin);
+  }
+
+  function waitBridgeReady(timeoutMs) {
+    if (bridgeReady) return Promise.resolve();
     timeoutMs = timeoutMs || 15000;
     return new Promise(function (resolve, reject) {
-      var started = Date.now();
-      (function poll() {
-        if (childReady()) return resolve(child());
-        if (Date.now() - started > timeoutMs) return reject(new Error('ACTIVITY_TIMEOUT'));
-        setTimeout(poll, 100);
-      })();
+      var item = {resolve:resolve, reject:reject};
+      readyWaiters.push(item);
+      var timer = setTimeout(function () {
+        var idx = readyWaiters.indexOf(item);
+        if (idx >= 0) readyWaiters.splice(idx, 1);
+        reject(new Error('BRIDGE_TIMEOUT'));
+      }, timeoutMs);
+      item.resolve = function () { clearTimeout(timer); resolve(); };
+      item.reject = function (err) { clearTimeout(timer); reject(err); };
+      try { post({type:'PING'}); } catch (_) {}
     });
   }
 
-  function serializeActivity() {
-    var w = child();
-    if (!w || !w.S || typeof w.exportar !== 'function') throw new Error('ACTIVITY_NOT_READY');
-    return {
-      schema: 1,
-      activity: 's7-restaurante-abc',
-      case: String(w.CASO || 'abc'),
-      modelCode: String(w.exportar()),
-      step: Math.max(1, Math.min(7, Number(w.S.paso || 1)))
-    };
+  function bridgeRequest(type, payload, timeoutMs) {
+    timeoutMs = timeoutMs || 8000;
+    var requestId = 'r' + Date.now().toString(36) + '-' + (++requestSeq).toString(36);
+    return new Promise(function (resolve, reject) {
+      var timer = setTimeout(function () {
+        pending.delete(requestId);
+        reject(new Error('BRIDGE_REQUEST_TIMEOUT'));
+      }, timeoutMs);
+      pending.set(requestId, {
+        resolve:function (value) { clearTimeout(timer); resolve(value); },
+        reject:function (err) { clearTimeout(timer); reject(err); }
+      });
+      try {
+        post(Object.assign({type:type, requestId:requestId}, payload || {}));
+      } catch (err) {
+        clearTimeout(timer);
+        pending.delete(requestId);
+        reject(err);
+      }
+    });
+  }
+
+  window.addEventListener('message', function (event) {
+    if (!bridgeOrigin || event.origin !== bridgeOrigin || event.source !== bridgeWindow()) return;
+    var data = event.data;
+    if (!data || data.source !== SOURCE_BRIDGE || typeof data.type !== 'string') return;
+
+    if (data.type === 'READY') {
+      bridgeReady = true;
+      var waiters = readyWaiters.splice(0);
+      waiters.forEach(function (w) { w.resolve(); });
+      return;
+    }
+    if (data.type === 'CHANGE') {
+      scheduleSave();
+      return;
+    }
+    if (data.type === 'ERROR') {
+      setSync('El laboratorio aislado reportó un error', 'error');
+      return;
+    }
+    if (data.type === 'RESPONSE' && typeof data.requestId === 'string') {
+      var req = pending.get(data.requestId);
+      if (!req) return;
+      pending.delete(data.requestId);
+      if (data.ok) req.resolve(data.result);
+      else req.reject(new Error(String(data.error || 'BRIDGE_ERROR').slice(0,160)));
+    }
+  });
+
+  async function serializeActivity() {
+    var state = await bridgeRequest('GET_STATE');
+    if (!state || state.schema !== 1 || typeof state.modelCode !== 'string') {
+      throw new Error('INVALID_BRIDGE_STATE');
+    }
+    return state;
   }
 
   function fingerprint(state) {
     return JSON.stringify([state.schema, state.case, state.modelCode, state.step]);
   }
 
-  function hydrateActivity(serverState) {
-    if (!serverState || serverState.schema !== 1 || typeof serverState.modelCode !== 'string') {
-      return false;
-    }
-    var w = child();
-    var error = w.importar(serverState.modelCode);
-    if (error) throw new Error('STATE_IMPORT_FAILED: ' + error);
-    if (w.S && serverState.step) w.S.paso = Math.max(1, Math.min(7, Number(serverState.step)));
-    w.pintar();
+  async function hydrateActivity(serverState) {
+    if (!serverState || serverState.schema !== 1 || typeof serverState.modelCode !== 'string') return false;
+    await bridgeRequest('SET_STATE', {state:serverState});
     return true;
   }
 
@@ -88,9 +146,9 @@
       setSync('Aún sin guardado en la nube', 'idle');
       return;
     }
-    hydrateActivity(row.state);
+    await hydrateActivity(row.state);
     revision = Number(row.revision || 0);
-    lastFingerprint = fingerprint(serializeActivity());
+    lastFingerprint = fingerprint(await serializeActivity());
     setSync('Guardado · versión ' + revision, 'saved');
   }
 
@@ -101,19 +159,18 @@
       return;
     }
 
-    var state = serializeActivity();
-    var fp = fingerprint(state);
-    if (!force && fp === lastFingerprint) return;
-
     saveInFlight = true;
     saveAgain = false;
     setSync('Guardando…', 'saving');
     try {
+      var state = await serializeActivity();
+      var fp = fingerprint(state);
+      if (!force && fp === lastFingerprint) {
+        setSync('Guardado · versión ' + revision, 'saved');
+        return;
+      }
       var result = await window.ANDESDBLMS.saveActivityState(
-        activity.activity_id,
-        state,
-        revision,
-        state.step
+        activity.activity_id, state, revision, state.step
       );
       revision = Number(result && result.revision || revision);
       lastFingerprint = fp;
@@ -141,13 +198,6 @@
     if (!hydrated || conflict) return;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(function () { doSave(false); }, 800);
-  }
-
-  function attachActivityListeners() {
-    var doc = child().document;
-    ['input', 'change', 'click'].forEach(function (eventName) {
-      doc.addEventListener(eventName, scheduleSave, true);
-    });
   }
 
   async function flushSave() {
@@ -180,7 +230,8 @@
   }
 
   async function copyLocalWork() {
-    var code = serializeActivity().modelCode;
+    var state = await serializeActivity();
+    var code = state.modelCode;
     try {
       await navigator.clipboard.writeText(code);
       text(conflictCopy, 'Código copiado');
@@ -207,29 +258,39 @@
       return;
     }
 
+    bridgeOrigin = validOrigin(window.ANDESDB_LMS_CONFIG.s7SandboxOrigin || '');
+    if (!bridgeOrigin || bridgeOrigin === location.origin) {
+      throw new Error('LAB_ORIGIN_MUST_BE_SEPARATE');
+    }
+
     var session = await window.ANDESDBAuth.getSession();
     if (!session) {
       location.replace('./index.html');
       return;
     }
 
-    setSync('Cargando tu trabajo…', 'saving');
+    frame.src = bridgeOrigin + '/pilot-lab/s7-bridge.html?parentOrigin=' + encodeURIComponent(location.origin);
+    setSync('Cargando laboratorio aislado…', 'saving');
+    await waitBridgeReady();
+
     activity = await window.ANDESDBLMS.resolveActivityBySlug(
       window.ANDESDB_LMS_CONFIG.s7ActivitySlug,
       window.ANDESDB_LMS_CONFIG.s7ActivityVersion
     );
     if (!activity) throw new Error('ACTIVITY_NOT_AVAILABLE');
 
-    await waitChildReady();
     await loadServerState();
-    attachActivityListeners();
     hydrated = true;
     if (submitButton) submitButton.disabled = false;
   }
 
   if (submitButton) submitButton.addEventListener('click', submit);
-  if (conflictCopy) conflictCopy.addEventListener('click', copyLocalWork);
-  if (conflictReload) conflictReload.addEventListener('click', reloadServer);
+  if (conflictCopy) conflictCopy.addEventListener('click', function () {
+    copyLocalWork().catch(function () { setSync('No se pudo copiar el trabajo local', 'error'); });
+  });
+  if (conflictReload) conflictReload.addEventListener('click', function () {
+    reloadServer().catch(function () { setSync('No se pudo recargar desde servidor', 'error'); });
+  });
   if (logoutButton) logoutButton.addEventListener('click', async function () {
     await window.ANDESDBAuth.signOut();
     location.replace('./index.html');
