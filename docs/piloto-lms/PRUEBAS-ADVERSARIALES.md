@@ -1,91 +1,84 @@
 # Pruebas adversariales obligatorias · Piloto LMS
 
-No basta con que el flujo feliz funcione. El piloto se aprueba intentando romper aislamiento y autorización.
+El flujo feliz no aprueba el piloto. Hay que intentar romper aislamiento, sesión, concurrencia y entrega.
 
-## Cuentas de prueba
+## Identidades de laboratorio
 
-Crear en el proyecto de prueba:
+Crear, sin usar personas reales:
 
-- `student_a` matriculado en cohorte A;
-- `student_b` matriculado en cohorte A;
-- `student_c` autenticado pero NO matriculado;
-- `teacher_a` asignado a cohorte A;
-- `teacher_b` asignado a cohorte B;
-- `admin_test` solo para administración.
-
-Nunca usar estudiantes reales en estos tests.
+- `student_a`: cohorte A;
+- `student_b`: cohorte A;
+- `student_no_enrollment`: autenticado, sin matrícula;
+- `teacher_a`: asignado a cohorte A;
+- `teacher_b`: asignado a cohorte B;
+- `admin_test`: administración puntual.
 
 ## Matriz de autorización
 
-| Operación | A | B | C no matriculado | Teacher A | Teacher B |
+| Operación sobre A | A | B | Sin matrícula | Teacher A | Teacher B |
 |---|---:|---:|---:|---:|---:|
-| leer estado A | ✅ | ❌ | ❌ | ✅ | ❌ |
-| modificar estado A | ✅ | ❌ | ❌ | ❌* | ❌ |
-| leer entrega A | ✅ | ❌ | ❌ | ✅ | ❌ |
-| modificar entrega A | ❌ | ❌ | ❌ | ❌ | ❌ |
-| feedback entrega A | ❌ | ❌ | ❌ | ✅ | ❌ |
-| modificar role propio | ❌ | ❌ | ❌ | ❌ | ❌ |
-| crear enrollment propio | ❌ | ❌ | ❌ | ❌ | ❌ |
+| leer estado | ✅ | ❌ | ❌ | ✅ | ❌ |
+| guardar estado | ✅ RPC | ❌ | ❌ | ❌ | ❌ |
+| leer submission | ✅ | ❌ | ❌ | ✅ | ❌ |
+| modificar submission | ❌ | ❌ | ❌ | ❌ | ❌ |
+| cambiar role/enrollment | ❌ | ❌ | ❌ | ❌ | ❌ |
 
-`*` En el piloto el docente observa el borrador, no lo edita.
+## T01 · IDOR/BOLA lectura
 
-## T01 · IDOR/BOLA de lectura
+B intenta seleccionar `enrollment`, `activity_state` y `submissions` de A usando UUID conocidos.
 
-1. A crea un `activity_state`.
-2. Obtener su `enrollment_id` y `activity_id` desde una sesión administrativa de prueba.
-3. Como B, ejecutar SELECT filtrando por esos IDs.
-4. Repetir con request directa, no solo UI.
+**Esperado:** 0 filas o denegación; nunca datos de A.
 
-**Esperado:** cero filas.
+## T02 · Escritura directa ajena
 
-## T02 · IDOR/BOLA de escritura
+B intenta `INSERT/UPDATE` directo sobre `activity_state`/`activity_progress` con IDs de A.
 
-Como B intentar UPDATE/UPSERT sobre la PK de A.
+**Esperado:** permiso denegado. Migration 003 revoca escritura directa a `authenticated`.
 
-**Esperado:** operación denegada/0 filas; estado de A intacto.
+## T03 · Manipular identidad en el navegador
 
-## T03 · Payload con user/enrollment ajeno
+Modificar DevTools/request para añadir `user_id`, `enrollment_id`, `role` o timestamps arbitrarios.
 
-Manipular la petición del frontend y sustituir IDs por los de A.
+**Esperado:** los RPC de autosave/submit ignoran esos conceptos porque no forman parte de su contrato; derivan matrícula desde `auth.uid()`.
 
-**Esperado:** RLS lo bloquea aunque JavaScript haya sido modificado.
+## T04 · Escalada vertical
 
-## T04 · Escalada horizontal/vertical
+Como student intentar:
 
-Como student:
+- UPDATE/INSERT de `user_roles`;
+- INSERT de `enrollments`;
+- INSERT de `teacher_cohorts`;
+- editar perfil esperando convertirse en teacher.
 
-- INSERT `user_roles(role='teacher')`;
-- UPDATE su `user_roles`;
-- INSERT `teacher_cohorts`;
-- cambiar metadata del perfil e intentar que el sistema la trate como rol.
+**Esperado:** todo bloqueado.
 
-**Esperado:** todo bloqueado; el rol efectivo sigue siendo student.
+## T05 · Autenticado sin matrícula
 
-## T05 · Cuenta autenticada sin matrícula
+`student_no_enrollment` obtiene una sesión OTP válida.
 
-C inicia sesión correctamente pero no tiene enrollment.
-
-**Esperado:** no accede a actividades privadas ni a datos académicos.
+**Esperado:** `get_my_dashboard()` devuelve 0 filas y S7 no está disponible.
 
 ## T06 · Teacher fuera de cohorte
 
-Teacher B intenta consultar estado/entrega de cohorte A.
+Teacher B llama `get_teacher_cohort_progress(cohortA)` y `get_teacher_submission(enrollmentA, ...)`.
 
-**Esperado:** cero filas.
+**Esperado:** error de autorización (`42501`) o 0 datos, según operación.
 
 ## T07 · Inmutabilidad de entrega
 
-A crea una submission y luego intenta:
+A entrega por `submit_activity`. Después intenta UPDATE/DELETE directo.
 
-- UPDATE snapshot;
-- DELETE submission;
-- cambiar `submitted_at`.
+**Esperado:** denegado. El snapshot sigue idéntico.
 
-**Esperado:** bloqueado.
+## T08 · Snapshot no manipulable
 
-## T08 · XSS almacenado
+Interceptar el botón Entregar e intentar enviar un `state_snapshot` inventado.
 
-Guardar en cada campo de texto soportado:
+**Esperado:** `submit_activity` no acepta ese parámetro. Copia el estado que ya existe en PostgreSQL.
+
+## T09 · XSS almacenado
+
+Introducir como dato persistente cadenas como:
 
 ```text
 <img src=x onerror=alert(document.domain)>
@@ -93,69 +86,80 @@ Guardar en cada campo de texto soportado:
 "><svg onload=alert(1)>
 ```
 
-Abrir como A y como teacher A.
+Abrir la entrega en vista docente.
 
-**Esperado:** texto visible literal; nunca ejecución.
+**Esperado:** texto literal; 0 ejecución. `teacher.js` no usa `innerHTML`/`insertAdjacentHTML`.
 
-## T09 · Payload excesivo
+## T10 · Payload excesivo
 
-Intentar guardar estado JSON > 512 KiB.
+`save_activity_state` con JSON >512 KiB.
 
-**Esperado:** constraint rechaza el write. UI explica que no pudo guardar sin imprimir payload completo.
+**Esperado:** error controlado; el estado anterior permanece intacto.
 
-## T10 · Autosave concurrente
+## T11 · Autosave concurrente
 
-1. abrir misma actividad en dos pestañas/dispositivos;
-2. ambos cargan revision N;
-3. A guarda -> N+1;
-4. B intenta guardar basado en N.
+1. dos navegadores cargan revision N;
+2. A guarda y obtiene N+1;
+3. B guarda con expected=N.
 
-**Esperado objetivo de aplicación:** detectar conflicto y no sobrescribir silenciosamente. La migración incrementa revision en servidor; el adaptador de aplicación debe añadir comparación optimista antes de aprobar G2.
+**Esperado:** B recibe `40001 revision conflict`; no existe last-write-wins. La UI detiene autosave, permite copiar código local y cargar servidor.
 
-## T11 · Session expiration
+## T12 · Expiración de sesión
 
-Expirar/revocar sesión mientras existe un autosave pendiente.
+Revocar/expirar JWT durante autosave.
 
-**Esperado:** no loop infinito, no pérdida silenciosa, estado UI `sesión expirada`, login de nuevo.
+**Esperado:** no bucle infinito, no mensaje falso de “Guardado”, posibilidad de autenticarse de nuevo.
 
-## T12 · Solución oculta
+## T13 · OTP / cuentas inexistentes
 
-Inspeccionar HTML, JS, source maps y network del estudiante antes de hora de publicación.
+Solicitar OTP para cuenta no autorizada y autorizada.
 
-**Esperado:** ninguna respuesta que se pretenda secreta está presente por estar simplemente `hidden`.
+**Esperado UI:** mensaje equivalente para ambos casos; no usar la interfaz como oráculo de usuarios.
 
-## T13 · Secret scanning manual
+## T14 · Registro abierto
 
-Buscar en branch/build:
+Intentar crear cuenta desde el frontend o alterar `create_user` en la request.
 
-```text
-service_role
-PRIVATE KEY
-SUPABASE_SERVICE
-SNYK_TOKEN
-client_secret
-Authorization: Bearer
-```
+**Esperado:** el proyecto de Auth está configurado cerrado y una sesión sin enrollment sigue viendo 0 datos aunque consiga autenticarse.
 
-La palabra puede existir en documentación de seguridad; ninguna debe corresponder a un valor real.
+## T15 · Key misuse
 
-## T14 · Redirect OAuth
+Inspeccionar HTML/JS/network.
 
-Intentar redirects no registrados, subdominios similares y parámetros abiertos.
+**Esperado:** puede verse `sb_publishable_...`; nunca `sb_secret_...`, legacy service role, DB password, SMTP password o OAuth secret.
 
-**Esperado:** solo URLs exactas del piloto.
+## T16 · Submission replay
 
-## T15 · Rate/autosave
+Repetir el submit hasta superar `max_attempts=3`.
 
-Manipular cliente para enviar decenas de saves por segundo.
+**Esperado:** intentos 1–3 válidos según política; el cuarto falla. Los intentos previos permanecen intactos.
 
-**Esperado:** la plataforma sigue disponible; registrar necesidad de rate limiting adicional si el proveedor no basta.
+## T17 · Progreso manipulado
 
-## Gate automático/manual
+Alterar el porcentaje en JavaScript o llamar el RPC con un paso fuera de 0..max_step.
 
-Una prueba marcada ❌ bloquea el piloto. Un hallazgo se cierra solo con:
+**Esperado:** porcentaje se deriva del paso en servidor y paso fuera de rango falla.
 
-1. fix;
-2. test repetido;
-3. test de regresión añadido cuando sea automatizable;
-4. threat model actualizado si cambia la arquitectura.
+## T18 · Acceso anónimo
+
+Sin JWT consultar tablas académicas o RPC protegidos.
+
+**Esperado:** 0 acceso/permission denied.
+
+## T19 · Stress básico
+
+Simular la escala objetivo con debounce normal y luego un cliente deliberadamente agresivo.
+
+**Esperado:** no corrupción. Si el rate limit del proveedor no basta ante abuso, registrar rate limiting adicional antes de ampliar el piloto.
+
+## T20 · Backup/restore
+
+Crear datos ficticios, ejecutar backup, alterar/borrar datos de laboratorio y restaurar en entorno seguro.
+
+**Esperado:** restauración demostrada y documentada; no basta con que “el proveedor tiene backups”.
+
+## Evidencia
+
+`supabase/tests/rls-adversarial.sql` contiene escenarios SQL reproducibles. Cada hallazgo se cierra solo con fix + repetición + prueba de regresión cuando sea automatizable.
+
+Una sola prueba crítica fallida bloquea el GO.
