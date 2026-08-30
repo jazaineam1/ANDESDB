@@ -114,6 +114,39 @@ En S7 y S10 el trabajo autónomo no necesita “Reto” separado si la actividad
 | S11 | documentos y partición |
 | S12 | hechos, dimensiones, medidas y grano analítico |
 
+## Dos caminos, no uno
+
+El hilo de arriba es en realidad **dos**, y confundirlos fue el problema de la
+sesión 6.
+
+| | |
+|---|---|
+| **Camino de diseño** · S6 → S7 → S8 → S9 | cómo se construye la base que hace funcionar el negocio: reglas → modelo → normalización → tablas |
+| **Camino analítico** · S12 en adelante | qué se hace después con los datos: OLTP, OLAP, lago, bodega, ETL/ELT |
+
+**La S6 los mezcló.** Después del Restaurante ABC todavía cubrió OLTP, OLAP, las
+tres clases de dato, lago, bodega, ETL y ELT: once preguntas distintas en una
+sesión, y las cinco últimas de otro viaje. El grupo salió sin saber cuál era el
+hilo, y la S7 abría dando por hecho que habían salido con las reglas en la mano.
+
+**Correcciones ya aplicadas:**
+
+- La S7 abre con un mapa que **separa los dos caminos**, dice cuál se sigue hoy y
+  aparca el otro hasta la S12 — sin fingir que la S6 fue lineal.
+- El cierre analítico de la S7 baja a **dos minutos** y deja de enseñar OLAP:
+  solo confirma el mapa.
+- El bloque de certificaciones sale de la S7 y se va a la S16.
+
+**Para lo que viene:** el material analítico de la S6 —OLTP/OLAP, tipos de dato,
+lago, bodega, ETL/ELT— **se recoge en la S12**, donde el estudiante ya tiene
+delante el problema que lo hace necesario: su propio modelo operacional
+contestando caro una pregunta de negocio. No se repite antes.
+
+**Regla para las sesiones que quedan:** una sesión responde **una** pregunta
+grande. Si hacen falta dos, son dos sesiones.
+
+---
+
 ## S13–S16: transferencia
 
 - S13: warehouse cloud real en BigQuery;
