@@ -1,180 +1,117 @@
-# Piloto LMS seguro para ANDESDB
+# Piloto LMS · ANDESDB
 
-> Rama experimental: `piloto-lms-secure-ssdf`.
+> Rama: `piloto-lms-sdd-secure`
 >
-> Esta rama NO se debe desplegar sobre el sitio principal ni usar con datos reales de estudiantes hasta completar los gates de seguridad y privacidad descritos aquí.
+> `main` permanece fuera del experimento. No usar datos reales hasta superar los gates de `specs/001-lms-pilot/checklists/requirements.md`.
 
 ## Objetivo
 
-Probar, con una cohorte pequeña, el salto de ANDESDB desde un sitio de curso interactivo a un LMS ligero donde cada estudiante pueda:
+Probar un único recorrido vertical:
 
-1. autenticarse con una identidad propia;
-2. ver su progreso por actividad;
-3. guardar automáticamente el estado de un taller;
-4. cerrar el navegador y continuar en otro dispositivo exactamente donde quedó;
-5. entregar una versión inmutable de su trabajo;
-6. permitir que el docente vea progreso y entregas de su cohorte, sin exponer trabajos de otros estudiantes.
+`login -> S7 -> autosave -> cerrar -> otro dispositivo -> continuar -> entregar -> docente ve`
 
-El piloto usa la Sesión 7 (`constructor-abc.html`) como primer vertical completo porque ya tiene pasos, estado estructurado, criterios de avance y una entrega clara.
+El piloto no intenta construir un LMS genérico. Valida identidad, persistencia, aislamiento, entrega y trazabilidad sobre una actividad real de ANDESDB.
 
-## Principio rector
+## Método SDD
 
-No se intenta construir Moodle. Se construye primero el núcleo que ANDESDB necesita:
+La fuente de verdad funcional está en:
 
-`identidad -> matrícula -> actividad -> autosave -> restauración -> entrega -> vista docente`
+1. `.specify/memory/constitution.md`
+2. `specs/001-lms-pilot/spec.md`
+3. `specs/001-lms-pilot/clarifications.md`
+4. `specs/001-lms-pilot/plan.md`
+5. `specs/001-lms-pilot/checklists/requirements.md`
+6. `specs/001-lms-pilot/tasks.md`
+7. `specs/001-lms-pilot/analysis.md`
 
-Si ese flujo funciona y supera las pruebas de seguridad, se reutiliza en las demás sesiones.
+El código implementa esa especificación; no al revés.
 
-## Baseline de seguridad
-
-Para el piloto se adopta un proceso de **Secure Software Development** alineado con:
-
-- NIST SP 800-218 SSDF 1.1 como baseline estable;
-- OWASP ASVS como catálogo de requisitos verificables para autenticación, sesión, control de acceso, validación y protección de datos;
-- OWASP Top 10 como referencia de amenazas web;
-- principio `deny by default`, mínimo privilegio y defensa en profundidad;
-- PostgreSQL Row Level Security como barrera de autorización en la capa de datos;
-- ninguna clave privilegiada en navegador, HTML, repositorio o artefactos de CI.
-
-La revisión 1.2 de SSDF se sigue como referencia de evolución, pero al estar en borrador no se usa como requisito normativo del piloto.
-
-## Arquitectura propuesta
+## Arquitectura del piloto
 
 ```text
-GitHub (código)
-      |
-      v
-Frontend estático del curso
-Cloudflare Pages o entorno aislado de preview
-      |
-      | HTTPS + sesión del usuario
-      v
-Supabase
-  |- Auth (Google/Microsoft; acceso por invitación)
-  |- PostgreSQL
-  |- RLS
-  |- API
-  `- Edge Functions solo si una operación necesita privilegios
+/pilot/ (frontend estático)
+       |
+       | publishable key + JWT de usuario
+       v
+Supabase Auth + PostgREST/RPC + PostgreSQL/RLS
+       |
+       +-- progress
+       +-- activity_state
+       +-- submissions
+       `-- teacher view limitada por cohorte
 ```
 
-Para el piloto no se requiere servidor Node/Python persistente. La autorización final vive en PostgreSQL/RLS, no en JavaScript.
+No se añade servidor Node/Python ni runtime npm/CDN al primer vertical.
 
-## Datos que se guardan
+## Páginas
 
-Mínimo necesario:
+- `/pilot/index.html`: OTP y progreso del estudiante.
+- `/pilot/s7.html`: S7 original dentro de un host con autosave/restauración.
+- `/pilot/teacher.html`: progreso y última entrega de cohortes asignadas.
 
-- identificador interno del usuario;
-- nombre visible opcional;
-- rol (`student`, `teacher`, `admin`) en tabla no modificable por el estudiante;
-- matrícula a cohorte;
-- progreso de actividad;
-- estado JSON del taller;
-- snapshot de la entrega;
-- feedback del docente.
+La configuración pública está en `assets/lms/config.js` y nace con `enabled: false`.
 
-No almacenar en el piloto: cédula, teléfono, dirección, fecha de nacimiento, contraseñas, tokens OAuth, claves privadas ni datos de terceros.
+## Backend versionado
 
-El correo permanece preferiblemente en el proveedor de identidad/Auth y no se duplica en las tablas de aplicación si no es necesario.
+Aplicar en orden:
 
-## Scope del piloto
+1. `202608300001_lms_pilot.sql` — esquema y RLS base.
+2. `202608300002_lms_pilot_hardening.sql` — columnas/roles endurecidos.
+3. `202608300003_lms_pilot_rpc.sql` — autosave concurrente, dashboard y entrega server-side.
+4. `202608300004_lms_pilot_catalog.sql` — catálogo S7 y lecturas seguras.
 
-### Incluido
+## Seguridad
 
-- 1 curso y 1 cohorte piloto;
-- 10-40 estudiantes;
-- S7 como primera actividad persistente;
-- login por Google o Microsoft;
-- matrícula administrada, no autoinscripción pública;
-- autosave online;
-- recuperación en otro dispositivo;
-- dashboard mínimo del estudiante;
-- dashboard mínimo del docente;
-- entrega inmutable;
-- logs técnicos mínimos sin contenido sensible;
-- pruebas de RLS con al menos dos estudiantes y un docente.
+Controles principales:
 
-### Fuera del piloto
+- deny-by-default;
+- `anon` sin acceso académico;
+- autenticación distinta de matrícula;
+- rol no editable por estudiante;
+- RLS en tablas académicas;
+- escrituras sensibles mediante RPC que deriva identidad de `auth.uid()`;
+- `revision` para conflictos multi-dispositivo;
+- submission copiada desde estado confirmado en servidor;
+- CSP en las páginas del piloto;
+- contenido docente renderizado con `textContent`;
+- ninguna secret/service key en navegador;
+- CodeQL y guards de secretos en CI.
 
-- pagos;
-- mensajería privada;
-- foros;
-- videollamadas;
-- certificados;
-- almacenamiento de archivos de estudiantes;
-- calificación oficial de la universidad;
-- integración SIS/LDAP institucional;
-- modo offline con resolución automática de conflictos;
-- analítica invasiva de comportamiento;
-- ejecución de SQL de estudiantes en servidores compartidos.
+Detalles: `ARQUITECTURA-Y-SEGURIDAD.md`, `THREAT-MODEL.md` y `PRUEBAS-ADVERSARIALES.md`.
 
-## Gates: no pasar al siguiente estado si falla uno
+## Auth elegido para el piloto
 
-### G0 - Diseño
+Email OTP con cuentas precreadas y `create_user: false`.
 
-- [ ] threat model aprobado;
-- [ ] inventario de datos personales;
-- [ ] roles y matriz de autorización definidos;
-- [ ] alcance de piloto y criterio de salida definidos.
+Autenticarse no matricula. La matrícula y asignación docente se realizan administrativamente con `supabase/pilot-admin.sql`.
 
-### G1 - Infraestructura de prueba
+## Tamaño y retención
 
-- [ ] proyecto Supabase exclusivo para piloto;
-- [ ] autenticación por invitación;
-- [ ] RLS habilitado en TODA tabla expuesta;
-- [ ] `anon` sin permisos sobre datos de estudiantes;
-- [ ] `service_role` solo en secreto de servidor/CI autorizado, nunca frontend;
-- [ ] URLs de redirect allowlisted de forma explícita.
+- laboratorio: 5 identidades ficticias/adversariales;
+- primera prueba real: máximo 10 participantes;
+- retención inicial: 90 días después del cierre, seguida de decisión explícita de exportar, anonimizar o eliminar.
 
-### G2 - Aplicación
+## Qué falta antes de usarlo
 
-- [ ] ninguna respuesta de otro estudiante es legible manipulando IDs;
-- [ ] ninguna escritura de otro estudiante es posible manipulando requests;
-- [ ] rol docente no puede autootorgarse desde el cliente;
-- [ ] autosave tiene límite de tamaño y frecuencia;
-- [ ] todo contenido introducido por usuario se renderiza como texto salvo sanitización explícita;
-- [ ] CSP y cabeceras de seguridad verificadas en el hosting del piloto.
+El código está preparado, pero un piloto **no existe todavía** hasta tener un proyecto Supabase de prueba y ejecutar allí las migraciones/pruebas.
 
-### G3 - Verificación
+Runbook: `OPERACION.md`.
 
-- [ ] tests negativos de autorización;
-- [ ] prueba XSS almacenado;
-- [ ] prueba de IDOR/BOLA;
-- [ ] prueba de manipulación de rol;
-- [ ] prueba de replay/duplicación de entrega;
-- [ ] CodeQL/escaneo estático sin hallazgos críticos abiertos;
-- [ ] secret scanning sin secretos activos;
-- [ ] revisión de dependencias y lockfile.
+Prueba SQL: `../../supabase/tests/rls-adversarial.sql`.
 
-### G4 - Piloto humano
+## Gate de salida
 
-- [ ] aviso de privacidad visible;
-- [ ] consentimiento/base institucional definida antes de datos reales;
-- [ ] procedimiento de borrado/corrección de datos;
-- [ ] recuperación documentada ante pérdida o corrupción;
-- [ ] máximo 10-40 participantes;
-- [ ] mecanismo de rollback al sitio actual.
+No hay GO si cualquiera es falso:
 
-## Criterio de éxito
+- 0 accesos cross-user;
+- 0 escaladas de rol;
+- 0 XSS almacenados ejecutados;
+- 10/10 restauraciones multi-dispositivo;
+- 100% submissions inmutables para student;
+- backup/restauración probados;
+- CI verde;
+- privacidad revisada.
 
-El piloto es exitoso si, durante dos semanas o al menos dos actividades:
+## Rollback
 
-- >= 95% de autosaves terminan correctamente;
-- 100% de pruebas cross-user son denegadas;
-- ningún secreto privilegiado llega al cliente;
-- ningún hallazgo crítico/alto queda abierto;
-- un estudiante puede iniciar en dispositivo A y continuar en B;
-- una entrega queda congelada aunque el borrador posterior cambie;
-- el docente puede ver solo estudiantes de cohortes que administra;
-- ningún incidente de privacidad obliga a detener el piloto.
-
-## Orden de lectura
-
-1. `ARQUITECTURA-Y-SSDF.md`
-2. `THREAT-MODEL.md`
-3. `BACKLOG-PILOTO.md`
-4. `../../supabase/migrations/202608300001_lms_pilot.sql`
-5. `SECURITY.md` en la raíz del repositorio
-
-## Regla de despliegue
-
-La rama se mantiene aislada de `main`. El piloto debe desplegarse en un dominio/preview separado. No se mezcla con el curso productivo hasta que G0-G4 estén completos y exista una decisión explícita de promoción.
+El kill-switch inmediato es volver `enabled: false` en `assets/lms/config.js`. La rama y el proyecto Supabase de piloto pueden retirarse sin afectar `main` ni el curso público.
