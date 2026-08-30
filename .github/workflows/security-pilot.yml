@@ -54,7 +54,10 @@ jobs:
           for file in assets/lms/*.js; do
             node --check "$file"
           done
-          python -m py_compile tools/configurar_piloto_lms.py tools/security_gate.py
+          python -m py_compile \
+            tools/configurar_piloto_lms.py \
+            tools/build_pilot_deploy.py \
+            tools/security_gate.py
 
       - name: Contrato SDD
         shell: bash
@@ -72,7 +75,10 @@ jobs:
             specs/002-project-security/spec.md \
             specs/002-project-security/clarifications.md \
             specs/002-project-security/plan.md \
-            specs/002-project-security/tasks.md; do
+            specs/002-project-security/checklists/requirements.md \
+            specs/002-project-security/tasks.md \
+            specs/002-project-security/analysis.md \
+            specs/002-project-security/verify.md; do
             test -s "$file"
           done
           test -s docs/SEGURIDAD-PROYECTO.md
@@ -112,7 +118,7 @@ jobs:
               raise SystemExit('config.js contiene una secret key')
           if 's7SandboxOrigin' not in config:
               raise SystemExit('Falta origen dedicado del laboratorio')
-          if '.contentDocument' in host or '.document' in host or '.exportar' in host or '.importar' in host:
+          if any(x in host for x in ('.contentDocument', '.document', '.exportar', '.importar', 'constructor-abc.html')):
               raise SystemExit('El shell LMS no puede inspeccionar DOM/globals del laboratorio')
           if "event.origin !== bridgeOrigin" not in host or "event.source !== bridgeWindow()" not in host:
               raise SystemExit('Host sin validación exacta de mensajes')
