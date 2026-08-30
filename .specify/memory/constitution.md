@@ -1,58 +1,72 @@
-# Constitución SDD · Piloto LMS ANDESDB
+# Constitución SDD · ANDESDB y Piloto LMS
 
-Versión: 1.0.0
+Versión: 1.1.0
 
 ## I. La especificación manda
 
-Ningún cambio funcional del piloto se implementa sin una especificación aprobada. El código debe satisfacer la especificación; no se ajusta la especificación para justificar código ya escrito.
+Ningún cambio funcional o de seguridad material se implementa sin una especificación trazable. El código debe satisfacer la especificación; no se modifica la especificación después para justificar código inseguro ya escrito.
 
-Flujo obligatorio para cambios materiales:
+Flujo obligatorio:
 
 `Spec -> Clarify -> Plan -> Checklist -> Tasks -> Analyze -> Implement -> Verify`
 
-## II. Seguridad por diseño y por defecto
+## II. Seguridad del proyecto por diseño y por defecto
 
-La seguridad es requisito funcional del piloto, no una tarea posterior. Toda historia que lea o modifique datos personales, progreso, entregas o roles debe definir explícitamente:
+La seguridad cubre **todo ANDESDB**: contenido, frontend, scripts, GitHub Actions, dependencias/binarios, hosting, Supabase, datos, backups y operación. No se limita al LMS.
+
+Toda historia que cambie una frontera de confianza debe definir:
 
 - actor autorizado;
 - activo protegido;
-- decisión de autorización en servidor/BD;
+- entrada no confiable;
+- decisión de autorización;
 - comportamiento ante denegación;
-- prueba negativa asociada.
+- prueba positiva y negativa;
+- rollback/kill switch cuando aplique.
 
-Baseline: deny-by-default, mínimo privilegio, RLS en toda tabla académica expuesta, secretos solo del lado servidor, sin `service_role` en cliente.
+Baseline operativo: deny-by-default, mínimo privilegio, defensa en profundidad y fail-closed.
+
+Los controles se derivan de `docs/SEGURIDAD-PROYECTO.md`, con NIST SSDF 1.1, NIST CSF 2.0, OWASP ASVS 5.0, OWASP Top 10 2025, OWASP API Security Top 10 2023 y OpenSSF Scorecard como referencias principales aplicables. No se afirma certificación sin auditoría correspondiente.
 
 ## III. Identidad no implica autorización
 
-Autenticarse no matricula ni concede acceso. La autorización depende de matrícula activa, cohorte y rol asignado por un flujo privilegiado.
+Autenticarse no matricula ni concede acceso. La autorización depende de matrícula activa, cohorte y rol asignado por flujo privilegiado.
 
 Un estudiante nunca puede:
 
-- autoasignarse un rol privilegiado;
-- autoinscribirse en una cohorte;
-- leer/modificar el trabajo de otro estudiante;
-- alterar una entrega ya enviada.
+- autoasignarse rol privilegiado;
+- autoinscribirse en cohorte;
+- leer/modificar trabajo de otro estudiante;
+- alterar una entrega enviada.
 
-## IV. Datos mínimos
+## IV. Secretos cero en Git
 
-El piloto solo almacena los datos necesarios para identidad académica, progreso, estado de actividad, entrega y retroalimentación. No se añade cédula, teléfono, dirección u otros datos personales sin una nueva especificación y justificación.
+No se versionan contraseñas, connection strings con password, private keys, `service_role`, `sb_secret_*`, OAuth client secrets, SMTP passwords ni tokens reutilizables.
 
-## V. Persistencia confiable
+Si un secreto llega a Git, se considera comprometido: **eliminarlo no sustituye su rotación/revocación**. El incidente debe quedar registrado sin repetir el valor secreto.
 
-El estado editable y la entrega son conceptos distintos:
+## V. Datos mínimos
 
-- `activity_state`: mutable, con revisión y autosave;
+El piloto solo almacena datos necesarios para identidad académica mínima, progreso, estado de actividad, entrega y retroalimentación. No se añade cédula, teléfono, dirección u otra PII sin nueva especificación y justificación.
+
+## VI. Persistencia confiable
+
+- `activity_state`: mutable, revisionado y con autosave;
 - `submission`: snapshot inmutable.
 
-Toda actualización de estado debe soportar control de concurrencia para evitar sobrescrituras silenciosas.
+Toda actualización de estado soporta control de concurrencia para evitar sobrescrituras silenciosas.
 
-## VI. Compatibilidad de actividades
+## VII. Compatibilidad de actividades
 
 Toda actividad persistente tiene `activity_version`. Cambiar la forma del estado requiere estrategia explícita: migrar, conservar versión anterior o invalidar de forma visible. Nunca se descarta silenciosamente trabajo de un estudiante.
 
-## VII. Validación adversarial
+## VIII. Aislamiento de código heredado/no confiable
 
-Una funcionalidad que cambia fronteras de autorización no está terminada hasta tener pruebas positivas y negativas. Como mínimo se prueba:
+El shell autenticado no ejecuta laboratorios heredados complejos en el mismo origen. Los laboratorios se aíslan en origen separado y la interoperabilidad usa un protocolo explícito con validación exacta de `origin` y `source`. Ningún token LMS cruza esa frontera.
+
+## IX. Validación adversarial
+
+Como mínimo se prueban:
 
 - acceso entre estudiantes;
 - acceso entre cohortes/docentes;
@@ -61,27 +75,38 @@ Una funcionalidad que cambia fronteras de autorización no está terminada hasta
 - XSS almacenado;
 - payload sobredimensionado;
 - reenvío/edición de entregas;
-- concurrencia de autosave.
+- concurrencia de autosave;
+- mensajes cross-origin manipulados;
+- exposición de secretos;
+- regresiones de supply chain.
 
-## VIII. Supply chain reproducible
+## X. Supply chain reproducible
 
-Actions críticas se fijan por commit SHA. Secretos no se versionan. Las dependencias nuevas requieren justificación, versión fija/lockfile cuando aplique y revisión automatizada de vulnerabilidades.
+- Actions externas fijadas por SHA completo;
+- secretos fuera del repo;
+- dependencias nuevas justificadas y versionadas;
+- descarga de artefactos sin ejecutar scripts innecesarios;
+- integridad registrada/verificada cuando se vendorizan binarios;
+- CodeQL, Dependency Review y OpenSSF Scorecard como controles automatizados;
+- permisos de CI mínimos.
 
-## IX. Piloto antes que plataforma
+## XI. Piloto antes que plataforma
 
-El primer objetivo es demostrar un único recorrido vertical seguro:
+El recorrido vertical prioritario sigue siendo:
 
 `login -> S7 -> autosave -> cerrar -> otro dispositivo -> continuar -> entregar -> docente ve`
 
-No se añaden foros, mensajería, certificados, pagos ni funcionalidades de LMS genérico mientras este recorrido no pase los criterios de aceptación.
+No se añaden funciones genéricas de LMS antes de que seguridad, persistencia y recuperación estén verificadas.
 
-## X. Definition of Done
+## XII. Definition of Done
 
 Una tarea solo está terminada cuando:
 
 1. satisface su criterio de aceptación;
 2. pasa validaciones ANDESDB;
-3. pasa pruebas de autorización relevantes;
-4. no introduce secretos;
-5. no degrada `main`;
-6. deja documentación/spec sincronizada con el comportamiento real.
+3. pasa `tools/security_gate.py` cuando aplica;
+4. pasa pruebas de autorización/seguridad relevantes;
+5. no introduce secretos;
+6. no degrada `main` ni una frontera de confianza;
+7. deja spec, threat model y documentación sincronizados;
+8. no deja Critical/High abierto para un piloto humano.
