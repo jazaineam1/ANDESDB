@@ -1,87 +1,71 @@
 # Arquitectura y seguridad · Piloto LMS ANDESDB
 
-Este documento describe **cómo queda construido** el piloto. El proceso de desarrollo es SDD y su fuente de verdad está en `specs/001-lms-pilot/`.
+El proceso de desarrollo es SDD. La función LMS está en `specs/001-lms-pilot/` y el hardening integral del proyecto en `specs/002-project-security/`.
 
 ## Arquitectura
 
 ```text
-Navegador
-  |
-  | HTML/CSS/JS estático
-  v
-/pilot/
-  |- index.html          login + progreso
-  |- s7.html             host persistente de S7
-  `- teacher.html        vista docente mínima
-  |
-  | apikey: sb_publishable_...
-  | Authorization: Bearer <JWT de usuario>
-  v
-Supabase
-  |- Auth: email OTP
-  |- PostgREST/RPC
-  `- PostgreSQL
-       |- RLS
-       |- activity_state
-       |- activity_progress
-       |- submissions
-       `- funciones SECURITY DEFINER
+ORIGEN A · shell autenticado
+https://<lms-origin>
+  /pilot/index.html
+  /pilot/s7.html
+  /pilot/teacher.html
+  sessionStorage: sesión Supabase
+        |
+        | fetch HTTPS
+        v
+  Supabase Auth/PostgREST/RPC
+        |
+        v
+  PostgreSQL + RLS
+
+        |
+        | iframe sandbox + postMessage
+        | origin/source exactos
+        v
+
+ORIGEN B · laboratorio aislado
+https://<lab-origin>
+  /pilot-lab/s7-bridge.html
+        |
+        | mismo origen del laboratorio
+        v
+  /Presentaciones/M3/constructor-abc.html
 ```
 
-No existe un servidor Node/Python propio en el piloto.
+El laboratorio **no recibe tokens Supabase**. El shell autenticado **no inspecciona DOM, localStorage ni globals del laboratorio**.
 
 ## ADR-01 · Frontend público por diseño
 
-Todo JavaScript, HTML, URL del proyecto y publishable key se consideran recuperables por cualquier visitante. Ningún control depende de ocultarlos.
-
-Las claves secretas/administrativas quedan fuera del navegador y del repositorio.
+HTML, JavaScript, URL de proyecto y publishable key son públicos. Ningún control depende de ocultarlos. Secrets y credenciales administrativas quedan fuera del navegador/Git.
 
 ## ADR-02 · Auth no es autorización
 
-Supabase Auth responde **quién es** el usuario. PostgreSQL decide **qué puede hacer**.
-
-Una sesión válida no crea matrícula. Para acceder a S7 deben coincidir:
-
-- usuario autenticado;
-- enrollment activo;
-- cohorte activa;
-- actividad publicada/activa/liberada.
+Una sesión válida no matricula. Para acceder a una actividad deben coincidir usuario autenticado, enrollment activo, cohorte activa y actividad publicada/liberada.
 
 ## ADR-03 · RLS + RPC
 
-RLS permanece activo como aislamiento de filas. Las operaciones sensibles se realizan además mediante RPC para no confiar en campos elegidos por el cliente.
-
-El autosave recibe:
-
-- `activity_id`;
-- estado JSON;
-- revisión esperada;
-- paso actual.
-
-El servidor deriva `enrollment_id` desde `auth.uid()`.
+RLS aísla filas. Escrituras sensibles usan RPC; el servidor deriva `enrollment_id` desde `auth.uid()` y no confía en IDs de ownership enviados por cliente.
 
 ## ADR-04 · Concurrencia explícita
 
-`activity_state.revision` evita el patrón last-write-wins silencioso.
-
-```text
-A lee rev 5        B lee rev 5
-A guarda -> rev 6
-                   B intenta guardar rev 5
-                   -> 40001 revision conflict
-```
-
-El cliente detiene autosave y ofrece copiar el trabajo local antes de cargar la versión remota.
+`activity_state.revision` evita last-write-wins silencioso. Una revisión obsoleta produce conflicto y el cliente no sobrescribe.
 
 ## ADR-05 · Borrador y entrega separados
 
-`activity_state` es mutable.
+`activity_state` es mutable. `submissions` es snapshot inmutable. `submit_activity` copia el último estado confirmado en servidor; el navegador no decide el snapshot final.
 
-`submissions` es un snapshot inmutable para el estudiante. El navegador no envía el snapshot que desea guardar: llama `submit_activity(activity_id, revision)` y PostgreSQL copia el último estado confirmado.
+## ADR-06 · S7 se conserva pero se aísla
 
-## ADR-06 · S7 no se reescribe
+El constructor heredado continúa exportando/importando su modelo. El bridge, en el origen de laboratorio, puede hablar con ese constructor. El shell solo habla con el bridge mediante un protocolo mínimo:
 
-El taller `constructor-abc.html` ya sabe exportar/importar su estado. `/pilot/s7.html` lo aloja en un iframe same-origin y lo adapta al contrato LMS.
+- `READY`;
+- `CHANGE`;
+- `GET_STATE`;
+- `SET_STATE`;
+- `RESPONSE`.
+
+Host y bridge validan **`event.origin` y `event.source`** antes de procesar mensajes. No se usa `'*'` como target origin.
 
 Estado persistido v1:
 
@@ -97,23 +81,13 @@ Estado persistido v1:
 
 ## ADR-07 · Sesión del navegador
 
-El piloto conserva access/refresh token en `sessionStorage`, no en `localStorage`. Esto reduce persistencia entre cierres completos, pero no protege contra un XSS same-origin. Por eso son obligatorios:
+La sesión está en `sessionStorage`, no `localStorage`. Esto no protege de XSS same-origin; por eso el código heredado vive en otro origen, el LMS usa CSP estricta y el contenido de estudiante se representa como texto.
 
-- CSP;
-- sin scripts CDN nuevos;
-- sin `innerHTML` para contenido de estudiantes;
-- CodeQL;
-- pruebas XSS almacenado.
+## ADR-08 · OTP y acceso cerrado
 
-Una sesión basada en cookie HttpOnly requeriría un BFF/backend y queda fuera del alcance inicial.
+Email OTP con cuentas precreadas; `create_user:false` es defensa adicional, no sustituto de cerrar la creación pública en Supabase. No hay contraseñas propias.
 
-## ADR-08 · Email OTP y acceso cerrado
-
-El piloto usa OTP por correo y `create_user: false`. Las cuentas se crean administrativamente y la matrícula es una operación separada.
-
-No se implementan contraseñas propias.
-
-## Matriz resumida de autorización
+## Matriz resumida
 
 | Operación | Student propio | Student ajeno | Teacher cohorte | Teacher otra cohorte |
 |---|---:|---:|---:|---:|
@@ -124,69 +98,30 @@ No se implementan contraseñas propias.
 | Cambiar role/enrollment | no | no | no | no |
 | Ver submission | sí | no | sí | no |
 
-Las operaciones administrativas se ejecutan fuera del navegador.
+## Datos y límites
 
-## Superficie de datos
+Solo UUID interno, nombre opcional, rol, matrícula/cohorte, progreso, estado, entrega y feedback. Estado JSON <= 512 KiB, 7 pasos S7, máximo inicial 3 entregas y debounce 800 ms.
 
-Se persiste únicamente:
+## CSP/orígenes
 
-- UUID interno;
-- nombre visible opcional;
-- rol;
-- matrícula/cohorte;
-- progreso;
-- estado de actividad;
-- entregas;
-- feedback si posteriormente se activa.
+Antes de habilitar se ejecuta `tools/configurar_piloto_lms.py`, que exige:
 
-No se incorpora cédula, teléfono, dirección o datos de perfil innecesarios.
+- origen HTTPS exacto de Supabase;
+- origen HTTPS exacto del shell;
+- origen HTTPS **distinto** del laboratorio;
+- publishable key, nunca secret key.
 
-## Límites
-
-- estado JSON <= 512 KiB;
-- actividad S7 = 7 pasos;
-- máximo inicial de entregas = 3;
-- autosave cliente = debounce de 800 ms;
-- piloto real inicial = máximo 10 participantes;
-- retención de piloto = 90 días después del cierre, sujeta a decisión de exportar/anonimizar/eliminar.
-
-## Cabeceras/CSP del piloto
-
-Las páginas `/pilot/` incluyen CSP que exige:
-
-- scripts y estilos del mismo origen;
-- conexión solo al mismo origen y `https://*.supabase.co`;
-- sin `object-src`;
-- `base-uri` y `form-action` restringidos.
-
-El contenido heredado dentro del iframe mantiene su runtime actual; el host LMS no introduce scripts remotos.
+El shell usa `script-src 'self'`, `object-src 'none'`, `base-uri 'none'` y `frame-ancestors 'none'`. S7 solo puede enmarcar el origen de laboratorio configurado. El bridge solo puede ser enmarcado por el origen LMS configurado.
 
 ## Supply chain
 
-El piloto deliberadamente no añade npm ni SDK de runtime. Usa `fetch` nativo contra Auth/PostgREST.
-
-CI ejecuta:
-
-- validación del curso;
-- `node --check` en `assets/lms/*.js`;
-- comprobación de artefactos SDD;
-- secret guards;
-- verificación de CSP/fronteras frontend;
-- CodeQL JavaScript/TypeScript y Python.
-
-Snyk se activa si en el futuro se añaden dependencias o se configura su token; no se simula cobertura inexistente.
+- Actions externas por SHA completo;
+- CodeQL;
+- Dependency Review;
+- OpenSSF Scorecard;
+- `tools/security_gate.py`;
+- motores WASM vendorizados desde versiones npm exactas con `--ignore-scripts` y SHA-256 del árbol resultante.
 
 ## Gates antes de datos reales
 
-No hay GO mientras falte cualquiera de estos:
-
-1. migraciones 001–004 aplicadas desde cero;
-2. Security Advisor revisado;
-3. A/B cross-user = 0 accesos;
-4. docente A/B = aislamiento correcto;
-5. XSS almacenado = 0 ejecuciones;
-6. 10/10 restauraciones multi-dispositivo;
-7. submissions inmutables;
-8. backup y restauración probados;
-9. aviso de privacidad revisado;
-10. CI verde.
+No hay GO mientras falte: rotar cualquier credencial expuesta; branch protection/ruleset; migraciones 001–004; Security Advisor; matriz A/B/teacher A/B; XSS=0 ejecuciones; mensajes cross-origin falsos ignorados; 10/10 restauraciones; submission inmutable; MFA teacher/admin; backup+restore probado; privacidad revisada; CI/CodeQL/Scorecard sin bloqueadores Critical/High.
