@@ -37,6 +37,21 @@ Presentaciones/**/EVALUACION-*.md
 
 
 # ---------------------------------------------------------------------
+# SECRETOS / CONFIGURACIÓN LOCAL · PILOTO LMS
+# Solo .env.example se versiona. Ninguna credencial real entra al repo.
+# ---------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+supabase/.temp/
+.supabase/
+
+
+# ---------------------------------------------------------------------
 # Temporales de Office (se crean al abrir un .pptx o .docx)
 # ---------------------------------------------------------------------
 ~$*
