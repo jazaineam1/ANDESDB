@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v7-sesion-7-20260830';
+const VERSION = 'andesdb-v8-sesion-8-20260830';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -18,6 +18,7 @@ const ESSENTIAL = [
   './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
   './Presentaciones/M3/sql-lab-s6.js',
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
+  './Presentaciones/M3/sesion-8-modelado-y-normalizacion.html',
   './Presentaciones/M3/constructor-abc.html',
   './assets/vendor/sqljs/sql-wasm.js',
   './assets/vendor/sqljs/sql-wasm.wasm',

@@ -1534,10 +1534,12 @@ var PASOS = [
   {n:4, t:'Las relaciones',pinta:paso4},
   {n:5, t:'La base',       pinta:paso5},
   {n:6, t:'Las pruebas',   pinta:paso6},
-  {n:7, t:'La llamada',    pinta:paso7}
+  {n:7, t:'La llamada',    pinta:paso7},
+  {n:8, t:'La lente',      pinta:paso8, solo:'abc'}
 ];
 
 function listo(n){
+  if (n===8) return !!(S.ents.pedido && !S.ents.pedido.attrs.total);
   if (n===1) return REGLAS.every(function(r){ return S.reglas[r.n].accion; });
   if (n===2) return sustantivosVivos().every(function(s){ return S.sust[s.k]; });
   if (n===3) return entidades().length > 0 && entidades().every(function(k){
@@ -1552,7 +1554,7 @@ function listo(n){
 function pintarPasos(){
   var nav = $('#pasos');
   nav.innerHTML = '';
-  PASOS.forEach(function(p){
+  PASOS.filter(function(p){ return !p.solo || p.solo === CASO; }).forEach(function(p){
     var rot = (p.n === 7 && VERDAD) ? 'La correcci\u00f3n' : p.t;
     var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(rot)+'</button>');
     if (S.paso === p.n) b.className = 'on';
@@ -2377,6 +2379,157 @@ function paso7Corregir(m){
     '<div class="nota g"><p>Ya sabes usar la herramienta. Cambia arriba al ' +
     '<strong>Restaurante ABC</strong>: allí no hay respuesta correcta, y por eso es el taller ' +
     'de verdad.</p></div></div>'));
+}
+
+/* =====================================================================
+   PASO 8 · LA LENTE DE NORMALIZACIÓN
+   Busca en el modelo del estudiante los datos que están guardados dos veces,
+   y separa los dos casos que tienen la misma forma y la decisión contraria:
+   el que se puede recalcular (fuera) y el que no (se queda).
+   ===================================================================== */
+
+function redundancias(){
+  var h = [];
+  var pe = (S.ents.pedido || {attrs:{}}).attrs;
+  var li = (S.ents.linea_pedido || {attrs:{}}).attrs;
+  var pl = (S.ents.plato || {attrs:{}}).attrs;
+  var hayLineas = tieneEnt('linea_pedido') && li.cantidad && li.precio_unitario;
+
+  if (tieneEnt('pedido') && pe.total && hayLineas) {
+    h.push({
+      k:'total', clase:'quitar',
+      q:'<code>pedido.total</code> guarda algo que ya está en <code>linea_pedido</code>',
+      d:'Cada línea tiene <code>cantidad</code> y <code>precio_unitario</code>: el total ' +
+        '<b>se puede calcular siempre</b>. Guardarlo además es guardar el mismo dato dos ' +
+        'veces, y dos copias del mismo dato acaban contradiciéndose.'
+    });
+  } else if (tieneEnt('pedido') && pe.total) {
+    h.push({
+      k:'total-solo', clase:'ojo',
+      q:'<code>pedido.total</code> no se puede recalcular desde ninguna parte',
+      d:'No tienes las líneas del pedido con cantidad y precio, así que el total <b>no es ' +
+        'redundante</b>: es el único sitio donde vive ese número. Aquí guardarlo está bien — ' +
+        'pero fíjate en lo que pierdes: no puedes saber qué se pidió, solo cuánto se cobró.'
+    });
+  }
+
+  if (hayLineas && tieneEnt('plato') && pl.precio) {
+    h.push({
+      k:'precio', clase:'dejar',
+      q:'<code>linea_pedido.precio_unitario</code> duplica <code>plato.precio</code>… ' +
+        'y <b>debe duplicarlo</b>',
+      d:'Tiene exactamente la misma forma que el anterior: un dato guardado dos veces. Pero ' +
+        '<b>no se puede recalcular</b>: si mañana sube el ajiaco, el precio de ayer ya no ' +
+        'existe en ninguna parte. La cuenta de la semana pasada no puede cambiar sola.'
+    });
+  }
+  return h;
+}
+
+var _anom = null;
+
+function correrAnomalia(){
+  var b = construir();
+  if (b.error) return {error:b.error};
+  var db = b.db;
+  var DESC = 'SELECT COUNT(*) FROM (SELECT p.pedido_id FROM pedido p ' +
+             'LEFT JOIN linea_pedido l ON l.pedido_id = p.pedido_id ' +
+             'GROUP BY p.pedido_id, p.total ' +
+             'HAVING p.total <> COALESCE(SUM(l.cantidad * l.precio_unitario), 0))';
+  function descuadres(){
+    try { return db.exec(DESC)[0].values[0][0]; } catch(e){ return null; }
+  }
+  var r = {};
+  try {
+    /* 1 · el cajero cierra las cuentas: todo cuadra */
+    db.run('UPDATE pedido SET total = (SELECT COALESCE(SUM(cantidad * precio_unitario), 0) ' +
+           'FROM linea_pedido WHERE pedido_id = pedido.pedido_id)');
+    r.antes = descuadres();
+    /* 2 · el cliente pide un plato más */
+    db.run('UPDATE linea_pedido SET cantidad = cantidad + 1 WHERE rowid = (SELECT MIN(rowid) FROM linea_pedido)');
+    r.error = null;
+    r.despues = descuadres();
+    var f = db.exec('SELECT p.pedido_id, p.total, ' +
+                    'COALESCE(SUM(l.cantidad * l.precio_unitario), 0) ' +
+                    'FROM pedido p LEFT JOIN linea_pedido l ON l.pedido_id = p.pedido_id ' +
+                    'WHERE p.pedido_id = (SELECT pedido_id FROM linea_pedido WHERE rowid = (SELECT MIN(rowid) FROM linea_pedido)) ' +
+                    'GROUP BY p.pedido_id, p.total');
+    if (f.length) { r.fila = f[0].values[0]; }
+    /* 3 · y borrar una línea deja el total en el aire */
+    db.run('DELETE FROM linea_pedido WHERE rowid = (SELECT MAX(rowid) FROM linea_pedido)');
+    r.trasBorrar = descuadres();
+  } catch(e){ r.error = e.message; }
+  db.close();
+  return r;
+}
+
+function paso8(m){
+  var h = redundancias();
+  m.appendChild(el(
+    '<div class="panel">' +
+    '<div class="ey">Paso 8 · la lente de normalización</div>' +
+    '<h2>Lo que tu modelo guarda dos veces</h2>' +
+    '<p class="lead">Ayer construiste el modelo. Hoy se mira con otra lente: ' +
+    '<strong>¿hay algún dato guardado en dos sitios?</strong> Y si lo hay, la pregunta que ' +
+    'de verdad importa no es «¿está repetido?» sino <strong>«¿se puede recalcular?»</strong>.</p>' +
+    '<div id="reds"></div></div>'));
+
+  var c = $('#reds', m);
+  if (!h.length) {
+    c.appendChild(el('<div class="nota o"><p>No encuentro ningún dato duplicado en tu modelo. ' +
+      'Puede ser que esté limpio — o que le falte <code>linea_pedido</code> con ' +
+      '<code>cantidad</code> y <code>precio_unitario</code>, que es donde se ve mejor. ' +
+      'Vuelve a los pasos 2 y 3.</p></div>'));
+    return;
+  }
+  h.forEach(function(x){
+    var ic = x.clase === 'quitar' ? '&#10060;' : (x.clase === 'dejar' ? '&#9989;' : '&#9888;&#65039;');
+    var cl = x.clase === 'quitar' ? 'no' : (x.clase === 'dejar' ? 'ok' : 'duda');
+    c.appendChild(el('<div class="prueba ' + cl + '"><div class="ic">' + ic + '</div>' +
+      '<div class="pt">' + x.q + '</div><div class="pd">' + x.d + '</div></div>'));
+  });
+
+  var quitar = h.filter(function(x){ return x.k === 'total'; })[0];
+  if (!quitar) return;
+
+  var pan = el('<div class="panel">' +
+    '<h2 style="font-size:1.15rem;color:var(--b)">Y ahora rómpelo</h2>' +
+    '<p class="lead">Dos copias del mismo dato no son un problema <em>hasta que una cambia</em>. ' +
+    'Esto le pasa a tu base ahora mismo: el cajero cierra las cuentas y todo cuadra, y entonces ' +
+    '<strong>el cliente pide un plato más</strong>.</p>' +
+    '<div id="anom"></div></div>');
+  m.appendChild(pan);
+  var a = $('#anom', pan);
+  var bt = el('<button class="bt p" style="width:auto;display:inline-block">Ejecutar el UPDATE</button>');
+  bt.onclick = function(){
+    bt.disabled = true; bt.textContent = 'Ejecutado';
+    var r = correrAnomalia();
+    if (r.error) { a.appendChild(el('<div class="nota r"><p>' + esc(r.error) + '</p></div>')); return; }
+    a.appendChild(el('<pre>-- 1 &middot; el cajero cierra las cuentas\nUPDATE pedido SET total = (SELECT SUM(cantidad * precio_unitario)\n                          FROM linea_pedido WHERE pedido_id = pedido.pedido_id);\n-- descuadres: ' + r.antes + '\n\n-- 2 &middot; y el cliente pide un plato m&aacute;s\nUPDATE linea_pedido SET cantidad = cantidad + 1\n  WHERE rowid = (SELECT MIN(rowid) FROM linea_pedido);</pre>'));
+    a.appendChild(el('<div class="nota r"><p><strong>El motor no dijo nada.</strong> Y ahora hay ' +
+      '<b>' + r.despues + '</b> pedido' + (r.despues === 1 ? '' : 's') + ' cuya cuenta no coincide ' +
+      'con lo que se pidió.</p>' +
+      (r.fila ? '<p>El pedido <b>' + r.fila[0] + '</b> dice que costó <b>' +
+        Math.round(r.fila[1]) + '</b> y los platos suman <b>' + Math.round(r.fila[2]) +
+        '</b>. Faltan <b>' + Math.round(r.fila[2] - r.fila[1]) + '</b>.</p>' : '') +
+      '<p>Y si además borras una línea, el total sigue ahí como si nada: <b>' + r.trasBorrar +
+      '</b> descuadres. Eso son las tres anomalías clásicas —al actualizar, al borrar y al ' +
+      'insertar— y todas salen de <strong>la misma copia de más</strong>.</p></div>'));
+
+    var rep = el('<button class="bt v" style="width:auto;display:inline-block;margin-top:.6em">Quitar <code>pedido.total</code> y volver a probar</button>');
+    rep.onclick = function(){
+      delete S.ents.pedido.attrs.total;
+      guardarLocal();
+      pintar();
+    };
+    a.appendChild(rep);
+    a.appendChild(el('<div class="nota g" style="margin-top:.6em"><p><strong>Y no se pierde ' +
+      'nada.</strong> El total sigue existiendo — solo que se calcula en vez de guardarse:</p>' +
+      '<pre>SELECT p.pedido_id, SUM(l.cantidad * l.precio_unitario) AS total\nFROM   pedido p\nJOIN   linea_pedido l ON l.pedido_id = p.pedido_id\nGROUP  BY p.pedido_id;</pre>' +
+      '<p>Un dato que se puede reconstruir <b>no se pierde al quitarlo</b>. Ese es el criterio ' +
+      'entero de la normalización, dicho sin jerga.</p></div>'));
+  };
+  a.appendChild(bt);
 }
 
 function nombreEstado(e){

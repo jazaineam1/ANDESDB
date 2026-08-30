@@ -261,13 +261,20 @@
           "modo": "guiada",
           "titulo": "Modelado y normalización",
           "estado": "pendiente",
-          "desc": "Dependencias, redundancia y normalización sin perder las reglas del negocio.",
+          "href": "Presentaciones/M3/sesion-8-modelado-y-normalizacion.html",
+          "desc": "La libreta del Restaurante ABC, ordenada hasta 3FN — y la pregunta que decide de verdad: no «está repetido?» sino «se puede reconstruir?».",
           "tags": [
             "1FN",
             "2FN",
             "3FN",
             "dependencias",
-            "modelo relacional"
+            "anomalías"
+          ],
+          "recursos": [
+            {
+              "txt": "🧱 El constructor · paso 8: la lente de normalización",
+              "href": "Presentaciones/M3/constructor-abc.html"
+            }
           ]
         },
         {
