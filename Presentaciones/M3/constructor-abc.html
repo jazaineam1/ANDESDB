@@ -393,7 +393,7 @@ var RELS_ABC = [
 ];
 
 var CARDS = [
-  {v:'',    t:'no existe',  d:'Estas dos cosas no se relacionan en mi modelo.'},
+  {v:'NO',  t:'no existe',  d:'Decidido: estas dos cosas no se relacionan en mi modelo.'},
   {v:'N:1', t:'N : 1',      d:'Muchos del primero para uno del segundo. La clave foránea va en el primero.'},
   {v:'1:N', t:'1 : N',      d:'Al revés: muchos del segundo para uno del primero. La clave foránea va en el segundo.'},
   {v:'1:1', t:'1 : 1',      d:'Uno y solo uno de cada lado. Se implementa con una clave foránea ÚNICA.'},
@@ -477,11 +477,24 @@ function sustantivosVivos(){
   });
 }
 
+/* Las relaciones que se pueden plantear con las tablas que hay marcadas.
+   Es contra esto, y no contra el catálogo entero, contra lo que se mide el
+   progreso: con seis tablas puede que solo haya cuatro relaciones posibles. */
+function relsPosibles(){
+  return RELS.filter(function(r){ return tieneEnt(r.a) && tieneEnt(r.b); });
+}
+
+/* Las que además existen. 'NO' es una decisión tomada, no una relación. */
 function relsVivas(){
-  return RELS.filter(function(r){
-    var e = S.rels[r.id];
-    return e.card && tieneEnt(r.a) && tieneEnt(r.b);
+  return relsPosibles().filter(function(r){
+    var c = S.rels[r.id].card;
+    return c && c !== 'NO';
   });
+}
+
+/* Decididas: incluye las que el estudiante dijo expresamente que no existen. */
+function relsDecididas(){
+  return relsPosibles().filter(function(r){ return !!S.rels[r.id].card; });
 }
 
 /* =====================================================================
@@ -1128,10 +1141,19 @@ var GUIA_DVD = {
       hecho:function(){ return entidades().length > 0 && entidades().every(function(k){
                return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; }); },
       falta:function(){ return 'Hay tablas sin ningún atributo marcado.'; }},
-  4: {di:'Doce relaciones. Diez son N:1 y dos son N:N — y en las N:1 lo que importa es ' +
-         '<b>de qué lado</b> queda la clave foránea.',
-      hecho:function(){ return relsVivas().length >= 8; },
-      falta:function(){ return 'Llevas ' + relsVivas().length + ' de 12 relaciones.'; }},
+  4: {di:'Di cómo se conecta cada par. En las N:1 lo que importa es <b>de qué lado</b> ' +
+         'queda la clave foránea, y si crees que dos cosas no se relacionan, ' +
+         '<b>«no existe» también es una respuesta</b>.',
+      hecho:function(){
+        var pos = relsPosibles();
+        return pos.length > 0 && relsDecididas().length === pos.length;
+      },
+      falta:function(){
+        var pos = relsPosibles().length, hechas = relsDecididas().length;
+        if (!pos) return 'Marca más tablas en el paso 2: con las que hay no se puede relacionar nada.';
+        return 'Llevas ' + hechas + ' de ' + pos + ' · son las que se pueden plantear con tus ' +
+               entidades().length + ' tablas.';
+      }},
   5: {di:'Aquí está tu base montada. Mira primero <b>el diagrama</b>: eso es un modelo ER, y lo ' +
          'acabas de generar tú a partir de catorce frases.',
       hecho:function(){ return true; }, falta:function(){ return ''; }},
@@ -1327,7 +1349,39 @@ function generarSVG(){
     cols[Math.max(0, Math.min(2, c))].push({k:p.nombre, puente:true, p:p});
   });
 
-  var AN = 200, X = [40, 400, 760], caja = {};
+  /* Quién se conecta con quién, para poder ordenar las filas. */
+  var vecinos = {};
+  function une(a, b){
+    (vecinos[a] = vecinos[a] || []).push(b);
+    (vecinos[b] = vecinos[b] || []).push(a);
+  }
+  relsVivas().forEach(function(r){
+    var e = S.rels[r.id];
+    if (e.card === 'N:N') {
+      var pn = r.puente || (r.a+'_'+r.b);
+      une(r.a, pn); une(r.b, pn);
+    } else { une(r.a, r.b); }
+  });
+
+  /* Ordenar cada columna por baricentro: cada caja se coloca a la altura media
+     de aquellas con las que se conecta. Es el truco estándar para reducir
+     cruces en un grafo por capas, y con doce tablas se nota muchísimo. */
+  var pos = {};
+  cols.forEach(function(col){ col.forEach(function(it, i){ pos[it.k] = i; }); });
+  for (var vuelta = 0; vuelta < 4; vuelta++) {
+    [1, 0, 2, 1].forEach(function(ci){
+      cols[ci].forEach(function(it){
+        var vs = (vecinos[it.k] || []).filter(function(v){ return pos[v] !== undefined; });
+        it.peso = vs.length
+          ? vs.reduce(function(a, v){ return a + pos[v]; }, 0) / vs.length
+          : pos[it.k];
+      });
+      cols[ci].sort(function(a, b){ return a.peso - b.peso; });
+      cols[ci].forEach(function(it, i){ pos[it.k] = i; });
+    });
+  }
+
+  var AN = 208, X = [30, 446, 862], caja = {};
   var alto = 40;
   cols.forEach(function(col, ci){
     var y = 30;
@@ -1335,19 +1389,20 @@ function generarSVG(){
       var filas = item.puente ? 2
         : (colsDe(item.k).length + 1 + fksDe(item.k).length + puentesDe(item.k).length * 2);
       var h = 30 + filas * 17 + 8;
-      caja[item.k] = {x:X[ci], y:y, w:AN, h:h, item:item};
-      y += h + 26;
+      caja[item.k] = {x:X[ci], y:y, w:AN, h:h, item:item, col:ci};
+      y += h + 34;
     });
     alto = Math.max(alto, y);
   });
 
   var svg = [];
-  svg.push('<svg viewBox="0 0 1000 '+alto+'" width="100%" height="'+alto+'" '+
+  svg.push('<svg viewBox="0 0 1100 '+alto+'" width="100%" height="'+alto+'" '+
            'xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">');
   svg.push('<defs><marker id="pt" markerWidth="7" markerHeight="7" refX="6" refY="3.5" '+
            'orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#124e78"/></marker></defs>');
 
   /* líneas primero, para que las cajas queden encima */
+  _lineaN = 0;
   relsVivas().forEach(function(r){
     var e = S.rels[r.id];
     var origen, destino, etA, etB;
@@ -1405,22 +1460,42 @@ function generarSVG(){
   return svg.join('');
 }
 
+var _lineaN = 0;
 function linea(svg, A, B, cardA, cardB, r){
-  var ax, bx, ay = A.y + A.h/2, by = B.y + B.h/2;
+  _lineaN++;
+  /* Cada línea sale de su caja a una altura ligeramente distinta, para que dos
+     que van al mismo sitio no se dibujen una encima de otra. */
+  var sep = ((_lineaN % 5) - 2) * 6;
+  var ay = A.y + A.h/2 + sep, by = B.y + B.h/2 - sep;
+  ay = Math.max(A.y + 12, Math.min(A.y + A.h - 12, ay));
+  by = Math.max(B.y + 12, Math.min(B.y + B.h - 12, by));
+
+  var ax, bx;
   if (A.x < B.x) { ax = A.x + A.w; bx = B.x; }
   else           { ax = A.x;       bx = B.x + B.w; }
-  var mx = (ax + bx) / 2;
-  var d = 'M'+ax+','+ay+' C'+mx+','+ay+' '+mx+','+by+' '+bx+','+by;
-  svg.push('<path d="'+d+'" fill="none" stroke="#124e78" stroke-width="1.4" opacity=".75"/>');
+
+  var c1 = ax + (bx - ax) * 0.42, c2 = ax + (bx - ax) * 0.58;
+  svg.push('<path d="M'+ax+','+ay+' C'+c1+','+ay+' '+c2+','+by+' '+bx+','+by+'" ' +
+           'fill="none" stroke="#124e78" stroke-width="1.4" opacity=".6"/>');
+
   var dir = A.x < B.x ? 1 : -1;
-  svg.push('<text x="'+(ax+14*dir)+'" y="'+(ay-6)+'" font-size="11" font-weight="800" '+
-           'fill="#124e78" text-anchor="middle">'+cardA+'</text>');
-  svg.push('<text x="'+(bx-14*dir)+'" y="'+(by-6)+'" font-size="11" font-weight="800" '+
-           'fill="#124e78" text-anchor="middle">'+cardB+'</text>');
+  [[ax + 13*dir, ay, cardA], [bx - 13*dir, by, cardB]].forEach(function(p){
+    svg.push('<circle cx="'+p[0]+'" cy="'+(p[1]-3)+'" r="8" fill="#fff" opacity=".92"/>');
+    svg.push('<text x="'+p[0]+'" y="'+(p[1]+1)+'" font-size="11" font-weight="800" ' +
+             'fill="#124e78" text-anchor="middle">'+p[2]+'</text>');
+  });
+
   var e = S.rels[r.id];
   if (e.regla) {
-    svg.push('<text x="'+mx+'" y="'+((ay+by)/2 - 5)+'" font-size="10" font-weight="700" '+
-             'fill="#ff8a24" text-anchor="middle">regla '+e.regla+'</text>');
+    /* La etiqueta se reparte a lo largo del trazo en vez de amontonarse en el
+       centro, y lleva fondo para que se lea sobre las líneas que cruce. */
+    var f = 0.30 + (_lineaN % 4) * 0.13;
+    var lx = ax + (bx - ax) * f, ly = ay + (by - ay) * f;
+    var an = 40;
+    svg.push('<rect x="'+(lx-an/2)+'" y="'+(ly-14)+'" width="'+an+'" height="13" rx="6.5" ' +
+             'fill="#fff" stroke="#ffd9b0" stroke-width="1"/>');
+    svg.push('<text x="'+lx+'" y="'+(ly-4)+'" font-size="9" font-weight="800" ' +
+             'fill="#c96a00" text-anchor="middle">regla '+e.regla+'</text>');
   }
 }
 
@@ -1443,7 +1518,10 @@ function listo(n){
   if (n===2) return sustantivosVivos().every(function(s){ return S.sust[s.k]; });
   if (n===3) return entidades().length > 0 && entidades().every(function(k){
     return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; });
-  if (n===4) return relsVivas().length >= 3;
+  if (n===4) {
+    var pos = relsPosibles();
+    return pos.length > 0 && relsDecididas().length === pos.length;
+  }
   return false;
 }
 
@@ -1792,7 +1870,11 @@ function paso4(m){
     });
     cu.appendChild(fila);
 
-    if (e.card) {
+    if (e.card === 'NO') {
+      cu.appendChild(el('<p class="small" style="margin:0">Anotado: en tu modelo estas dos ' +
+        'cosas no se relacionan. Es una decisión como cualquier otra, y cuenta como hecha.</p>'));
+    }
+    if (e.card && e.card !== 'NO') {
       var obl = el('<div style="display:flex;gap:1.2em;flex-wrap:wrap;margin-bottom:.5em"></div>');
       [[0,'oblA','Todo '+r.a.toUpperCase()+' tiene '+r.b.toUpperCase()],
        [1,'oblB','Todo '+r.b.toUpperCase()+' tiene '+r.a.toUpperCase()]].forEach(function(x){
@@ -2176,6 +2258,11 @@ function corregir(){
   Object.keys(V.rels).forEach(function(id){
     var e = S.rels[id], real = V.rels[id], por = (V.card && V.card[id]) || '';
     if (!e || !e.card) { h.push({t:'falta', q:'Falta la relación: ' + bonito(id), d:por}); return; }
+    if (e.card === 'NO') {
+      h.push({t:'ojo', q:'Dijiste que <b>' + bonito(id) + '</b> no existe, y en la base real sí: ' +
+              'es <b>' + real + '</b>.', d:por});
+      return;
+    }
     if (e.card === real) h.push({t:'bien', q:bonito(id) + ' &middot; <b>' + real + '</b>', d:por});
     else h.push({t:'ojo', q:'Pusiste <b>' + bonito(id) + '</b> como <b>' + e.card +
                  '</b>, y es <b>' + real + '</b>.', d:por});
