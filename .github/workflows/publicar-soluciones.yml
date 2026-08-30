@@ -3,8 +3,8 @@ name: Publicar soluciones programadas
 on:
   schedule:
     # Se dispara a las 19:45 de Bogotá (00:45 UTC del día siguiente) y el
-    # runner espera internamente hasta las 20:00. Esto reduce el riesgo de
-    # retraso de los cron programados justo al inicio de la hora.
+    # runner espera internamente hasta la hora que fije el plan. Esto reduce
+    # el riesgo de retraso de los cron programados al inicio de la hora.
     - cron: '45 0 * * *'
   workflow_dispatch:
     inputs:
@@ -41,25 +41,30 @@ jobs:
             echo "manual=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          session=$(python - <<'PY'
+          # La hora se lee del plan, no se fija aquí. Antes se comparaba contra
+          # "20:00" literal, así que cualquier sesión programada a otra hora
+          # (la S7 va a las 20:15, después de su debrief) no se publicaba nunca.
+          leido=$(python - <<'PY'
           import json
           from datetime import datetime
           from zoneinfo import ZoneInfo
           plan=json.load(open('assets/learning/learning-plan.json', encoding='utf-8'))
           today=datetime.now(ZoneInfo('America/Bogota')).strftime('%Y-%m-%d')
-          for n,s in plan['sesiones'].items():
+          for n,s in sorted(plan['sesiones'].items(), key=lambda x: int(x[0])):
               sol=s.get('solucion', {})
-              if s.get('fecha')==today and sol.get('modo')=='programada' and sol.get('publicar')=='20:00':
-                  print(n)
+              hora=str(sol.get('publicar',''))
+              if s.get('fecha')==today and sol.get('modo')=='programada' and hora >= '20:00':
+                  print(n, hora)
                   break
           PY
           )
-          echo "session=$session" >> "$GITHUB_OUTPUT"
+          echo "session=$(echo "$leido" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "at=$(echo "$leido" | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
           echo "manual=false" >> "$GITHUB_OUTPUT"
 
       - name: No hay publicación para hoy
         if: steps.target.outputs.session == ''
-        run: echo 'Hoy no hay una solución programada para las 20:00.'
+        run: echo 'Hoy no hay ninguna solución programada.'
 
       - name: Verificar secreto y archivo cifrado
         if: steps.target.outputs.session != ''
@@ -76,21 +81,27 @@ jobs:
             exit 1
           fi
 
-      - name: Esperar hasta las 20:00 Bogotá
+      - name: Esperar hasta la hora programada
         if: steps.target.outputs.session != '' && steps.target.outputs.manual != 'true'
         shell: bash
+        env:
+          AT: ${{ steps.target.outputs.at }}
         run: |
           set -euo pipefail
           seconds=$(python - <<'PY'
+          import os
           from datetime import datetime
           from zoneinfo import ZoneInfo
+          # La hora sale del plan de aprendizaje, no de una constante: cada
+          # sesión corta puede publicar después de su propio debrief.
+          h, m = (os.environ.get('AT') or '20:00').split(':')
           tz=ZoneInfo('America/Bogota')
           now=datetime.now(tz)
-          target=now.replace(hour=20, minute=0, second=0, microsecond=0)
+          target=now.replace(hour=int(h), minute=int(m), second=0, microsecond=0)
           print(max(0, int((target-now).total_seconds())))
           PY
           )
-          echo "Esperando ${seconds}s para publicar a las 20:00 Bogotá."
+          echo "Esperando ${seconds}s para publicar a las ${AT} de Bogotá."
           sleep "$seconds"
 
       - name: Descifrar y publicar solución
@@ -112,6 +123,6 @@ jobs:
             echo "La solución S${n} ya estaba publicada."
             exit 0
           fi
-          git commit -m "Publicar solución S${n} · 20:00 Bogotá"
+          git commit -m "Publicar solución S${n}"
           git pull --rebase origin main
           git push origin main

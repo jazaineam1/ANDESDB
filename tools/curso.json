@@ -233,7 +233,8 @@
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
           "titulo": "De las reglas al modelo",
-          "estado": "pendiente",
+          "estado": "proxima",
+          "href": "Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html",
           "desc": "Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.",
           "tags": [
             "entidades",

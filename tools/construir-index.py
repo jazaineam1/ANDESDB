@@ -109,11 +109,11 @@ def construir():
                    ''.join(tarjeta_sesion(s) for s in ses)))
 
     if activo and activo.get('sesiones') and len(grupos) > 1:
-        resto = [m for m in grupos if m['n'] != activo['n']]
-        sesiones = bloque_abierto(activo)
-        if resto:
-            sesiones += ('<h3 class="grupo-mod otros">El resto del recorrido</h3>'
-                         + ''.join(bloque_plegado(m) for m in resto))
+        # En orden de módulo, sin sacar el actual de su sitio: el recorrido se
+        # lee de principio a fin y el módulo en curso es el único abierto.
+        sesiones = ''.join(
+            bloque_abierto(m) if m['n'] == activo['n'] else bloque_plegado(m)
+            for m in grupos)
     elif len(grupos) > 1:
         sesiones = ''.join(bloque_abierto(m) for m in grupos)
     else:

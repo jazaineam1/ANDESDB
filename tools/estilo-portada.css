@@ -190,11 +190,10 @@ footer{background:var(--dark);color:#c3d1dc;padding:2.2rem 0;font-size:.87rem}
 /* ===== lo cursado y lo que falta, plegado =====
    Con 15 sesiones abiertas había que bajar media pantalla para llegar a la de
    esta semana. Nada se quita: solo deja de estorbar. */
-.grupo-mod.otros{margin-top:2.6rem;color:var(--ink-soft);border-bottom-color:var(--line)}
-.grupo-mod.otros:before{background:var(--line)}
-
 details.grupo{border:1px solid var(--line);border-radius:var(--r-md);
   background:var(--paper);margin:.5rem 0;overflow:hidden}
+/* El módulo abierto respira: va en su sitio del recorrido, no arriba. */
+details.grupo+.grupo-mod{margin-top:1.8rem}
 details.grupo+details.grupo{margin-top:.5rem}
 /* Rejilla y no flex: con flex-wrap la flecha se caía sola a la primera línea
    cuando el título era largo, y cada módulo quedaba alineado distinto. */

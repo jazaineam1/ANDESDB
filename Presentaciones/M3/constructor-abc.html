@@ -459,6 +459,24 @@ function entidades(){
 }
 function tieneEnt(k){ return entidades().indexOf(k) >= 0; }
 
+/* Los sustantivos que el paso 1 deja pasar.
+   Cuidado con el criterio: NO se filtra por «estructura». La regla 2 es de
+   aplicación —el motor no puede comprobar un solape— y sin embargo nombra
+   «mesa» y «reserva» igual de claro que cualquier otra. La categoría dice
+   CÓMO se hace cumplir una regla, no si nombra entidades.
+
+   Lo que sí se sostiene: un sustantivo cuya única razón de existir es una
+   regla marcada PENDIENTE no debería crearse. Es la lección de la sesión 6
+   aplicada al diseño — no se construye lo que nadie ha confirmado. */
+function sustantivosVivos(){
+  return SUSTANTIVOS.filter(function(x){
+    if (!x.reglas.length) return true;   // no sale de ninguna regla: se decide a mano
+    return x.reglas.some(function(n){
+      return S.reglas[n] && S.reglas[n].accion !== 'PENDIENTE';
+    });
+  });
+}
+
 function relsVivas(){
   return RELS.filter(function(r){
     var e = S.rels[r.id];
@@ -974,8 +992,8 @@ var GUIA_DVD = {
                return !S.reglas[r.n].accion; }).length + ' reglas por clasificar.'; }},
   2: {di:'De estos ocho sustantivos, cinco son tablas de <code>dvdrental</code>. ' +
          'El m&aacute;s dif&iacute;cil es <b>copia</b>: pi&eacute;nsalo antes de marcarlo.',
-      hecho:function(){ return SUSTANTIVOS.every(function(s){ return S.sust[s.k]; }); },
-      falta:function(){ return 'Te faltan ' + SUSTANTIVOS.filter(function(s){
+      hecho:function(){ return sustantivosVivos().every(function(s){ return S.sust[s.k]; }); },
+      falta:function(){ return 'Te faltan ' + sustantivosVivos().filter(function(s){
                return !S.sust[s.k]; }).length + ' por decidir.'; }},
   3: {di:'Marca los atributos de cada tabla. Cuidado con dos: &iquest;es obligatoria ' +
          'la fecha de devoluci&oacute;n? &iquest;es &uacute;nico el t&iacute;tulo de una pel&iacute;cula?',
@@ -1283,7 +1301,7 @@ var PASOS = [
 
 function listo(n){
   if (n===1) return REGLAS.every(function(r){ return S.reglas[r.n].accion; });
-  if (n===2) return SUSTANTIVOS.every(function(s){ return S.sust[s.k]; });
+  if (n===2) return sustantivosVivos().every(function(s){ return S.sust[s.k]; });
   if (n===3) return entidades().length > 0 && entidades().every(function(k){
     return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; });
   if (n===4) return relsVivas().length >= 3;
@@ -1448,7 +1466,19 @@ function paso2(m){
     '</div>'));
 
   var tb = $('#tsus', m);
-  SUSTANTIVOS.forEach(function(s){
+  var vivos = sustantivosVivos();
+  var fuera = SUSTANTIVOS.length - vivos.length;
+  if (fuera) {
+    $('.tabla-envuelta', m).insertAdjacentElement('beforebegin', el(
+      '<div class="nota o"><p><strong>' + fuera + ' sustantivo' + (fuera > 1 ? 's' : '') +
+      ' no aparece' + (fuera > 1 ? 'n' : '') + ' aquí.</strong> Sale' + (fuera > 1 ? 'n' : '') +
+      ' <em>solo</em> de reglas que marcaste como <b>pendientes</b>, y una regla pendiente ' +
+      'es una que nadie ha confirmado todavía.</p>' +
+      '<p>No se construye lo que el negocio no ha dicho: se pregunta. Si crees que alguno ' +
+      'debería estar, vuelve al paso 1 y cámbialo — <strong>lo que decides allí llega ' +
+      'hasta aquí.</strong></p></div>'));
+  }
+  vivos.forEach(function(s){
     var tr = el('<tr><td><b>'+esc(s.t)+'</b>'+
       (s.pista?'<div style="font-size:.82em;color:var(--ink-soft)">'+esc(s.pista)+'</div>':'')+
       '</td><td style="font-size:.85em;color:var(--ink-soft)">'+
@@ -1553,13 +1583,23 @@ function paso3(m){
         s.appendChild(o0);
         REGLAS.forEach(function(r){
           var o = document.createElement('option');
-          o.value = r.n; o.textContent = 'Regla ' + r.n + ' · ' + r.txt.slice(0,46) + '…';
+          o.value = r.n;
+          o.textContent = 'Regla ' + r.n + ' [' + tipoCorto(r.n) + '] · ' +
+                          r.txt.slice(0,40) + '…';
           if (sel.regla === r.n) o.selected = true;
           s.appendChild(o);
         });
         s.onchange = function(){ sel.regla = s.value ? +s.value : null; pintar(); };
         if (!sel.regla) tdr.className = 'sinregla';
         tdr.appendChild(s);
+        /* Una regla que el motor no puede hacer cumplir no puede justificar
+           una restricción del motor. Es la incoherencia más común. */
+        if (sel.regla && incoherente(sel.regla)) {
+          tdr.className = 'sinregla';
+          tdr.appendChild(el('<div style="font-size:.78em;color:#8a4b00;margin-top:.2em">' +
+            'La clasificaste como <b>' + tipoCorto(sel.regla) + '</b>. Si el motor no la ' +
+            'puede hacer cumplir, no puede justificar esta restricción.</div>'));
+        }
       } else {
         tdr.innerHTML = '<span style="color:var(--ink-soft);font-size:.85em">—</span>';
       }
@@ -1568,6 +1608,19 @@ function paso3(m){
     });
     L.appendChild(card);
   });
+}
+
+function tipoCorto(n){
+  var a = S.reglas[n] && S.reglas[n].accion;
+  return {ESTRUCTURA:'estructura', RESTRICCION:'restricción',
+          APLICACION:'aplicación', PENDIENTE:'pendiente'}[a] || 'sin clasificar';
+}
+
+/* Justificar un NOT NULL o un UNIQUE con una regla que tú mismo marcaste como
+   de aplicación o pendiente es contradecirte con el paso 1. */
+function incoherente(n){
+  var a = S.reglas[n] && S.reglas[n].accion;
+  return a === 'APLICACION' || a === 'PENDIENTE';
 }
 
 /* --------------------------- PASO 4 --------------------------- */
