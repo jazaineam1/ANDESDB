@@ -1,9 +1,13 @@
 name: Security · OpenSSF Scorecard
 
+# scorecard-action solo admite la rama por defecto. Este workflow queda
+# preparado en la rama piloto y se vuelve efectivo cuando el baseline de
+# seguridad se promueva a main. En la rama piloto, security_gate.py y CodeQL
+# cubren los checks automatizables del código propio.
 on:
   push:
     branches:
-      - piloto-lms-sdd-secure
+      - main
   schedule:
     - cron: '31 9 * * 3'
   workflow_dispatch:
