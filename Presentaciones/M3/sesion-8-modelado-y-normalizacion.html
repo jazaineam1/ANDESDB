@@ -683,24 +683,26 @@ lo perdiste, est&aacute; ah&iacute;.</p>
 <div class="brand"><span>Sesi&oacute;n 8 &middot; M&oacute;dulo 3</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
 </section>
 
-<section class="slide dense mid" data-title="La cuenta que miente">
-<div class="ey">10 minutos &middot; y empieza mal a propósito</div>
-<h2>El modelo que les di ayer miente</h2>
-<p class="lead">El de referencia. El que publiqué a las 20:15 y que muchos abrieron.
-Tiene dentro el defecto del que va la clase de hoy, y quiero enseñárselo antes que nada.</p>
+<section class="slide dense mid" data-title="Otra pregunta">
+<div class="ey">10 minutos</div>
+<h2>Una pregunta que ayer no le hicimos</h2>
+<p class="lead">Ayer le preguntamos al modelo <strong>si representaba las reglas del
+negocio</strong>. Y sí: las representa. Hoy le hacemos otra, que ayer no tocaba &mdash;
+<strong>¿qué le pasa cuando los datos cambian con el tiempo?</strong></p>
 <div class="g2">
-<div><h3>Una noche cualquiera</h3>
-<ol class="steps">
-<li>El pedido 1 lleva dos ajiacos y una bandeja. <strong>102.000</strong>.</li>
-<li>El cajero cierra la cuenta y escribe el total. <strong>Cuadra.</strong></li>
-<li>El cliente pide <strong>un ajiaco más</strong>.</li>
-</ol>
+<div><h3>Una decisión que nadie había mirado</h3>
+<p>El modelo guarda <code>pedido.total</code>. Es lo que hace <strong>casi cualquier
+sistema real</strong>: una factura lleva su total escrito.</p>
+<div class="ctx"><p style="margin:0"><strong>No es un error.</strong> Es una decisión —
+y toda decisión tiene un precio. Lo que pasa es que ese precio <strong>no se ve el día que
+se diseña</strong>: se ve meses después.</p></div>
+<p style="margin-top:.5em">Vamos a medirlo. El pedido 1 lleva dos ajiacos y una bandeja,
+el cajero cierra la cuenta y todo cuadra. Y entonces el cliente pide un ajiaco más:</p>
 <pre><code>UPDATE linea_pedido
    SET cantidad = 3
  WHERE linea_id = 1;</code></pre>
-<div class="warn"><p style="margin:0"><strong>¿Dio error el motor?</strong> No. Ni uno.</p></div>
 </div>
-<div><h3>Y ahora la cuenta dice otra cosa</h3>
+<div><h3>El precio, en números</h3>
 <svg style="width:100%;height:auto;display:block;margin:.3em 0" viewBox="0 0 420 190" role="img" aria-label="El total guardado dice 102000 y las lineas suman 134000">
 <rect x="10" y="16" width="188" height="76" rx="10" fill="#fff1f0" stroke="#a52a2a" stroke-width="2.2"/>
 <text x="104" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#a52a2a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">LA CUENTA DICE</text>
@@ -708,16 +710,17 @@ Tiene dentro el defecto del que va la clase de hoy, y quiero enseñárselo antes
 <rect x="222" y="16" width="188" height="76" rx="10" fill="#e9f8ef" stroke="#146c43" stroke-width="2.2"/>
 <text x="316" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">LOS PLATOS SUMAN</text>
 <text x="316" y="72" text-anchor="middle" font-size="27" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">134.000</text>
-<text x="210" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">faltan 32.000, y nadie lo sabe</text>
+<text x="210" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">y el motor no dijo nada</text>
 <rect x="10" y="132" width="400" height="46" rx="9" fill="#fff3e7" stroke="#ff8a24" stroke-width="1.6"/>
-<text x="210" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#171717" font-family="Segoe UI,Arial,sans-serif">El mismo n&uacute;mero guardado en dos sitios.</text>
-<text x="210" y="169" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">Uno cambi&oacute; y el otro no. Eso es de lo que va hoy.</text>
+<text x="210" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#171717" font-family="Segoe UI,Arial,sans-serif">El precio de guardar un total:</text>
+<text x="210" y="169" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">hay que acordarse de actualizarlo. Siempre.</text>
 </svg>
-<p class="small">Y hay dos más de la misma causa: borra la única línea de un pedido y el
-total sigue ahí; inserta un pedido de 95.000 <strong>sin ningún plato</strong> y lo acepta.</p>
+<p class="small">Y se paga de otras dos formas: borren la única línea de un pedido y el
+total sigue ahí; inserten uno de 95.000 <strong>sin ningún plato</strong> y lo acepta.
+<strong>Lo de hoy es ver ese precio antes de pagarlo</strong>, y decidir cuándo vale la pena.</p>
 </div>
 </div>
-<div class="brand"><span>Apertura</span><span>Dos copias acaban contradiciéndose</span></div>
+<div class="brand"><span>Apertura</span><span>No es un error: es un precio</span></div>
 </section>
 
 <section class="slide dense mid" data-title="Dependencias">
@@ -1057,8 +1060,9 @@ es lo único que hace falta traer. Y si lo pierden, está en el chat de hoy.</p>
 y el modelo de referencia de ayer sigue disponible.</p></div>
 </div>
 <p style="margin-top:.5em;font-size:1.06em">El viernes escuchamos un negocio. El martes lo
-dibujamos. Hoy lo hemos <strong>ordenado</strong> — y hemos visto que ordenar no es quitar
-todo lo que se repite, sino <strong>saber cuál de las copias puede mentir</strong>.</p>
+dibujamos. Hoy hemos aprendido a <strong>ponerle precio a una decisión</strong> &mdash; porque
+ordenar no es quitar todo lo que se repite, sino <strong>saber cuál de las copias hay que
+pagar y cuál no</strong>.</p>
 <div class="brand"><span>Cierre</span><span>¿Se puede reconstruir?</span></div>
 </section>
 
