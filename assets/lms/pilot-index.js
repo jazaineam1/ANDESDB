@@ -31,22 +31,22 @@
     title.textContent = row.activity_title;
     card.appendChild(title);
 
+    var percent = Math.max(0, Math.min(100, Number(row.percent || 0)));
     var meta = document.createElement('p');
     meta.className = 'muted';
     meta.textContent = 'Paso ' + Number(row.current_step || 0) + ' de ' + Number(row.max_step || 0) +
-      ' · ' + Number(row.percent || 0) + '%';
+      ' · ' + percent + '%';
     card.appendChild(meta);
 
-    var bar = document.createElement('div');
-    bar.className = 'progress';
-    var fill = document.createElement('span');
-    fill.style.width = Math.max(0, Math.min(100, Number(row.percent || 0))) + '%';
-    bar.appendChild(fill);
-    card.appendChild(bar);
+    var meter = document.createElement('progress');
+    meter.className = 'meter';
+    meter.max = 100;
+    meter.value = percent;
+    meter.setAttribute('aria-label', 'Avance ' + percent + '%');
+    card.appendChild(meter);
 
     var actions = document.createElement('div');
-    actions.className = 'row';
-    actions.style.marginTop = '14px';
+    actions.className = 'row actions';
 
     if (row.activity_slug === window.ANDESDB_LMS_CONFIG.s7ActivitySlug) {
       var link = document.createElement('a');
