@@ -74,15 +74,40 @@ El script exige HTTPS, rechaza claves secretas, exige orígenes distintos y conf
 
 La publishable key es pública; nunca usar `sb_secret_*`/service role.
 
-## 7. Desplegar de forma separada
+## 7. Construir dos artefactos, no desplegar el repositorio completo
+
+Después de configurar el piloto:
+
+```bash
+python tools/build_pilot_deploy.py \
+  --lms-origin https://LMS_HOST
+```
+
+El comando produce exclusivamente:
+
+```text
+dist/pilot-lms/   -> desplegar en https://LMS_HOST
+dist/pilot-lab/   -> desplegar en https://LAB_HOST
+```
+
+**Regla de seguridad:** nunca publicar la raíz completa del repositorio en el origen autenticado. Si se hiciera, el constructor heredado volvería a estar accesible bajo el mismo origen que mantiene la sesión y se perdería una barrera importante frente a XSS.
+
+El artefacto LMS contiene solo el shell y los assets LMS necesarios. El artefacto de laboratorio contiene el bridge, el constructor S7 y los recursos locales que ese laboratorio necesita. El builder genera además `_headers` con CSP y cabeceras de hardening para cada origen.
 
 ### LMS origin
 
-Debe servir `/pilot/**` y `assets/lms/**`. Verificar desde respuesta HTTP real CSP/cabeceras; el meta-CSP del HTML no sustituye las cabeceras del hosting.
+Verificar desde la **respuesta HTTP real**, no solo desde el HTML fuente:
+
+- CSP exacta;
+- `X-Content-Type-Options: nosniff`;
+- `Referrer-Policy: no-referrer`;
+- `Permissions-Policy` restrictiva;
+- `frame-ancestors`/protección contra framing;
+- `Cache-Control: no-store` para el shell piloto.
 
 ### Lab origin
 
-Debe servir `/pilot-lab/**`, `Presentaciones/M3/constructor-abc.html` y los assets requeridos por ese taller. **No desplegar secretos/configuración privada allí.**
+El laboratorio mantiene temporalmente inline JS/CSS y WebAssembly porque el constructor heredado lo requiere, pero esa deuda queda confinada al origen de laboratorio, donde no existe una sesión Supabase. No desplegar allí `auth-client.js`, `lms-client.js`, configuración privada ni secretos.
 
 El iframe del shell usa sandbox. El bridge valida padre/origen exacto y el shell valida bridge/origen exacto.
 
@@ -92,7 +117,7 @@ El iframe del shell usa sandbox. El bridge valida padre/origen exacto y el shell
 - mensaje desde ventana diferente: ignorado;
 - mensaje hacia bridge desde padre/origen no autorizado: ignorado;
 - XSS/control total del lab no permite leer `sessionStorage` del LMS;
-- Network del lab no contiene Authorization/JWT ni publishable/secret Supabase;
+- Network del lab no contiene Authorization/JWT ni claves Supabase;
 - el estado sigue guardando/restaurando por bridge.
 
 ## 9. Recorrido estudiante
@@ -111,13 +136,14 @@ Antes del GO:
 python tools/security_gate.py
 ```
 
-Y verificar CI:
+Y verificar:
 
-- Security · piloto LMS SDD;
+- `Security · piloto LMS SDD`;
 - CodeQL;
-- OpenSSF Scorecard;
 - Dependency Review en PR;
 - vendoring WASM reproducible con SHA-256.
+
+OpenSSF Scorecard queda preparado para ejecutarse en `main`, porque la acción oficial solo soporta la rama por defecto. Debe revisarse cuando el baseline de seguridad se promueva a `main`; no se considera evidencia verde del branch piloto.
 
 No promover con Critical/High abierto.
 
