@@ -697,7 +697,7 @@ para lo de esta tarde.</p>
 <rect x="30" y="62" width="120" height="46" rx="9" fill="#fff" stroke="#124e78" stroke-width="1.8"/><text x="90" y="82" fill="#124e78">reglas del</text><text x="90" y="97" fill="#124e78">negocio</text>
 <rect x="176" y="62" width="120" height="46" rx="9" fill="#ffd600" stroke="#124e78" stroke-width="2.4"/><text x="236" y="82" fill="#171717">el modelo</text><text x="236" y="97" fill="#171717">de datos</text>
 <rect x="322" y="62" width="120" height="46" rx="9" fill="#fff" stroke="#124e78" stroke-width="1.8"/><text x="382" y="82" fill="#124e78">normalizar</text><text x="382" y="97" fill="#124e78">sin romperlo</text>
-<rect x="468" y="62" width="104" height="46" rx="9" fill="#fff" stroke="#124e78" stroke-width="1.8"/><text x="520" y="82" fill="#124e78">CREATE</text><text x="520" y="97" fill="#124e78">TABLE</text></g>
+<rect x="468" y="62" width="104" height="46" rx="9" fill="#fff" stroke="#124e78" stroke-width="1.8"/><text x="520" y="82" fill="#124e78">crear las</text><text x="520" y="97" fill="#124e78">tablas</text></g>
 <g stroke="#124e78" stroke-width="2" fill="none"><path d="M150 85 h20"/><path d="M296 85 h20"/><path d="M442 85 h20"/></g>
 <g font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="800" text-anchor="middle" fill="#5a5a5a">
 <text x="90" y="130">sesi&oacute;n 6</text><text x="236" y="130">HOY</text><text x="382" y="130">ma&ntilde;ana</text><text x="520" y="130">el viernes</text></g>
@@ -801,7 +801,7 @@ personas y un cliente identificado.»</em></p>
 </ul>
 <div class="hintbox"><p style="margin:0">Esta es de las que el motor defiende
 <strong>entera</strong>. Vas a ver que hay muy pocas.</p></div></div>
-<div><h3>El SQL que sale</h3>
+<div><h3>Lo que la herramienta escribirá</h3>
 <pre><code>CREATE TABLE reserva (
   reserva_id INTEGER PRIMARY KEY,
   cliente_id INTEGER NOT NULL
@@ -810,8 +810,10 @@ personas y un cliente identificado.»</em></p>
   hora       TEXT    NOT NULL,
   personas   INTEGER NOT NULL
 );</code></pre>
-<p class="small">Cada línea obligatoria viene de una frase de la dueña. Ninguna
-la puse yo.</p></div>
+<p class="small"><strong>Hoy no tienen que saber escribir esto</strong> — lo genera la
+herramienta a partir de sus decisiones, y el viernes lo escribirán ustedes contra un
+servicio real. Lo que sí quiero que vean: <strong>cada línea obligatoria viene de una frase
+de la dueña</strong>. Ninguna la puse yo.</p></div>
 </div>
 <div class="brand"><span>Ejemplo trabajado</span><span>Restricción</span></div>
 </section>
@@ -905,8 +907,11 @@ Está en <strong>la página del curso</strong>, en la tarjeta de la
     <td>sin nada detrás<br><span class="small">Restaurante ABC &mdash; el taller, después
     de la práctica</span></td></tr>
 </tbody></table>
-<div class="hintbox" style="margin-top:.55em"><p style="margin:0">Si prefieres teclearla:
-<code>jazaineam1.github.io/ANDESDB</code> y de ahí a la sesión 7.
+<div class="dlrow" style="margin:.4em 0 .2em">
+<a href="constructor-abc.html?caso=dvd">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; empezamos por aqu&iacute;</small></a>
+<a href="constructor-abc.html">&#129521; Abrir el constructor<small>Restaurante ABC &middot; el taller, despu&eacute;s</small></a></div>
+<div class="hintbox" style="margin-top:.4em"><p style="margin:0">Si prefieren teclearla:
+<code>jazaineam1.github.io/ANDESDB</code>, y de ahí a la sesión 7.
 <strong>Arriba del todo hay un botón para cambiar de caso</strong> &mdash; no hace falta
 volver a entrar.</p></div>
 <p class="small" style="margin-top:.45em">No se instala nada, no hay que crear cuenta y
@@ -936,7 +941,7 @@ funciona igual en el teléfono. Lo que hagan se queda en su navegador.</p>
 <text x="12" y="118" font-size="8.5" font-weight="800" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".06em">Y AL FINAL, LO QUE SALE SOLO:</text>
 <g font-family="Segoe UI,Arial,sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">
 <rect x="12" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="64" y="145" fill="#124e78">tu diagrama</text><text x="64" y="158" fill="#124e78">entidad-relaci&oacute;n</text>
-<rect x="124" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="176" y="145" fill="#124e78">tu SQL</text><text x="176" y="158" fill="#124e78">CREATE TABLE</text>
+<rect x="124" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="176" y="145" fill="#124e78">el SQL de</text><text x="176" y="158" fill="#124e78">sus tablas</text>
 <rect x="236" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="288" y="145" fill="#124e78">una base viva</text><text x="288" y="158" fill="#124e78">con datos dentro</text>
 <rect x="348" y="126" width="100" height="44" rx="8" fill="#fff6c9" stroke="#ff8a24" stroke-width="1.8"/><text x="398" y="145" fill="#c96a00">12 pruebas</text><text x="398" y="158" fill="#c96a00">contra tu base</text></g>
 </svg>
@@ -982,7 +987,9 @@ modelo con el que hay dentro de <code>dvdrental</code> de verdad, y no dice
 </tbody></table>
 <p class="small" style="margin-top:.5em">Practicamos aqu&iacute; porque <code>dvdrental</code>
 <strong>tiene respuesta correcta</strong>: alguien construy&oacute; esa base de verdad. El
-Restaurante ABC no la tiene &mdash; y por eso es el taller.</p></div>
+Restaurante ABC no la tiene &mdash; y por eso es el taller.</p>
+<div class="dlrow" style="margin-top:.4em">
+<a href="constructor-abc.html?caso=dvd">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; &aacute;branla ahora</small></a></div></div>
 </div>
 <div class="brand"><span>El ensayo</span><span>Con red, antes de quitarla</span></div>
 </section>
