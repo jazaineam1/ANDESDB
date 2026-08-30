@@ -1401,22 +1401,52 @@ function generarSVG(){
   svg.push('<defs><marker id="pt" markerWidth="7" markerHeight="7" refX="6" refY="3.5" '+
            'orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#124e78"/></marker></defs>');
 
-  /* líneas primero, para que las cajas queden encima */
-  _lineaN = 0;
+  /* Se recogen TODAS las conexiones antes de dibujar ninguna: hace falta
+     saber cuántas salen por cada lado de cada caja para poder repartirlas.
+     Cuando todas salían del centro, dos etiquetas de relaciones distintas
+     acababan superpuestas y se leían como una sola cardinalidad. */
+  var conexiones = [];
+  function conecta(ka, kb, ca, cb, r){
+    if (!caja[ka] || !caja[kb] || ka === kb) return;
+    var derA = caja[ka].x < caja[kb].x;
+    conexiones.push({
+      A:{k:ka, card:ca, lado:derA ? 'D' : 'I', otro:kb},
+      B:{k:kb, card:cb, lado:derA ? 'I' : 'D', otro:ka},
+      r:r
+    });
+  }
   relsVivas().forEach(function(r){
     var e = S.rels[r.id];
-    var origen, destino, etA, etB;
     if (e.card === 'N:N') {
       var pn = r.puente || (r.a+'_'+r.b);
-      if (!caja[pn]) return;
-      linea(svg, caja[r.a], caja[pn], 'N', '1', r);
-      linea(svg, caja[r.b], caja[pn], 'N', '1', r);
+      conecta(r.a, pn, 'N', '1', r);
+      conecta(r.b, pn, 'N', '1', r);
       return;
     }
-    if (!caja[r.a] || !caja[r.b]) return;
-    if (e.card === '1:N') linea(svg, caja[r.a], caja[r.b], '1', 'N', r);
-    else linea(svg, caja[r.a], caja[r.b], e.card === '1:1' ? '1' : 'N', '1', r);
+    if (e.card === '1:N') conecta(r.a, r.b, '1', 'N', r);
+    else conecta(r.a, r.b, e.card === '1:1' ? '1' : 'N', '1', r);
   });
+
+  /* Cada borde reparte sus salidas en vertical, ordenadas por la altura del
+     otro extremo: así además se cruzan menos entre ellas. */
+  var anclas = {};
+  conexiones.forEach(function(c){
+    [c.A, c.B].forEach(function(p){
+      var id = p.k + p.lado;
+      (anclas[id] = anclas[id] || []).push(p);
+    });
+  });
+  Object.keys(anclas).forEach(function(id){
+    var lista = anclas[id], cj = caja[lista[0].k];
+    lista.sort(function(a, b){ return caja[a.otro].y - caja[b.otro].y; });
+    lista.forEach(function(p, i){
+      p.y = cj.y + 26 + (cj.h - 34) * (i + 1) / (lista.length + 1);
+      p.x = (p.lado === 'D') ? cj.x + cj.w : cj.x;
+    });
+  });
+
+  _lineaN = 0;
+  conexiones.forEach(function(c){ linea(svg, c); });
 
   /* cajas */
   Object.keys(caja).forEach(function(k){
@@ -1461,41 +1491,35 @@ function generarSVG(){
 }
 
 var _lineaN = 0;
-function linea(svg, A, B, cardA, cardB, r){
+function linea(svg, c){
   _lineaN++;
-  /* Cada línea sale de su caja a una altura ligeramente distinta, para que dos
-     que van al mismo sitio no se dibujen una encima de otra. */
-  var sep = ((_lineaN % 5) - 2) * 6;
-  var ay = A.y + A.h/2 + sep, by = B.y + B.h/2 - sep;
-  ay = Math.max(A.y + 12, Math.min(A.y + A.h - 12, ay));
-  by = Math.max(B.y + 12, Math.min(B.y + B.h - 12, by));
+  var A = c.A, B = c.B;
+  /* Los tiradores de la curva salen hacia AFUERA del lado por el que arranca
+     cada extremo, para que la línea despegue perpendicular a la caja. */
+  var d = Math.max(46, Math.abs(B.x - A.x) * 0.40);
+  var sA = (A.lado === 'D') ? 1 : -1, sB = (B.lado === 'D') ? 1 : -1;
+  svg.push('<path d="M'+A.x+','+A.y+' C'+(A.x + d*sA)+','+A.y+' ' +
+           (B.x + d*sB)+','+B.y+' '+B.x+','+B.y+'" ' +
+           'fill="none" stroke="#124e78" stroke-width="1.35" opacity=".5"/>');
 
-  var ax, bx;
-  if (A.x < B.x) { ax = A.x + A.w; bx = B.x; }
-  else           { ax = A.x;       bx = B.x + B.w; }
-
-  var c1 = ax + (bx - ax) * 0.42, c2 = ax + (bx - ax) * 0.58;
-  svg.push('<path d="M'+ax+','+ay+' C'+c1+','+ay+' '+c2+','+by+' '+bx+','+by+'" ' +
-           'fill="none" stroke="#124e78" stroke-width="1.4" opacity=".6"/>');
-
-  var dir = A.x < B.x ? 1 : -1;
-  [[ax + 13*dir, ay, cardA], [bx - 13*dir, by, cardB]].forEach(function(p){
-    svg.push('<circle cx="'+p[0]+'" cy="'+(p[1]-3)+'" r="8" fill="#fff" opacity=".92"/>');
-    svg.push('<text x="'+p[0]+'" y="'+(p[1]+1)+'" font-size="11" font-weight="800" ' +
-             'fill="#124e78" text-anchor="middle">'+p[2]+'</text>');
+  [A, B].forEach(function(p){
+    var px = p.x + (p.lado === 'D' ? 13 : -13);
+    svg.push('<circle cx="'+px+'" cy="'+p.y+'" r="8.5" fill="#fff" ' +
+             'stroke="#c9dcea" stroke-width="1"/>');
+    svg.push('<text x="'+px+'" y="'+(p.y + 3.6)+'" font-size="10.5" font-weight="800" ' +
+             'fill="#124e78" text-anchor="middle">'+p.card+'</text>');
   });
 
-  var e = S.rels[r.id];
+  var e = S.rels[c.r.id];
   if (e.regla) {
-    /* La etiqueta se reparte a lo largo del trazo en vez de amontonarse en el
-       centro, y lleva fondo para que se lea sobre las líneas que cruce. */
-    var f = 0.30 + (_lineaN % 4) * 0.13;
-    var lx = ax + (bx - ax) * f, ly = ay + (by - ay) * f;
-    var an = 40;
-    svg.push('<rect x="'+(lx-an/2)+'" y="'+(ly-14)+'" width="'+an+'" height="13" rx="6.5" ' +
-             'fill="#fff" stroke="#ffd9b0" stroke-width="1"/>');
-    svg.push('<text x="'+lx+'" y="'+(ly-4)+'" font-size="9" font-weight="800" ' +
-             'fill="#c96a00" text-anchor="middle">regla '+e.regla+'</text>');
+    /* Repartida a lo largo del trazo, no en el centro: si no, todas las que
+       van entre las mismas dos columnas caen en el mismo sitio. */
+    var f = 0.34 + (_lineaN % 3) * 0.16;
+    var lx = A.x + (B.x - A.x) * f, ly = A.y + (B.y - A.y) * f;
+    svg.push('<rect x="'+(lx - 21)+'" y="'+(ly - 7)+'" width="42" height="14" rx="7" ' +
+             'fill="#fff8ef" stroke="#f0c99a" stroke-width="1"/>');
+    svg.push('<text x="'+lx+'" y="'+(ly + 3.4)+'" font-size="9" font-weight="800" ' +
+             'fill="#b05e00" text-anchor="middle">regla '+e.regla+'</text>');
   }
 }
 
@@ -1616,7 +1640,7 @@ function paso1(m){
     '<div class="panel">'+
     '<div class="ey">Paso 1 · de 7</div>'+
     '<h2>¿Qué se puede hacer con cada regla?</h2>'+
-    '<p class="lead">Estas son tus diez reglas del jueves, sin tocar. El nivel de certeza viene '+
+    '<p class="lead">Estas son tus diez reglas del viernes, sin tocar. El nivel de certeza viene '+
     'precargado y <strong>puedes cambiarlo</strong>. Lo nuevo es la segunda decisión: de las cuatro '+
     'cosas que se pueden hacer con una regla, ¿cuál es? Nadie te va a decir aquí si acertaste — '+
     'eso lo dirá la base de datos en el paso 6.</p>'+
@@ -2078,7 +2102,7 @@ function paso6(m){
 var LLAMADAS = [
   {
     id:'juntar',
-    quien:'La dueña, un jueves a las 7 de la tarde',
+    quien:'La dueña, un viernes a las 7 de la tarde',
     dice:'«Se me olvidó decirte una cosa. Cuando viene un grupo grande, juntamos dos mesas y les tomamos un solo pedido.»',
     cambia:'La regla 4 —“un pedido no puede asignarse a más de una mesa”— deja de ser cierta.',
     aplicar:function(){ S.rels.pedido_mesa.card = 'N:N'; S.rels.pedido_mesa.regla = 4; }

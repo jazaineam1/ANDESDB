@@ -162,7 +162,7 @@
       }
     },
     "9": {
-      "fecha": "2026-09-03",
+      "fecha": "2026-09-04",
       "titulo": "DDL + Azure SQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
@@ -325,7 +325,7 @@
       }
     },
     "12": {
-      "fecha": "2026-09-10",
+      "fecha": "2026-09-11",
       "titulo": "Fundamentos de data warehouse",
       "duracion_util": 165,
       "modo": "guiada",
@@ -497,7 +497,7 @@
       }
     },
     "15": {
-      "fecha": "2026-09-17",
+      "fecha": "2026-09-18",
       "titulo": "Desafío final integrador",
       "duracion_util": 165,
       "modo": "autonomo_guiado",

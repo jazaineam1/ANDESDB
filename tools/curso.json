@@ -272,7 +272,7 @@
         },
         {
           "n": 9,
-          "fecha": "2026-09-03",
+          "fecha": "2026-09-04",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
           "titulo": "DDL + Azure SQL",
@@ -340,7 +340,7 @@
       "sesiones": [
         {
           "n": 12,
-          "fecha": "2026-09-10",
+          "fecha": "2026-09-11",
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Fundamentos de data warehouse",
@@ -402,7 +402,7 @@
       "sesiones": [
         {
           "n": 15,
-          "fecha": "2026-09-17",
+          "fecha": "2026-09-18",
           "duracionUtil": 165,
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 90,
