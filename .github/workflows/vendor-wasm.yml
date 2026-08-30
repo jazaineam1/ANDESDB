@@ -79,9 +79,9 @@ jobs:
 
           (
             cd assets/vendor
-            find sqljs duckdb -type f -print0 | sort -z | xargs -0 sha256sum
-          ) > assets/vendor/SHA256SUMS.txt
-          sha256sum -c assets/vendor/SHA256SUMS.txt --directory assets/vendor
+            find sqljs duckdb -type f -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+            sha256sum -c SHA256SUMS.txt
+          )
 
       - name: Cambiar S6 a sql.js local
         run: |
