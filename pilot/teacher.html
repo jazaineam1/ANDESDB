@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'">
+  <title>ANDESDB · Piloto LMS · Docente</title>
+  <link rel="stylesheet" href="../assets/lms/pilot.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="inner">
+      <div>
+        <div class="brand">ANDESDB · Vista docente</div>
+        <div id="teacherUser" class="muted"></div>
+      </div>
+      <div class="row">
+        <a class="btn secondary" href="./index.html">Mi portal</a>
+        <button id="logoutButton" class="btn secondary" type="button">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="card">
+      <h1>Progreso de la cohorte</h1>
+      <p class="muted">La base de datos limita esta vista a las cohortes asignadas al docente.</p>
+      <div class="field">
+        <label for="cohortSelect">Cohorte</label>
+        <select id="cohortSelect">
+          <option value="">Cargando…</option>
+        </select>
+      </div>
+      <p id="teacherMessage" class="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Actividad</th>
+            <th>Paso</th>
+            <th>Avance</th>
+            <th>Estado</th>
+            <th>Entregas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="progressBody"></tbody>
+      </table>
+    </section>
+
+    <section id="submissionDetail" class="card" hidden>
+      <h2 id="submissionTitle">Entrega</h2>
+      <p id="submissionMeta" class="muted"></p>
+      <pre id="submissionState" class="codebox"></pre>
+    </section>
+  </main>
+
+  <script src="../assets/lms/config.js"></script>
+  <script src="../assets/lms/auth-client.js"></script>
+  <script src="../assets/lms/lms-client.js"></script>
+  <script src="../assets/lms/teacher.js"></script>
+</body>
+</html>
