@@ -6,39 +6,25 @@
 Encuesta*.xlsx
 *respuestas*.xlsx
 
-
 # ---------------------------------------------------------------------
 # VERSIONES DOCENTES · solo en el equipo del docente
-# Llevan el guion, las respuestas y las notas de clase. La versión de
-# estudiante SÍ se publica y se regenera con:
-#   .\tools\derivar-version-estudiante.ps1 <archivo docente>
 # ---------------------------------------------------------------------
-
 
 # ---------------------------------------------------------------------
 # SOLUCIONES ANTES DE LA HORA DE PUBLICACIÓN
-# Nunca subir la versión en texto plano. Para S7/S10/S13 se cifra y se
-# versiona solamente soluciones_cifradas/SN.sql.enc; el Action la publica
-# a las 20:00 America/Bogota.
 # ---------------------------------------------------------------------
 soluciones_privadas/
 
-
 # ---------------------------------------------------------------------
-# MATERIAL DOCENTE generado por los agentes de evaluacion
-# Libretos: llevan el guion hablado completo y las respuestas.
-# Evaluacion: diagnostico interno de las sesiones.
-# Quitalos de aqui si prefieres versionarlos (el repo es publico).
+# MATERIAL DOCENTE generado por los agentes de evaluación
 # ---------------------------------------------------------------------
 Presentaciones/**/libreto-*.md
 Presentaciones/**/PLAN-*.md
 Presentaciones/**/ALTERNATIVAS-*.md
 Presentaciones/**/EVALUACION-*.md
 
-
 # ---------------------------------------------------------------------
 # SECRETOS / CONFIGURACIÓN LOCAL · PILOTO LMS
-# Solo .env.example se versiona. Ninguna credencial real entra al repo.
 # ---------------------------------------------------------------------
 .env
 .env.*
@@ -50,16 +36,13 @@ Presentaciones/**/EVALUACION-*.md
 supabase/.temp/
 .supabase/
 
+# Artefactos de build/deploy se regeneran; nunca contienen la fuente de verdad.
+dist/
 
 # ---------------------------------------------------------------------
-# Temporales de Office (se crean al abrir un .pptx o .docx)
+# Temporales
 # ---------------------------------------------------------------------
 ~$*
-
-
-# ---------------------------------------------------------------------
-# Varios
-# ---------------------------------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -67,12 +50,8 @@ __pycache__/
 *.pyc
 .session1_rewrite.ps1
 
-
 # ---------------------------------------------------------------------
-# RESPUESTAS de los concursos · el repo es publico
-# El banco lleva la respuesta correcta de cada pregunta en claro, y los
-# .xlsx que se importan a Kahoot tambien. En las paginas de estudiante
-# van cifradas; aqui no.
+# RESPUESTAS de los concursos · el repo es público
 # ---------------------------------------------------------------------
 tools/preguntas_s6.py
 tools/kahoot/
