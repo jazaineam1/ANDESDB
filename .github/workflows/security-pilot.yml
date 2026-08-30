@@ -141,16 +141,18 @@ jobs:
                       raise SystemExit(f'{page}: piloto enabled con connect-src wildcard')
           PY
 
-      - name: Sin rastros de la rama SSDF descartada
+      - name: Sin rastros de la rama descartada
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -n 'piloto-lms-secure-ssdf' -- .; then
+          old_branch="piloto-lms-secure-"ssdf
+          old_doc="ARQUITECTURA-Y-"SSDF
+          if git grep -n "$old_branch" -- .; then
             echo 'Quedó una referencia a la rama descartada.'
             exit 1
           fi
-          if git grep -n 'ARQUITECTURA-Y-SSDF' -- .; then
-            echo 'Quedó una referencia al documento SSDF descartado.'
+          if git grep -n "$old_doc" -- .; then
+            echo 'Quedó una referencia al documento descartado.'
             exit 1
           fi
 
