@@ -1,0 +1,101 @@
+name: Security · piloto LMS
+
+on:
+  push:
+    branches:
+      - piloto-lms-secure-ssdf
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '17 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  course-gates:
+    name: Validaciones ANDESDB
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: ''
+
+      - name: Validator
+        run: python tools/validar_curso.py
+
+      - name: Secretos de alta confianza
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Bloquea archivos de configuración local que nunca deben versionarse.
+          tracked_env="$(git ls-files '.env' '.env.*' ':!.env.example')"
+          if [ -n "$tracked_env" ]; then
+            echo "Archivos .env versionados indebidamente:"
+            echo "$tracked_env"
+            exit 1
+          fi
+
+          # Nunca debe existir una clave privada versionada.
+          if git grep -n -E -- '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----' -- . ':!docs/**' ':!SECURITY.md'; then
+            echo 'Se detectó una posible clave privada.'
+            exit 1
+          fi
+
+      - name: SQL del piloto presente
+        run: test -s supabase/migrations/202608300001_lms_pilot.sql
+
+  codeql:
+    name: CodeQL · ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      security-events: write
+      packages: read
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+          - python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Inicializar CodeQL
+        uses: github/codeql-action/init@6f5948dfacef28e207b48d0905cf90c03365536d # v3, 2026-08-26
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Analizar
+        uses: github/codeql-action/analyze@6f5948dfacef28e207b48d0905cf90c03365536d # v3, 2026-08-26
+        with:
+          category: /language:${{ matrix.language }}
+
+# Snyk se integra únicamente cuando exista SNYK_TOKEN en GitHub Secrets.
+# No se añade un step que falle silenciosamente ni se versiona el token.
+# La habilitación está descrita en docs/piloto-lms/ARQUITECTURA-Y-SSDF.md.
