@@ -43,25 +43,33 @@ jobs:
       - name: Validator del curso
         run: python tools/validar_curso.py
 
-      - name: JavaScript del piloto
+      - name: Sintaxis del piloto
         shell: bash
         run: |
           set -euo pipefail
           for file in assets/lms/*.js; do
             node --check "$file"
           done
+          python -m py_compile tools/configurar_piloto_lms.py
 
       - name: Contrato SDD del piloto
         shell: bash
         run: |
           set -euo pipefail
-          test -s .specify/memory/constitution.md
-          test -s specs/001-lms-pilot/spec.md
-          test -s specs/001-lms-pilot/clarifications.md
-          test -s specs/001-lms-pilot/plan.md
-          test -s specs/001-lms-pilot/checklists/requirements.md
-          test -s specs/001-lms-pilot/tasks.md
-          test -s specs/001-lms-pilot/analysis.md
+          for file in \
+            .specify/memory/constitution.md \
+            specs/001-lms-pilot/spec.md \
+            specs/001-lms-pilot/clarifications.md \
+            specs/001-lms-pilot/plan.md \
+            specs/001-lms-pilot/checklists/requirements.md \
+            specs/001-lms-pilot/tasks.md \
+            specs/001-lms-pilot/analysis.md \
+            specs/001-lms-pilot/verify.md; do
+            test -s "$file"
+          done
+          test -s docs/piloto-lms/OPERACION.md
+          test -s docs/piloto-lms/PRIVACIDAD-PILOTO.md
+          test -s docs/piloto-lms/ARQUITECTURA-Y-SEGURIDAD.md
 
       - name: Migraciones del piloto
         shell: bash
@@ -74,6 +82,7 @@ jobs:
             supabase/migrations/202608300004_lms_pilot_catalog.sql; do
             test -s "$file"
           done
+          test -s supabase/pilot-admin.sql
           test -s supabase/tests/rls-adversarial.sql
 
       - name: Secretos de alta confianza
@@ -113,11 +122,37 @@ jobs:
           if '.innerHTML' in teacher or 'insertAdjacentHTML' in teacher:
               raise SystemExit('teacher.js no puede interpretar HTML de estudiantes')
 
-          for rel in ('pilot/index.html', 'pilot/s7.html', 'pilot/teacher.html'):
-              text = Path(rel).read_text(encoding='utf-8')
+          pages = [Path(x) for x in ('pilot/index.html', 'pilot/s7.html', 'pilot/teacher.html')]
+          for page in pages:
+              text = page.read_text(encoding='utf-8')
               if 'Content-Security-Policy' not in text:
-                  raise SystemExit(f'{rel}: falta CSP')
+                  raise SystemExit(f'{page}: falta CSP')
+              if "script-src 'self'" not in text:
+                  raise SystemExit(f'{page}: script-src no está limitado a self')
+
+          enabled = bool(re.search(r'enabled:\s*true', config))
+          if enabled:
+              if not re.search(r"supabaseUrl:\s*'https://[a-z0-9]+\.supabase\.co'", config):
+                  raise SystemExit('Piloto enabled sin Supabase URL exacta')
+              if not re.search(r"supabasePublishableKey:\s*'sb_publishable_[A-Za-z0-9_-]+'", config):
+                  raise SystemExit('Piloto enabled sin publishable key válida')
+              for page in pages:
+                  if 'https://*.supabase.co' in page.read_text(encoding='utf-8'):
+                      raise SystemExit(f'{page}: piloto enabled con connect-src wildcard')
           PY
+
+      - name: Sin rastros de la rama SSDF descartada
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -n 'piloto-lms-secure-ssdf' -- .; then
+            echo 'Quedó una referencia a la rama descartada.'
+            exit 1
+          fi
+          if git grep -n 'ARQUITECTURA-Y-SSDF' -- .; then
+            echo 'Quedó una referencia al documento SSDF descartado.'
+            exit 1
+          fi
 
   codeql:
     name: CodeQL · ${{ matrix.language }}
