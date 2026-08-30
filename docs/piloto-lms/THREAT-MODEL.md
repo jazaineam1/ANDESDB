@@ -4,246 +4,217 @@
 
 Protege el flujo:
 
-`login -> matrícula -> abrir S7 -> autosave -> continuar -> entregar -> revisar`
+`email OTP -> matrícula -> S7 -> autosave -> continuar -> entregar -> revisar`
 
 Activos principales:
 
-1. identidad del estudiante;
-2. estado de sus actividades;
+1. identidad/sesión del participante;
+2. estado de actividad;
 3. entregas;
-4. feedback docente;
-5. roles y matrículas;
+4. roles y matrículas;
+5. asignaciones de cohorte docente;
 6. secretos de infraestructura;
-7. disponibilidad del piloto.
+7. disponibilidad y recuperabilidad del piloto.
 
 ## Fronteras de confianza
 
 ```text
-[ navegador estudiante ]
-        |  NO confiable
-        v
-[ hosting estático ]
-        |
-        | HTTPS
-        v
-[ Supabase Auth/API ]
-        |
-        v
-[ PostgreSQL + RLS ]
+[ navegador estudiante/docente ]  NO confiable
+              |
+              | HTTPS
+              v
+[ frontend estático /pilot/ ]      público e inspeccionable
+              |
+              | publishable key + JWT usuario
+              v
+[ Supabase Auth + API ]
+              |
+              v
+[ PostgreSQL + RLS + RPC ]         frontera de autorización
 
-[ navegador docente ] ---- misma API, privilegios distintos
-
-[ GitHub Actions ] ---- frontera privilegiada separada
+[ SQL Editor/Admin ]               frontera privilegiada separada
+[ GitHub Actions ]                 frontera de supply chain
 ```
 
-Todo valor enviado por navegador se considera manipulable: `user_id`, `enrollment_id`, `activity_id`, rol, progreso, JSON, timestamps y parámetros de URL.
+Todo valor del navegador es manipulable: `activity_id`, JSON, paso, revision, URL y llamadas REST. Los RPC sensibles no aceptan `user_id`, `role` ni `enrollment_id` para escritura.
 
 ## STRIDE
 
 ### S · Spoofing
 
 **Amenazas**
-
-- robo de sesión del estudiante;
-- OAuth redirect mal configurado;
-- cuenta falsa autoinscrita;
-- docente suplantado.
+- robo de access/refresh token por XSS;
+- control del buzón de correo del participante;
+- creación no autorizada de cuentas;
+- suplantación de docente.
 
 **Controles**
-
-- OAuth/OIDC; no password store propio;
-- allowlist exacta de redirects;
+- OTP gestionado por Supabase Auth; ANDESDB no almacena contraseñas;
+- cuentas precreadas y `create_user:false`;
 - matrícula separada de autenticación;
-- MFA para teacher/admin antes de producción;
-- no guardar tokens en logs;
-- HTTPS únicamente.
+- sesión en `sessionStorage`, no progreso en almacenamiento de sesión;
+- CSP restrictiva y sin scripts CDN nuevos;
+- HTTPS.
 
-**Prueba**
-
-- usuario autenticado pero no matriculado recibe acceso denegado;
-- redirect no registrado falla;
-- cuenta student no puede asumir role teacher.
+**Pruebas**
+- autenticado sin matrícula obtiene 0 datos académicos;
+- cuenta student no asume role teacher;
+- OTP inválido/vencido no crea sesión.
 
 ### T · Tampering
 
 **Amenazas**
-
-- cambiar el estado de otro alumno variando UUID;
-- alterar porcentaje para aparecer completado;
-- modificar una entrega después de enviarla;
-- cambiar `role` o `enrollment` desde DevTools;
-- sobrescribir un autosave nuevo desde una pestaña antigua.
+- modificar estado ajeno variando UUID;
+- inflar porcentaje/paso;
+- sobrescribir una versión nueva desde otra pestaña;
+- modificar submission;
+- enviar snapshot distinto al estado guardado.
 
 **Controles**
+- RLS;
+- `save_activity_state` deriva enrollment desde `auth.uid()`;
+- porcentaje calculado por servidor;
+- revisión esperada + bloqueo de fila;
+- `submit_activity` copia el snapshot desde servidor;
+- sin UPDATE/DELETE de submission para student.
 
-- RLS con ownership;
-- roles no editables por estudiantes;
-- submissions sin UPDATE/DELETE de student;
-- constraints de rango/tamaño;
-- revisión de servidor para autosave;
-- progreso derivable de criterios y no usado como prueba de autorización.
-
-**Prueba**
-
-- student A usa IDs de B en GET/POST/PATCH/DELETE: todos denegados;
-- modificar payload `user_id=B`: no crea ni actualiza datos;
-- PATCH sobre submission propia: denegado.
+**Pruebas**
+- A usa IDs de B: 0 acceso;
+- dos saves con misma revisión: uno debe recibir conflicto;
+- PATCH/DELETE de submission: denegado.
 
 ### R · Repudiation
 
 **Amenazas**
-
-- disputa de si se entregó o cuándo;
-- docente modifica feedback sin trazabilidad mínima.
+- disputa sobre si/cuándo se entregó;
+- confusión entre borrador y entrega.
 
 **Controles**
+- `submitted_at` del servidor;
+- `attempt_no`;
+- snapshot separado e inmutable;
+- `activity_version` persistida.
 
-- `submitted_at` generado por servidor;
-- snapshot inmutable;
-- timestamps de servidor;
-- para piloto, feedback conserva `teacher_id` y timestamps.
-
-**Fuera de alcance inicial**
-
-- ledger criptográfico;
-- auditoría legal completa.
+El piloto no ofrece auditoría legal completa ni firma digital.
 
 ### I · Information Disclosure
 
 **Amenazas**
-
-- enumeración de perfiles;
+- enumeración de estudiantes;
 - IDOR/BOLA;
-- estado de estudiante filtrado en logs;
-- secretos en repo/bundle;
-- respuestas correctas ocultas solo por CSS/JS.
+- docente de otra cohorte;
+- estado/tokens en logs;
+- secret key en frontend/repositorio.
 
 **Controles**
-
-- RLS;
-- mínimos GRANT;
-- `anon` sin acceso académico;
-- service role prohibido en frontend;
-- logging sin payload;
-- soluciones privilegiadas fuera de HTML si realmente deben protegerse;
-- secret scanning.
-
-**Prueba**
-
-- student A no puede SELECT de B ni por relación indirecta;
-- inspeccionar JS/build no revela secreto privilegiado;
-- artifact/log de CI no contiene `.env`.
+- RLS + mínimo GRANT;
+- `anon` sin tablas académicas;
+- docente ligado a `teacher_cohorts`;
+- publishable key como única key en cliente;
+- secret guards y CodeQL;
+- no log de tokens/estado completo.
 
 ### D · Denial of Service
 
 **Amenazas**
-
 - autosave por cada tecla;
-- payload JSON enorme;
-- spam de login;
-- envío repetido de entregas;
-- consultas costosas del dashboard.
+- JSON enorme;
+- spam de OTP;
+- submission loop;
+- consultas docentes excesivas.
 
 **Controles**
-
-- debounce 800-1500 ms;
-- límite de JSON <= 512 KiB por estado en piloto;
-- límites del proveedor Auth;
-- attempt count y límites de aplicación;
-- índices en FKs/consultas de RLS;
-- cohorte pequeña y kill switch.
-
-**Prueba**
-
-- payload > límite rechazado;
-- simulación de 40 estudiantes guardando en paralelo;
-- dashboard no ejecuta N+1 requests por estudiante.
+- debounce 800 ms;
+- límite 512 KiB en DB/RPC;
+- límites/rate limits del proveedor Auth;
+- máximo 3 submissions iniciales;
+- índices de RLS/dashboard;
+- cohorte real inicial <=10;
+- kill-switch por configuración/deployment.
 
 ### E · Elevation of Privilege
 
 **Amenazas**
-
-- cambiar `role=teacher`;
-- editar metadata del perfil;
-- abusar de función `SECURITY DEFINER`;
-- filtrar service role;
-- teacher accede a cohorte no asignada.
+- `role=teacher` desde DevTools;
+- autoenrollment;
+- abuso de SECURITY DEFINER;
+- docente accede a cohorte no asignada;
+- secret key filtrada.
 
 **Controles**
+- roles/enrollments sin write grant de student;
+- helpers SECURITY DEFINER mínimos con `search_path` fijo;
+- EXECUTE explícito solo donde aplica;
+- teacher RPC valida asignación;
+- secret/service key prohibida en frontend.
 
-- rol separado y sin write grant;
-- funciones SECURITY DEFINER mínimas, `search_path` fijo y `EXECUTE` explícito;
-- service role solo servidor;
-- política por cohorte para teacher en versión antes de producción;
-- no confiar en claims editables por usuario.
+## XSS almacenado
 
-**Prueba**
+La vista docente es el objetivo de mayor impacto: contenido persistido por estudiante podría intentar ejecutar código con la sesión del profesor.
 
-- INSERT/UPDATE a `user_roles` como student falla;
-- llamada a funciones auxiliares con IDs arbitrarios no filtra datos;
-- teacher de cohorte A no puede ver cohorte B.
+**Regla:** snapshots/identificadores del estudiante se presentan con `textContent`; no `innerHTML` ni `insertAdjacentHTML`.
 
-## Amenazas web específicas
-
-### XSS almacenado
-
-El estado de S7 contiene texto controlado por estudiante. Si posteriormente se pinta con `innerHTML`, un payload podría ejecutarse en la sesión de docente.
-
-**Regla:** todo texto de usuario usa `textContent`. Rich text queda fuera del piloto.
-
-Caso de prueba:
+Payload mínimo de prueba:
 
 ```text
 <img src=x onerror=alert(document.domain)>
 ```
 
-Debe mostrarse literalmente y nunca ejecutar código.
+Debe verse como texto literal.
 
-### IDOR / BOLA
+El constructor S7 heredado usa HTML interno para su propia UI. El host LMS persiste un `modelCode` compacto y no inyecta directamente texto arbitrario de estudiante en el DOM docente.
 
-Es la amenaza prioritaria del piloto porque el frontend conoce UUIDs.
+## IDOR / BOLA
 
-Caso:
+Es la amenaza prioritaria del LMS.
 
-1. A guarda actividad;
-2. B obtiene o adivina el `activity_state.id`/`enrollment_id` de A;
-3. B modifica manualmente la petición.
+Resultado obligatorio:
+- Student A no puede leer/escribir B;
+- Teacher A no puede leer cohorte B;
+- conocer un UUID no concede nada;
+- RPC de escritura deriva la identidad real desde `auth.uid()`.
 
-Resultado obligatorio: 0 filas visibles/modificadas.
+## CSRF
 
-### CSRF
+El piloto usa bearer JWT, no una cookie propia enviada automáticamente a la API académica. CSRF clásico no es la amenaza dominante. Si se introduce un BFF/cookie HttpOnly en el futuro, esta sección debe reabrirse y definir SameSite/CSRF token/origin checks.
 
-Con bearer tokens del SDK y no cookies de sesión de aplicación, el riesgo cambia frente a un backend clásico. Aun así, ninguna operación sensible debe depender solo de origen visual. Si en el futuro se introducen cookies propias, se reabre este threat model y se exige defensa CSRF explícita.
+## Supply chain
 
-### Supply-chain
+Runtime nuevo del piloto:
+- 0 npm packages;
+- 0 SDK cargados desde CDN;
+- scripts propios del mismo origen.
 
-- SDK comprometido;
-- Action comprometida;
-- dependencia vulnerable;
-- CDN sustituida.
+CI:
+- Actions críticas por commit SHA;
+- CodeQL;
+- secret guards;
+- sintaxis JS;
+- CSP/frontera de render docente.
 
-Mitigación: bundle local, lockfile, revisión de updates, CodeQL/Snyk, SHA pin de Actions antes de producción.
+Si se incorpora una dependencia, se exige versión fija/lockfile y revisión de vulnerabilidades antes de merge.
 
-## Riesgos aceptados en piloto
+## Riesgos residuales aceptados
 
-| Riesgo | Decisión |
+| Riesgo | Tratamiento de piloto |
 |---|---|
-| Sin offline conflict merge | aceptar; mostrar conflicto y no sobrescribir |
-| Sin auditoría legal completa | aceptar; no es sistema oficial de notas |
-| Hosting piloto separado | obligatorio |
-| Google/Microsoft dependencia externa | aceptar |
-| `style-src 'unsafe-inline'` temporal | aceptar solo si no se habilita `script-src 'unsafe-inline'`; registrar deuda |
+| JWT legible por JS | aceptar temporalmente; CSP + mínimo JS + sessionStorage; reevaluar BFF para producción |
+| Sin merge offline complejo | aceptar; detener autosave ante conflicto |
+| Dependencia de correo/Supabase | aceptar; no es sistema oficial de notas |
+| Sin auditoría legal completa | aceptar |
+| `localStorage` heredado de S7 | solo recuperación local; servidor prevalece en host LMS |
+| CSP connect-src wildcard durante preparación | reemplazar por origen exacto antes del piloto real |
 
 ## Kill switch
 
 Ante fuga, XSS, error RLS o secreto filtrado:
 
-1. deshabilitar acceso al deployment piloto;
-2. revocar sesiones/secretos afectados;
-3. pausar o bloquear API del proyecto si aplica;
-4. preservar solo logs técnicos necesarios;
+1. `enabled:false` y/o retirar deployment piloto;
+2. revocar sesiones/claves afectadas;
+3. deshabilitar matrículas afectadas;
+4. preservar evidencia mínima;
 5. corregir en rama;
-6. añadir test de regresión;
-7. documentar causa raíz antes de reabrir.
+6. añadir prueba de regresión;
+7. repetir matriz adversarial y restore drill antes de reabrir.
 
-El sitio principal de ANDESDB debe seguir operativo porque el piloto vive en otra rama y otro deployment.
+`main` y el curso público no dependen de Supabase y deben seguir operativos.
