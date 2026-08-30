@@ -417,7 +417,7 @@ var GUARDADO = {};   // el trabajo de cada caso se conserva al cambiar de caso
 var S = null;
 
 function estadoNuevo(){
-  var e = {paso:1, reglas:{}, sust:{}, ents:{}, rels:{}, pest:'ddl'};
+  var e = {paso:1, reglas:{}, sust:{}, ents:{}, rels:{}, pest:'er'};
   REGLAS.forEach(function(r){ e.reglas[r.n] = {nivel:r.nivel, accion:null}; });
   SUSTANTIVOS.forEach(function(s){ e.sust[s.k] = null; });
   RELS.forEach(function(r){ e.rels[r.id] = {card:'', oblA:false, oblB:false, regla:null}; });
@@ -812,28 +812,39 @@ var PRUEBAS_ABC = [
    ===================================================================== */
 
 var REGLAS_DVD = [
-  {n:1, txt:'Un alquiler no puede existir sin la copia que se llevó ni el cliente que se la llevó.', nivel:'confirmada'},
-  {n:2, txt:'Una copia pertenece a una sola película.', nivel:'confirmada'},
-  {n:3, txt:'Un cliente no puede registrarse sin nombre y sin apellido.', nivel:'confirmada'},
-  {n:4, txt:'Una película puede tener varios actores, y un actor puede salir en varias películas.', nivel:'confirmada'},
-  {n:5, txt:'Una película no puede existir sin título.', nivel:'confirmada'},
-  {n:6, txt:'Dos clientes distintos pueden llamarse igual.', nivel:'confirmada'},
-  {n:7, txt:'Un alquiler puede estar sin devolver.', nivel:'confirmada'},
-  {n:8, txt:'La misma película puede tener varias copias en el estante.', nivel:'confirmada'}
+  {n:1,  txt:'Un alquiler no puede existir sin la copia que se llevó, sin el cliente que se la llevó y sin el empleado que lo registró.', nivel:'confirmada'},
+  {n:2,  txt:'Una copia pertenece a una sola película y está en una sola tienda.', nivel:'confirmada'},
+  {n:3,  txt:'Un cliente no puede registrarse sin nombre, sin apellido y sin la tienda a la que pertenece.', nivel:'confirmada'},
+  {n:4,  txt:'Una película puede tener varios actores, y un actor puede salir en varias películas.', nivel:'confirmada'},
+  {n:5,  txt:'Una película no puede existir sin título y sin idioma.', nivel:'confirmada'},
+  {n:6,  txt:'Dos clientes distintos pueden llamarse igual.', nivel:'confirmada'},
+  {n:7,  txt:'Un alquiler puede estar sin devolver.', nivel:'confirmada'},
+  {n:8,  txt:'La misma película puede tener varias copias en el estante.', nivel:'confirmada'},
+  {n:9,  txt:'Un pago no puede existir sin el alquiler que lo origina.', nivel:'confirmada'},
+  {n:10, txt:'Un alquiler puede terminar sin ningún pago registrado.', nivel:'candidata'},
+  {n:11, txt:'Cada empleado trabaja en una sola tienda.', nivel:'confirmada'},
+  {n:12, txt:'Una película se agrupa en categorías, y una categoría agrupa muchas películas.', nivel:'candidata'},
+  {n:13, txt:'El idioma de una película se elige de una lista cerrada, no se escribe a mano.', nivel:'confirmada'},
+  {n:14, txt:'La misma copia se alquila muchas veces a lo largo del tiempo.', nivel:'confirmada'}
 ];
 
 var SUSTANTIVOS_DVD = [
-  {k:'customer',   t:'cliente',   reglas:[1,3,6], pista:''},
-  {k:'rental',     t:'alquiler',  reglas:[1,7],   pista:''},
-  {k:'inventory',  t:'copia',     reglas:[1,2,8],
+  {k:'customer',  t:'cliente',    reglas:[1,3,6],    pista:''},
+  {k:'rental',    t:'alquiler',   reglas:[1,7,10,14], pista:''},
+  {k:'inventory', t:'copia',      reglas:[1,2,8,14],
    pista:'El videoclub no alquila «la película»: alquila un DVD concreto del estante.'},
-  {k:'film',       t:'película', reglas:[2,4,5,8], pista:''},
-  {k:'actor',      t:'actor',     reglas:[4],     pista:''},
-  {k:'titulo',     t:'título', reglas:[5],
+  {k:'film',      t:'película',   reglas:[2,4,5,8,12,13], pista:''},
+  {k:'actor',     t:'actor',      reglas:[4],        pista:''},
+  {k:'category',  t:'categoría',  reglas:[12],       pista:''},
+  {k:'language',  t:'idioma',     reglas:[5,13],
+   pista:'«De una lista cerrada» es la pista. ¿Texto libre, o tabla propia?'},
+  {k:'payment',   t:'pago',       reglas:[9,10],     pista:''},
+  {k:'staff',     t:'empleado',   reglas:[1,11],     pista:''},
+  {k:'store',     t:'tienda',     reglas:[2,3,11],   pista:''},
+  {k:'titulo',    t:'título',     reglas:[5],
    pista:'¿Tiene vida propia, o es un dato de la película?'},
-  {k:'devolucion', t:'fecha de devolución', reglas:[7], pista:''},
-  {k:'tienda',     t:'tienda',    reglas:[],
-   pista:'Existe en la base real, pero queda fuera de esta práctica.'}
+  {k:'devolucion',t:'fecha de devolución', reglas:[7], pista:''},
+  {k:'importe',   t:'importe',    reglas:[9],        pista:''}
 ];
 
 var NOMS = ['Mary','Patricia','Linda','Barbara','Elizabeth','Jennifer','Maria',
@@ -846,8 +857,21 @@ var PELIS = ['Academy Dinosaur','Ace Goldfinger','Adaptation Holes','Affair Prej
              'African Egg','Agent Truman','Airplane Sierra','Airport Pollock',
              'Alabama Devil','Aladdin Calendar','Alamo Videotape','Alaska Phantom',
              'Ali Forever','Alice Fantasia','Alien Center'];
+var CATS = ['Action','Animation','Children','Classics','Comedy','Documentary',
+            'Drama','Family','Foreign','Games','Horror','Music','New','Sci-Fi',
+            'Sports','Travel'];
+var IDIOMAS = ['English','Italian','Japanese','Mandarin','French','German'];
 
 var CAT_DVD = {
+  store: {label:'STORE', col:0, attrs:[
+    {k:'nombre', t:'TEXTO', sug:{}, regla:null, gen:function(i){return "'Tienda "+(i+1)+"'";}}
+  ]},
+  staff: {label:'STAFF', col:0, attrs:[
+    {k:'first_name', t:'TEXTO', sug:{obl:1}, regla:1, gen:function(i){return "'"+NOMS[(i*5)%NOMS.length]+"'";}},
+    {k:'last_name',  t:'TEXTO', sug:{obl:1}, regla:1, gen:function(i){return "'"+APES[(i*11)%APES.length]+"'";}},
+    {k:'username',   t:'TEXTO', sug:{obl:1}, regla:null, gen:function(i){return "'user"+(i+1)+"'";}},
+    {k:'email',      t:'TEXTO', sug:{},      regla:null, gen:function(i){return "'staff"+(i+1)+"@sakila.com'";}}
+  ]},
   customer: {label:'CUSTOMER', col:0, attrs:[
     {k:'first_name', t:'TEXTO',  sug:{obl:1}, regla:3, gen:function(i){return "'"+NOMS[i%NOMS.length]+"'";}},
     {k:'last_name',  t:'TEXTO',  sug:{obl:1}, regla:3, gen:function(i){return "'"+APES[i%APES.length]+"'";}},
@@ -864,7 +888,11 @@ var CAT_DVD = {
      gen:function(i){ return i%7===0 ? 'NULL' : "'2005-06-"+pad(1+(i%28))+"'"; }}
   ]},
   inventory: {label:'INVENTORY', col:1, attrs:[
-    {k:'store_id', t:'ENTERO', sug:{obl:1}, regla:null, gen:function(i){return 1+(i%2);}}
+    {k:'etiqueta', t:'TEXTO', sug:{}, regla:null, gen:function(i){return "'DVD-"+(1000+i)+"'";}}
+  ]},
+  payment: {label:'PAYMENT', col:1, attrs:[
+    {k:'amount',       t:'DECIMAL', sug:{obl:1}, regla:9, gen:function(i){return [0.99,2.99,4.99,7.99][i%4];}},
+    {k:'payment_date', t:'FECHA',   sug:{obl:1}, regla:9, gen:function(i){return "'2005-06-"+pad(1+(i%28))+"'";}}
   ]},
   film: {label:'FILM', col:2, attrs:[
     {k:'title',           t:'TEXTO',   sug:{obl:1}, regla:5, gen:function(i){return "'"+PELIS[i%PELIS.length]+"'";}},
@@ -872,53 +900,116 @@ var CAT_DVD = {
     {k:'release_year',    t:'ENTERO',  sug:{},      regla:null, gen:function(i){return 2006;}},
     {k:'rental_rate',     t:'DECIMAL', sug:{},      regla:null, gen:function(i){return [0.99,2.99,4.99][i%3];}},
     {k:'rental_duration', t:'ENTERO',  sug:{},      regla:null, gen:function(i){return 3+(i%5);}}
+  ]},
+  category: {label:'CATEGORY', col:2, attrs:[
+    {k:'name', t:'TEXTO', sug:{obl:1}, regla:12, gen:function(i){return "'"+CATS[i%CATS.length]+"'";}}
+  ]},
+  language: {label:'LANGUAGE', col:2, attrs:[
+    {k:'name', t:'TEXTO', sug:{obl:1}, regla:13, gen:function(i){return "'"+IDIOMAS[i%IDIOMAS.length]+"'";}}
   ]}
 };
 
 var RELS_DVD = [
-  {id:'rental_customer',  a:'rental',    b:'customer',  verbo:'lo hace',   sug:'N:1', regla:1,
+  {id:'rental_customer',  a:'rental',    b:'customer',  verbo:'lo hace',      sug:'N:1', regla:1,
    frase:'Un RENTAL lo hace un CUSTOMER'},
-  {id:'rental_inventory', a:'rental',    b:'inventory', verbo:'se lleva',  sug:'N:1', regla:1,
+  {id:'rental_inventory', a:'rental',    b:'inventory', verbo:'se lleva',     sug:'N:1', regla:1,
    frase:'Un RENTAL se lleva una copia (INVENTORY)'},
-  {id:'inventory_film',   a:'inventory', b:'film',      verbo:'es de',     sug:'N:1', regla:2,
+  {id:'rental_staff',     a:'rental',    b:'staff',     verbo:'lo registra',  sug:'N:1', regla:1,
+   frase:'Un RENTAL lo registra un STAFF'},
+  {id:'inventory_film',   a:'inventory', b:'film',      verbo:'es de',        sug:'N:1', regla:2,
    frase:'Una copia (INVENTORY) es de una FILM'},
-  {id:'film_actor',       a:'film',      b:'actor',     verbo:'tiene',     sug:'N:N', regla:4,
-   frase:'Una FILM tiene ACTORES', puente:'film_actor'}
+  {id:'inventory_store',  a:'inventory', b:'store',     verbo:'está en',      sug:'N:1', regla:2,
+   frase:'Una copia (INVENTORY) está en un STORE'},
+  {id:'payment_rental',   a:'payment',   b:'rental',    verbo:'salda',        sug:'N:1', regla:9,
+   frase:'Un PAYMENT salda un RENTAL'},
+  {id:'payment_customer', a:'payment',   b:'customer',  verbo:'lo hace',      sug:'N:1', regla:9,
+   frase:'Un PAYMENT lo hace un CUSTOMER'},
+  {id:'customer_store',   a:'customer',  b:'store',     verbo:'pertenece a',  sug:'N:1', regla:3,
+   frase:'Un CUSTOMER pertenece a un STORE'},
+  {id:'staff_store',      a:'staff',     b:'store',     verbo:'trabaja en',   sug:'N:1', regla:11,
+   frase:'Un STAFF trabaja en un STORE'},
+  {id:'film_language',    a:'film',      b:'language',  verbo:'está en',      sug:'N:1', regla:13,
+   frase:'Una FILM está en un LANGUAGE'},
+  {id:'film_actor',       a:'film',      b:'actor',     verbo:'tiene',        sug:'N:N', regla:4,
+   frase:'Una FILM tiene ACTORES', puente:'film_actor'},
+  {id:'film_category',    a:'film',      b:'category',  verbo:'se agrupa en', sug:'N:N', regla:12,
+   frase:'Una FILM se agrupa en CATEGORÍAS', puente:'film_category'}
 ];
 
-var FILAS_DVD = {customer:20, actor:12, film:15, inventory:30, rental:40};
+var FILAS_DVD = {store:2, staff:4, customer:20, actor:12, film:15, category:8,
+                 language:6, inventory:30, rental:40, payment:36};
 
 /* --- La verdad, sacada de dvdrental.db con pragma_table_info y contando
    filas. No está escrita a mano: si lo estuviera, estaría mal. --- */
 var VERDAD_DVD = {
   tablas: {
-    customer:  {obl:['first_name','last_name'], opc:['email','activebool']},
-    rental:    {obl:['rental_date'],            opc:['return_date']},
-    inventory: {obl:['store_id'],               opc:[]},
-    film:      {obl:['title'],                  opc:['description','release_year','rental_rate','rental_duration']},
-    actor:     {obl:['first_name','last_name'], opc:[]}
+    store:     {obl:[],                                opc:['nombre']},
+    staff:     {obl:['first_name','last_name','username'], opc:['email']},
+    customer:  {obl:['first_name','last_name'],        opc:['email','activebool']},
+    actor:     {obl:['first_name','last_name'],        opc:[]},
+    rental:    {obl:['rental_date'],                   opc:['return_date']},
+    inventory: {obl:[],                                opc:['etiqueta']},
+    payment:   {obl:['amount','payment_date'],         opc:[]},
+    film:      {obl:['title'],                         opc:['description','release_year','rental_rate','rental_duration']},
+    category:  {obl:['name'],                          opc:[]},
+    language:  {obl:['name'],                          opc:[]}
   },
-  /* En toda la base no hay ni un solo índice único fuera de las claves
+  /* En toda la base no hay un solo índice único fuera de las claves
      primarias: cualquier UNIQUE que marque el estudiante es cosa suya. */
   unicos: {},
-  rels: {rental_customer:'N:1', rental_inventory:'N:1', inventory_film:'N:1', film_actor:'N:N'},
+  rels: {
+    rental_customer:'N:1', rental_inventory:'N:1', rental_staff:'N:1',
+    inventory_film:'N:1', inventory_store:'N:1',
+    payment_rental:'N:1', payment_customer:'N:1',
+    customer_store:'N:1', staff_store:'N:1', film_language:'N:1',
+    film_actor:'N:N', film_category:'N:N'
+  },
   evid: {
-    'rental.return_date': '<b>183</b> de los 16.044 alquileres est&aacute;n sin devolver. ' +
-      'Con <code>NOT NULL</code>, tu base rechazar&iacute;a los 183.',
-    'film.title': 'Hay <b>1.000</b> t&iacute;tulos y <b>0</b> repetidos: hoy los datos te dan la raz&oacute;n. ' +
-      'Pero el esquema real <b>no</b> lo declara &uacute;nico. &iquest;Es una regla, o es un patr&oacute;n?',
+    'rental.return_date': '<b>183</b> de los 16.044 alquileres están sin devolver. ' +
+      'Con <code>NOT NULL</code>, tu base rechazaría los 183.',
+    'film.title': 'Hay <b>1.000</b> títulos y <b>0</b> repetidos: hoy los datos te dan la razón. ' +
+      'Pero el esquema real <b>no</b> lo declara único. ¿Es una regla, o es un patrón?',
     'customer.first_name': 'Hay <b>8</b> nombres de pila compartidos entre los 599 clientes. ' +
-      'Con <code>UNIQUE</code> no habr&iacute;an podido registrarse.',
-    'customer.last_name': 'Los apellidos tambi&eacute;n se repiten entre 599 clientes.',
-    'customer.email': 'El esquema real no lo declara &uacute;nico, aunque parezca la columna m&aacute;s obvia para serlo.'
+      'Con <code>UNIQUE</code> no habrían podido registrarse.',
+    'customer.last_name': 'Los apellidos también se repiten entre 599 clientes.',
+    'customer.email': 'Hay <b>0</b> correos repetidos entre los 599 clientes, y aun así el esquema ' +
+      'real <b>no</b> lo declara único. Otra vez: patrón, no restricción.',
+    'payment.amount': 'Obligatorio también en la base real: un pago sin importe no es un pago.',
+    'staff.username': 'Obligatorio en la base real. Es lo que identifica al empleado en el sistema.',
+    'category.name': 'Obligatorio. Las <b>16</b> categorías son una lista cerrada.',
+    'language.name': 'Obligatorio. Solo hay <b>6</b> idiomas, y de ahí sale la regla 13.',
+    'store.nombre': 'Esta columna <b>no existe</b> en la base real: la tienda se identifica por su dirección, y <code>address</code> queda fuera de esta práctica. La puse yo, así que aquí mandas tú.'
   },
   card: {
-    inventory_film: 'Una pel&iacute;cula llega a tener <b>8</b> copias en el estante, y cada copia ' +
-      'es de una sola pel&iacute;cula: por eso es N:1 desde <code>inventory</code>.',
-    film_actor: 'Hay <b>976</b> pel&iacute;culas con m&aacute;s de un actor <b>y 200</b> actores en ' +
-      'm&aacute;s de una pel&iacute;cula. Se cumple por los dos lados: es N:N.',
+    inventory_film: 'Una película llega a tener <b>8</b> copias en el estante, y cada copia es ' +
+      'de una sola película: por eso es N:1 desde <code>inventory</code>.',
+    inventory_store: 'Una tienda tiene hasta <b>2.311</b> copias, y cada copia está en una sola.',
     rental_customer: 'Un cliente hace muchos alquileres; cada alquiler es de un solo cliente.',
-    rental_inventory: 'Una copia se alquila muchas veces; cada alquiler se lleva una sola copia.'
+    rental_inventory: '<b>4.576</b> copias se han alquilado más de una vez, y cada alquiler se ' +
+      'lleva una sola copia.',
+    rental_staff: 'Solo hay <b>2</b> empleados para 16.044 alquileres: muchos alquileres por empleado.',
+    payment_rental: 'Casi todos los alquileres tienen un pago o ninguno, pero <b>1</b> tiene dos. ' +
+      'Con uno basta para que no sea 1:1.',
+    payment_customer: 'Un cliente paga muchas veces; cada pago es de un solo cliente.',
+    customer_store: 'Una tienda llega a tener <b>326</b> clientes.',
+    staff_store: 'Regla 11: cada empleado trabaja en una sola tienda.',
+    film_language: 'Solo hay <b>6</b> idiomas para 1.000 películas, y ninguna se queda sin idioma.',
+    film_actor: 'Hay <b>976</b> películas con más de un actor <b>y 200</b> actores en más de una ' +
+      'película. Se cumple por los dos lados: es N:N de verdad.',
+    film_category: '<b>Aquí está la trampa buena.</b> El esquema real tiene una tabla puente, ' +
+      'así que <b>estructuralmente es N:N</b>. Pero en los datos, <b>0</b> películas tienen más ' +
+      'de una categoría — las 1.000 tienen exactamente una. La estructura permite algo que el ' +
+      'negocio nunca hace. ¿Es una regla, o solo un patrón? Es la pregunta de la sesión 6, otra vez.'
+  },
+  porque: {
+    inventory: 'Sin ella, <code>rental</code> apuntaría directo a <code>film</code>, y entonces no ' +
+      'se puede saber <em>qué copia</em> se llevó el cliente ni cuántas hay en cada tienda.',
+    language: 'La regla 13 dice «de una lista cerrada». Eso es una tabla, no un texto libre: con ' +
+      'texto libre acabas teniendo «English», «english» e «Inglés» como tres idiomas distintos.',
+    store: 'Tres reglas la nombran. Sin ella no se sabe en qué tienda está una copia, ni a cuál ' +
+      'pertenece un cliente, ni dónde trabaja un empleado.',
+    staff: 'La regla 1 dice «el empleado que lo registró». Si es un texto, no hay a quién atribuir nada.',
+    category: 'La regla 12 la nombra, y son 16 valores fijos.'
   }
 };
 
@@ -929,7 +1020,7 @@ var PRUEBAS_DVD = [
     sql:function(){ return ins('film', {title:null}); },
     debe:'rechazar',
     siRechaza:'Bien. <code>NOT NULL</code> sobre <code>title</code>, igual que en la base real.',
-    siPasa:'Entr&oacute; una pel&iacute;cula sin t&iacute;tulo. En <code>dvdrental</code>, <code>title</code> es obligatorio.'
+    siPasa:'Entró una película sin título. En <code>dvdrental</code>, <code>title</code> es obligatorio.'
   },
   {
     n:2, regla:7, req:['rental'],
@@ -937,7 +1028,7 @@ var PRUEBAS_DVD = [
     sql:function(){ return ins('rental', {return_date:null}); },
     debe:'pasar',
     siPasa:'Entra, y debe entrar: en la base real hay <b>183</b> alquileres sin devolver.',
-    siRechaza:'<b>Tu modelo lo proh&iacute;be y la regla lo permit&iacute;a.</b> Marcaste ' +
+    siRechaza:'<b>Tu modelo lo prohíbe y la regla lo permitía.</b> Marcaste ' +
       '<code>return_date</code> obligatoria, y con eso dejas fuera los <b>183</b> alquileres ' +
       'que hay ahora mismo en la calle.'
   },
@@ -946,8 +1037,8 @@ var PRUEBAS_DVD = [
     t:'Dos clientes que se llaman igual',
     sql:function(){ return dosIguales(); },
     debe:'pasar',
-    siPasa:'Entran los dos, y as&iacute; debe ser: hay <b>8</b> nombres de pila compartidos entre los 599 clientes.',
-    siRechaza:'<b>Tu modelo lo proh&iacute;be y la regla lo permit&iacute;a.</b> Pusiste un ' +
+    siPasa:'Entran los dos, y así debe ser: hay <b>8</b> nombres de pila compartidos entre los 599 clientes.',
+    siRechaza:'<b>Tu modelo lo prohíbe y la regla lo permitía.</b> Pusiste un ' +
       '<code>UNIQUE</code> sobre el nombre. En la base real no existe.'
   },
   {
@@ -955,8 +1046,8 @@ var PRUEBAS_DVD = [
     t:'Un alquiler de un cliente que no existe',
     sql:function(){ return ins('rental', {}, {customer_id:99999}); },
     debe:'rechazar',
-    siRechaza:'La clave for&aacute;nea lo impidi&oacute;. <b>Ojo: en el archivo real esto S&Iacute; pasa</b> &mdash; lo ver&aacute;s abajo.',
-    siPasa:'Entr&oacute;. Te falta declarar la relaci&oacute;n RENTAL&ndash;CUSTOMER en el paso 4.'
+    siRechaza:'La clave foránea lo impidió. <b>Ojo: en el archivo real esto SÍ pasa</b> — lo verás abajo.',
+    siPasa:'Entró. Te falta declarar la relación RENTAL–CUSTOMER en el paso 4.'
   },
   {
     n:5, regla:8, req:['inventory','film'],
@@ -967,50 +1058,88 @@ var PRUEBAS_DVD = [
     },
     sql:function(){ return ochoCopias(); },
     debe:'pasar',
-    siPasa:'Entran las ocho. Correcto: la pel&iacute;cula m&aacute;s repetida tiene <b>8</b> copias.',
-    siRechaza:'<b>Tu modelo lo proh&iacute;be y el negocio lo hace todos los d&iacute;as.</b> ' +
-      'Si marcaste 1:1 entre copia y pel&iacute;cula, o pusiste <code>UNIQUE</code> sobre ' +
-      '<code>film_id</code>, el videoclub no puede tener dos DVD de la misma pel&iacute;cula.'
+    siPasa:'Entran las ocho. Correcto: la película más repetida tiene <b>8</b> copias.',
+    siRechaza:'<b>Tu modelo lo prohíbe y el negocio lo hace todos los días.</b> ' +
+      'Si marcaste 1:1 entre copia y película, el videoclub no puede tener dos DVD de la misma.'
   },
   {
     n:6, regla:2, req:['inventory','film'],
     t:'Una copia de una película que no está en el catálogo',
     sql:function(){ return ins('inventory', {}, {film_id:99999}); },
     debe:'rechazar',
-    siRechaza:'La clave for&aacute;nea hizo su trabajo.',
-    siPasa:'Entr&oacute;. Falta la relaci&oacute;n INVENTORY&ndash;FILM.'
+    siRechaza:'La clave foránea hizo su trabajo.',
+    siPasa:'Entró. Falta la relación INVENTORY–FILM.'
+  },
+  {
+    n:7, regla:10, req:['rental','payment'],
+    t:'Un alquiler que termina sin ningún pago',
+    sql:function(){ return "UPDATE rental SET return_date = '2005-07-01' WHERE rental_id = 1;"; },
+    debe:'pasar',
+    siPasa:'Pasa, y debe pasar: en la base real hay <b>1.452</b> alquileres sin ningún pago registrado.',
+    siRechaza:'Algo lo impidió, y la regla 10 no lo prohibía.'
+  },
+  {
+    n:8, regla:9, req:['payment'],
+    t:'Un pago sin importe',
+    sql:function(){ return ins('payment', {amount:null}); },
+    debe:'rechazar',
+    siRechaza:'Bien: en la base real <code>amount</code> es obligatorio. Un pago sin importe no es un pago.',
+    siPasa:'Entró un pago sin importe. En <code>dvdrental</code>, <code>amount</code> es obligatorio.'
+  },
+  {
+    n:9, regla:13, req:['film','language'],
+    t:'Una película en un idioma que no está en la lista',
+    sql:function(){ return ins('film', {}, {language_id:99999}); },
+    debe:'rechazar',
+    siRechaza:'La clave foránea cierra la lista. Eso es lo que quiere decir «lista cerrada».',
+    siPasa:'Entró. Sin la relación FILM–LANGUAGE, el idioma es texto libre disfrazado.'
+  },
+  {
+    n:10, regla:12, req:['film','category'],
+    t:'Una película en dos categorías a la vez',
+    guarda:function(){
+      var p = puentesVivos().filter(function(x){ return x.rel.id === 'film_category'; })[0];
+      return p ? null : 'la relación FILM–CATEGORY puesta como N:N';
+    },
+    sql:function(){ return dosCategorias(); },
+    debe:'pasar',
+    siPasa:'Entran las dos. Tu modelo lo permite… y <b>en la base real también</b>. Pero de las ' +
+      '1.000 películas, <b>ninguna</b> tiene más de una categoría. ¿Regla o patrón?',
+    siRechaza:'Tu modelo lo impide. En la estructura real <b>no</b> está impedido — hay una tabla ' +
+      'puente. Aunque los datos te den la razón: <b>0</b> películas tienen más de una.'
   }
 ];
 
 /* --- La guía: solo en la práctica. En el taller del ABC no hay guía. --- */
 var GUIA_DVD = {
-  1: {di:'Clasifica las ocho reglas. Aqu&iacute; casi todas son <b>estructura</b> o ' +
-         '<b>restricci&oacute;n</b>: fíjate en la 6 y la 7, que est&aacute;n escritas ' +
-         'como <b>permisos</b> &mdash; dicen lo que S&Iacute; se puede hacer.',
+  1: {di:'Clasifica las catorce reglas. Fíjate en la <b>6</b>, la <b>7</b> y la <b>10</b>: están ' +
+         'escritas como <b>permisos</b> — dicen lo que SÍ se puede hacer, y son las que atrapan ' +
+         'a quien marca todo obligatorio.',
       hecho:function(){ return REGLAS.every(function(r){ return S.reglas[r.n].accion; }); },
       falta:function(){ return 'Te faltan ' + REGLAS.filter(function(r){
                return !S.reglas[r.n].accion; }).length + ' reglas por clasificar.'; }},
-  2: {di:'De estos ocho sustantivos, cinco son tablas de <code>dvdrental</code>. ' +
-         'El m&aacute;s dif&iacute;cil es <b>copia</b>: pi&eacute;nsalo antes de marcarlo.',
+  2: {di:'De estos trece sustantivos, <b>diez</b> son tablas de <code>dvdrental</code>. Los más ' +
+         'difíciles son <b>copia</b> y <b>idioma</b>: piénsalos antes de marcarlos.',
       hecho:function(){ return sustantivosVivos().every(function(s){ return S.sust[s.k]; }); },
       falta:function(){ return 'Te faltan ' + sustantivosVivos().filter(function(s){
                return !S.sust[s.k]; }).length + ' por decidir.'; }},
-  3: {di:'Marca los atributos de cada tabla. Cuidado con dos: &iquest;es obligatoria ' +
-         'la fecha de devoluci&oacute;n? &iquest;es &uacute;nico el t&iacute;tulo de una pel&iacute;cula?',
+  3: {di:'Marca los atributos de cada tabla. Cuidado con dos: ¿es obligatoria la fecha de ' +
+         'devolución? ¿es único el título de una película?',
       hecho:function(){ return entidades().length > 0 && entidades().every(function(k){
                return Object.keys((S.ents[k]||{attrs:{}}).attrs).length > 0; }); },
-      falta:function(){ return 'Hay tablas sin ning&uacute;n atributo marcado.'; }},
-  4: {di:'Cuatro relaciones. Tres son N:1 y una es N:N &mdash; y en las N:1 lo que ' +
-         'importa es <b>de qu&eacute; lado</b> queda la clave for&aacute;nea.',
-      hecho:function(){ return relsVivas().length >= 3; },
-      falta:function(){ return 'Llevas ' + relsVivas().length + ' de 4 relaciones.'; }},
-  5: {di:'Aqu&iacute; est&aacute; tu base montada. Mira el SQL y el diagrama, y luego pasa a las pruebas.',
+      falta:function(){ return 'Hay tablas sin ningún atributo marcado.'; }},
+  4: {di:'Doce relaciones. Diez son N:1 y dos son N:N — y en las N:1 lo que importa es ' +
+         '<b>de qué lado</b> queda la clave foránea.',
+      hecho:function(){ return relsVivas().length >= 8; },
+      falta:function(){ return 'Llevas ' + relsVivas().length + ' de 12 relaciones.'; }},
+  5: {di:'Aquí está tu base montada. Mira primero <b>el diagrama</b>: eso es un modelo ER, y lo ' +
+         'acabas de generar tú a partir de catorce frases.',
       hecho:function(){ return true; }, falta:function(){ return ''; }},
-  6: {di:'Seis intentos contra tu base. Dos de ellos <b>deben pasar</b>: si te salen ' +
-         'en &aacute;mbar, tu modelo es m&aacute;s estricto que el negocio.',
+  6: {di:'Diez intentos contra tu base. Cuatro de ellos <b>deben pasar</b>: si te salen en ' +
+         'ámbar, tu modelo es más estricto que el negocio.',
       hecho:function(){ return true; }, falta:function(){ return ''; }},
-  7: {di:'Y ahora la parte que el Restaurante ABC no puede tener: comparar tu modelo ' +
-         'con la base que alguien construy&oacute; de verdad.',
+  7: {di:'Y ahora la parte que el Restaurante ABC no puede tener: tu diagrama contra el de la ' +
+         'base que alguien construyó de verdad.',
       hecho:function(){ return true; }, falta:function(){ return ''; }}
 };
 
@@ -1081,6 +1210,16 @@ function ochoCopias(){
   for (var i = 0; i < 8; i++)
     out.push(ins('inventory', {}, {film_id:1}).replace('900001', String(900010 + i)));
   return out.join('\n');
+}
+
+/* La misma pelicula en dos categorias. Solo tiene sentido si el puente
+   film_category existe; si no, la prueba se salta sola. */
+function dosCategorias(){
+  var p = puentesVivos().filter(function(x){ return x.rel.id === 'film_category'; })[0];
+  if (!p) return null;
+  var tb = p.nombre;
+  return 'INSERT INTO ' + tb + ' (' + pk('film') + ', ' + pk('category') + ') VALUES (2, 5);\n' +
+         'INSERT INTO ' + tb + ' (' + pk('film') + ', ' + pk('category') + ') VALUES (2, 6);';
 }
 
 function recetaVencida(){
@@ -1716,12 +1855,13 @@ function paso5(m){
     '<div class="panel">'+
     '<div class="ey">Paso 5 · de 7</div>'+
     '<h2>Tu modelo, hecho base de datos</h2>'+
-    '<p class="lead">Esto ya no es un dibujo: es SQLite corriendo en tu navegador con tus tablas '+
-    'y con datos del restaurante dentro.</p>'+
+    '<p class="lead">Esto es un <strong>modelo entidad-relación</strong>, y lo acabas de generar '+
+    'tú a partir de unas cuantas frases. Debajo está el SQL que le corresponde, y detrás una base '+
+    'SQLite de verdad corriendo en tu navegador con datos dentro.</p>'+
     '<div class="pest" id="pest"></div>'+
     '<div id="cuerpoPaso5"></div></div>'));
 
-  var pestañas = [['ddl','El SQL'],['er','El diagrama'],['datos','Los datos']];
+  var pestañas = [['er','El diagrama'],['ddl','El SQL'],['datos','Los datos']];
   var nav = $('#pest', m);
   pestañas.forEach(function(p){
     var b = el('<button type="button">'+esc(p[1])+'</button>');
@@ -2044,6 +2184,32 @@ function corregir(){
   return h;
 }
 
+/* El diagrama del modelo de referencia.
+   Se construye un estado sintetico a partir de VERDAD y se reutiliza el mismo
+   generador que dibuja el del estudiante: asi los dos diagramas se dibujan con
+   las mismas reglas y se pueden comparar de verdad. */
+function svgDeReferencia(){
+  var V = VERDAD;
+  if (!V) return '';
+  var guardado = S;
+  var e = {paso:5, reglas:{}, sust:{}, ents:{}, rels:{}, pest:'er'};
+  REGLAS.forEach(function(r){ e.reglas[r.n] = {nivel:r.nivel, accion:'ESTRUCTURA'}; });
+  SUSTANTIVOS.forEach(function(x){ e.sust[x.k] = V.tablas[x.k] ? 'entidad' : 'no'; });
+  Object.keys(V.tablas).forEach(function(k){
+    if (!CAT[k]) return;
+    e.ents[k] = {attrs:{}};
+    V.tablas[k].obl.forEach(function(a){ e.ents[k].attrs[a] = {obl:true, uni:false, regla:null}; });
+    V.tablas[k].opc.forEach(function(a){ e.ents[k].attrs[a] = {obl:false, uni:false, regla:null}; });
+  });
+  RELS.forEach(function(r){
+    e.rels[r.id] = {card:V.rels[r.id] || '', oblA:true, oblB:false, regla:r.regla || null};
+  });
+  S = e;
+  var svg;
+  try { svg = generarSVG(); } finally { S = guardado; }
+  return svg;
+}
+
 function paso7Corregir(m){
   var h = corregir();
   var bien = h.filter(function(x){ return x.t === 'bien'; }).length;
@@ -2074,6 +2240,19 @@ function paso7Corregir(m){
         (x.d ? '<div class="hd">' + x.d + '</div>' : '<div class="hd"></div>') + '</div>'));
     });
   });
+
+  var cmp = el('<div class="panel">' +
+    '<h2 style="font-size:1.15rem;color:var(--b)">Tu diagrama, y el de la base real</h2>' +
+    '<p class="lead">El de arriba lo has hecho tú a partir de las catorce frases. El de abajo es ' +
+    'el que hay dentro de <code>dvdrental</code>. <strong>Esto es la automatización entera:</strong> ' +
+    'de unas frases a un modelo entidad-relación, de ahí a las tablas, y de ahí a una comprobación.</p>' +
+    '<h3 style="font-size:.95rem;color:var(--ink-soft);margin:.8em 0 .3em">El tuyo</h3>' +
+    '<div class="lienzo" id="erMio"></div>' +
+    '<h3 style="font-size:.95rem;color:var(--ink-soft);margin:1em 0 .3em">El de la base real</h3>' +
+    '<div class="lienzo" id="erReal"></div></div>');
+  m.appendChild(cmp);
+  $('#erMio', cmp).innerHTML = generarSVG();
+  $('#erReal', cmp).innerHTML = svgDeReferencia();
 
   m.appendChild(el('<div class="panel"><div class="nota o">' +
     '<p><strong>Y ahora lo que de verdad importa de esta práctica.</strong> Ninguna de esas ' +
