@@ -1,9 +1,9 @@
-name: Security · piloto LMS
+name: Security · piloto LMS SDD
 
 on:
   push:
     branches:
-      - piloto-lms-secure-ssdf
+      - piloto-lms-sdd-secure
   pull_request:
     branches:
       - main
@@ -15,12 +15,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: security-pilot-${{ github.ref }}
+  group: security-pilot-sdd-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   course-gates:
-    name: Validaciones ANDESDB
+    name: Validaciones ANDESDB + SDD
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -40,14 +40,46 @@ jobs:
           node-version: '24'
           cache: ''
 
-      - name: Validator
+      - name: Validator del curso
         run: python tools/validar_curso.py
+
+      - name: JavaScript del piloto
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in assets/lms/*.js; do
+            node --check "$file"
+          done
+
+      - name: Contrato SDD del piloto
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s .specify/memory/constitution.md
+          test -s specs/001-lms-pilot/spec.md
+          test -s specs/001-lms-pilot/clarifications.md
+          test -s specs/001-lms-pilot/plan.md
+          test -s specs/001-lms-pilot/checklists/requirements.md
+          test -s specs/001-lms-pilot/tasks.md
+          test -s specs/001-lms-pilot/analysis.md
+
+      - name: Migraciones del piloto
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            supabase/migrations/202608300001_lms_pilot.sql \
+            supabase/migrations/202608300002_lms_pilot_hardening.sql \
+            supabase/migrations/202608300003_lms_pilot_rpc.sql \
+            supabase/migrations/202608300004_lms_pilot_catalog.sql; do
+            test -s "$file"
+          done
+          test -s supabase/tests/rls-adversarial.sql
 
       - name: Secretos de alta confianza
         shell: bash
         run: |
           set -euo pipefail
-          # Bloquea archivos de configuración local que nunca deben versionarse.
           tracked_env="$(git ls-files '.env' '.env.*' ':!.env.example')"
           if [ -n "$tracked_env" ]; then
             echo "Archivos .env versionados indebidamente:"
@@ -55,14 +87,37 @@ jobs:
             exit 1
           fi
 
-          # Nunca debe existir una clave privada versionada.
           if git grep -n -E -- '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----' -- . ':!docs/**' ':!SECURITY.md'; then
             echo 'Se detectó una posible clave privada.'
             exit 1
           fi
 
-      - name: SQL del piloto presente
-        run: test -s supabase/migrations/202608300001_lms_pilot.sql
+          if git grep -n -E -- 'sb_secret_[A-Za-z0-9_-]{12,}' -- ':!docs/**' ':!specs/**' ':!SECURITY.md'; then
+            echo 'Se detectó una posible Supabase secret key.'
+            exit 1
+          fi
+
+      - name: Fronteras del frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          config = Path('assets/lms/config.js').read_text(encoding='utf-8')
+          if re.search(r"supabasePublishableKey\s*:\s*['\"]sb_secret_", config):
+              raise SystemExit('config.js contiene una secret key en el campo público')
+
+          teacher = Path('assets/lms/teacher.js').read_text(encoding='utf-8')
+          if '.innerHTML' in teacher or 'insertAdjacentHTML' in teacher:
+              raise SystemExit('teacher.js no puede interpretar HTML de estudiantes')
+
+          for rel in ('pilot/index.html', 'pilot/s7.html', 'pilot/teacher.html'):
+              text = Path(rel).read_text(encoding='utf-8')
+              if 'Content-Security-Policy' not in text:
+                  raise SystemExit(f'{rel}: falta CSP')
+          PY
 
   codeql:
     name: CodeQL · ${{ matrix.language }}
@@ -96,6 +151,7 @@ jobs:
         with:
           category: /language:${{ matrix.language }}
 
-# Snyk se integra únicamente cuando exista SNYK_TOKEN en GitHub Secrets.
-# No se añade un step que falle silenciosamente ni se versiona el token.
-# La habilitación está descrita en docs/piloto-lms/ARQUITECTURA-Y-SSDF.md.
+# Snyk queda como gate opcional hasta que el repositorio tenga SNYK_TOKEN.
+# No se simula una cobertura que todavía no existe. Como el runtime del piloto
+# no añade paquetes npm ni CDN, CodeQL + secret guard cubren el código propio;
+# Snyk se habilita antes de introducir nuevas dependencias de terceros.
