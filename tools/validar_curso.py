@@ -110,8 +110,14 @@ def validate_learning_plan(plan: dict) -> None:
         if s.get("trabajo_autonomo_min", 0) < 60:
             err(f"S{n}: la sesión corta requiere >=60 min de trabajo autónomo")
         solution = s.get("solucion", {})
-        if solution.get("modo") != "programada" or solution.get("publicar") != "20:00":
-            err(f"S{n}: la solución debe estar programada a las 20:00")
+        publish = str(solution.get("publicar", ""))
+        if solution.get("modo") != "programada":
+            err(f"S{n}: la solución debe estar programada, no abierta")
+        elif not re.fullmatch(r"[0-2][0-9]:[0-5][0-9]", publish) or publish < "20:00":
+            err(
+                f"S{n}: la solución no puede publicarse antes de las 20:00 "
+                f"America/Bogota (dice {publish!r})"
+            )
 
     for n in (9, 11, 13, 14):
         real = sessions[str(n)].get("servicio_real", {})
