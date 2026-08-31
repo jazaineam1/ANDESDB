@@ -1,0 +1,163 @@
+name: Corregir sintaxis y explicación S9
+
+on:
+  push:
+    paths:
+      - '.github/workflows/corregir-s9-sintaxis.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  corregir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Corregir presentación y script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          html_path = Path('Presentaciones/M3/sesion-9-ddl-supabase.html')
+          sql_path = Path('Scripts/S9.sql')
+          html = html_path.read_text(encoding='utf-8')
+          sql = sql_path.read_text(encoding='utf-8')
+
+          # 1) Explicación explícita de sintaxis antes del primer CREATE real.
+          anchor = '<section class="slide " data-title="Primer CREATE">'
+          syntax_slides = r'''
+<section class="slide " data-title="Convención SQL">
+  <div class="ey">18–33 min · Antes de escribir</div>
+  <h2>Cómo escribimos SQL en este curso</h2>
+  <div class="vs-grid">
+    <section>
+      <h3>Palabras del lenguaje</h3>
+      <p><code>CREATE TABLE</code>, <code>PRIMARY KEY</code>, <code>NOT NULL</code>, <code>REFERENCES</code>...</p>
+      <p><strong>Siempre en MAYÚSCULA.</strong></p>
+    </section>
+    <section>
+      <h3>Nombres que inventamos</h3>
+      <p><code>cliente</code>, <code>cliente_id</code>, <code>nombre</code>...</p>
+      <p><strong>En minúscula y con guion bajo.</strong></p>
+    </section>
+  </div>
+  <p class="warn"><strong>Convención de lectura:</strong> PostgreSQL no exige mayúsculas para las palabras clave, pero nosotros las usamos para distinguir inmediatamente el lenguaje SQL de los nombres del modelo.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Convención SQL</span></div>
+</section>
+<section class="slide dense" data-title="Sintaxis CREATE TABLE">
+  <div class="ey">18–33 min · Plantilla</div>
+  <h2>La forma general de <code>CREATE TABLE</code></h2>
+<pre><code>CREATE TABLE nombre_tabla (
+    columna_1 TIPO_DE_DATO RESTRICCIONES,
+    columna_2 TIPO_DE_DATO RESTRICCIONES,
+    ...,
+    CONSTRAINT nombre_regla TIPO_RESTRICCION (...)
+);</code></pre>
+  <table class="tbl" style="margin-top:1em"><thead><tr><th>Parte</th><th>Qué significa</th></tr></thead><tbody>
+    <tr><td><code>CREATE TABLE</code></td><td>orden: crear una tabla nueva</td></tr>
+    <tr><td><code>nombre_tabla</code></td><td>nombre que nosotros damos al objeto</td></tr>
+    <tr><td><code>( ... )</code></td><td>todo lo que define la tabla vive entre paréntesis</td></tr>
+    <tr><td><code>,</code></td><td>separa una definición de la siguiente</td></tr>
+    <tr><td><code>;</code></td><td>termina la instrucción SQL</td></tr>
+  </tbody></table>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CREATE TABLE</span></div>
+</section>
+<section class="slide " data-title="Anatomía de una columna">
+  <div class="ey">18–33 min · Leer una línea</div>
+  <h2>Una columna se lee de izquierda a derecha</h2>
+<pre><code>nombre TEXT NOT NULL</code></pre>
+  <div class="steps" style="margin-top:1.4em">
+    <article><b>1</b><h3><code>nombre</code></h3><p>Nombre de la columna.</p></article>
+    <article><b>2</b><h3><code>TEXT</code></h3><p>Tipo de dato que acepta.</p></article>
+    <article><b>3</b><h3><code>NOT NULL</code></h3><p>Regla: el dato es obligatorio.</p></article>
+    <article><b>4</b><h3><code>,</code></h3><p>Después viene otra columna o restricción.</p></article>
+  </div>
+  <p class="hintbox"><strong>Patrón mental:</strong> nombre → tipo → reglas. Antes de escribir una línea, debes poder responder esas tres cosas.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Anatomía de una columna</span></div>
+</section>
+<section class="slide dense" data-title="Sintaxis CONSTRAINT">
+  <div class="ey">18–33 min · Reglas con nombre</div>
+  <h2>¿Qué significa <code>CONSTRAINT</code>?</h2>
+<pre><code>CONSTRAINT pk_cliente PRIMARY KEY (cliente_id)
+
+CONSTRAINT fk_reserva_cliente
+    FOREIGN KEY (cliente_id)
+    REFERENCES cliente(cliente_id)</code></pre>
+  <div class="vs-grid" style="margin-top:1em">
+    <section><h3><code>CONSTRAINT pk_cliente</code></h3><p>Le damos un nombre a la regla. Eso ayuda a identificarla cuando PostgreSQL reporta un error.</p></section>
+    <section><h3><code>PRIMARY KEY (...)</code></h3><p>Indicamos qué clase de regla es y sobre qué columna o columnas actúa.</p></section>
+  </div>
+  <p class="hintbox"><code>FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)</code> se lee: “este valor debe existir como <code>cliente_id</code> en la tabla <code>cliente</code>”.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CONSTRAINT</span></div>
+</section>
+'''
+
+          if 'data-title="Sintaxis CREATE TABLE"' not in html:
+              if anchor not in html:
+                  raise SystemExit('No se encontró el punto de inserción antes de Primer CREATE')
+              html = html.replace(anchor, syntax_slides + '\n' + anchor, 1)
+
+          # 2) Palabras SQL en mayúscula, preservando literales entre comillas simples.
+          keywords = [
+              'CREATE','TABLE','SCHEMA','IF','NOT','EXISTS','SET','TO','DROP','CASCADE',
+              'CONSTRAINT','PRIMARY','KEY','FOREIGN','REFERENCES','UNIQUE','CHECK','DEFAULT',
+              'GENERATED','ALWAYS','AS','IDENTITY','INSERT','INTO','VALUES','SELECT','FROM',
+              'JOIN','INNER','LEFT','RIGHT','FULL','OUTER','ON','WHERE','GROUP','BY','HAVING',
+              'ORDER','ALTER','ADD','UPDATE','DELETE','ENABLE','ROW','LEVEL','SECURITY',
+              'AND','OR','IN','IS','NULL','TRUE','FALSE','TEXT','BIGINT','INTEGER','NUMERIC',
+              'REAL','BOOLEAN','DATE','TIME','TIMESTAMP','VARCHAR','WITH','DISTINCT','LIMIT',
+              'OFFSET','CURRENT_DATE','CURRENT_TIME','CURRENT_TIMESTAMP'
+          ]
+          kw_re = re.compile(r'\b(?:' + '|'.join(sorted(map(re.escape, keywords), key=len, reverse=True)) + r')\b', re.I)
+
+          def upper_non_literals(text):
+              parts = re.split(r"('(?:''|[^'])*')", text)
+              for i in range(0, len(parts), 2):
+                  parts[i] = kw_re.sub(lambda m: m.group(0).upper(), parts[i])
+              return ''.join(parts)
+
+          def code_repl(match):
+              return '<code>' + upper_non_literals(match.group(1)) + '</code>'
+
+          html = re.sub(r'<code>(.*?)</code>', code_repl, html, flags=re.S)
+
+          # 3) El script de clase sigue la misma convención, sin tocar textos literales ni comentarios.
+          out_lines = []
+          for line in sql.splitlines():
+              if '--' in line:
+                  code, comment = line.split('--', 1)
+                  out_lines.append(upper_non_literals(code) + '--' + comment)
+              else:
+                  out_lines.append(upper_non_literals(line))
+          sql = '\n'.join(out_lines) + ('\n' if sql.endswith('\n') else '')
+
+          syntax_header = '''-- ============================================================\n-- CÓMO LEER LA SINTAXIS DE ESTA SESIÓN\n-- Palabras del lenguaje SQL: MAYÚSCULA.\n-- Nombres de tablas y columnas: minúscula.\n--\n-- Patrón general:\n-- CREATE TABLE nombre_tabla (\n--     columna TIPO_DE_DATO RESTRICCIONES,\n--     CONSTRAINT nombre_regla TIPO_RESTRICCION (...)\n-- );\n-- ============================================================\n\n'''
+          if 'CÓMO LEER LA SINTAXIS DE ESTA SESIÓN' not in sql:
+              sql = syntax_header + sql
+
+          html_path.write_text(html, encoding='utf-8')
+          sql_path.write_text(sql, encoding='utf-8')
+          PY
+
+      - name: Validar curso
+        run: python tools/validar_curso.py
+
+      - name: Publicar corrección y retirar workflow temporal
+        run: |
+          set -euo pipefail
+          rm .github/workflows/corregir-s9-sintaxis.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Presentaciones/M3/sesion-9-ddl-supabase.html Scripts/S9.sql .github/workflows/corregir-s9-sintaxis.yml
+          git commit -m 'Explicar sintaxis SQL y normalizar mayúsculas en S9'
+          git pull --rebase origin main
+          git push origin main
