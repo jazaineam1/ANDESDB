@@ -2487,7 +2487,7 @@ function redundancias(){
       k:'total', clase:'quitar',
       q:'<code>pedido.total</code> guarda algo que ya está en <code>linea_pedido</code>',
       d:'Cada línea tiene <code>cantidad</code> y <code>precio_unitario</code>: el total ' +
-        '<b>se puede calcular siempre</b>. Guardarlo además es guardar el mismo dato dos ' +
+        '<b>en este modelo se puede reconstruir exactamente</b> con <code>cantidad</code> y <code>precio_unitario</code>. Guardarlo además es guardar el mismo dato dos ' +
         'veces, y dos copias del mismo dato acaban contradiciéndose.'
     });
   } else if (tieneEnt('pedido') && pe.total) {
