@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://supabase-pilot.invalid; frame-src https://lab-pilot.invalid; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
+  <title>Sesión 7 · Piloto LMS</title>
+  <link rel="stylesheet" href="../assets/lms/pilot.css">
+</head>
+<body class="s7-layout">
+  <header class="topbar">
+    <div class="inner">
+      <div>
+        <div class="brand">Sesión 7 · Restaurante ABC</div>
+        <div id="syncText" class="status" aria-live="polite">Preparando…</div>
+      </div>
+      <div class="row">
+        <a class="btn secondary" href="./index.html">Mi progreso</a>
+        <button id="submitActivity" class="btn primary" type="button" disabled>Entregar</button>
+        <button id="logoutButton" class="btn secondary" type="button">Cerrar sesión</button>
+      </div>
+      <div id="conflictBox" class="notice warn full-row" hidden>
+        Hay una versión más reciente en el servidor. Para evitar pérdida de trabajo no se sobrescribió. Puedes copiar tu código local y luego cargar la versión del servidor.
+        <div class="row actions">
+          <button id="conflictCopy" class="btn secondary" type="button">Copiar trabajo local</button>
+          <button id="conflictReload" class="btn primary" type="button">Cargar versión del servidor</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <iframe id="activityFrame" class="activity-frame" title="Taller Restaurante ABC" sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"></iframe>
+
+  <script src="../assets/lms/config.js"></script>
+  <script src="../assets/lms/auth-client.js"></script>
+  <script src="../assets/lms/lms-client.js"></script>
+  <script src="../assets/lms/s7-host.js"></script>
+</body>
+</html>

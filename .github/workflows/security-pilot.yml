@@ -1,0 +1,188 @@
+name: Security · piloto LMS SDD
+
+on:
+  push:
+    branches:
+      - piloto-lms-sdd-secure
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '17 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-pilot-sdd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  project-gates:
+    name: ANDESDB · SDD + Security Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: ''
+
+      - name: Validator del curso
+        run: python tools/validar_curso.py
+
+      - name: Gate integral de seguridad
+        run: python tools/security_gate.py
+
+      - name: Sintaxis del piloto
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in assets/lms/*.js; do
+            node --check "$file"
+          done
+          python -m py_compile \
+            tools/configurar_piloto_lms.py \
+            tools/build_pilot_deploy.py \
+            tools/security_gate.py
+
+      - name: Contrato SDD
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            .specify/memory/constitution.md \
+            specs/001-lms-pilot/spec.md \
+            specs/001-lms-pilot/clarifications.md \
+            specs/001-lms-pilot/plan.md \
+            specs/001-lms-pilot/checklists/requirements.md \
+            specs/001-lms-pilot/tasks.md \
+            specs/001-lms-pilot/analysis.md \
+            specs/001-lms-pilot/verify.md \
+            specs/002-project-security/spec.md \
+            specs/002-project-security/clarifications.md \
+            specs/002-project-security/plan.md \
+            specs/002-project-security/checklists/requirements.md \
+            specs/002-project-security/tasks.md \
+            specs/002-project-security/analysis.md \
+            specs/002-project-security/verify.md; do
+            test -s "$file"
+          done
+          test -s docs/SEGURIDAD-PROYECTO.md
+          test -s docs/piloto-lms/OPERACION.md
+          test -s docs/piloto-lms/PRIVACIDAD-PILOTO.md
+          test -s docs/piloto-lms/ARQUITECTURA-Y-SEGURIDAD.md
+
+      - name: Migraciones del piloto
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            supabase/migrations/202608300001_lms_pilot.sql \
+            supabase/migrations/202608300002_lms_pilot_hardening.sql \
+            supabase/migrations/202608300003_lms_pilot_rpc.sql \
+            supabase/migrations/202608300004_lms_pilot_catalog.sql; do
+            test -s "$file"
+          done
+          test -s supabase/pilot-admin.sql
+          test -s supabase/tests/rls-adversarial.sql
+
+      - name: Fronteras del frontend autenticado
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          config = Path('assets/lms/config.js').read_text(encoding='utf-8')
+          host = Path('assets/lms/s7-host.js').read_text(encoding='utf-8')
+          bridge = Path('assets/lms/s7-bridge.js').read_text(encoding='utf-8')
+          s7 = Path('pilot/s7.html').read_text(encoding='utf-8')
+          bridge_html = Path('pilot-lab/s7-bridge.html').read_text(encoding='utf-8')
+
+          if re.search(r"supabasePublishableKey\s*:\s*['\"]sb_secret_", config):
+              raise SystemExit('config.js contiene una secret key')
+          if 's7SandboxOrigin' not in config:
+              raise SystemExit('Falta origen dedicado del laboratorio')
+          if any(x in host for x in ('.contentDocument', '.document', '.exportar', '.importar', 'constructor-abc.html')):
+              raise SystemExit('El shell LMS no puede inspeccionar DOM/globals del laboratorio')
+          if "event.origin !== bridgeOrigin" not in host or "event.source !== bridgeWindow()" not in host:
+              raise SystemExit('Host sin validación exacta de mensajes')
+          if "event.origin !== parentOrigin" not in bridge or "event.source !== window.parent" not in bridge:
+              raise SystemExit('Bridge sin validación exacta de mensajes')
+          if 'sandbox="allow-scripts allow-same-origin"' not in s7:
+              raise SystemExit('Iframe del laboratorio sin sandbox')
+          if 'frame-ancestors https://' not in bridge_html:
+              raise SystemExit('Bridge sin frame-ancestors exacto/placeholder HTTPS')
+
+          enabled = bool(re.search(r'enabled:\s*true', config))
+          if enabled:
+              if not re.search(r"supabaseUrl:\s*'https://[a-z0-9]+\.supabase\.co'", config):
+                  raise SystemExit('Piloto enabled sin Supabase URL exacta')
+              if not re.search(r"supabasePublishableKey:\s*'sb_publishable_[A-Za-z0-9_-]+'", config):
+                  raise SystemExit('Piloto enabled sin publishable key válida')
+              m = re.search(r"s7SandboxOrigin:\s*'(https://[^']+)'", config)
+              if not m:
+                  raise SystemExit('Piloto enabled sin lab origin exacto')
+          PY
+
+      - name: Sin rastros de la rama descartada
+        shell: bash
+        run: |
+          set -euo pipefail
+          old_branch="piloto-lms-secure-"ssdf
+          old_doc="ARQUITECTURA-Y-"SSDF
+          if git grep -n "$old_branch" -- . ':!.github/workflows/security-pilot.yml'; then
+            echo 'Quedó una referencia a la rama descartada.'
+            exit 1
+          fi
+          if git grep -n "$old_doc" -- . ':!.github/workflows/security-pilot.yml'; then
+            echo 'Quedó una referencia al documento descartado.'
+            exit 1
+          fi
+
+  codeql:
+    name: CodeQL · ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      security-events: write
+      packages: read
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+          - python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Inicializar CodeQL
+        uses: github/codeql-action/init@6f5948dfacef28e207b48d0905cf90c03365536d # v3, 2026-08-26
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Analizar
+        uses: github/codeql-action/analyze@6f5948dfacef28e207b48d0905cf90c03365536d # v3, 2026-08-26
+        with:
+          category: /language:${{ matrix.language }}
