@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 6,
+  "sesionActual": 7,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -206,7 +206,7 @@
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Reglas de negocio",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.",
           "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
           "tags": [
@@ -232,7 +232,7 @@
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
           "titulo": "De las reglas al modelo",
-          "estado": "proxima",
+          "estado": "hoy",
           "href": "Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html",
           "desc": "Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.",
           "tags": [
@@ -457,14 +457,12 @@
   "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
   "materialesHoy": [
     {
-      "txt": "🗄️ La base de datos",
-      "href": "Presentaciones/M2/base-datos/dvdrental.db",
-      "download": true
+      "txt": "🧱 El constructor: de la frase a la tabla",
+      "href": "Presentaciones/M3/constructor-abc.html?sesion=7"
     },
     {
-      "txt": "📜 Las consultas de la clase",
-      "href": "Scripts/S6.sql",
-      "download": true
+      "txt": "🎬 Practica con dvdrental antes de la clase",
+      "href": "Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"
     }
   ]
 }
