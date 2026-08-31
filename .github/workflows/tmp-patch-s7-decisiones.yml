@@ -1,0 +1,36 @@
+name: Mejorar razonamiento S7
+
+on:
+  push:
+    paths:
+      - '.github/workflows/tmp-patch-s7-decisiones.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Aplicar mejora S7
+        run: python tools/tmp_patch_s7_decisiones.py
+      - name: Validar curso
+        run: |
+          if [ -f tools/validar-curso.py ]; then python tools/validar-curso.py; fi
+          if [ -f tools/validar_curso.py ]; then python tools/validar_curso.py; fi
+          if [ -f tools/construir-index.py ]; then python tools/construir-index.py --check || true; fi
+      - name: Publicar S7
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html
+          if git diff --cached --quiet; then
+            echo 'Sin cambios'
+          else
+            git commit -m 'Profundizar razonamiento de decisiones en S7'
+            git push
+          fi
