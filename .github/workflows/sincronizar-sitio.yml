@@ -8,7 +8,6 @@ on:
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
-      - 'tools/fix_lente_s8.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -26,9 +25,6 @@ jobs:
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
-
-      - name: Alinear lente S8
-        run: python tools/fix_lente_s8.py
 
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
@@ -49,6 +45,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html Presentaciones
-          git commit -m 'Alinear lente de normalización S8'
+          git commit -m 'Sincronizar sitio con el manifiesto del curso'
           git pull --rebase origin main
           git push origin main
