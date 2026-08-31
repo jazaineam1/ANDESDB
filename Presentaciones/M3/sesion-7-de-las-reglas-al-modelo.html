@@ -723,9 +723,9 @@ para lo de esta tarde.</p>
 <div class="agenda-grid" style="margin-top:.3em">
 <article><b>1</b><h3>De la regla al modelo</h3><p>Qu&eacute; propone una regla: entidades, relaciones, cardinalidad. Y qu&eacute; <em>no</em> propone.</p></article>
 <article><b>2</b><h3>Tres, juntos</h3><p>Clasificamos tres de sus diez reglas en vivo. Una cabe en el esquema, otra no, y otra no se implementa.</p></article>
-<article><b>3</b><h3>La herramienta</h3><p><strong>Veinte minutos</strong> con <code>dvdrental</code>, que ya conocen, para aprenderla con red antes de usarla sin ella.</p></article>
+<article><b>3</b><h3>Cómo decidimos</h3><p><strong>Veinte minutos</strong> para hacer visible el razonamiento: evidencia, opciones, elección, precio y prueba.</p></article>
 <article><b>&#9208;</b><h3>Pausa</h3><p>15 minutos.</p></article>
-<article><b>4</b><h3>El taller</h3><p>En equipo. Su modelo del Restaurante ABC, y una base de datos de verdad al final.</p></article>
+<article><b>4</b><h3>El taller</h3><p>En equipo. Su modelo del Restaurante ABC, con decisiones justificadas y una base comprobable al final.</p></article>
 <article><b>5</b><h3>Comprobar y defender</h3><p>Las tres decisiones dif&iacute;ciles, lo que sus tablas <em>no</em> pueden defender, y una llamada de la due&ntilde;a.</p></article>
 </div>
 <div class="brand"><span>Apertura</span><span>Hoy se dise&ntilde;a, no se analiza</span></div>
@@ -902,180 +902,101 @@ tuyas.</p></div>
 <div class="brand"><span>Ejemplo trabajado</span><span>Lo que nadie confirmó, no se construye</span></div>
 </section>
 
-<section class="slide dense mid" data-title="La herramienta">
-<div class="ey">La herramienta · 4 minutos · &aacute;branla ahora</div>
-<h2>Una sola página, dos puertas</h2>
+<section class="slide dense mid" data-title="El criterio">
+<div class="ey">Antes del taller · 4 minutos</div>
+<h2>Una decisión defendible deja rastro</h2>
+<p class="lead">Hoy no quiero que encuentren “la tabla correcta”. Quiero que puedan explicar <strong>por qué una decisión tiene sentido con la evidencia que tenemos</strong>.</p>
 <div class="g2">
-<div>
-<div class="ctx" style="margin-top:0"><p style="margin:0;font-size:1.06em">
-Está en <strong>la página del curso</strong>, en la tarjeta de la
-<strong>sesión 7</strong>. Dos enlaces, y son <strong>la misma página</strong>.</p></div>
-<div class="dlrow" style="margin:.4em 0 .2em">
-<a href="constructor-abc.html?caso=dvd&amp;sesion=7">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; empezamos por aqu&iacute;</small></a>
-<a href="constructor-abc.html?sesion=7">&#129521; Abrir el constructor<small>Restaurante ABC &middot; el taller, despu&eacute;s</small></a></div>
-<div class="hintbox" style="margin-top:.3em"><p style="margin:0"><strong>Arriba del todo hay
-un botón para cambiar de caso.</strong> Si prefieren teclearla:
-<code>jazaineam1.github.io/ANDESDB</code>, sesión 7.</p></div>
-<p class="small" style="margin-top:.3em">No se instala nada ni hay que crear cuenta. Lo que
-hagan se queda en su navegador.</p>
-</div>
-<div><svg style="width:100%;max-width:330px;height:auto;display:block;margin:.2em auto .2em" viewBox="0 0 460 176" role="img" aria-label="La pantalla de la herramienta: barra de siete pasos, una regla con cuatro botones, y el resultado">
-<rect x="2" y="2" width="456" height="172" rx="9" fill="#fff" stroke="#dfe6ec" stroke-width="1.4"/>
-<rect x="2" y="2" width="456" height="26" rx="9" fill="#f5f3ee"/>
-<text x="12" y="19" font-size="9.5" font-weight="800" fill="#124e78" font-family="Segoe UI,Arial,sans-serif">De la frase a la tabla</text>
-<g font-family="Segoe UI,Arial,sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">
-<rect x="112" y="7" width="44" height="15" rx="7.5" fill="#124e78"/><text x="134" y="17.5" fill="#fff">1 reglas</text>
-<rect x="160" y="7" width="52" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="186" y="17.5" fill="#5a5a5a">2 sustantiv.</text>
-<rect x="216" y="7" width="46" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="239" y="17.5" fill="#5a5a5a">3 atributos</text>
-<rect x="266" y="7" width="48" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="290" y="17.5" fill="#5a5a5a">4 relaciones</text>
-<rect x="318" y="7" width="34" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="335" y="17.5" fill="#5a5a5a">5 base</text>
-<rect x="356" y="7" width="42" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="377" y="17.5" fill="#5a5a5a">6 pruebas</text>
-<rect x="402" y="7" width="46" height="15" rx="7.5" fill="#fff" stroke="#dfe6ec"/><text x="425" y="17.5" fill="#5a5a5a">7 cierre</text></g>
-<rect x="12" y="38" width="300" height="60" rx="8" fill="#fff" stroke="#dfe6ec" stroke-width="1.4"/>
-<text x="22" y="52" font-size="13" font-weight="800" fill="#124e78" font-family="Segoe UI,Arial,sans-serif">2</text>
-<text x="38" y="52" font-size="9" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Una mesa no puede tener dos reservas que</text>
-<text x="38" y="63" font-size="9" fill="#171717" font-family="Segoe UI,Arial,sans-serif">se solapen en el tiempo.</text>
-<g font-family="Segoe UI,Arial,sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">
-<rect x="38" y="72" width="58" height="16" rx="8" fill="#fff" stroke="#dfe6ec"/><text x="67" y="83" fill="#5a5a5a">Estructura</text>
-<rect x="100" y="72" width="60" height="16" rx="8" fill="#fff" stroke="#dfe6ec"/><text x="130" y="83" fill="#5a5a5a">Restricci&oacute;n</text>
-<rect x="164" y="72" width="58" height="16" rx="8" fill="#ff8a24" stroke="#ff8a24"/><text x="193" y="83" fill="#fff">Aplicaci&oacute;n</text>
-<rect x="226" y="72" width="56" height="16" rx="8" fill="#fff" stroke="#dfe6ec"/><text x="254" y="83" fill="#5a5a5a">Pendiente</text></g>
-<rect x="320" y="38" width="128" height="60" rx="8" fill="#fff" stroke="#dfe6ec" stroke-width="1.4"/>
-<text x="330" y="52" font-size="8" font-weight="800" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">PASO 4</text>
-<text x="330" y="64" font-size="8.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">Un PEDIDO se sirve</text>
-<text x="330" y="74" font-size="8.5" fill="#171717" font-family="Segoe UI,Arial,sans-serif">en una MESA</text>
-<g font-family="Segoe UI,Arial,sans-serif" font-size="7" font-weight="800" text-anchor="middle">
-<rect x="330" y="80" width="26" height="13" rx="6.5" fill="#fff" stroke="#dfe6ec"/><text x="343" y="89" fill="#5a5a5a">N:1</text>
-<rect x="359" y="80" width="26" height="13" rx="6.5" fill="#fff" stroke="#dfe6ec"/><text x="372" y="89" fill="#5a5a5a">1:N</text>
-<rect x="388" y="80" width="26" height="13" rx="6.5" fill="#fff" stroke="#dfe6ec"/><text x="401" y="89" fill="#5a5a5a">1:1</text>
-<rect x="417" y="80" width="26" height="13" rx="6.5" fill="#fff" stroke="#dfe6ec"/><text x="430" y="89" fill="#5a5a5a">N:N</text></g>
-<text x="12" y="118" font-size="8.5" font-weight="800" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".06em">Y AL FINAL, LO QUE SALE SOLO:</text>
-<g font-family="Segoe UI,Arial,sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">
-<rect x="12" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="64" y="145" fill="#124e78">tu diagrama</text><text x="64" y="158" fill="#124e78">entidad-relaci&oacute;n</text>
-<rect x="124" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="176" y="145" fill="#124e78">las tablas que</text><text x="176" y="158" fill="#124e78">de ah&iacute; salen</text>
-<rect x="236" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="288" y="145" fill="#124e78">una base viva</text><text x="288" y="158" fill="#124e78">con datos dentro</text>
-<rect x="348" y="126" width="100" height="44" rx="8" fill="#fff6c9" stroke="#ff8a24" stroke-width="1.8"/><text x="398" y="145" fill="#c96a00">12 pruebas</text><text x="398" y="158" fill="#c96a00">contra tu base</text></g>
-</svg>
-<h3>Los siete pasos</h3>
-<ol class="steps" style="margin-top:.5em">
-<li>Clasificar cada regla.</li>
-<li>Qué sustantivos son tablas.</li>
-<li>Los atributos &mdash; y <strong>qué regla justifica cada obligatorio</strong>.</li>
-<li>Las relaciones, <strong>una por una</strong>, y su cardinalidad.</li>
-<li><strong>Su diagrama ER</strong> y su base, generados.</li>
-<li>El banco de pruebas, contra su base.</li>
-<li>Y el <strong>cierre del caso</strong>: el &uacute;nico paso distinto en cada puerta.</li>
-</ol>
-<p class="small">Ese cierre es, en <code>dvdrental</code>, <strong>la correcci&oacute;n contra
-la base real</strong>; en el Restaurante ABC, <strong>una llamada de tel&eacute;fono</strong>.
-Y en el ABC hay una pesta&ntilde;a 8 m&aacute;s, que abrimos ma&ntilde;ana.</p>
-</div>
-</div>
-<div class="brand"><span>La herramienta</span><span>Primero con red, luego sin ella</span></div>
-</section>
-
-<section class="slide dense mid" data-title="La practica">
-<div class="ey">El ensayo &middot; 20 minutos, todos a la vez</div>
-<h2>Primero con <code>dvdrental</code>, que ya conocen</h2>
-<p class="lead">La misma herramienta, otro caso. <strong>Diez tablas del videoclub</strong> y
-catorce frases sobre c&oacute;mo funciona &mdash; y al final, algo que el Restaurante ABC
-<strong>no puede darles</strong>.</p>
-<div class="g2">
-<div><h3>Las frases con las que van a trabajar</h3>
+<div><h3>Las cinco preguntas</h3>
 <table class="optbl"><tbody>
-<tr><td>1</td><td>Un alquiler no puede existir sin la copia que se llev&oacute;, sin el cliente y sin el empleado que lo registr&oacute;.</td></tr>
-<tr><td>4</td><td>Una pel&iacute;cula puede tener varios actores, y un actor salir en varias pel&iacute;culas.</td></tr>
-<tr><td>7</td><td><b>Un alquiler <em>puede</em> estar sin devolver.</b></td></tr>
-<tr><td>&hellip;</td><td>y otras once</td></tr>
-</tbody></table>
-<div class="hintbox" style="margin-top:.5em"><p style="margin:0">Miren la <b>7</b>. Est&aacute;
-escrita <strong>en positivo</strong>: dice lo que S&Iacute; se puede hacer. Hay tres as&iacute;, y
-son las que atrapan a quien marca todo como obligatorio.</p></div></div>
-<div><h3>Y esto es lo que no tendr&aacute;n despu&eacute;s</h3>
-<div class="ctx"><p style="margin:0"><strong>La herramienta les corrige.</strong> Compara su
-modelo con el que hay dentro de <code>dvdrental</code> de verdad, y no dice
-&laquo;mal&raquo;: dice qu&eacute; hace la base real y con qu&eacute; evidencia.</p></div>
-<table class="optbl" style="margin-top:.5em;font-size:.94em"><tbody>
-<tr><td>&#9888;&#65039;</td><td>&laquo;Marcaste <code>return_date</code> obligatoria. Hay <b>183</b> alquileres sin devolver que su base rechazar&iacute;a.&raquo;</td></tr>
-<tr><td>&#9888;&#65039;</td><td>&laquo;Puso <code>FILM&ndash;ACTORES</code> como N:1. Hay <b>976</b> pel&iacute;culas con m&aacute;s de un actor <b>y 200</b> actores en m&aacute;s de una.&raquo;</td></tr>
-</tbody></table>
-<p class="small" style="margin-top:.4em">Practicamos aqu&iacute; porque <code>dvdrental</code>
-<strong>tiene respuesta correcta</strong>. El Restaurante ABC no la tiene: por eso es el taller.</p>
-<div class="dlrow" style="margin-top:.4em">
-<a href="constructor-abc.html?caso=dvd&amp;sesion=7">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; &aacute;branla ahora</small></a></div></div>
-</div>
-<div class="brand"><span>El ensayo</span><span>Con red, antes de quitarla</span></div>
-</section>
-
-<section class="slide dense mid" data-title="Los veinte minutos">
-<div class="ey">El ensayo &middot; c&oacute;mo lo hacemos</div>
-<h2>Veinte minutos, y los llevo yo</h2>
-<p class="lead">No hay que terminarlo perfecto: hay que <strong>recorrerlo entero</strong>.
-Yo voy cantando el paso y el tiempo; ustedes van decidiendo <strong>en su propia
-pantalla</strong>.</p>
-<div class="g2">
-<div><h3>El recorrido, con reloj</h3>
-<table class="optbl"><tbody>
-<tr><td style="width:4.2em"><b>5 min</b></td><td><b>Paso 1</b> &middot; las <b>14 reglas</b>. Clasifico tres con ustedes y las once que quedan las hacen. <span class="small">Ojo a las tres escritas <b>en positivo</b>.</span></td></tr>
-<tr><td><b>3 min</b></td><td><b>Paso 2</b> &middot; los <b>13 sustantivos</b>: entidad, atributo o ninguno.</td></tr>
-<tr><td><b>2 min</b></td><td><b>Paso 3</b> &middot; los atributos. Solo los obligatorios, y de qu&eacute; regla salen.</td></tr>
-<tr><td><b>5 min</b></td><td><b>Paso 4</b> &middot; las <b>12 relaciones</b>. Es la parte dif&iacute;cil: aqu&iacute; vamos despacio.</td></tr>
-<tr><td><b>2 min</b></td><td><b>Pasos 5 y 6</b> &middot; su diagrama, su base y las pruebas contra ella.</td></tr>
-<tr><td><b>3 min</b></td><td><b>Paso 7</b> &middot; la correcci&oacute;n contra <code>dvdrental</code> de verdad.</td></tr>
+<tr><td><b>1 · Evidencia</b></td><td>¿Qué frase o regla del negocio me obliga a decidir?</td></tr>
+<tr><td><b>2 · Opciones</b></td><td>¿Qué diseños razonables existen?</td></tr>
+<tr><td><b>3 · Elección</b></td><td>¿Cuál elijo con lo que sé hoy?</td></tr>
+<tr><td><b>4 · Precio</b></td><td>¿Qué gano y qué vuelvo más difícil?</td></tr>
+<tr><td><b>5 · Prueba</b></td><td>¿Qué dato o cambio demostraría que mi decisión funciona —o que debo cambiarla?</td></tr>
 </tbody></table></div>
-<div><h3>La regla del ensayo</h3>
-<div class="hintbox"><p style="margin:0;font-size:1.04em">Antes de cada decisi&oacute;n
-dif&iacute;cil: <strong>treinta segundos en silencio</strong>, cada quien en su pantalla.
-Despu&eacute;s la decimos en voz alta.</p></div>
-<p style="margin-top:.45em">As&iacute;: <em>&iquest;PEL&Iacute;CULA&ndash;ACTOR es N:1 o N:N?</em>
-Treinta segundos. Sin hablar. Y entonces me lo dicen.</p>
-<p class="small">Si el que va r&aacute;pido decide por todos, esto no sirve de nada &mdash; y
-esta tarde, en las salas, pasa lo mismo.</p>
-<div class="ctx" style="margin-top:.45em"><p style="margin:0"><strong>Si se quedan
-atr&aacute;s, no paren.</strong> Salten con las pesta&ntilde;as de arriba al paso donde
-vamos: la herramienta no bloquea la navegaci&oacute;n. El recorrido entero queda publicado
-para terminarlo despu&eacute;s con calma.</p></div></div>
+<div><h3>La diferencia importante</h3>
+<div class="ctx"><p style="margin:0"><strong>Una regla no dibuja automáticamente una tabla.</strong> La regla aporta evidencia. El modelo es una decisión que hacemos para representar esa evidencia.</p></div>
+<p>Por eso dos equipos pueden terminar con modelos distintos y ambos ser defendibles.</p>
+<div class="hintbox"><p style="margin:0"><strong>Regla del taller:</strong> si no puedes explicar evidencia, opción, elección y consecuencia, todavía no terminaste de decidir.</p></div></div>
 </div>
-<div class="brand"><span>El ensayo &middot; Con red</span><span>Recorrerlo entero, no terminarlo perfecto</span></div>
+<div class="brand"><span>El criterio</span><span>Evidencia → opciones → elección → precio → prueba</span></div>
+</section>
+
+<section class="slide dense mid" data-title="Una decisión completa">
+<div class="ey">Ejemplo trabajado · 10 minutos</div>
+<h2>Regla 4: un pedido no puede estar en más de una mesa</h2>
+<p class="lead">No saltemos de la frase a una FK. Hagamos visible todo el razonamiento.</p>
+<div class="g2">
+<div><h3>1 · Evidencia y opciones</h3>
+<div class="ctx"><p style="margin:0"><strong>Evidencia:</strong> “Un pedido no puede asignarse a más de una mesa”. Con lo que sabemos hoy, cada pedido tiene como máximo una mesa.</p></div>
+<table class="optbl"><tbody>
+<tr><td><b>Opción A</b></td><td><code>pedido.mesa_id</code></td><td>simple; la cardinalidad queda N:1</td></tr>
+<tr><td><b>Opción B</b></td><td><code>pedido_mesa</code></td><td>más flexible; permitiría varias mesas</td></tr>
+</tbody></table>
+</div>
+<div><h3>2 · Elección, precio y prueba</h3>
+<p><strong>Elegimos A hoy</strong>, porque es la estructura mínima que representa la regla confirmada.</p>
+<ul class="checks">
+<li><strong>Ganamos:</strong> simplicidad y una regla estructural fácil de entender.</li>
+<li><strong>Pagamos:</strong> si mañana el negocio junta mesas, este diseño tendrá que cambiar.</li>
+<li><strong>Prueba:</strong> intentar asociar un segundo <code>mesa_id</code> al mismo pedido no debería ser posible sin alterar el esquema.</li>
+</ul>
+<div class="warn"><p style="margin:0"><strong>No elegimos A porque sea “más correcta”.</strong> La elegimos porque corresponde a la evidencia disponible <em>hoy</em>. Más adelante una llamada de la dueña pondrá esta decisión a prueba.</p></div></div>
+</div>
+<div class="brand"><span>Ejemplo 1</span><span>La decisión vale mientras valga su evidencia</span></div>
+</section>
+
+<section class="slide dense mid" data-title="Dos decisiones más">
+<div class="ey">Ejemplos trabajados · 10 minutos</div>
+<h2>Dos reglas parecidas pueden exigir decisiones distintas</h2>
+<div class="g2">
+<div><h3>Regla 1 · Reserva completa</h3>
+<p class="small"><b>Evidencia:</b> una reserva no puede confirmarse sin fecha, hora, personas y cliente.</p>
+<p><strong>Decisión:</strong> esos datos pertenecen a <code>reserva</code>; los que siempre son necesarios para existir/confirmarse se modelan como obligatorios según el estado que representemos.</p>
+<ul class="checks">
+<li><b>Opción descartada:</b> guardar cliente como texto dentro de la reserva.</li>
+<li><b>Por qué:</b> necesitamos una identidad reutilizable del cliente, no repetir su nombre.</li>
+<li><b>Precio:</b> aparece una relación y una FK, pero ganamos consistencia.</li>
+</ul></div>
+<div><h3>Regla 2 · No solapar reservas</h3>
+<p class="small"><b>Evidencia:</b> una mesa no puede tener dos reservas que se solapen en el tiempo.</p>
+<p><strong>Decisión:</strong> el modelo debe guardar mesa, inicio y duración/fin de forma que el solape pueda evaluarse, pero <strong>no inventamos un <code>UNIQUE</code></strong> que no expresa intervalos.</p>
+<ul class="checks">
+<li><b>Representar</b> la regla sí es tarea del modelo.</li>
+<li><b>Garantizar</b> el solape puede requerir lógica adicional.</li>
+<li><b>Prueba:</b> dos reservas parcialmente superpuestas deben ser detectables.</li>
+</ul></div>
+</div>
+<div class="hintbox"><p style="margin:0"><strong>El caso <code>dvdrental</code> queda publicado como práctica opcional.</strong> Ya conocen PK, FK, N:N y tablas puente de sesiones anteriores; hoy el tiempo se usa en justificar decisiones sobre ABC.</p></div>
+<div class="brand"><span>Ejemplos 2 y 3</span><span>Representar no siempre significa garantizar</span></div>
 </section>
 
 <section class="slide yellow dense mid" data-title="El encargo">
 <div class="ey">Taller · 39 minutos en salas</div>
-<h2>El encargo</h2>
-<p class="lead">Convertir las diez reglas del Restaurante ABC en un modelo
-<strong>que se pueda defender</strong>. En equipo, y con una condición que lo
-cambia todo: <strong>cada decisión cita la regla que la justifica</strong>.</p>
-<div class="ctx" style="margin:.2em 0 .45em"><p style="margin:0">Misma página, otra puerta:
-arriba, <strong>Restaurante ABC</strong>. Y aquí <strong>quitamos la red</strong>: la
-herramienta sigue comprobando qué hace su base, pero <strong>ya no tiene una base correcta
-contra la cual compararlos</strong>. A partir de ahora no se trata de acertar &mdash; se trata
-de <strong>poder justificar</strong>.</p></div>
+<h2>El encargo: un modelo que se pueda defender</h2>
+<p class="lead">Conviertan las diez reglas del Restaurante ABC en un modelo. Pero cada decisión importante debe venir acompañada de <strong>su razonamiento</strong>, no solo de una caja y una línea.</p>
 <div class="g2">
-<div><h3>Qué tiene que tener</h3>
+<div><h3>Producto mínimo</h3>
 <ul class="checks">
-<li><strong>Seis entidades</strong> como mínimo, cada una justificada.</li>
-<li><strong>Todas</strong> las relaciones con su cardinalidad, dicha en palabras.</li>
-<li><strong>Tres decisiones</strong> que no eran obvias, explicadas.</li>
-<li><strong>Una duda de negocio</strong> que quede explícita, sin resolver.</li>
+<li><strong>Seis entidades como mínimo</strong>, pero seis no es una meta: una tabla inventada para completar el número se elimina.</li>
+<li>Todas las relaciones con <strong>cardinalidad explicada en palabras</strong>.</li>
+<li><strong>Tres decisiones difíciles</strong> documentadas.</li>
+<li><strong>Una pregunta al negocio</strong> que quede abierta.</li>
+<li>Al volver, pegan en el chat el <strong>código del modelo</strong>.</li>
 </ul>
-<div class="hintbox"><p style="margin:0">Si no puedes citar la regla, la decisión
-es tuya y no del negocio. <strong>No es un error</strong> — pero hay que saber
-cuántas de esas llevas.</p></div></div>
-<div><h3>Cómo trabajamos</h3>
-<ul class="checks">
-<li><strong>Siete salas</strong>, con nombre: Cocina, Salón, Caja, Reservas,
-    Domicilios, Bodega y Barra. El nombre no es su tema: <strong>todos
-    modelan el restaurante entero</strong>.</li>
-<li>En el primer minuto, <strong>alguien comparte pantalla</strong> y escribe.
-    Los demás discuten &mdash; pero <strong>antes de cada decisión difícil, treinta
-    segundos en silencio</strong>, como en el ensayo. Nadie decide por la sala.</li>
-<li>Paso por las salas. No voy a resolver: voy a preguntar
-    <em>«¿qué regla justifica eso?»</em>.</li>
-<li>Al volver, <strong>cada sala pega su código de modelo en el chat</strong>.
-    No hay que subir ningún archivo.</li>
-</ul></div>
+<div class="hintbox"><p style="margin:0">Si tienen cinco entidades muy bien justificadas y una sexta que nadie puede defender, <strong>la sexta sobra</strong>. El mínimo sirve para obligarnos a explorar, no para premiar cantidad.</p></div></div>
+<div><h3>Para cada decisión difícil escriban esto</h3>
+<table class="optbl"><tbody>
+<tr><td><b>Evidencia</b></td><td>regla/frase que la provoca</td></tr>
+<tr><td><b>Opciones</b></td><td>dos diseños posibles</td></tr>
+<tr><td><b>Elegimos</b></td><td>una, y por qué</td></tr>
+<tr><td><b>Precio</b></td><td>qué facilita y qué dificulta</td></tr>
+<tr><td><b>Falta saber</b></td><td>qué pregunta podría cambiarla</td></tr>
+</tbody></table>
+<p class="small" style="margin-top:.5em">En el primer minuto alguien comparte pantalla. Antes de una decisión difícil: <strong>30 segundos de decisión individual</strong>; después discuten. Así el más rápido no decide por toda la sala.</p></div>
 </div>
-<div class="brand"><span>Taller · Del relato al modelo</span><span>Sin regla no hay relación</span></div>
+<div class="brand"><span>Taller · Del relato al modelo</span><span>No entregan tablas: entregan decisiones justificadas</span></div>
 </section>
 
 <section class="slide yellow mid" data-title="Pausa" data-break="15">
@@ -1109,185 +1030,112 @@ de la sesión. Anoten cuántas les salen: lo comparamos ahora.</p></div>
 <div class="brand"><span>Taller · Comprobar</span><span>Que ejecute no es que esté bien</span></div>
 </section>
 
-<section class="slide dense mid" data-title="Tres decisiones">
+<section class="slide tiny mid" data-title="Tres decisiones">
 <div class="ey">Debrief · 22 minutos</div>
-<h2>Las tres que casi nadie resuelve igual</h2>
-<p class="lead">No hay respuesta correcta en ninguna de las tres. Hay
-<strong>decisiones defendibles</strong>, y eso es distinto. Una sala defiende cada
-una.</p>
+<h2>Tres decisiones: qué evidencia las sostiene y qué cuestan</h2>
+<p class="lead">No las comparemos por “correcta/incorrecta”. Comparemos <strong>qué explica mejor cada opción y qué obliga a pagar después</strong>.</p>
 <div class="g3">
-<div class="card"><h3>Turno</h3>
-<p>¿Entidad, o una palabra dentro de la reserva?</p>
-<p class="small"><strong>A favor de entidad:</strong> si mañana el turno tiene
-hora de inicio, aforo o precio distinto, ya está en su sitio.
-<strong>En contra:</strong> hoy son dos palabras y una tabla de dos filas.</p></div>
-<div class="card"><h3>Línea de pedido</h3>
-<p>¿Hace falta algo entre el pedido y el plato?</p>
-<p class="small">La regla 5 dice «al menos un plato» y la dueña dijo «se puede
-añadir después». <strong>En cuanto guardas cantidad o precio, el puente ha
-dejado de ser un puente y es una entidad.</strong></p></div>
-<div class="card"><h3>Mesero</h3>
-<p>¿Entidad, o solo un nombre escrito en el pedido?</p>
-<p class="small">La regla 10 dice «el mesero <em>asignado</em>». Si es un texto,
-no hay a quién asignar nada — y no se puede comprobar quién tocó qué.</p></div>
+<div class="card"><h3>1 · Turno</h3>
+<p><b>Evidencia:</b> aparece como concepto operativo, pero ninguna regla exige hoy atributos propios.</p>
+<p class="small"><b>Opciones:</b> texto/atributo o entidad <code>turno</code>.<br><b>Referencia:</b> entidad si esperamos horario, aforo o configuración propia.<br><b>Precio:</b> una tabla más hoy a cambio de no rediseñar cuando el turno tenga datos propios.<br><b>Pregunta:</b> “¿los turnos tienen horario/configuración que cambia?”</p></div>
+<div class="card"><h3>2 · Línea de pedido</h3>
+<p><b>Evidencia:</b> un pedido contiene platos y necesitamos cantidad; además el precio cobrado puede ser histórico.</p>
+<p class="small"><b>Opciones:</b> N:N directa o entidad asociativa.<br><b>Referencia:</b> <code>linea_pedido</code> porque la relación tiene hechos propios: cantidad/precio.<br><b>Precio:</b> más filas y joins, pero conserva exactamente qué se vendió.<br><b>Prueba:</b> dos pedidos pueden contener el mismo plato con cantidades/precios distintos.</p></div>
+<div class="card"><h3>3 · Mesero</h3>
+<p><b>Evidencia:</b> regla 10 habla del <em>mesero asignado</em> y de quién puede modificar.</p>
+<p class="small"><b>Opciones:</b> guardar nombre como texto o crear <code>mesero</code>.<br><b>Referencia:</b> entidad, porque necesitamos identidad para asignar y eventualmente autorizar.<br><b>Precio:</b> relación adicional, pero deja de depender de un nombre escrito a mano.<br><b>Pregunta:</b> “¿un mesero puede cambiar de nombre/estado/turno?”</p></div>
 </div>
-<div class="brand"><span>Debrief · Defender</span><span>Defendible no es lo mismo que correcto</span></div>
+<div class="warn" style="margin-top:.6em"><p style="margin:0"><strong>Antes de mostrar mi referencia:</strong> cada sala elige una de estas tres y dice en 30 segundos evidencia → elección → precio. Si solo dicen “porque sí”, todavía falta la decisión.</p></div>
+<div class="brand"><span>Debrief · Defender</span><span>Una buena decisión explica también su costo</span></div>
 </section>
 
 <section class="slide dense mid" data-title="Modelo de referencia">
-<div class="ey">Debrief · el modelo de referencia</div>
-<h2>Once tablas, y dos que nadie pidió</h2>
-<p class="lead">Como las diez reglas del viernes: <strong>no es la respuesta, es
-una referencia</strong>. Busquen dos cosas — algo que se les escapó, y algo suyo
-mejor justificado que el mío.</p>
+<div class="ey">Debrief · una solución defendible</div>
+<h2>Esta es una solución posible, no la respuesta</h2>
+<p class="lead">No comparen cuántas tablas tienen. Comparen <strong>qué decisión está mejor justificada</strong>. Mi modelo también contiene decisiones discutibles.</p>
 <div class="g2">
-<div><h3>Las que salen de las reglas</h3>
+<div><h3>Lo que la evidencia empuja con fuerza</h3>
 <table class="optbl"><tbody>
-<tr><td>mesa</td><td>reglas 2, 3, 4</td></tr>
-<tr><td>cliente</td><td>regla 1</td></tr>
-<tr><td>mesero</td><td>regla 10</td></tr>
-<tr><td>reserva</td><td>reglas 1, 2, 3</td></tr>
-<tr><td>pedido</td><td>reglas 4, 5, 8, 10</td></tr>
-<tr><td>plato</td><td>reglas 5, 6, 7</td></tr>
-<tr><td>ingrediente</td><td>reglas 6, 7</td></tr>
-<tr><td>pago</td><td>reglas 8, 9</td></tr>
-<tr><td>turno</td><td><em>sin regla — decisión de diseño</em></td></tr>
+<tr><td><code>mesa</code></td><td>capacidad + asignación</td></tr>
+<tr><td><code>cliente</code></td><td>identidad reutilizable</td></tr>
+<tr><td><code>mesero</code></td><td>asignación/autoría</td></tr>
+<tr><td><code>reserva</code></td><td>evento con fecha/hora/personas</td></tr>
+<tr><td><code>pedido</code></td><td>transacción operativa</td></tr>
+<tr><td><code>plato</code>, <code>ingrediente</code>, <code>pago</code></td><td>hechos que las reglas necesitan distinguir</td></tr>
 </tbody></table></div>
-<div><h3>Y las dos que nadie pidió</h3>
-<div class="ctx"><p style="margin:0"><code>linea_pedido</code> y
-<code>receta</code>. <strong>No salen de ninguna frase de la dueña</strong>: salen
-de que la relación es «varios de varios», y entonces no hay otra forma.</p></div>
-<p style="margin-top:.6em">Es <code>film_category</code> de la sesión 5, otra vez.
-Aquella tampoco la eligió nadie: la exigía que una película tuviera varias
-categorías y una categoría varias películas.</p>
-<div class="hintbox"><p style="margin:0"><strong>La diferencia entre las dos:</strong>
-<code>receta</code> es un puente pelado. <code>linea_pedido</code> guarda cantidad
-y precio — <strong>y en cuanto un puente guarda algo suyo, es una entidad</strong>.</p></div>
+<div><h3>Lo que exige una decisión</h3>
+<ul class="checks">
+<li><code>turno</code>: podría empezar como atributo; lo separo solo si tiene identidad/datos propios.</li>
+<li><code>receta</code>: aparece porque plato–ingrediente es N:N; puede además guardar cantidad/unidad.</li>
+<li><code>linea_pedido</code>: no es “una tabla puente porque sí”; existe porque la relación pedido–plato tiene datos propios.</li>
+</ul>
+<div class="ctx"><p style="margin:0"><strong>Comparación obligatoria:</strong> encuentren <b>una cosa que a su modelo le faltó</b> y <b>una decisión de su modelo que prefieran al mío</b>. La segunda es tan importante como la primera.</p></div>
+<p class="small">El número de tablas no es una nota. Un modelo con menos tablas puede ser mejor si representa el mismo negocio con menos supuestos.</p></div>
 </div>
-</div>
-<div class="brand"><span>Debrief · Referencia</span><span>Hay tablas que exige la forma, no el negocio</span></div>
+<div class="brand"><span>Debrief · Referencia</span><span>Comparar razones, no contar tablas</span></div>
 </section>
 
-<section class="slide tiny mid" data-title="Dos de diez">
-<div class="ey">Debrief &middot; el hallazgo</div>
-<h2>Solo dos de sus diez caben en una restricci&oacute;n declarativa</h2>
-<p class="lead">Sus diez reglas enteras, en el orden del viernes. Y &laquo;declarativa&raquo;
-quiere decir <strong>lo que el motor sabe defender solo</strong>, y que son cinco cosas con
-nombre: clave primaria, clave for&aacute;nea, obligatorio, &uacute;nico y comprobaci&oacute;n.
-<strong>Nada m&aacute;s.</strong> Escribirlas es del viernes; hoy basta con saber que existen
-y cu&aacute;les son.</p>
-<div class="tabla-envuelta"><table class="optbl">
-<thead><tr><th style="width:1.8em">#</th><th style="width:34%">Su regla, tal como qued&oacute;</th><th>Lo que casi todo el mundo intenta escribir</th><th>Lo que de verdad pasa</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>Una reserva no puede confirmarse sin fecha, hora, personas y cliente.</td><td><code>NOT NULL</code> en cuatro columnas</td><td><b>&#9989; la cumple entera</b></td></tr>
-<tr><td>2</td><td>Una mesa no puede tener dos reservas que se <b>solapen</b>.</td><td><code>UNIQUE (mesa, fecha)</code></td><td>&#10060; <code>UNIQUE</code> no expresa un <b>solape</b></td></tr>
-<tr><td>3</td><td>Una reserva no puede aceptar m&aacute;s personas de las que caben en la mesa.</td><td><code>CHECK (personas &lt;= puestos)</code></td><td>&#10060; <code>puestos</code> est&aacute; en <b>otra tabla</b></td></tr>
-<tr><td>4</td><td>Un pedido no puede asignarse a <b>m&aacute;s de una</b> mesa.</td><td>una clave for&aacute;nea a <code>mesa</code></td><td><b>&#9989; la cardinalidad ES la regla</b></td></tr>
-<tr><td>5</td><td>Un pedido no puede enviarse a cocina sin <b>al menos un</b> plato.</td><td>nada obvio</td><td>&#10060; &laquo;al menos uno&raquo; no se escribe en DDL</td></tr>
-<tr><td>6</td><td>Un plato no puede pedirse si alguno de sus ingredientes est&aacute; agotado.</td><td>&mdash;</td><td>&#128172; es hip&oacute;tesis: no se implementa</td></tr>
-<tr><td>7</td><td>Un ingrediente vencido no puede usarse en ning&uacute;n plato.</td><td><code>CHECK (vencimiento &gt; hoy)</code></td><td>&#10060; depende del <b>momento de uso</b></td></tr>
-<tr><td>8</td><td>Un pedido no puede cerrarse sin pago.</td><td>nada obvio</td><td>&#10060; es una transici&oacute;n de estado</td></tr>
-<tr><td>9</td><td>Un pago puede repartirse, pero la suma debe igualar el total.</td><td><code>CHECK (SUM(...) = total)</code></td><td>&#10060; un <code>CHECK</code> no lleva subconsulta</td></tr>
-<tr><td>10</td><td>Un pedido solo puede modificarlo el <b>mesero asignado</b> a esa mesa.</td><td>&mdash;</td><td>&#10060; es permiso de <b>qui&eacute;n</b>, no forma del dato</td></tr>
+<section class="slide dense mid" data-title="Dos de diez">
+<div class="ey">Debrief · el hallazgo</div>
+<h2>¿Por qué solo algunas reglas caben directamente en el esquema?</h2>
+<p class="lead">No memoricen “2 de 10”. Entiendan <strong>qué hace difícil a las otras</strong>.</p>
+<div class="g2">
+<div><h3>El esquema sí puede garantizar directamente</h3>
+<table class="optbl"><tbody>
+<tr><td><b>Regla 1</b></td><td>datos obligatorios de la reserva</td><td><code>NOT NULL</code> / FK según el estado modelado</td></tr>
+<tr><td><b>Regla 4</b></td><td>un pedido → una mesa, con la evidencia original</td><td>la cardinalidad/FK puede representarla</td></tr>
+</tbody></table>
+<div class="hintbox"><p style="margin:0">Estas reglas dependen de <strong>una fila o una relación estructural directa</strong>. El motor puede rechazarlas sin mirar una historia completa.</p></div></div>
+<div><h3>Las demás fallan por razones distintas</h3>
+<table class="optbl"><tbody>
+<tr><td><b>2</b></td><td>solape</td><td>compara intervalos entre filas</td></tr>
+<tr><td><b>3</b></td><td>aforo</td><td>compara datos de otra entidad</td></tr>
+<tr><td><b>5, 8</b></td><td>estado/proceso</td><td>“al menos uno” o “cerrar solo si...”</td></tr>
+<tr><td><b>7</b></td><td>tiempo</td><td>depende del momento de uso</td></tr>
+<tr><td><b>9</b></td><td>suma de pagos</td><td>agrega varias filas</td></tr>
+<tr><td><b>10</b></td><td>permiso</td><td>depende de quién ejecuta</td></tr>
+<tr><td><b>6</b></td><td>hipótesis</td><td>primero hay que confirmarla</td></tr>
 </tbody></table></div>
-<div style="width:100%;flex:0 0 auto"><svg style="width:100%;height:auto;display:block;margin:.3em 0 0" viewBox="0 0 1200 74" role="img" aria-label="Dos de las diez reglas caben en el esquema y ocho quedan fuera">
-<rect x="2" y="4" width="392" height="66" rx="10" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/>
-<text x="46" y="34" text-anchor="middle" font-size="26" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">2</text>
-<text x="46" y="52" text-anchor="middle" font-size="9.5" font-weight="700" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">de diez</text>
-<text x="240" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">RESTRICCI&Oacute;N DECLARATIVA</text>
-<rect x="106" y="32" width="120" height="22" rx="7" fill="#fff" stroke="#146c43" stroke-width="1.4"/>
-<text x="166" y="47" text-anchor="middle" font-size="10.5" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">regla 1</text>
-<rect x="238" y="32" width="120" height="22" rx="7" fill="#fff" stroke="#146c43" stroke-width="1.4"/>
-<text x="298" y="47" text-anchor="middle" font-size="10.5" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">regla 4</text>
-<text x="240" y="66" text-anchor="middle" font-size="9" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">NOT NULL y clave for&aacute;nea &middot; el motor las defiende solo</text>
-<rect x="410" y="4" width="788" height="66" rx="10" fill="#fff3e7" stroke="#ff8a24" stroke-width="2" stroke-dasharray="7 4"/>
-<text x="456" y="34" text-anchor="middle" font-size="26" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">8</text>
-<text x="456" y="52" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">de diez</text>
-<text x="820" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">NECESITAN OTRO MECANISMO &middot; Y VARIAS, M&Aacute;S DE UNA CAPA</text>
-<g font-family="Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="800" fill="#c96a00" text-anchor="middle">
-<rect x="524" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="556" y="47">2</text>
-<rect x="596" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="628" y="47">3</text>
-<rect x="668" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="700" y="47">5</text>
-<rect x="740" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="772" y="47">6</text>
-<rect x="812" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="844" y="47">7</text>
-<rect x="884" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="916" y="47">8</text>
-<rect x="956" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="988" y="47">9</text>
-<rect x="1028" y="32" width="64" height="22" rx="7" fill="#fff" stroke="#f0c99a" stroke-width="1.3"/><text x="1060" y="47">10</text></g>
-<text x="820" y="66" text-anchor="middle" font-size="9" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">disparador, transacci&oacute;n, backend, interfaz&hellip; y si no est&aacute; en ninguna capa, la base se corrompe sin un solo error</text>
-</svg></div>
-<div class="brand"><span>Debrief &middot; El hallazgo</span><span>Lo declarativo es un cepo estrecho</span></div>
+</div>
+<div class="brand"><span>Debrief · El hallazgo</span><span>La dificultad de la regla indica la capa que necesita</span></div>
 </section>
 
 <section class="slide dense mid" data-title="Donde va cada regla">
-<div class="ey">Debrief &middot; la escalera</div>
-<h2>Y entonces &iquest;d&oacute;nde va cada regla?</h2>
-<p class="lead">Se baja la escalera y se para en <strong>el primer escal&oacute;n que la
-garantice</strong>. Ninguna capa sustituye a la de abajo &mdash; y muchas reglas viven en
-varias a la vez.</p>
-<div style="width:100%;flex:0 0 auto"><svg style="width:100%;height:auto;display:block;margin:.3em 0 .2em" viewBox="0 0 1200 300" role="img" aria-label="La escalera de cuatro escalones: el esquema, el disparador o la transaccion, el backend y la interfaz, con las reglas que paran en cada uno">
-<g font-family="Segoe UI,Arial,sans-serif" text-anchor="middle">
-<rect x="8" y="8" width="286" height="74" rx="10" fill="#e9f8ef" stroke="#146c43" stroke-width="2.2"/>
-<text x="151" y="30" font-size="12" font-weight="800" fill="#146c43" letter-spacing=".05em">1 &middot; EL ESQUEMA</text>
-<text x="151" y="47" font-size="10.5" fill="#5a5a5a">PK &middot; FK &middot; NOT NULL &middot; UNIQUE &middot; CHECK</text>
-<rect x="96" y="54" width="48" height="21" rx="7" fill="#fff" stroke="#146c43" stroke-width="1.4"/><text x="120" y="69" font-size="11" font-weight="800" fill="#146c43">1</text>
-<rect x="152" y="54" width="48" height="21" rx="7" fill="#fff" stroke="#146c43" stroke-width="1.4"/><text x="176" y="69" font-size="11" font-weight="800" fill="#146c43">4</text>
-
-<rect x="306" y="80" width="286" height="74" rx="10" fill="#e9f4ff" stroke="#124e78" stroke-width="2.2"/>
-<text x="449" y="102" font-size="12" font-weight="800" fill="#124e78" letter-spacing=".05em">2 &middot; DISPARADOR O TRANSACCI&Oacute;N</text>
-<text x="449" y="119" font-size="10.5" fill="#5a5a5a">esto sigue estando <tspan font-weight="800">dentro</tspan> de la base</text>
-<g font-size="11" font-weight="800" fill="#124e78">
-<rect x="326" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="345" y="141">2</text>
-<rect x="370" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="389" y="141">3</text>
-<rect x="414" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="433" y="141">5</text>
-<rect x="458" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="477" y="141">7</text>
-<rect x="502" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="521" y="141">8</text>
-<rect x="546" y="126" width="38" height="21" rx="7" fill="#fff" stroke="#124e78" stroke-width="1.3"/><text x="565" y="141">9</text></g>
-
-<rect x="604" y="152" width="286" height="74" rx="10" fill="#fff3e7" stroke="#ff8a24" stroke-width="2.2"/>
-<text x="747" y="174" font-size="12" font-weight="800" fill="#c96a00" letter-spacing=".05em">3 &middot; EL BACKEND</text>
-<text x="747" y="191" font-size="10.5" fill="#5a5a5a">ya fuera de la base: la aplicaci&oacute;n</text>
-<rect x="723" y="198" width="48" height="21" rx="7" fill="#fff" stroke="#ff8a24" stroke-width="1.4"/><text x="747" y="213" font-size="11" font-weight="800" fill="#c96a00">10</text>
-
-<rect x="902" y="224" width="290" height="68" rx="10" fill="#f5f3ee" stroke="#a9b4bf" stroke-width="2.2" stroke-dasharray="8 5"/>
-<text x="1047" y="248" font-size="12" font-weight="800" fill="#5a5a5a" letter-spacing=".05em">4 &middot; LA INTERFAZ</text>
-<text x="1047" y="266" font-size="10.5" fill="#5a5a5a">no garantiza nada:</text>
-<text x="1047" y="281" font-size="10.5" fill="#5a5a5a">solo evita que el error se intente</text>
-
-<g stroke="#a9b4bf" stroke-width="2.4" fill="none" stroke-linecap="round">
-<path d="M300 60 h6 v20"/><path d="M598 132 h6 v20"/><path d="M896 204 h6 v20"/></g>
-
-<rect x="628" y="8" width="564" height="60" rx="10" fill="#fff" stroke="#dfe6ec" stroke-width="1.8"/>
-<text x="910" y="30" font-size="11.5" font-weight="800" fill="#171717">La regla 6 no entra en la escalera.</text>
-<text x="910" y="50" font-size="10.5" fill="#5a5a5a">Es hip&oacute;tesis: primero se confirma con la due&ntilde;a, y solo despu&eacute;s se decide el escal&oacute;n.</text>
-</g>
-</svg></div>
-<div class="hintbox" style="margin-top:.2em"><p style="margin:0"><b>Hoy no tienen que saber
-construir</b> un disparador ni una transacci&oacute;n: basta con <strong>reconocer que
-existen</strong> reglas que no caben en las cinco.</p></div>
-<div class="brand"><span>Debrief &middot; La escalera</span><span>El primer escal&oacute;n que la garantice</span></div>
+<div class="ey">Debrief · mapa, no contenido nuevo</div>
+<h2>Una regla baja hasta la primera capa que realmente pueda garantizarla</h2>
+<p class="lead">No tienen que aprender triggers ni backend hoy. Solo reconocer <strong>por qué el esquema a veces alcanza y a veces no</strong>.</p>
+<div class="steps">
+<article><b>0</b><h3>¿Es cierta?</h3><p>Si sigue siendo hipótesis, no implementamos nada todavía.</p></article>
+<article><b>1</b><h3>¿Cabe en estructura?</h3><p>PK, FK, <code>NOT NULL</code>, <code>UNIQUE</code>, <code>CHECK</code>.</p></article>
+<article><b>2</b><h3>¿Necesita contexto?</h3><p>Varias filas, tiempo, suma o transición: hará falta lógica de base/transacción.</p></article>
+<article><b>3</b><h3>¿Depende de quién?</h3><p>Permisos y flujo de usuario suelen necesitar aplicación/backend.</p></article>
+</div>
+<div class="g2" style="margin-top:.7em">
+<div class="ctx"><p style="margin:0"><strong>La interfaz no garantiza la regla.</strong> Puede evitar que alguien intente el error, pero otro cliente o proceso podría saltársela.</p></div>
+<div class="hintbox"><p style="margin:0"><strong>Decisión práctica:</strong> empiecen siempre por la capa más baja que tenga información suficiente para garantizar la regla. Si no alcanza, suben.</p></div></div>
+<div class="brand"><span>Debrief · La escalera</span><span>Primero confirmar; luego buscar la capa mínima suficiente</span></div>
 </section>
 
 <section class="slide dense mid" data-title="La llamada">
-<div class="ey">7 minutos · todos a la vez</div>
-<h2>Y entonces suena el teléfono</h2>
-<div class="ctx" style="font-size:1.08em"><p style="margin:0">«Se me olvidó
-decirte una cosa. Cuando viene un grupo grande, <strong>juntamos dos mesas</strong>
-y les tomamos un solo pedido.»</p></div>
-<p class="lead" style="margin-top:.7em">Una frase. Abran el <strong>paso 7</strong>
-y miren qué le pasa a su base.</p>
-<div class="g3">
-<div class="card"><h3>El esquema</h3><p>La regla 4 deja de ser cierta. Aparece
-<code>PEDIDO_MESA</code> y desaparece <code>pedido.mesa_id</code>.</p></div>
-<div class="card"><h3>Los datos</h3><p>Los pedidos que ya hay dentro <strong>hay
-que migrarlos fila a fila</strong>. Nadie lo hace solo, y mientras dura el
-sistema no puede tomar pedidos.</p></div>
-<div class="card"><h3>Las pruebas</h3><p>Dos cambian de color. Lo que ayer
-estaba bien, hoy no.</p></div>
+<div class="ey">7 minutos · una decisión cambia cuando cambia la evidencia</div>
+<h2>“Cuando viene un grupo grande, juntamos dos mesas”</h2>
+<div class="ctx" style="font-size:1.06em"><p style="margin:0">La dueña agrega: “juntamos dos mesas y les tomamos <strong>un solo pedido</strong>”.</p></div>
+<div class="g2">
+<div><h3>Antes de tocar el modelo</h3>
+<p><strong>60 segundos:</strong> ¿qué decisión de hace un rato dejó de ser válida?</p>
+<ul class="checks">
+<li>Identifiquen la evidencia vieja.</li>
+<li>Identifiquen la evidencia nueva.</li>
+<li>Digan qué cardinalidad cambia.</li>
+<li>Propongan la estructura mínima que ahora sí representa el negocio.</li>
+</ul>
+<div class="warn"><p style="margin:0">No digan todavía “tabla puente” por memoria. Primero digan <strong>qué relación cambió</strong> y por qué.</p></div></div>
+<div data-r><h3>La decisión revisada</h3>
+<p>Antes elegimos <code>pedido.mesa_id</code> porque la regla 4 decía “máximo una mesa”. <strong>La decisión era defendible con esa evidencia.</strong></p>
+<p>La nueva frase la invalida: pedido ↔ mesa pasa a permitir varios en ambos sentidos a lo largo del tiempo. Aparece <code>pedido_mesa</code> y <code>pedido.mesa_id</code> deja de representar el negocio.</p>
+<div class="hintbox"><p style="margin:0"><strong>Lo importante:</strong> el modelo anterior no era “malo”. El negocio cambió —o descubrimos una regla que faltaba— y por eso cambian esquema, migración de datos y pruebas.</p></div></div>
 </div>
-<p style="margin-top:.7em"><strong>Una frase de la dueña movió el esquema, los
-datos y las pruebas a la vez.</strong> Por eso un modelo se escribe en lápiz — y
-por eso mañana hay una sesión entera sobre cómo transformarlo sin romperlo.</p>
-<div class="brand"><span>El cambio</span><span>El modelo se escribe en lápiz</span></div>
+<div class="brand"><span>El cambio</span><span>Una decisión vale mientras valga su evidencia</span></div>
 </section>
 
 <section class="slide mid" data-title="La pregunta cara">
