@@ -348,13 +348,13 @@ var CAT_ABC = {
     {k:'estado',   t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'"+(i%7===0?'no llegó':'confirmada')+"'";}}
   ]},
   pedido: {label:'PEDIDO', col:1, attrs:[
-    {k:'abierto_en', t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'2026-09-"+pad(1+(i%12))+" "+pad(12+(i%9))+":00'";}},
+    {k:'creado_en',  t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'2026-09-"+pad(1+(i%12))+" "+pad(12+(i%9))+":00'";}},
     {k:'estado',     t:'TEXTO',  sug:{obl:1}, regla:8,    gen:function(i){return "'"+['abierto','en cocina','cerrado'][i%3]+"'";}},
     {k:'total',      t:'DECIMAL',sug:{obl:1}, regla:9,    gen:function(i){return (20000+i*1500)%90000+5000;}}
   ]},
   plato: {label:'PLATO', col:2, attrs:[
     {k:'nombre',    t:'TEXTO',  sug:{obl:1}, regla:null, gen:function(i){return "'"+PLATOS[i%PLATOS.length]+"'";}},
-    {k:'precio',    t:'DECIMAL',sug:{obl:1}, regla:9,    gen:function(i){return 18000+(i%9)*4000;}},
+    {k:'precio_actual', t:'DECIMAL',sug:{obl:1}, regla:9,    gen:function(i){return 18000+(i%9)*4000;}},
     {k:'temporada', t:'TEXTO',  sug:{},      regla:null, gen:function(i){return "'"+(i%2?'actual':'anterior')+"'";}},
     {k:'agotado',   t:'ENTERO', sug:{},      regla:6,    gen:function(i){return i%9===0?1:0;}}
   ]},
@@ -445,30 +445,41 @@ function cargarCaso(id, conservar){
 /* Hasta donde se llega en cada sesion. El SQL de las tablas es materia de la
    sesion 9: antes de esa fecha se ve el candado, no el CREATE TABLE. */
 var SESION = 7;
+var LENTE_ABIERTA = false;
 var SESIONES = {
   7: {paso8:false, ddl:false},
   8: {paso8:true,  ddl:false},
   9: {paso8:true,  ddl:true}
 };
-function hoy(){ return SESIONES[SESION] || SESIONES[7]; }
+function hoy(){
+  var base = SESIONES[SESION] || SESIONES[7];
+  return {
+    paso8: base.paso8 && (SESION !== 8 || LENTE_ABIERTA),
+    ddl: base.ddl
+  };
+}
 
-/* El Restaurante ABC tiene ocho pasos y dvdrental siete: el 8 es `solo:'abc'`.
-   La banda no puede prometer un paso que esta puerta no tiene. */
+/* El Restaurante ABC tiene ocho pasos y dvdrental siete. En S8 la lente
+   aparece solamente cuando la presentación llega a ese momento. */
 function tieneP8(){
-  return PASOS.some(function(p){ return p.n === 8 && (!p.solo || p.solo === CASO); });
+  return hoy().paso8 && PASOS.some(function(p){
+    return p.n === 8 && (!p.solo || p.solo === CASO);
+  });
 }
 function textoHoy(){
-  var elSQL = ' El SQL de tus tablas se abre <b>el viernes</b>, en la sesi&oacute;n 9.';
+  var elDDL = ' El DDL local se abre <b>en la sesi&oacute;n 9</b>, despu&eacute;s de explicar la sintaxis.';
   if (SESION >= 9)
-    return '<b>Sesi&oacute;n 9.</b> Hoy se abre <b>el SQL de tus tablas</b>, en la ' +
-           'pesta&ntilde;a del paso 5.';
-  if (SESION === 8)
-    return tieneP8()
-      ? '<b>Sesi&oacute;n 8.</b> Hoy se abre el <b>paso 8</b>, con tu modelo de ayer.' + elSQL
-      : '<b>Sesi&oacute;n 8.</b> El paso 8 es del <b>Restaurante ABC</b>: c&aacute;mbiate de caso ' +
-        'aqu&iacute; arriba.' + elSQL;
-  return '<b>Sesi&oacute;n 7.</b> Hoy se recorren los <b>siete pasos</b>' +
-         (tieneP8() ? ', y el paso 8 se abre ma&ntilde;ana' : '') + '.' + elSQL;
+    return '<b>Sesi&oacute;n 9.</b> En el paso 5 puedes ver el <b>DDL local &middot; SQLite</b> de tu modelo. ' +
+           'Se usa para comparar dialectos; el laboratorio real de Supabase usa <b>Scripts/S9.sql</b>.';
+  if (SESION === 8) {
+    if (CASO !== 'abc')
+      return '<b>Sesi&oacute;n 8.</b> La lente trabaja sobre el <b>Restaurante ABC</b>. ' +
+             'C&aacute;mbiate de caso cuando el docente abra ese momento.' + elDDL;
+    if (hoy().paso8)
+      return '<b>Sesi&oacute;n 8.</b> <b>Ahora s&iacute;</b> se abre el paso 8: la lente de normalizaci&oacute;n sobre tu modelo.' + elDDL;
+    return '<b>Sesi&oacute;n 8.</b> Recupera tu modelo de S7. La <b>lente</b> se abrir&aacute; cuando la presentaci&oacute;n llegue a ese momento.' + elDDL;
+  }
+  return '<b>Sesi&oacute;n 7.</b> Hoy se recorren los <b>siete pasos</b>. La normalizaci&oacute;n y el DDL todav&iacute;a no se muestran.';
 }
 
 var SQL = null;      // el módulo sql.js, una vez cargado
@@ -541,7 +552,7 @@ function relsDecididas(){
 var TIPOS = {TEXTO:'TEXT', ENTERO:'INTEGER', DECIMAL:'REAL', FECHA:'TEXT', BOOLEANO:'INTEGER'};
 
 function nombreTabla(k){ return k; }
-function pk(k){ return k + '_id'; }
+function pk(k){ return k === 'linea_pedido' ? 'linea_id' : k + '_id'; }
 
 /* Las claves foráneas que van DENTRO de la tabla k.
    Devuelve {b, e, id}: b es la tabla a la que apunta, e el estado de la
@@ -1591,7 +1602,9 @@ function listo(n){
 function pintarPasos(){
   var nav = $('#pasos');
   nav.innerHTML = '';
-  PASOS.filter(function(p){ return !p.solo || p.solo === CASO; }).forEach(function(p){
+  PASOS.filter(function(p){
+    return (!p.solo || p.solo === CASO) && (p.n !== 8 || hoy().paso8);
+  }).forEach(function(p){
     var rot = (p.n === 7 && VERDAD) ? 'La correcci\u00f3n' : p.t;
     var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(rot)+'</button>');
     if (p.n === 8 && !hoy().paso8) b.title = 'Esto es de la sesión 8';
@@ -1604,6 +1617,7 @@ function pintarPasos(){
 }
 
 function pintar(){
+  if (S.paso === 8 && !hoy().paso8) S.paso = 7;
   var bd = $('#btDDL'); if (bd) bd.style.display = hoy().ddl ? '' : 'none';
   var bh = $('#hoy'); if (bh) bh.innerHTML = textoHoy();
   pintarPasos();
@@ -2006,14 +2020,18 @@ function paso5(m){
     '<h2>Tu modelo, hecho base de datos</h2>'+
     '<p class="lead">Esto es un <strong>modelo entidad-relación</strong>, y lo acabas de generar '+
     'tú a partir de unas cuantas frases. '+
-    (hoy().ddl ? 'Debajo está el SQL que le corresponde, y detrás una base '
+    (hoy().ddl ? 'Debajo está el <strong>DDL local &middot; SQLite</strong> que corresponde a tus decisiones, y detrás una base '
                : 'Y detrás hay una base ')+
     'SQLite de verdad corriendo en tu navegador con datos dentro.</p>'+
     '<div class="pest" id="pest"></div>'+
-    '<div id="cuerpoPaso5"></div></div>'));
+    '<div id="cuerpoPaso5"></div>'+
+    (CASO === 'dvd' ? '<div class="nota o" style="margin-top:.7em"><p><strong>No es la misma base SQLite de S6.</strong> '+
+      'El archivo <code>dvdrental.db</code> de S6 era una conversión en la que se perdieron claves foráneas; '+
+      'aquí la herramienta construye una SQLite nueva desde las decisiones del modelo. Por eso aquí sí pueden existir FK.</p></div>' : '')+
+    '</div>'));
 
   var pestañas = [['er','El diagrama'],
-                  ['ddl', hoy().ddl ? 'El SQL' : 'El SQL · viernes'],
+                  ['ddl', hoy().ddl ? 'DDL local · SQLite' : 'DDL · sesión 9'],
                   ['datos','Los datos']];
   var nav = $('#pest', m);
   pestañas.forEach(function(p){
@@ -2027,17 +2045,20 @@ function paso5(m){
   var c = $('#cuerpoPaso5', m);
   if (S.pest === 'ddl' && !hoy().ddl) {
     c.appendChild(el('<div class="nota o">'+
-      '<p><strong>Tu SQL ya est&aacute; escrito, y es tuyo.</strong> Lo acaba de generar la '+
-      'herramienta con las decisiones que tomaste en los pasos 1 a 4.</p>'+
-      '<p>Se abre <strong>el viernes, en la sesi&oacute;n 9</strong>, que es donde se aprende a '+
-      'escribirlo y donde vas a llevarlo a un servicio de verdad. No lo necesitas hoy para nada: '+
-      'tu base ya est&aacute; construida y el banco de pruebas corre igual.</p>'+
+      '<p><strong>El DDL local de tu modelo ya est&aacute; generado.</strong> La herramienta lo construye '+
+      'a partir de las decisiones que tomaste en los pasos 1 a 4.</p>'+
+      '<p>Se abre <strong>en la sesi&oacute;n 9</strong>, despu&eacute;s de aprender la sintaxis y comparar '+
+      'SQLite con PostgreSQL. <strong>No es el script que se pega en Supabase.</strong> El laboratorio '+
+      'real usa <code>Scripts/S9.sql</code>.</p>'+
       '<p>Mientras tanto, lo que s&iacute; es de hoy est&aacute; en las otras dos pesta&ntilde;as: '+
       '<strong>el diagrama</strong>, que es tu modelo, y <strong>los datos</strong>, que son las '+
       'filas que tu modelo acepta.</p></div>'));
   } else if (S.pest === 'ddl') {
     var ddl = generarDDL();
-    var bt = el('<button class="copiar">Copiar el SQL entero</button>');
+    c.appendChild(el('<div class="nota"><p><strong>DDL local &middot; SQLite.</strong> Úsalo para '+
+      'comparar cómo tu modelo se traduce a otro dialecto. <strong>No lo pegues en Supabase</strong>: '+
+      'allí usamos el script PostgreSQL de la sesión 9.</p></div>'));
+    var bt = el('<button class="copiar">Copiar DDL SQLite</button>');
     bt.onclick = function(){ copiar(ddl, bt); };
     c.appendChild(bt);
     c.appendChild(el('<pre>'+pintaSQL(ddl)+'</pre>'));
@@ -2204,7 +2225,7 @@ function paso7(m){
     '<div id="llamadas"></div></div>'));
 
   var L = $('#llamadas', m);
-  LLAMADAS.forEach(function(ll){
+  [LLAMADAS[0]].forEach(function(ll){
     var card = el('<div class="ecard"><h3>'+esc(ll.quien)+'</h3><div class="cuerpo">'+
       '<p style="font-size:1.05rem;margin:.2em 0 .5em">'+esc(ll.dice)+'</p>'+
       '<p class="lead" style="margin:.2em 0 .7em">'+esc(ll.cambia)+'</p>'+
@@ -2479,14 +2500,15 @@ function redundancias(){
     });
   }
 
-  if (hayLineas && tieneEnt('plato') && pl.precio) {
+  if (hayLineas && tieneEnt('plato') && pl.precio_actual) {
     h.push({
       k:'precio', clase:'dejar',
-      q:'<code>linea_pedido.precio_unitario</code> duplica <code>plato.precio</code>… ' +
-        'y <b>debe duplicarlo</b>',
-      d:'Tiene exactamente la misma forma que el anterior: un dato guardado dos veces. Pero ' +
-        '<b>no se puede recalcular</b>: si mañana sube el ajiaco, el precio de ayer ya no ' +
-        'existe en ninguna parte. La cuenta de la semana pasada no puede cambiar sola.'
+      q:'<code>linea_pedido.precio_unitario</code> se parece a <code>plato.precio_actual</code>, ' +
+        'pero <b>representa otro hecho</b>',
+      d:'Puede tener hoy el mismo valor que el precio vigente, pero <b>no significa lo mismo</b>. ' +
+        'Si mañana sube el ajiaco, <code>plato.precio_actual</code> cambia; ' +
+        '<code>linea_pedido.precio_unitario</code> conserva lo cobrado en aquel pedido. ' +
+        'Si el negocio necesita historia, quitarlo perdería significado.'
     });
   }
   return h;
@@ -2599,8 +2621,9 @@ function paso8(m){
     a.appendChild(el('<div class="nota g" style="margin-top:.6em"><p><strong>Y no se pierde ' +
       'nada.</strong> El total sigue existiendo — solo que se calcula en vez de guardarse:</p>' +
       '<pre>SELECT p.pedido_id, SUM(l.cantidad * l.precio_unitario) AS total\nFROM   pedido p\nJOIN   linea_pedido l ON l.pedido_id = p.pedido_id\nGROUP  BY p.pedido_id;</pre>' +
-      '<p>Un dato que se puede reconstruir <b>no se pierde al quitarlo</b>. Ese es el criterio ' +
-      'entero de la normalización, dicho sin jerga.</p></div>'));
+      '<p>Si un dato puede reconstruirse exactamente, quitar esa copia puede evitar inconsistencias. '+
+      '<strong>Es una prueba útil de normalización, no la única:</strong> todavía hay que preguntar '+
+      'de qué depende el dato y qué significado perderíamos al quitarlo.</p></div>'));
   };
   a.appendChild(bt);
 }
@@ -2708,6 +2731,15 @@ function importar(codigo){
       throw new Error('el c\u00f3digo se lee, pero no tiene la forma de un modelo. ' +
         'C\u00f3pialo otra vez entero desde el cuadro de quien te lo pas\u00f3.');
     }
+    /* Compatibilidad con códigos creados antes de unificar nombres S7-S9. */
+    if (min.e && min.e.pedido && min.e.pedido.abierto_en && !min.e.pedido.creado_en) {
+      min.e.pedido.creado_en = min.e.pedido.abierto_en;
+      delete min.e.pedido.abierto_en;
+    }
+    if (min.e && min.e.plato && min.e.plato.precio && !min.e.plato.precio_actual) {
+      min.e.plato.precio_actual = min.e.plato.precio;
+      delete min.e.plato.precio;
+    }
     var NIV = {c:'confirmada', a:'candidata', h:'hipotesis'};
     var ACC = {E:'ESTRUCTURA', R:'RESTRICCION', A:'APLICACION', P:'PENDIENTE'};
     REGLAS.forEach(function(r, i){
@@ -2796,11 +2828,11 @@ $('#btProbar').onclick = function(){ S.paso = 6; pintar(); window.scrollTo(0,0);
 $('#btDDL').onclick = function(){
   var ddl = generarDDL();
   var c = document.createElement('div');
-  var b = el('<button class="copiar">Copiar el SQL entero</button>');
+  var b = el('<button class="copiar">Copiar DDL SQLite</button>');
   b.onclick = function(){ copiar(ddl, b); };
   c.appendChild(b);
   c.appendChild(el('<pre>'+pintaSQL(ddl)+'</pre>'));
-  dialogo('El SQL que llevas', c);
+  dialogo('DDL local · SQLite', c);
 };
 
 $('#btCodigo').onclick = function(){
@@ -2836,21 +2868,28 @@ document.addEventListener('click', function(e){
 var pedido = (location.search.match(/[?&]caso=([a-z]+)/) || [])[1];
 cargarCaso(CASOS[pedido] ? pedido : 'abc');
 
-/* La sesion la trae el enlace del mazo. Se recuerda la mas alta que se haya
-   abierto para que un marcador viejo no vuelva a cerrar lo que ya se dio. */
-var ses = +((location.search.match(/[?&]sesion=(\d)/) || [])[1] || 0);
+/* Si el enlace trae ?sesion=N, esa vista queda congelada: repasar S7 semanas después
+   no revela automáticamente S8/S9. Sin ?sesion se abre la versión más avanzada disponible. */
+var sesMatch = location.search.match(/[?&]sesion=(\d)/);
+var ses = +(sesMatch ? sesMatch[1] : 0);
+var sesionExplicita = !!(sesMatch && SESIONES[ses]);
 var vista = 0;
 try { vista = +(localStorage.getItem('constructor7-sesion') || 0); } catch(e){}
-SESION = Math.max(SESIONES[ses] ? ses : 7, SESIONES[vista] ? vista : 7);
 
-/* Y si ya lleg&oacute; el d&iacute;a de la sesi&oacute;n, se abre sola: un marcador viejo no
-   puede dejar el SQL con candado justo el d&iacute;a que toca abrirlo. Fecha local
-   del estudiante, no UTC. */
-var FECHAS = {8:'2026-09-02', 9:'2026-09-04'};
-var _d = new Date();
-var _y = _d.getFullYear() + '-' + ('0'+(_d.getMonth()+1)).slice(-2) + '-' + ('0'+_d.getDate()).slice(-2);
-Object.keys(FECHAS).forEach(function(k){ if (_y >= FECHAS[k]) SESION = Math.max(SESION, +k); });
-try { localStorage.setItem('constructor7-sesion', SESION); } catch(e){}
+if (sesionExplicita) {
+  SESION = ses;
+} else {
+  SESION = SESIONES[vista] ? vista : 7;
+  var FECHAS = {8:'2026-09-02', 9:'2026-09-04'};
+  var _d = new Date();
+  var _y = _d.getFullYear() + '-' + ('0'+(_d.getMonth()+1)).slice(-2) + '-' + ('0'+_d.getDate()).slice(-2);
+  Object.keys(FECHAS).forEach(function(k){ if (_y >= FECHAS[k]) SESION = Math.max(SESION, +k); });
+  try { localStorage.setItem('constructor7-sesion', SESION); } catch(e){}
+}
+
+LENTE_ABIERTA = SESION >= 9 || /[?&]lente=1(?:&|$)/.test(location.search);
+var pasoPedido = +((location.search.match(/[?&]paso=(\d)/) || [])[1] || 0);
+if (pasoPedido >= 1 && pasoPedido <= 8 && (pasoPedido !== 8 || hoy().paso8)) S.paso = pasoPedido;
 $('#hoy').innerHTML = textoHoy();
 
 initSqlJs({ locateFile: function(f){ return '../../assets/vendor/sqljs/' + f; } })

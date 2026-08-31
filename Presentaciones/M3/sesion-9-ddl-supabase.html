@@ -314,7 +314,7 @@ CONSTRAINT fk_reserva_cliente
 <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
 <tr><td>activar FK</td><td><code>PRAGMA foreign_keys = ON;</code></td><td>no se usa ese <code>PRAGMA</code></td></tr>
 </tbody></table>
-<p class="warn"><strong>No memoricen la tabla.</strong> Hoy solo deben reconocer tres traducciones: quitar <code>PRAGMA</code>, usar tipos PostgreSQL y generar IDs con <code>IDENTITY</code>. Las reglas PK/FK/NOT NULL siguen significando lo mismo.</p>
+<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>No memoricen la tabla.</strong> Hoy solo deben reconocer tres traducciones: quitar <code>PRAGMA</code>, usar tipos PostgreSQL y generar IDs con <code>IDENTITY</code>. Las reglas PK/FK/NOT NULL siguen significando lo mismo.</p></div><div class="hintbox"><p style="margin:0"><strong>Ahora sí abran su modelo:</strong> <a href="constructor-abc.html?sesion=9&amp;paso=5">DDL local &middot; SQLite</a>. Úsenlo únicamente para comparar el dialecto. <strong>No se pega en Supabase:</strong> allí la fuente del laboratorio es <code>Scripts/S9.sql</code>.</p></div></div>
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>Mismo diseño, otro dialecto</span></div>
 </section>
 <section class="slide dense" data-title="Antes de Supabase">

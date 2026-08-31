@@ -174,27 +174,27 @@
       "dp900": [
         {
           "dominio": "Relational data on Azure",
-          "pregunta": "¿Qué opción de la familia Azure SQL ofrece el mayor control sobre el sistema operativo y la instancia de SQL Server?",
+          "pregunta": "¿Qué comando define una tabla nueva?",
           "opciones": [
-            "Azure SQL Database",
-            "Azure SQL Managed Instance",
-            "SQL Server on Azure Virtual Machines",
-            "Azure Table Storage"
+            "SELECT",
+            "CREATE TABLE",
+            "UPDATE",
+            "DELETE"
           ],
-          "correcta": 2,
-          "explicacion": "SQL Server en Azure VM se acerca más a administrar una instalación completa y ofrece el mayor control de infraestructura."
+          "correcta": 1,
+          "explicacion": "DDL define estructura: CREATE TABLE crea una tabla nueva."
         },
         {
           "dominio": "Relational data on Azure",
-          "pregunta": "¿Cuál es un servicio PaaS administrado de la familia Azure SQL orientado a bases individuales?",
+          "pregunta": "¿Qué restricción evita una clave foránea huérfana?",
           "opciones": [
-            "Azure SQL Database",
-            "Azure Files",
-            "Azure Blob Storage",
-            "Cosmos DB"
+            "CHECK",
+            "DEFAULT",
+            "FOREIGN KEY",
+            "ORDER BY"
           ],
-          "correcta": 0,
-          "explicacion": "Azure SQL Database es una opción PaaS de base relacional administrada."
+          "correcta": 2,
+          "explicacion": "FOREIGN KEY exige que el valor referenciado exista en la tabla objetivo."
         }
       ],
       "solucion": {

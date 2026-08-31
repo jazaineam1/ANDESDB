@@ -19,7 +19,7 @@ La heterogeneidad del grupo se atiende con dos velocidades **principalmente en p
 
 No se fuerza este patrón en actividades conceptuales o de interpretación. Por ejemplo, S6 (reglas de negocio) no necesita una capa artificial de Núcleo/Reto; allí el valor está en discutir evidencia, hipótesis y decisiones.
 
-Sesiones previstas para diferenciación técnica: **S9, S11, S12, S13, S14 y S15**. Puede ajustarse al construir cada sesión.
+Sesiones previstas para diferenciación técnica: **S11, S12, S13, S14 y S15**. Puede ajustarse al construir cada sesión.
 
 ### 2. Ejemplo trabajado → completar → resolver
 
@@ -42,7 +42,7 @@ No se usa `localStorage` para construir una narrativa de “avance del estudiant
 
 Cuando el aprendizaje depende de un servicio cloud, se usa el **servicio real**:
 
-- S9: Microsoft Azure SQL;
+- S9: Supabase + PostgreSQL;
 - S11: Firebase Firestore + Azure Cosmos DB;
 - S13: Google BigQuery;
 - S14: Google BigQuery.
