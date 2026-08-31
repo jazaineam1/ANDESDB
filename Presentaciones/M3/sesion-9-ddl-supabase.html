@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 9 - DDL y Supabase/PostgreSQL: convertir el modelo del Restaurante ABC en tablas reales, restricciones y pruebas - Diseno y Gestion de Bases de Datos con SQL"><title>Sesión 9 · DDL + Supabase/PostgreSQL</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffd600'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='22' font-weight='bold' fill='%23171717'%3E9%3C/text%3E%3C/svg%3E">
+<style>
+:root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#146c43;--r:#a52a2a;--paper:#fff;--s:#f5f3ee;--bl:#e9f4ff;--gl:#e9f8ef;--rl:#fff1f0;--yl:#fff6c9;--ol:#fff3e7;--ink:#1a1a1a;--ink-soft:#5a5a5a;--dark:#0e1a24;--dark-2:#16293a;--sh:0 1px 2px rgba(16,24,32,.05),0 8px 24px rgba(16,24,32,.07);font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}button,a{font:inherit}
+.stage{position:relative;width:min(100vw,177.777vh);height:min(100vh,56.25vw);margin:auto;top:50%;background:var(--paper);border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.45);overflow:hidden;container-type:size;container-name:stage;transform:translateY(-50%)}
+.slide{position:absolute;inset:0;display:none;padding:5.2% 6.2% 7%;overflow:hidden;background:var(--paper);color:var(--ink);font-size:1.3cqw;--gap:1.6cqw;--r-sm:.62cqw;--r-md:1.05cqw;--pill:999px}
+.slide.active{display:block}.slide.dense{font-size:1.08cqw}.slide.dark{background:linear-gradient(160deg,var(--dark),var(--dark-2));color:#fff}.slide.yellow{background:linear-gradient(160deg,#ffe14d,var(--y));color:var(--ink)}.slide.mid{display:none;place-content:center}.slide.mid.active{display:grid}
+.slide:after{content:"";position:absolute;right:0;bottom:0;width:34%;height:44%;background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);pointer-events:none}.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+h1,h2,h3,p{margin-top:0}h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:14ch;margin-bottom:.35em}h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}h3{font-size:1.2em;line-height:1.2}p,li{font-size:1em;line-height:1.45}.lead{font-size:1.55em;line-height:1.3;max-width:44ch}.small{font-size:.72em;color:var(--ink-soft)}.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}.dark .ey{color:var(--y)}.quote{font-size:2.0em;font-weight:800;line-height:1.15;max-width:32ch;letter-spacing:-.02em}code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+.brand{position:absolute;left:6.2%;right:6.2%;bottom:2.4%;display:flex;justify-content:space-between;align-items:center;gap:1em;font-size:.66em;font-weight:700;color:var(--ink-soft);z-index:3}.dark .brand{color:#b9c7d3}
+.hero-card,.card,.flowline article,.steps article,.vs-grid section,.proscons section,.hintbox,.warn,.q{color:var(--ink);background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1.15em;border-left:.4em solid var(--y)}.hero-card{max-width:48ch;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16);box-shadow:none}
+.warn{background:var(--ol);border-left-color:var(--o);font-size:.9em}.hintbox{background:var(--bl);border-left-color:var(--b);font-size:.9em}.hintbox strong{color:var(--b)}
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}.flowline article{flex:1;min-width:0;text-align:center;border-left:0;border-top:.4em solid var(--y);padding:1em .75em}.flowline article:nth-of-type(2n){background:var(--bl);border-top-color:var(--b)}.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}.flowline span{font-size:1.9em}.flowline p{margin:.25em 0 0;font-size:.78em;color:var(--ink-soft)}.flowline>i{align-self:center;display:grid;place-items:center;width:2em;height:2em;border-radius:50%;background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;box-shadow:var(--sh)}
+.steps,.vs-grid,.proscons{display:grid;gap:var(--gap);margin-top:1.4em}.steps{grid-template-columns:repeat(4,1fr)}.steps.six{grid-template-columns:repeat(6,1fr)}.vs-grid,.proscons{grid-template-columns:1fr 1fr}.steps article,.vs-grid section,.proscons section{position:relative;background:var(--s)}.steps article:nth-child(even),.vs-grid section:nth-child(2){background:var(--bl);border-left-color:var(--b)}.steps b{display:inline-grid;place-items:center;min-width:2em;height:2em;padding:0 .55em;border-radius:999px;background:var(--ink);color:var(--y);font-size:.9em;font-weight:800;white-space:nowrap}.steps p,.steps h3{margin:.35em 0 0}.proscons .pro{background:var(--gl);border-left-color:var(--g)}.proscons .con{background:var(--rl);border-left-color:var(--r)}
+pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);border-radius:var(--r-md);padding:1.1em 1.2em;font:.82em/1.48 Consolas,"Cascadia Mono",monospace;white-space:pre-wrap;overflow:auto;box-shadow:var(--sh);position:relative}pre.smallcode{font-size:.72em}.copybtn{position:absolute;top:.5em;right:.5em;z-index:3;font:800 .68em/1 "Segoe UI",Arial,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#cfe3f0;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.24);border-radius:999px;padding:.42em .85em;cursor:pointer;opacity:.55}pre:hover .copybtn{opacity:1}.copybtn.ok{opacity:1;color:#0d1b26;background:var(--y);border-color:var(--y)}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--r-sm);overflow:hidden;font-size:.88em;box-shadow:var(--sh);background:var(--paper)}.tbl th{background:var(--ink);color:#fff;text-align:left;padding:.7em .9em}.tbl td{padding:.65em .9em;border-top:1px solid #e6eaee}.tbl tr:nth-child(even) td{background:#fafafa}
+.ladder{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr;gap:.45em;align-items:center;margin:1em 0 1.2em}.ladder div{text-align:center;background:var(--bl);border-radius:var(--r-md);padding:1em;font-weight:900;color:var(--b)}.ladder b{color:var(--o);font-size:1.6em;transform:rotate(-90deg)}.ladder .gap{background:var(--yl);color:#3a2f00}.biglist{font-size:1.1em;line-height:1.65;max-width:58ch}.biglist li{margin:.3em 0}.q{margin:.85em 0;background:var(--bl);border-left-color:var(--b)}.q .qt{font-weight:900;margin-bottom:.55em}.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:.5em}.opts button,.q button{border:2px solid #d7e3ec;background:#fff;border-radius:999px;padding:.55em .75em;font-weight:800;cursor:pointer}.q .fb{display:none;margin:.65em 0 0}.q.ok .fb{display:block}.q.ok button:nth-child(2){background:var(--gl);border-color:var(--g)}.q[data-answer="c"].ok button:nth-child(3){background:var(--gl);border-color:var(--g)}
+.toolbar{position:fixed;left:50%;bottom:1.1vh;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:.35rem;background:rgba(14,26,36,.88);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:.35rem .45rem;color:#fff;backdrop-filter:blur(8px)}.toolbar button,.toolbar a{border:0;background:rgba(255,255,255,.10);color:#fff;border-radius:999px;padding:.45rem .7rem;text-decoration:none;font-weight:800;cursor:pointer}.toolbar button:hover,.toolbar a:hover{background:rgba(255,255,255,.22)}#counter{min-width:5.5em;text-align:center;font:800 .82rem/1 Consolas,monospace;color:#d7e3ec}.progress{position:fixed;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.15);z-index:999}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--y),var(--o))}.timer{position:fixed;right:1vw;top:1vh;background:rgba(14,26,36,.9);color:#fff;border-radius:999px;padding:.45rem .8rem;font:900 .9rem/1 Consolas,monospace;z-index:1000;display:none}.timer.on{display:block}
+@media(max-aspect-ratio:1/1), (max-width:700px){.slide,.slide.dense{font-size:16px;overflow:auto}.stage{width:100vw;height:100vh;border-radius:0;top:0;transform:none}.flowline,.steps,.steps.six,.vs-grid,.proscons,.ladder{grid-template-columns:1fr;display:grid}.flowline>i,.ladder b{transform:rotate(0deg);justify-self:center}.opts{grid-template-columns:1fr}.toolbar{bottom:.5rem}}
+</style></head><body><main class="stage">
+<section class="slide dark cover" data-title="Portada">
+  <div class="ey">Módulo 3 · Modelos de datos útiles</div>
+  
+  <h1>Del modelo a una base real</h1>
+  <p class="lead">DDL + Supabase/PostgreSQL</p>
+  <div class="hero-card">
+    <p>Hoy el modelo deja de ser un dibujo: lo convertimos en tablas, restricciones y pruebas que un motor real puede hacer cumplir.</p>
+  </div>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Portada</span></div>
+</section>
+<section class="slide " data-title="El hilo">
+  <div class="ey">0–8 min · Continuidad</div>
+  
+  <h2>Venimos construyendo una cadena</h2>
+  <div class="flowline five">
+    <article><span>🗣️</span><b>S6</b><p>¿Qué dice el negocio?</p></article><i>→</i>
+    <article><span>🧩</span><b>S7</b><p>¿Cómo lo represento?</p></article><i>→</i>
+    <article><span>🔎</span><b>S8</b><p>¿Dónde vive cada dato?</p></article><i>→</i>
+    <article><span>⚙️</span><b>S9</b><p>¿Cómo lo hace cumplir el motor?</p></article>
+  </div>
+  <p class="quote">Hoy no empezamos desde cero: ejecutamos lo que ustedes ya decidieron.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>El hilo</span></div>
+</section>
+<section class="slide " data-title="La pregunta">
+  <div class="ey">0–8 min · Pregunta central</div>
+  
+  <h2>¿Qué falta entre el modelo y la base real?</h2>
+  <div class="ladder">
+    <div>REGLA</div><b>↓</b><div>MODELO</div><b>↓</b><div>NORMALIZACIÓN</div><b>↓</b><div class="gap">¿?</div><b>↓</b><div>BASE REAL</div>
+  </div>
+  <p class="warn"><strong>Respuesta:</strong> DDL. El lenguaje con el que definimos tablas, columnas y reglas estructurales.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>La pregunta</span></div>
+</section>
+<section class="slide " data-title="Qué es DDL">
+  <div class="ey">8–18 min · Lenguaje</div>
+  
+  <h2>DDL define la estructura</h2>
+  <table class="tbl"><thead><tr><th>Necesidad</th><th>Comando</th><th>Idea</th></tr></thead><tbody>
+  <tr><td>Leer datos</td><td><code>SELECT</code></td><td>consulta</td></tr>
+  <tr><td>Cambiar filas</td><td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td>DML</td></tr>
+  <tr><td>Definir estructura</td><td><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code></td><td><strong>DDL</strong></td></tr>
+  </tbody></table>
+  <p class="quote">DML cambia los datos. DDL cambia la estructura que recibirá esos datos.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Qué es DDL</span></div>
+</section>
+<section class="slide " data-title="Supabase no es el motor">
+  <div class="ey">8–18 min · Arquitectura mínima</div>
+  
+  <h2>¿Quién hace qué?</h2>
+  <div class="flowline">
+    <article><span>👤</span><b>Usuario</b><p>Escribe SQL</p></article><i>→</i>
+    <article><span>🟢</span><b>Supabase</b><p>Dashboard y servicios</p></article><i>→</i>
+    <article><span>🐘</span><b>PostgreSQL</b><p>Motor relacional</p></article><i>→</i>
+    <article><span>🗄️</span><b>Base</b><p>Tablas y reglas</p></article>
+  </div>
+  <p class="warn">Supabase es la plataforma. PostgreSQL es el motor que ejecuta el DDL.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Supabase no es el motor</span></div>
+</section>
+<section class="slide " data-title="Primer CREATE">
+  <div class="ey">18–33 min · Anatomía</div>
+  
+  <h2>Primera tabla: <code>cliente</code></h2>
+<pre class=""><code>create table cliente (
+    cliente_id bigint generated always as identity,
+    nombre text not null,
+    telefono text,
+
+    constraint pk_cliente primary key (cliente_id),
+    constraint uq_cliente_telefono unique (telefono)
+);</code></pre>
+  <p class="hintbox"><strong>Lectura natural:</strong> cada cliente tiene un identificador generado, un nombre obligatorio y un teléfono que no puede repetirse si se registra.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE</span></div>
+</section>
+<section class="slide " data-title="Identity y PK">
+  <div class="ey">18–33 min · Distinción crítica</div>
+  
+  <h2><code>identity</code> y <code>primary key</code> no son lo mismo</h2>
+  <div class="vs-grid">
+    <section><h3><code>generated always as identity</code></h3><p>Genera números automáticamente.</p></section>
+    <section><h3><code>primary key</code></h3><p>Identifica de forma única cada fila.</p></section>
+  </div>
+  <p class="quote">El número automático ayuda. La clave primaria es la regla de identidad.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Identity y PK</span></div>
+</section>
+<section class="slide dense" data-title="Relación real">
+  <div class="ey">33–48 min · FK</div>
+  
+  <h2>Segunda tabla: <code>reserva</code></h2>
+<pre class="smallcode"><code>create table reserva (
+    reserva_id bigint generated always as identity,
+    cliente_id bigint not null,
+    fecha date not null,
+    hora time not null,
+    personas integer not null,
+
+    constraint pk_reserva primary key (reserva_id),
+    constraint fk_reserva_cliente
+      foreign key (cliente_id) references cliente(cliente_id),
+    constraint ck_reserva_personas check (personas &gt; 0)
+);</code></pre>
+  <p class="hintbox">S7 decía: RESERVA pertenece a CLIENTE. S9 lo traduce como <code>foreign key</code>.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Relación real</span></div>
+</section>
+<section class="slide " data-title="Restricciones">
+  <div class="ey">33–48 min · Lo que protege el motor</div>
+  
+  <h2>Las seis piezas de hoy</h2>
+  <div class="steps six">
+    <article><b>PK</b><p>Identidad</p></article>
+    <article><b>FK</b><p>Relación válida</p></article>
+    <article><b>NOT NULL</b><p>Obligatorio</p></article>
+    <article><b>UNIQUE</b><p>No repetir</p></article>
+    <article><b>CHECK</b><p>Condición simple</p></article>
+    <article><b>DEFAULT</b><p>Valor sugerido</p></article>
+  </div>
+  <p class="warn"><strong>Clave:</strong> DDL declarativo protege algunas reglas, no todas.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Restricciones</span></div>
+</section>
+<section class="slide " data-title="CHECK tiene límites">
+  <div class="ey">33–48 min · No todo cabe ahí</div>
+  
+  <h2>Un <code>CHECK</code> no puede verlo todo</h2>
+  <div class="proscons">
+    <section class="pro"><h3>Sí cabe</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado in (...)</code></li></ul></section>
+    <section class="con"><h3>No cabe como CHECK simple</h3><ul><li>comparar con puestos de otra tabla</li><li>evitar reservas solapadas complejas</li><li>validar suma de pagos</li></ul></section>
+  </div>
+  <p class="quote">Una restricción demasiado débil permite errores; una demasiado fuerte prohíbe negocio válido.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>CHECK tiene límites</span></div>
+</section>
+<section class="slide " data-title="Dialecto">
+  <div class="ey">48–60 min · SQLite → PostgreSQL</div>
+  
+  <h2>SQL cambia un poco entre motores</h2>
+  <table class="tbl"><thead><tr><th>Necesidad</th><th>SQLite/local</th><th>PostgreSQL/Supabase</th></tr></thead><tbody>
+    <tr><td>identificador</td><td><code>INTEGER</code></td><td><code>bigint generated ... as identity</code></td></tr>
+    <tr><td>texto</td><td><code>TEXT</code></td><td><code>text</code> o <code>varchar(n)</code></td></tr>
+    <tr><td>dinero</td><td><code>REAL</code></td><td><code>numeric(10,2)</code></td></tr>
+    <tr><td>booleano</td><td><code>0/1</code></td><td><code>boolean</code></td></tr>
+    <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>date</code>, <code>time</code>, <code>timestamp</code></td></tr>
+  </tbody></table>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Dialecto</span></div>
+</section>
+<section class="slide " data-title="Antes de Supabase">
+  <div class="ey">60–75 min · Preparación</div>
+  
+  <h2>Del constructor al SQL</h2>
+  <div class="steps">
+    <article><b>1</b><h3>Modelo</h3><p>Usa el modelo reparado en S8.</p></article>
+    <article><b>2</b><h3>Tablas</h3><p>Elige una parte implementable.</p></article>
+    <article><b>3</b><h3>Restricciones</h3><p>Marca qué regla protege cada una.</p></article>
+    <article><b>4</b><h3>SQL</h3><p>Copia y ajusta a PostgreSQL.</p></article>
+  </div>
+  <p class="warn">No se trata de copiar mucho SQL. Se trata de justificar cada restricción.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Antes de Supabase</span></div>
+</section>
+<section class="slide yellow mid" data-title="Pausa">
+  <div class="ey">15 min</div>
+  
+  <h2>Pausa</h2>
+  <p class="lead">Al volver, abrimos Supabase y ejecutamos el primer DDL real.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Pausa</span></div>
+</section>
+<section class="slide " data-title="Entrar a Supabase">
+  <div class="ey">75–90 min · Tutorial paso a paso</div>
+  
+  <h2>Ruta exacta en Supabase</h2>
+  <ol class="biglist">
+    <li>Entrar a <strong>supabase.com</strong> y abrir el proyecto del curso.</li>
+    <li>Ir a <strong>SQL Editor</strong>.</li>
+    <li>Crear un <strong>New query</strong>.</li>
+    <li>Pegar solo las primeras dos tablas.</li>
+    <li>Presionar <strong>Run</strong>.</li>
+    <li>Revisar las tablas en <strong>Table Editor</strong>.</li>
+  </ol>
+  <p class="hintbox">Si hay equipos, usar nombres o esquemas separados: <code>abc_e01</code>, <code>abc_e02</code>...</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Entrar a Supabase</span></div>
+</section>
+<section class="slide " data-title="Crear esquema de equipo">
+  <div class="ey">75–90 min · Evitar choques</div>
+  
+  <h2>Una opción ordenada por equipo</h2>
+<pre class=""><code>create schema if not exists abc_e01;
+set search_path to abc_e01;</code></pre>
+  <p class="warn">Así cada equipo puede trabajar sin pisar las tablas de otro. Si trabajan todos en <code>public</code>, los nombres chocan.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Crear esquema de equipo</span></div>
+</section>
+<section class="slide " data-title="Ejecutar primer bloque">
+  <div class="ey">75–90 min · Laboratorio</div>
+  
+  <h2>Bloque 1: clientes y reservas</h2>
+<pre class=""><code>set search_path to abc_e01;
+
+create table cliente (...);
+create table reserva (...);</code></pre>
+  <p class="hintbox">El archivo <code>Scripts/S9.sql</code> trae el bloque completo para copiar por partes.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Ejecutar primer bloque</span></div>
+</section>
+<section class="slide " data-title="Taller principal">
+  <div class="ey">90–115 min · Producto</div>
+  
+  <h2>Construyan una parte funcional de ABC</h2>
+  <div class="steps six">
+    <article><b>1</b><p>mínimo 5 tablas</p></article>
+    <article><b>2</b><p>PK en todas</p></article>
+    <article><b>3</b><p>mínimo 3 FK</p></article>
+    <article><b>4</b><p>NOT NULL justificados</p></article>
+    <article><b>5</b><p>1 CHECK</p></article>
+    <article><b>6</b><p>1 tabla puente</p></article>
+  </div>
+  <p class="warn">Cada equipo debe poder decir: “esta línea viene de esta regla o de esta decisión de diseño”.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Taller principal</span></div>
+</section>
+<section class="slide dense" data-title="Tabla puente">
+  <div class="ey">90–115 min · N:N</div>
+  
+  <h2>Cuando una relación N:N exige tabla</h2>
+<pre class="smallcode"><code>create table reserva_mesa (
+    reserva_id bigint not null,
+    mesa_id bigint not null,
+
+    constraint pk_reserva_mesa primary key (reserva_id, mesa_id),
+    constraint fk_reserva_mesa_reserva
+      foreign key (reserva_id) references reserva(reserva_id),
+    constraint fk_reserva_mesa_mesa
+      foreign key (mesa_id) references mesa(mesa_id)
+);</code></pre>
+  <p class="hintbox">Conecta S5 <code>film_category</code>, S7 cardinalidad N:N y S9 DDL real.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Tabla puente</span></div>
+</section>
+<section class="slide " data-title="Romper la base">
+  <div class="ey">115–135 min · Pruebas</div>
+  
+  <h2>Ahora intentamos guardar basura</h2>
+  <div class="steps">
+    <article><b>1</b><h3>NOT NULL</h3><p>nombre vacío</p></article>
+    <article><b>2</b><h3>FK</h3><p>cliente inexistente</p></article>
+    <article><b>3</b><h3>CHECK</h3><p>personas = 0</p></article>
+    <article><b>4</b><h3>UNIQUE</h3><p>teléfono repetido</p></article>
+  </div>
+  <p class="quote">Si el motor rechaza algo, no es un error de clase: es el objetivo de la clase.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Romper la base</span></div>
+</section>
+<section class="slide " data-title="Prueba FK">
+  <div class="ey">115–135 min · El payoff</div>
+  
+  <h2>Una frase del negocio se vuelve regla ejecutable</h2>
+<pre class=""><code>insert into reserva (cliente_id, fecha, hora, personas)
+values (999999, '2026-09-04', '20:00', 4);</code></pre>
+  <p class="warn"><strong>Debe fallar:</strong> no existe ningún cliente con <code>cliente_id = 999999</code>.</p>
+  <p class="quote">El motor acaba de negarse a guardar un dato porque ustedes convirtieron una frase en estructura.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Prueba FK</span></div>
+</section>
+<section class="slide " data-title="ALTER TABLE">
+  <div class="ey">135–145 min · Las reglas aparecen tarde</div>
+  
+  <h2>El modelo se escribe en lápiz</h2>
+<pre class=""><code>alter table reserva
+add constraint ck_reserva_personas_max
+check (personas &lt;= 20);</code></pre>
+  <p class="hintbox">Conecta con la llamada de la dueña: el negocio cambia, y a veces la estructura también.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>ALTER TABLE</span></div>
+</section>
+<section class="slide " data-title="DROP TABLE">
+  <div class="ey">135–145 min · Orden importa</div>
+  
+  <h2>Para borrar también hay dependencias</h2>
+<pre class=""><code>drop table linea_pedido;
+drop table pedido;
+drop table reserva;</code></pre>
+  <p class="warn">Para crear: padres antes que hijos. Para destruir: normalmente hijos antes que padres.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE</span></div>
+</section>
+<section class="slide " data-title="Supabase en el mapa">
+  <div class="ey">145–160 min · Servicio real</div>
+  
+  <h2>¿Qué estamos usando realmente?</h2>
+  <div class="vs-grid">
+    <section><h3>PostgreSQL</h3><p>Motor relacional. Ejecuta SQL, guarda tablas y aplica restricciones.</p></section>
+    <section><h3>Supabase</h3><p>Plataforma que ofrece Postgres administrado, dashboard, API, auth y storage.</p></section>
+  </div>
+  <p class="hintbox">No profundizamos en Auth, Storage, RLS ni APIs. Hoy el objetivo es DDL relacional.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Supabase en el mapa</span></div>
+</section>
+<section class="slide " data-title="Seguridad mínima">
+  <div class="ey">145–160 min · No abrir de más</div>
+  
+  <h2>Nota Supabase: tablas en <code>public</code></h2>
+  <p class="lead">En Supabase, las tablas pueden exponerse por API. Para una app real se debe pensar en permisos y Row Level Security.</p>
+  <p class="warn"><strong>Hoy:</strong> lo mencionamos para no enseñar malas prácticas, pero no convertimos S9 en una clase de seguridad ni backend.</p>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Seguridad mínima</span></div>
+</section>
+<section class="slide dense" data-title="DP-900">
+  <div class="ey">160–165 min · Recuperación</div>
+  
+  <h2>Dos preguntas rápidas</h2>
+  <div class="q" data-answer="b"><div class="qt">¿Qué comando define una tabla nueva?</div><div class="opts"><button>SELECT</button><button>CREATE TABLE</button><button>UPDATE</button><button>DELETE</button></div><p class="fb">DDL define estructura: <code>CREATE TABLE</code>.</p></div>
+  <div class="q" data-answer="c"><div class="qt">¿Qué restricción evita una FK huérfana?</div><div class="opts"><button>CHECK</button><button>DEFAULT</button><button>FOREIGN KEY</button><button>ORDER BY</button></div><p class="fb">La FK exige que el valor exista en la tabla referenciada.</p></div>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>DP-900</span></div>
+</section>
+<section class="slide dark" data-title="Cierre">
+  <div class="ey">160–165 min · Frase final</div>
+  
+  <h2>Lo que pasó hoy</h2>
+  <p class="quote">Una conversación con el negocio terminó convertida en decisiones que un motor de base de datos puede ejecutar y hacer cumplir.</p>
+  <div class="steps">
+    <article><b>S6</b><p>regla</p></article>
+    <article><b>S7</b><p>modelo</p></article>
+    <article><b>S8</b><p>dependencia</p></article>
+    <article><b>S9</b><p>DDL real</p></article>
+  </div>
+
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Cierre</span></div>
+</section>
+</main><div class="timer" id="timer">00:00</div><div class="toolbar"><button id="prev" title="Anterior">←</button><span id="counter"></span><button id="next" title="Siguiente">→</button><button id="fs" title="Pantalla completa">F</button><button id="tm" title="Cronómetro">T</button><a href="../../index.html" title="Inicio">Inicio</a></div><div class="progress"><div class="bar" id="bar"></div></div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let i=Number(new URL(location.href).searchParams.get('s')||0);if(i<0||i>=slides.length)i=0;const counter=document.getElementById('counter'),bar=document.getElementById('bar');
+function show(n){slides[i].classList.remove('active');i=Math.max(0,Math.min(slides.length-1,n));slides[i].classList.add('active');counter.textContent=(i+1)+' / '+slides.length;bar.style.width=((i+1)/slides.length*100)+'%';history.replaceState(null,'','#'+(i+1));}
+function next(){show(i+1)}function prev(){show(i-1)}document.getElementById('next').onclick=next;document.getElementById('prev').onclick=prev;
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')next();if(e.key==='ArrowLeft')prev();if(e.key.toLowerCase()==='f')toggleFS();if(e.key.toLowerCase()==='t')toggleTimer();});
+function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.();}document.getElementById('fs').onclick=toggleFS;
+let timerOn=false,t0=0,tick=null;function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function toggleTimer(){const el=document.getElementById('timer');timerOn=!timerOn;el.classList.toggle('on',timerOn);if(timerOn){t0=Date.now();tick=setInterval(()=>{el.textContent=fmt(Math.floor((Date.now()-t0)/1000));},250)}else clearInterval(tick)}document.getElementById('tm').onclick=toggleTimer;
+document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.className='copybtn';b.textContent='copiar';b.onclick=async()=>{await navigator.clipboard.writeText(pre.innerText.replace(/^copiar\n?/,''));b.textContent='copiado';b.classList.add('ok');setTimeout(()=>{b.textContent='copiar';b.classList.remove('ok')},1100)};pre.appendChild(b);});
+document.querySelectorAll('.q button').forEach(b=>b.onclick=()=>b.closest('.q').classList.add('ok'));
+show(i);
+</script></body></html>
