@@ -1017,8 +1017,8 @@ viernes pasado de refilón. <strong>Es el camino que aparcamos</strong>, y llega
 <p class="lead">De <em>Relational data on Azure</em>. Un clic y aparece por qué.
 <span class="marc" id="dpMarc">0 contestadas</span></p>
 <div class="cgrid" id="dpGrid">
-<div class="cq" data-i="0"><span class="ce"><span class="cn">1</span>La normalización se usa principalmente para:</span>
-<span class="co"><button type="button">Reducir redundancia y dependencias problemáticas</button><button type="button">Eliminar SQL</button><button type="button">Acelerar siempre cualquier consulta analítica</button><button type="button">Guardar archivos sin esquema</button></span></div>
+<div class="cq" data-i="0"><span class="ce"><span class="cn">1</span>En 3FN, ¿qué se elimina que la 2FN todavía permite?</span>
+<span class="co"><button type="button">Que una columna dependa de otra que tampoco es la clave</button><button type="button">Que existan claves foráneas</button><button type="button">Que una tabla tenga muchas columnas</button><button type="button">Que se puedan escribir consultas con JOIN</button></span></div>
 <div class="cq" data-i="1"><span class="ce"><span class="cn">2</span>¿Cuál es un objeto común de una base relacional?</span>
 <span class="co"><button type="button">Tabla</button><button type="button">Bucket de objetos únicamente</button><button type="button">Notebook como única unidad</button><button type="button">Cola de mensajes</button></span></div>
 </div>
@@ -1253,12 +1253,12 @@ document.querySelectorAll('.slide pre').forEach(function(pre){
    proteger. Un clic, verde o rojo, y el porque debajo. */
 (function(){
   var CLAVE = {
-    0: {ok:1, why:'Una clave for&aacute;nea expresa una <b>referencia</b> entre dos tablas: ' +
-        'apunta a una clave candidata de otra. No impide NULL por s&iacute; sola, y no ' +
-        'sustituye a la normalizaci&oacute;n. Hoy has escrito diez de ellas.'},
-    1: {ok:1, why:'Se normaliza para <b>reducir la redundancia y las anomal&iacute;as de ' +
-        'actualizaci&oacute;n</b>: el mismo dato en dos sitios acaba contradici&eacute;ndose. ' +
-        'Es exactamente el tema de ma&ntilde;ana, con su propio modelo.'}
+    0: {ok:0, why:'La 3FN quita las <b>dependencias transitivas</b>: una columna que depende ' +
+        'de otra que tampoco es la clave. El tel&eacute;fono no depende del pedido &mdash; depende ' +
+        'del cliente. Es exactamente lo que han movido hoy.'},
+    1: {ok:0, why:'La <b>tabla</b>. Un <i>bucket</i> es almacenamiento de objetos y un cuaderno ' +
+        'es una herramienta de an&aacute;lisis: ninguno de los dos es un objeto de una base ' +
+        'relacional. La DP-900 lo pregunta para separar el mundo relacional del resto.'}
   };
   var g = document.getElementById('dpGrid');
   if (!g) return;

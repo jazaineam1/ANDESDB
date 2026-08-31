@@ -290,7 +290,11 @@ CONSTRAINT fk_reserva_cliente
     <tr><td>dinero</td><td><code>REAL</code></td><td><code>NUMERIC(10,2)</code></td></tr>
     <tr><td>booleano</td><td><code>0/1</code></td><td><code>BOOLEAN</code></td></tr>
     <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
+    <tr><td>claves for&aacute;neas</td><td><code>PRAGMA foreign_keys = ON;</code></td><td><b>se borra</b> &mdash; en PostgreSQL siempre est&aacute;n activas</td></tr>
   </tbody></table>
+  <p class="warn"><b>Empiecen por esa &uacute;ltima.</b> El SQL que trae el constructor arranca con la
+  l&iacute;nea <code>PRAGMA</code>, que en SQLite enciende las claves for&aacute;neas y en PostgreSQL
+  no existe: si la pegan, el primer error sale antes de crear una sola tabla. B&oacute;rrenla y sigan.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Dialecto</span></div>
 </section>
@@ -305,6 +309,9 @@ CONSTRAINT fk_reserva_cliente
     <article><b>4</b><h3>SQL</h3><p>Copia y ajusta a PostgreSQL.</p></article>
   </div>
   <p class="warn">No se trata de copiar mucho SQL. Se trata de justificar cada restricción.</p>
+  <p><a href="constructor-abc.html?sesion=9"><b>&#129521; Abrir el constructor</b></a> &mdash; hoy,
+  y solo hoy, se abre ah&iacute; la pesta&ntilde;a <b>El SQL</b> del paso 5 con las tablas que
+  ustedes decidieron el martes y repararon el mi&eacute;rcoles.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Antes de Supabase</span></div>
 </section>

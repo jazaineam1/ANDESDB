@@ -2842,6 +2842,14 @@ var ses = +((location.search.match(/[?&]sesion=(\d)/) || [])[1] || 0);
 var vista = 0;
 try { vista = +(localStorage.getItem('constructor7-sesion') || 0); } catch(e){}
 SESION = Math.max(SESIONES[ses] ? ses : 7, SESIONES[vista] ? vista : 7);
+
+/* Y si ya lleg&oacute; el d&iacute;a de la sesi&oacute;n, se abre sola: un marcador viejo no
+   puede dejar el SQL con candado justo el d&iacute;a que toca abrirlo. Fecha local
+   del estudiante, no UTC. */
+var FECHAS = {8:'2026-09-02', 9:'2026-09-04'};
+var _d = new Date();
+var _y = _d.getFullYear() + '-' + ('0'+(_d.getMonth()+1)).slice(-2) + '-' + ('0'+_d.getDate()).slice(-2);
+Object.keys(FECHAS).forEach(function(k){ if (_y >= FECHAS[k]) SESION = Math.max(SESION, +k); });
 try { localStorage.setItem('constructor7-sesion', SESION); } catch(e){}
 $('#hoy').innerHTML = textoHoy();
 
