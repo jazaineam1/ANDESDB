@@ -83,17 +83,90 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Supabase no es el motor</span></div>
 </section>
+
+<section class="slide " data-title="Convención SQL">
+  <div class="ey">18–33 min · Antes de escribir</div>
+  <h2>Cómo escribimos SQL en este curso</h2>
+  <div class="vs-grid">
+    <section><h3>Palabras del lenguaje</h3><p><code>CREATE TABLE</code>, <code>PRIMARY KEY</code>, <code>NOT NULL</code>, <code>REFERENCES</code>...</p><p><strong>Siempre en MAYÚSCULA.</strong></p></section>
+    <section><h3>Nombres que inventamos</h3><p><code>cliente</code>, <code>cliente_id</code>, <code>nombre</code>...</p><p><strong>En minúscula y con guion bajo.</strong></p></section>
+  </div>
+  <p class="warn"><strong>Convención del curso:</strong> PostgreSQL acepta palabras clave en minúscula, pero aquí las escribimos en MAYÚSCULA para distinguir inmediatamente la sintaxis SQL de los nombres del modelo.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Convención SQL</span></div>
+</section>
+<section class="slide dense" data-title="Sintaxis CREATE TABLE">
+  <div class="ey">18–33 min · Plantilla</div>
+  <h2>La forma general de <code>CREATE TABLE</code></h2>
+<pre><code>CREATE TABLE nombre_tabla (
+    columna_1 TIPO_DE_DATO RESTRICCIONES,
+    columna_2 TIPO_DE_DATO RESTRICCIONES,
+    ...,
+    CONSTRAINT nombre_regla TIPO_RESTRICCION (...)
+);</code></pre>
+  <table class="tbl" style="margin-top:1em"><thead><tr><th>Parte</th><th>Qué significa</th></tr></thead><tbody>
+    <tr><td><code>CREATE TABLE</code></td><td>Orden: crear una tabla nueva.</td></tr>
+    <tr><td><code>nombre_tabla</code></td><td>Nombre que nosotros damos al objeto.</td></tr>
+    <tr><td><code>( ... )</code></td><td>Dentro van columnas y restricciones.</td></tr>
+    <tr><td><code>,</code></td><td>Separa una definición de la siguiente.</td></tr>
+    <tr><td><code>;</code></td><td>Termina la instrucción.</td></tr>
+  </tbody></table>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CREATE TABLE</span></div>
+</section>
+<section class="slide " data-title="Anatomía de una columna">
+  <div class="ey">18–33 min · Leer una línea</div>
+  <h2>Una columna se lee de izquierda a derecha</h2>
+<pre><code>nombre TEXT NOT NULL</code></pre>
+  <div class="steps" style="margin-top:1.4em">
+    <article><b>1</b><h3><code>nombre</code></h3><p>Nombre de la columna.</p></article>
+    <article><b>2</b><h3><code>TEXT</code></h3><p>Tipo de dato que acepta.</p></article>
+    <article><b>3</b><h3><code>NOT NULL</code></h3><p>Regla: el dato es obligatorio.</p></article>
+    <article><b>4</b><h3><code>,</code></h3><p>Después viene otra definición.</p></article>
+  </div>
+  <p class="hintbox"><strong>Patrón mental:</strong> nombre → tipo → reglas. Antes de escribir una línea debes poder responder esas tres cosas.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Anatomía de una columna</span></div>
+</section>
+<section class="slide dense" data-title="Sintaxis de restricciones">
+  <div class="ey">18–33 min · Reglas declarativas</div>
+  <h2>¿Cómo se escribe cada restricción?</h2>
+  <table class="tbl"><thead><tr><th>Regla</th><th>Sintaxis</th><th>Lectura</th></tr></thead><tbody>
+    <tr><td>Obligatorio</td><td><code>nombre TEXT NOT NULL</code></td><td>nombre no puede ser nulo</td></tr>
+    <tr><td>Sin repetir</td><td><code>telefono TEXT UNIQUE</code></td><td>no acepta dos valores iguales</td></tr>
+    <tr><td>Valor inicial</td><td><code>estado TEXT DEFAULT 'solicitada'</code></td><td>si no llega valor, usa ese</td></tr>
+    <tr><td>Identidad</td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td></tr>
+    <tr><td>Relación</td><td><code>FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)</code></td><td>el cliente debe existir</td></tr>
+    <tr><td>Condición</td><td><code>CHECK (personas &gt; 0)</code></td><td>la fila debe cumplir la expresión</td></tr>
+  </tbody></table>
+  <p class="warn"><code>DEFAULT</code> no valida el negocio: solo aporta un valor cuando la columna se omite.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis de restricciones</span></div>
+</section>
+<section class="slide dense" data-title="Sintaxis CONSTRAINT">
+  <div class="ey">18–33 min · Reglas con nombre</div>
+  <h2>¿Para qué usamos <code>CONSTRAINT</code>?</h2>
+<pre><code>CONSTRAINT pk_cliente
+    PRIMARY KEY (cliente_id)
+
+CONSTRAINT fk_reserva_cliente
+    FOREIGN KEY (cliente_id)
+    REFERENCES cliente(cliente_id)</code></pre>
+  <div class="vs-grid" style="margin-top:1em">
+    <section><h3><code>CONSTRAINT pk_cliente</code></h3><p>Le damos un nombre a la regla para reconocerla en el esquema y en los errores.</p></section>
+    <section><h3><code>PRIMARY KEY (...)</code></h3><p>Indicamos qué clase de restricción es y sobre qué columna o columnas actúa.</p></section>
+  </div>
+  <p class="hintbox"><code>FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)</code> se lee: “este valor debe existir como <code>cliente_id</code> en <code>cliente</code>”.</p>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CONSTRAINT</span></div>
+</section>
+
 <section class="slide " data-title="Primer CREATE">
   <div class="ey">18–33 min · Anatomía</div>
   
   <h2>Primera tabla: <code>cliente</code></h2>
-<pre class=""><code>create table cliente (
-    cliente_id bigint generated always as identity,
-    nombre text not null,
-    telefono text,
+<pre class=""><code>CREATE TABLE cliente (
+    cliente_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    telefono TEXT,
 
-    constraint pk_cliente primary key (cliente_id),
-    constraint uq_cliente_telefono unique (telefono)
+    CONSTRAINT pk_cliente PRIMARY KEY (cliente_id),
+    CONSTRAINT uq_cliente_telefono UNIQUE (telefono)
 );</code></pre>
   <p class="hintbox"><strong>Lectura natural:</strong> cada cliente tiene un identificador generado, un nombre obligatorio y un teléfono que no puede repetirse si se registra.</p>
 
@@ -102,10 +175,10 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
 <section class="slide " data-title="Identity y PK">
   <div class="ey">18–33 min · Distinción crítica</div>
   
-  <h2><code>identity</code> y <code>primary key</code> no son lo mismo</h2>
+  <h2><code>IDENTITY</code> y <code>PRIMARY KEY</code> no son lo mismo</h2>
   <div class="vs-grid">
-    <section><h3><code>generated always as identity</code></h3><p>Genera números automáticamente.</p></section>
-    <section><h3><code>primary key</code></h3><p>Identifica de forma única cada fila.</p></section>
+    <section><h3><code>GENERATED ALWAYS AS IDENTITY</code></h3><p>Genera números automáticamente.</p></section>
+    <section><h3><code>PRIMARY KEY</code></h3><p>Identifica de forma única cada fila.</p></section>
   </div>
   <p class="quote">El número automático ayuda. La clave primaria es la regla de identidad.</p>
 
@@ -115,19 +188,19 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   <div class="ey">33–48 min · FK</div>
   
   <h2>Segunda tabla: <code>reserva</code></h2>
-<pre class="smallcode"><code>create table reserva (
-    reserva_id bigint generated always as identity,
-    cliente_id bigint not null,
-    fecha date not null,
-    hora time not null,
-    personas integer not null,
+<pre class="smallcode"><code>CREATE TABLE reserva (
+    reserva_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    cliente_id BIGINT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    personas INTEGER NOT NULL,
 
-    constraint pk_reserva primary key (reserva_id),
-    constraint fk_reserva_cliente
-      foreign key (cliente_id) references cliente(cliente_id),
-    constraint ck_reserva_personas check (personas &gt; 0)
+    CONSTRAINT pk_reserva PRIMARY KEY (reserva_id),
+    CONSTRAINT fk_reserva_cliente
+      FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id),
+    CONSTRAINT ck_reserva_personas CHECK (personas &gt; 0)
 );</code></pre>
-  <p class="hintbox">S7 decía: RESERVA pertenece a CLIENTE. S9 lo traduce como <code>foreign key</code>.</p>
+  <p class="hintbox">S7 decía: RESERVA pertenece a CLIENTE. S9 lo traduce como <code>FOREIGN KEY</code>.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Relación real</span></div>
 </section>
@@ -152,7 +225,7 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   
   <h2>Un <code>CHECK</code> no puede verlo todo</h2>
   <div class="proscons">
-    <section class="pro"><h3>Sí cabe</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado in (...)</code></li></ul></section>
+    <section class="pro"><h3>Sí cabe</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado IN (...)</code></li></ul></section>
     <section class="con"><h3>No cabe como CHECK simple</h3><ul><li>comparar con puestos de otra tabla</li><li>evitar reservas solapadas complejas</li><li>validar suma de pagos</li></ul></section>
   </div>
   <p class="quote">Una restricción demasiado débil permite errores; una demasiado fuerte prohíbe negocio válido.</p>
@@ -164,11 +237,11 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   
   <h2>SQL cambia un poco entre motores</h2>
   <table class="tbl"><thead><tr><th>Necesidad</th><th>SQLite/local</th><th>PostgreSQL/Supabase</th></tr></thead><tbody>
-    <tr><td>identificador</td><td><code>INTEGER</code></td><td><code>bigint generated ... as identity</code></td></tr>
-    <tr><td>texto</td><td><code>TEXT</code></td><td><code>text</code> o <code>varchar(n)</code></td></tr>
-    <tr><td>dinero</td><td><code>REAL</code></td><td><code>numeric(10,2)</code></td></tr>
-    <tr><td>booleano</td><td><code>0/1</code></td><td><code>boolean</code></td></tr>
-    <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>date</code>, <code>time</code>, <code>timestamp</code></td></tr>
+    <tr><td>identificador</td><td><code>INTEGER</code></td><td><code>BIGINT GENERATED ... AS IDENTITY</code></td></tr>
+    <tr><td>texto</td><td><code>TEXT</code></td><td><code>TEXT</code> o <code>VARCHAR(n)</code></td></tr>
+    <tr><td>dinero</td><td><code>REAL</code></td><td><code>NUMERIC(10,2)</code></td></tr>
+    <tr><td>booleano</td><td><code>0/1</code></td><td><code>BOOLEAN</code></td></tr>
+    <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
   </tbody></table>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Dialecto</span></div>
@@ -215,8 +288,8 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   <div class="ey">75–90 min · Evitar choques</div>
   
   <h2>Una opción ordenada por equipo</h2>
-<pre class=""><code>create schema if not exists abc_e01;
-set search_path to abc_e01;</code></pre>
+<pre class=""><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
+SET search_path TO abc_e01;</code></pre>
   <p class="warn">Así cada equipo puede trabajar sin pisar las tablas de otro. Si trabajan todos en <code>public</code>, los nombres chocan.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Crear esquema de equipo</span></div>
@@ -225,10 +298,10 @@ set search_path to abc_e01;</code></pre>
   <div class="ey">75–90 min · Laboratorio</div>
   
   <h2>Bloque 1: clientes y reservas</h2>
-<pre class=""><code>set search_path to abc_e01;
+<pre class=""><code>SET search_path TO abc_e01;
 
-create table cliente (...);
-create table reserva (...);</code></pre>
+CREATE TABLE cliente (...);
+CREATE TABLE reserva (...);</code></pre>
   <p class="hintbox">El archivo <code>Scripts/S9.sql</code> trae el bloque completo para copiar por partes.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Ejecutar primer bloque</span></div>
@@ -253,15 +326,15 @@ create table reserva (...);</code></pre>
   <div class="ey">90–115 min · N:N</div>
   
   <h2>Cuando una relación N:N exige tabla</h2>
-<pre class="smallcode"><code>create table reserva_mesa (
-    reserva_id bigint not null,
-    mesa_id bigint not null,
+<pre class="smallcode"><code>CREATE TABLE reserva_mesa (
+    reserva_id BIGINT NOT NULL,
+    mesa_id BIGINT NOT NULL,
 
-    constraint pk_reserva_mesa primary key (reserva_id, mesa_id),
-    constraint fk_reserva_mesa_reserva
-      foreign key (reserva_id) references reserva(reserva_id),
-    constraint fk_reserva_mesa_mesa
-      foreign key (mesa_id) references mesa(mesa_id)
+    CONSTRAINT pk_reserva_mesa PRIMARY KEY (reserva_id, mesa_id),
+    CONSTRAINT fk_reserva_mesa_reserva
+      FOREIGN KEY (reserva_id) REFERENCES reserva(reserva_id),
+    CONSTRAINT fk_reserva_mesa_mesa
+      FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id)
 );</code></pre>
   <p class="hintbox">Conecta S5 <code>film_category</code>, S7 cardinalidad N:N y S9 DDL real.</p>
 
@@ -285,8 +358,8 @@ create table reserva (...);</code></pre>
   <div class="ey">115–135 min · El payoff</div>
   
   <h2>Una frase del negocio se vuelve regla ejecutable</h2>
-<pre class=""><code>insert into reserva (cliente_id, fecha, hora, personas)
-values (999999, '2026-09-04', '20:00', 4);</code></pre>
+<pre class=""><code>INSERT INTO reserva (cliente_id, fecha, hora, personas)
+VALUES (999999, '2026-09-04', '20:00', 4);</code></pre>
   <p class="warn"><strong>Debe fallar:</strong> no existe ningún cliente con <code>cliente_id = 999999</code>.</p>
   <p class="quote">El motor acaba de negarse a guardar un dato porque ustedes convirtieron una frase en estructura.</p>
 
@@ -296,9 +369,9 @@ values (999999, '2026-09-04', '20:00', 4);</code></pre>
   <div class="ey">135–145 min · Las reglas aparecen tarde</div>
   
   <h2>El modelo se escribe en lápiz</h2>
-<pre class=""><code>alter table reserva
-add constraint ck_reserva_personas_max
-check (personas &lt;= 20);</code></pre>
+<pre class=""><code>ALTER TABLE reserva
+ADD CONSTRAINT ck_reserva_personas_max
+CHECK (personas &lt;= 20);</code></pre>
   <p class="hintbox">Conecta con la llamada de la dueña: el negocio cambia, y a veces la estructura también.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>ALTER TABLE</span></div>
@@ -307,9 +380,9 @@ check (personas &lt;= 20);</code></pre>
   <div class="ey">135–145 min · Orden importa</div>
   
   <h2>Para borrar también hay dependencias</h2>
-<pre class=""><code>drop table linea_pedido;
-drop table pedido;
-drop table reserva;</code></pre>
+<pre class=""><code>DROP TABLE linea_pedido;
+DROP TABLE pedido;
+DROP TABLE reserva;</code></pre>
   <p class="warn">Para crear: padres antes que hijos. Para destruir: normalmente hijos antes que padres.</p>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE</span></div>

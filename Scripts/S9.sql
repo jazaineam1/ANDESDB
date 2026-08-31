@@ -1,4 +1,16 @@
 -- ============================================================
+-- CÓMO LEER LA SINTAXIS DE ESTA SESIÓN
+-- Palabras del lenguaje SQL: MAYÚSCULA.
+-- Nombres de tablas y columnas: minúscula.
+--
+-- Patrón general:
+-- CREATE TABLE nombre_tabla (
+--     columna TIPO_DE_DATO RESTRICCIONES,
+--     CONSTRAINT nombre_regla TIPO_RESTRICCION (...)
+-- );
+-- ============================================================
+
+-- ============================================================
 -- ANDESDB · Sesión 9
 -- DDL + Supabase/PostgreSQL
 -- Restaurante ABC: del modelo a una base real
@@ -6,158 +18,158 @@
 
 -- RECOMENDADO EN CLASE:
 -- Cambia abc_e01 por el código de tu equipo: abc_e02, abc_e03, etc.
-create schema if not exists abc_e01;
-set search_path to abc_e01;
+CREATE SCHEMA IF NOT EXISTS abc_e01;
+SET search_path TO abc_e01;
 
 -- Limpieza para poder repetir el laboratorio.
-drop table if exists linea_pedido cascade;
-drop table if exists pedido cascade;
-drop table if exists reserva_mesa cascade;
-drop table if exists reserva cascade;
-drop table if exists mesa cascade;
-drop table if exists plato cascade;
-drop table if exists cliente cascade;
+DROP TABLE IF EXISTS linea_pedido CASCADE;
+DROP TABLE IF EXISTS pedido CASCADE;
+DROP TABLE IF EXISTS reserva_mesa CASCADE;
+DROP TABLE IF EXISTS reserva CASCADE;
+DROP TABLE IF EXISTS mesa CASCADE;
+DROP TABLE IF EXISTS plato CASCADE;
+DROP TABLE IF EXISTS cliente CASCADE;
 
 -- ============================================================
 -- 1. Tablas base
 -- ============================================================
 
-create table cliente (
-    cliente_id bigint generated always as identity,
-    nombre text not null,
-    telefono text,
+CREATE TABLE cliente (
+    cliente_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    telefono TEXT,
 
-    constraint pk_cliente primary key (cliente_id),
-    constraint uq_cliente_telefono unique (telefono)
+    CONSTRAINT pk_cliente PRIMARY KEY (cliente_id),
+    CONSTRAINT uq_cliente_telefono UNIQUE (telefono)
 );
 
-create table mesa (
-    mesa_id bigint generated always as identity,
-    codigo text not null,
-    puestos integer not null,
+CREATE TABLE mesa (
+    mesa_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    codigo TEXT NOT NULL,
+    puestos INTEGER NOT NULL,
 
-    constraint pk_mesa primary key (mesa_id),
-    constraint uq_mesa_codigo unique (codigo),
-    constraint ck_mesa_puestos check (puestos > 0)
+    CONSTRAINT pk_mesa PRIMARY KEY (mesa_id),
+    CONSTRAINT uq_mesa_codigo UNIQUE (codigo),
+    CONSTRAINT ck_mesa_puestos CHECK (puestos > 0)
 );
 
-create table plato (
-    plato_id bigint generated always as identity,
-    nombre text not null,
-    precio_actual numeric(10,2) not null,
-    activo boolean not null default true,
+CREATE TABLE plato (
+    plato_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    precio_actual NUMERIC(10,2) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
 
-    constraint pk_plato primary key (plato_id),
-    constraint uq_plato_nombre unique (nombre),
-    constraint ck_plato_precio check (precio_actual >= 0)
+    CONSTRAINT pk_plato PRIMARY KEY (plato_id),
+    CONSTRAINT uq_plato_nombre UNIQUE (nombre),
+    CONSTRAINT ck_plato_precio CHECK (precio_actual >= 0)
 );
 
 -- ============================================================
 -- 2. Reserva: FK + NOT NULL + CHECK
 -- ============================================================
 
-create table reserva (
-    reserva_id bigint generated always as identity,
-    cliente_id bigint not null,
-    fecha date not null,
-    hora time not null,
-    personas integer not null,
-    estado text not null default 'pendiente',
+CREATE TABLE reserva (
+    reserva_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    cliente_id BIGINT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    personas INTEGER NOT NULL,
+    estado TEXT NOT NULL DEFAULT 'pendiente',
 
-    constraint pk_reserva primary key (reserva_id),
-    constraint fk_reserva_cliente
-        foreign key (cliente_id) references cliente(cliente_id),
-    constraint ck_reserva_personas check (personas > 0),
-    constraint ck_reserva_estado
-        check (estado in ('pendiente', 'confirmada', 'cancelada', 'cumplida'))
+    CONSTRAINT pk_reserva PRIMARY KEY (reserva_id),
+    CONSTRAINT fk_reserva_cliente
+        FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id),
+    CONSTRAINT ck_reserva_personas CHECK (personas > 0),
+    CONSTRAINT ck_reserva_estado
+        CHECK (estado IN ('pendiente', 'confirmada', 'cancelada', 'cumplida'))
 );
 
 -- ============================================================
 -- 3. Tabla puente: una reserva puede usar una o varias mesas
 -- ============================================================
 
-create table reserva_mesa (
-    reserva_id bigint not null,
-    mesa_id bigint not null,
+CREATE TABLE reserva_mesa (
+    reserva_id BIGINT NOT NULL,
+    mesa_id BIGINT NOT NULL,
 
-    constraint pk_reserva_mesa primary key (reserva_id, mesa_id),
-    constraint fk_reserva_mesa_reserva
-        foreign key (reserva_id) references reserva(reserva_id),
-    constraint fk_reserva_mesa_mesa
-        foreign key (mesa_id) references mesa(mesa_id)
+    CONSTRAINT pk_reserva_mesa PRIMARY KEY (reserva_id, mesa_id),
+    CONSTRAINT fk_reserva_mesa_reserva
+        FOREIGN KEY (reserva_id) REFERENCES reserva(reserva_id),
+    CONSTRAINT fk_reserva_mesa_mesa
+        FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id)
 );
 
 -- ============================================================
 -- 4. Pedido y línea de pedido
 -- ============================================================
 
-create table pedido (
-    pedido_id bigint generated always as identity,
-    reserva_id bigint,
-    creado_en timestamp not null default now(),
-    estado text not null default 'abierto',
+CREATE TABLE pedido (
+    pedido_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    reserva_id BIGINT,
+    creado_en TIMESTAMP NOT NULL DEFAULT now(),
+    estado TEXT NOT NULL DEFAULT 'abierto',
 
-    constraint pk_pedido primary key (pedido_id),
-    constraint fk_pedido_reserva
-        foreign key (reserva_id) references reserva(reserva_id),
-    constraint ck_pedido_estado
-        check (estado in ('abierto', 'cerrado', 'cancelado'))
+    CONSTRAINT pk_pedido PRIMARY KEY (pedido_id),
+    CONSTRAINT fk_pedido_reserva
+        FOREIGN KEY (reserva_id) REFERENCES reserva(reserva_id),
+    CONSTRAINT ck_pedido_estado
+        CHECK (estado IN ('abierto', 'cerrado', 'cancelado'))
 );
 
-create table linea_pedido (
-    pedido_id bigint not null,
-    plato_id bigint not null,
-    cantidad integer not null,
-    precio_unitario numeric(10,2) not null,
+CREATE TABLE linea_pedido (
+    pedido_id BIGINT NOT NULL,
+    plato_id BIGINT NOT NULL,
+    cantidad INTEGER NOT NULL,
+    precio_unitario NUMERIC(10,2) NOT NULL,
 
-    constraint pk_linea_pedido primary key (pedido_id, plato_id),
-    constraint fk_linea_pedido_pedido
-        foreign key (pedido_id) references pedido(pedido_id),
-    constraint fk_linea_pedido_plato
-        foreign key (plato_id) references plato(plato_id),
-    constraint ck_linea_cantidad check (cantidad > 0),
-    constraint ck_linea_precio check (precio_unitario >= 0)
+    CONSTRAINT pk_linea_pedido PRIMARY KEY (pedido_id, plato_id),
+    CONSTRAINT fk_linea_pedido_pedido
+        FOREIGN KEY (pedido_id) REFERENCES pedido(pedido_id),
+    CONSTRAINT fk_linea_pedido_plato
+        FOREIGN KEY (plato_id) REFERENCES plato(plato_id),
+    CONSTRAINT ck_linea_cantidad CHECK (cantidad > 0),
+    CONSTRAINT ck_linea_precio CHECK (precio_unitario >= 0)
 );
 
 -- ============================================================
 -- 5. Inserts válidos
 -- ============================================================
 
-insert into cliente (nombre, telefono) values
+INSERT INTO cliente (nombre, telefono) VALUES
 ('Ana Pérez', '3001234567'),
 ('Luis Gómez', '3102223344');
 
-insert into mesa (codigo, puestos) values
+INSERT INTO mesa (codigo, puestos) VALUES
 ('M1', 4),
 ('M2', 4),
 ('M3', 8);
 
-insert into plato (nombre, precio_actual) values
+INSERT INTO plato (nombre, precio_actual) VALUES
 ('Ajiaco', 28000),
 ('Bandeja paisa', 32000),
 ('Limonada', 7000);
 
-insert into reserva (cliente_id, fecha, hora, personas, estado)
-values (1, '2026-09-04', '20:00', 4, 'confirmada');
+INSERT INTO reserva (cliente_id, fecha, hora, personas, estado)
+VALUES (1, '2026-09-04', '20:00', 4, 'confirmada');
 
-insert into reserva_mesa (reserva_id, mesa_id) values
+INSERT INTO reserva_mesa (reserva_id, mesa_id) VALUES
 (1, 1),
 (1, 2);
 
-insert into pedido (reserva_id, estado) values
+INSERT INTO pedido (reserva_id, estado) VALUES
 (1, 'abierto');
 
-insert into linea_pedido (pedido_id, plato_id, cantidad, precio_unitario) values
+INSERT INTO linea_pedido (pedido_id, plato_id, cantidad, precio_unitario) VALUES
 (1, 1, 2, 28000),
 (1, 3, 4, 7000);
 
 -- Consulta de reconstrucción: no guardamos pedido.total.
-select
+SELECT
     p.pedido_id,
-    sum(lp.cantidad * lp.precio_unitario) as total_calculado
-from pedido p
-join linea_pedido lp on lp.pedido_id = p.pedido_id
-group by p.pedido_id;
+    sum(lp.cantidad * lp.precio_unitario) AS total_calculado
+FROM pedido p
+JOIN linea_pedido lp ON lp.pedido_id = p.pedido_id
+GROUP BY p.pedido_id;
 
 -- ============================================================
 -- 6. Pruebas que DEBEN FALLAR
@@ -186,9 +198,9 @@ group by p.pedido_id;
 -- 7. ALTER TABLE: una regla aparece tarde
 -- ============================================================
 
-alter table reserva
-add constraint ck_reserva_personas_max
-check (personas <= 20);
+ALTER TABLE reserva
+ADD CONSTRAINT ck_reserva_personas_max
+CHECK (personas <= 20);
 
 -- Esta debe fallar después del ALTER.
 -- insert into reserva (cliente_id, fecha, hora, personas)
