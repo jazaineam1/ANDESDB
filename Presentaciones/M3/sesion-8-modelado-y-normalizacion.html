@@ -754,11 +754,11 @@ WHERE linea_id = 1;</code></pre>
 <h2>La libreta vieja mezcla hechos distintos</h2>
 <p class="lead">Esta hoja heredada tiene <strong>una fila por pedido</strong> y mete varios platos dentro de una sola celda. No es nuestro modelo final: es el material desordenado que vamos a separar.</p>
 <div class="tabla-envuelta"><table class="optbl" style="font-size:.86em">
-<thead><tr><th>fecha</th><th>hora</th><th>mesa</th><th>puestos</th><th>mesero</th><th>doc</th><th>cliente</th><th>teléfono</th><th>platos</th><th>total</th><th>pago</th></tr></thead>
+<thead><tr><th>fecha</th><th>hora</th><th>mesa</th><th>puestos</th><th>mesero</th><th>cliente</th><th>teléfono</th><th>platos</th><th>total</th><th>pago</th></tr></thead>
 <tbody>
-<tr><td>2026-09-01</td><td>12:30</td><td>1</td><td>4</td><td>Luis</td><td>CC1</td><td>Ana Restrepo</td><td>3001111111</td><td><b>Ajiaco x2; Bandeja paisa x1</b></td><td>102000</td><td>tarjeta</td></tr>
-<tr><td>2026-09-01</td><td>13:00</td><td>2</td><td>2</td><td>Marta</td><td>CC2</td><td>Carlos Mejía</td><td>—</td><td>Sancocho x1</td><td>28000</td><td>efectivo</td></tr>
-<tr><td>2026-09-01</td><td>20:15</td><td>1</td><td><b>4</b></td><td>Luis</td><td>CC1</td><td>Ana Restrepo</td><td>3001111111</td><td>Sancocho x2</td><td>56000</td><td>efectivo</td></tr>
+<tr><td>2026-09-01</td><td>12:30</td><td>1</td><td>4</td><td>Luis</td><td>Ana Restrepo</td><td>3001111111</td><td><b>Ajiaco x2; Bandeja paisa x1</b></td><td>102000</td><td>tarjeta</td></tr>
+<tr><td>2026-09-01</td><td>13:00</td><td>2</td><td>2</td><td>Marta</td><td>Carlos Mejía</td><td>—</td><td>Sancocho x1</td><td>28000</td><td>efectivo</td></tr>
+<tr><td>2026-09-01</td><td>20:15</td><td>1</td><td><b>4</b></td><td>Luis</td><td>Ana Restrepo</td><td>3001111111</td><td>Sancocho x2</td><td>56000</td><td>efectivo</td></tr>
 </tbody></table></div>
 <div class="g3" style="margin-top:.5em">
 <div class="card"><h3>Lista dentro de una celda</h3><p><code>Ajiaco x2; Bandeja x1</code> obliga a partir texto antes de contar, relacionar o validar.</p></div>
