@@ -1814,7 +1814,7 @@ function paso3(m){
         var i = el('<input type="checkbox">');
         i.disabled = !sel;
         i.checked = !!(sel && sel[campo]);
-        i.onchange = function(){ sel[campo] = i.checked; pintar(); };
+        i.onchange = function(){ if (!sel) return; sel[campo] = i.checked; pintar(); };
         td.appendChild(i); tr.appendChild(td);
       });
 
@@ -2019,16 +2019,23 @@ function paso6(m){
     '<div class="panel">'+
     '<div class="ey">Paso 6 · de 7</div>'+
     '<h2>El banco de pruebas</h2>'+
-    '<p class="lead">Doce intentos reales de <code>INSERT</code>, <code>UPDATE</code> y '+
+    '<p class="lead">'+PRUEBAS.length+' intentos reales de <code>INSERT</code>, <code>UPDATE</code> y '+
     '<code>DELETE</code> contra <strong>tu</strong> base. Cada uno cita la regla que lo motiva. '+
     'No se te dice si acertaste: se te dice <strong>qué hizo tu base</strong> y qué dice la regla. '+
     'Sacar conclusiones es tu trabajo.</p>'+
     '<div id="resPruebas"><div class="cargando">Corriendo…</div></div></div>'));
 
   setTimeout(function(){
-    var r = correrPruebas();
     var c = $('#resPruebas', m);
     c.innerHTML = '';
+    if (!entidades().length) {
+      c.appendChild(el('<div class="nota o"><p><strong>No hay ninguna tabla que probar todav&iacute;a.</strong> '+
+        'El banco de pruebas lanza sus intentos contra <em>tu</em> base, y tu base a&uacute;n no existe.</p>'+
+        '<p>Vuelve al <strong>paso 2</strong> y marca qu&eacute; sustantivos son entidades. '+
+        'Con dos o tres ya hay algo que probar.</p></div>'));
+      return;
+    }
+    var r = correrPruebas();
     if (r.error) { c.appendChild(el('<div class="nota r"><p>'+esc(r.error)+'</p></div>')); return; }
 
     var buenas = 0, fallos = 0, excesos = 0;
@@ -2336,8 +2343,11 @@ function paso7Corregir(m){
     '<code>dvdrental</code> de verdad. <strong>Esto no es una nota</strong>: es lo que hace ' +
     'la base real, y la evidencia que lo respalda. En el Restaurante ABC no vas a tener ' +
     'esta pantalla — allí el que decide eres tú.</p>' +
-    '<div class="nota"><p><strong>' + bien + '</strong> coinciden con la base real &middot; ' +
-    '<strong>' + mal + '</strong> se apartan.</p></div>' +
+    (entidades().length
+      ? '<div class="nota"><p><strong>' + bien + '</strong> coinciden con la base real &middot; ' +
+        '<strong>' + mal + '</strong> se apartan.</p></div>'
+      : '<div class="nota o"><p><strong>Todav&iacute;a no hay modelo que comparar.</strong> ' +
+        'Esto no es un cero: es que no has marcado ninguna entidad. Haz los pasos 2 y 4 y vuelve.</p></div>') +
     '<div id="hallazgos"></div></div>'));
 
   var c = $('#hallazgos', m);
@@ -2612,6 +2622,7 @@ function importar(codigo){
   try {
     var t = codigo.trim().replace(/\s+/g,'');
     var mio = CASOS[CASO].prefijo;
+    if (!t) throw new Error('no hay nada pegado en el cuadro.');
     if (t.indexOf(mio) !== 0) {
       /* Un código del otro caso no se importa a medias: los sustantivos y las
          relaciones son otros y quedaría un modelo sin sentido. */
@@ -2619,9 +2630,21 @@ function importar(codigo){
         return k !== CASO && t.indexOf(CASOS[k].prefijo) === 0; })[0];
       if (otro) throw new Error('ese código es de ' + CASOS[otro].nombre +
         '. Cambia de caso arriba y vuelve a pegarlo.');
-      throw new Error('no empieza por ' + mio);
+      throw new Error('eso no parece un c\u00f3digo de modelo. Los c\u00f3digos empiezan por ' +
+        mio + ' y siguen con una tira larga de letras y n\u00fameros.');
     }
-    var min = JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));
+    var min;
+    try { min = JSON.parse(decodeURIComponent(escape(atob(t.slice(5))))); }
+    catch(e){
+      throw new Error('el c\u00f3digo est\u00e1 incompleto o le falta un pedazo. ' +
+        'C\u00f3pialo otra vez entero, desde ' + mio + ' hasta el \u00faltimo car\u00e1cter, ' +
+        'sin dejar nada fuera de la selecci\u00f3n.');
+    }
+    if (!min || !Array.isArray(min.g) || !Array.isArray(min.s) ||
+        typeof min.e !== 'object' || min.e === null) {
+      throw new Error('el c\u00f3digo se lee, pero no tiene la forma de un modelo. ' +
+        'C\u00f3pialo otra vez entero desde el cuadro de quien te lo pas\u00f3.');
+    }
     var NIV = {c:'confirmada', a:'candidata', h:'hipotesis'};
     var ACC = {E:'ESTRUCTURA', R:'RESTRICCION', A:'APLICACION', P:'PENDIENTE'};
     REGLAS.forEach(function(r, i){
