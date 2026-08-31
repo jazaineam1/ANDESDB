@@ -26,6 +26,33 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
+      - name: Publicar S9 con Supabase/PostgreSQL
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = Path('tools/curso.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          encontrada = False
+          for modulo in data.get('modulos', []):
+              for sesion in modulo.get('sesiones', []):
+                  if sesion.get('n') == 9:
+                      sesion['titulo'] = 'DDL + Supabase/PostgreSQL'
+                      sesion['desc'] = 'Convertir el modelo del Restaurante ABC en CREATE TABLE y restricciones, ejecutarlo en PostgreSQL real con Supabase y comprobar qué reglas acepta o rechaza el motor.'
+                      sesion['href'] = 'Presentaciones/M3/sesion-9-ddl-supabase.html'
+                      sesion['tags'] = ['CREATE TABLE','PK','FK','NOT NULL','UNIQUE','CHECK','PostgreSQL','Supabase']
+                      sesion['recursos'] = [{
+                          'txt': '📄 Script del laboratorio · Supabase/PostgreSQL',
+                          'href': 'Scripts/S9.sql',
+                          'download': True
+                      }]
+                      encontrada = True
+          if not encontrada:
+              raise SystemExit('No se encontró la sesión 9')
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
 
@@ -35,16 +62,18 @@ jobs:
       - name: Validar curso
         run: python tools/validar_curso.py
 
-      - name: Publicar cambios generados
+      - name: Restaurar workflow y publicar cambios generados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones; then
+          git show HEAD^:.github/workflows/sincronizar-sitio.yml > .github/workflows/sincronizar-sitio.yml
+          rm -f .github/workflows/publicar-s9-supabase.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tools/curso.json index.html Presentaciones .github/workflows/sincronizar-sitio.yml .github/workflows/publicar-s9-supabase.yml
+          if git diff --cached --quiet; then
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones
-          git commit -m 'Sincronizar sitio con el manifiesto del curso'
+          git commit -m 'Publicar S9 DDL con Supabase/PostgreSQL en el sitio'
           git pull --rebase origin main
           git push origin main
