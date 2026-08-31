@@ -706,37 +706,53 @@ WHERE linea_id = 1;</code></pre>
 </div>
 <div class="brand"><span>Apertura</span><span>No es un error: es una decisión que envejeció</span></div>
 </section>
-<section class="slide dense mid" data-title="Dependencias">
-<div class="ey">12 minutos</div>
-<h2>«Si sé esto, ¿sé aquello?»</h2>
-<p class="lead">Esa pregunta es la forma práctica de reconocer una <strong>dependencia funcional</strong>. Primero se entiende; después se le pone nombre.</p>
+<section class="slide dense mid" data-title="Qué heredamos">
+<div class="ey">Puente S6 → S7 → S8 · 7 minutos</div>
+<h2>Normalizar no aumenta la certeza de una regla</h2>
+<p class="lead">S6 enseñó a distinguir <strong>restricción, permiso, patrón e hipótesis</strong>. S7 convirtió evidencia en decisiones de modelo. Hoy hacemos otra cosa: <strong>probamos la coherencia interna de un recorte de ese modelo</strong>.</p>
 <div class="g2">
-<div><h3>La pregunta, siempre igual</h3>
-<div class="ctx"><p style="margin:0;font-size:1.06em">Si te digo <strong>X</strong>, ¿puedes conocer <strong>Y</strong> sin mirar nada más?</p></div>
+<div><h3>Tres cosas que NO debemos mezclar</h3>
 <table class="optbl"><tbody>
-<tr><td>mesa</td><td>puestos</td><td><b>sí</b></td></tr>
-<tr><td>mesero</td><td>documento</td><td><b>sí</b></td></tr>
-<tr><td>pedido</td><td>fecha</td><td><b>sí</b></td></tr>
-<tr><td>pedido</td><td>platos</td><td><b>no</b>: puede haber varios</td></tr>
+<tr><td><b>Regla del negocio</b></td><td>puede estar confirmada, candidata o ser hipótesis</td></tr>
+<tr><td><b>Patrón de los datos</b></td><td>algo que ocurre en la muestra de hoy; por sí solo no obliga al negocio</td></tr>
+<tr><td><b>Decisión de diseño</b></td><td>la estructura que elegimos para representar la evidencia disponible</td></tr>
 </tbody></table>
-<p class="small" style="margin-top:.5em">Luego la notación compacta será, por ejemplo: <code>mesa_id → puestos</code>.</p></div>
-<div><h3>¿Para qué sirve?</h3>
-<p><strong>La dependencia ayuda a decidir dónde debe vivir el dato.</strong></p>
-<ul class="checks">
-<li>Los puestos dependen de la <b>mesa</b> → viven en <code>mesa</code>.</li>
-<li>El documento depende del <b>mesero</b> → vive en <code>mesero</code>.</li>
-<li>El precio cobrado depende de la <b>línea de esa transacción</b>, no del precio actual del plato.</li>
-</ul>
-<div class="hintbox"><p style="margin:0"><strong>Primera pregunta de hoy:</strong> ¿de qué depende este atributo? Esa respuesta orienta dónde debe quedar.</p></div></div>
+<div class="warn"><p style="margin:0"><strong>Ejemplo:</strong> que hoy todas las filas de una mesa muestren 4 puestos puede ser solo un patrón. Lo que justifica <code>mesa_id → puestos</code> es que la capacidad sea realmente una propiedad de la mesa.</p></div></div>
+<div><h3>Hoy usamos un recorte, no borramos el modelo</h3>
+<p>Para ver dependencias sin mezclar cinco problemas a la vez, aislamos:</p>
+<p><code>pedido</code> · <code>linea_pedido</code> · <code>plato</code> · <code>mesa</code> · <code>mesero</code> · <code>cliente</code></p>
+<div class="ctx"><p style="margin:0"><strong>Siguen existiendo fuera del ejercicio:</strong> reservas, pagos, inventario/ingredientes, la decisión <code>pedido_mesa</code> de S7 y las preguntas pendientes. No desaparecieron: <strong>hoy no son el objeto de la lupa</strong>.</p></div>
+<p class="small">La muestra de hoy contiene pedidos de una sola mesa para que la normalización se vea limpia; eso no revierte la llamada de S7 que permitió varias mesas por pedido.</p></div>
 </div>
-<div class="brand"><span>Dependencias</span><span>Cada dato, donde depende</span></div>
+<div class="brand"><span>Continuidad</span><span>Recorte pedagógico ≠ modelo completo</span></div>
+</section>
+<section class="slide dense mid" data-title="Dependencias">
+<div class="ey">10 minutos</div>
+<h2>«Si sé X, ¿debería poder saber Y?»</h2>
+<p class="lead">La dependencia funcional no se decide mirando coincidencias. Se apoya en <strong>el significado del dato y la evidencia del negocio</strong>. S6 ya nos enseñó que un patrón observado no es automáticamente una regla.</p>
+<div class="g2">
+<div><h3>La pregunta práctica</h3>
+<div class="ctx"><p style="margin:0;font-size:1.04em">Si conozco <strong>X</strong>, ¿el negocio y nuestro modelo dicen que <strong>Y</strong> debe quedar determinado?</p></div>
+<table class="optbl"><tbody>
+<tr><td><code>mesa_id</code></td><td><code>puestos</code></td><td><b>sí</b>: la capacidad pertenece a la mesa</td></tr>
+<tr><td><code>linea_id</code></td><td><code>cantidad</code></td><td><b>sí</b>: decisión del modelo de línea</td></tr>
+<tr><td><code>pedido_id</code></td><td>un solo plato</td><td><b>no</b>: un pedido contiene varias líneas</td></tr>
+</tbody></table>
+<p class="small" style="margin-top:.5em">La notación compacta será, por ejemplo: <code>mesa_id → puestos</code>.</p></div>
+<div><h3>El filtro heredado de S6</h3>
+<ul class="checks">
+<li>Si solo lo ves en los datos de hoy, trátalo primero como <strong>patrón observado</strong>.</li>
+<li>Si el negocio lo afirma o el concepto lo exige, puede sostener una <strong>dependencia del modelo</strong>.</li>
+<li>Si no sabes si debe mantenerse en el tiempo, queda como <strong>pregunta</strong>, no como verdad matemática.</li>
+</ul>
+<div class="hintbox"><p style="margin:0"><strong>Primera pregunta:</strong> ¿de qué depende? <strong>Segunda:</strong> ¿qué evidencia me permite afirmarlo?</p></div></div>
+</div>
+<div class="brand"><span>Dependencias</span><span>Semántica primero; patrón después</span></div>
 </section>
 <section class="slide dense mid" data-title="La libreta">
-<div class="ey">10 minutos &middot; el material de hoy</div>
-<h2>Veinte años de libreta</h2>
-<p class="lead">La dueña se lo dijo en la primera entrevista: <em>«llevamos veinte años con
-una libreta y una hoja de cálculo»</em>. <strong>Esta es la hoja.</strong> Una fila por cada
-plato de cada pedido.</p>
+<div class="ey">8 minutos · el material de hoy</div>
+<h2>La libreta vieja mezcla hechos distintos</h2>
+<p class="lead">Esta hoja heredada tiene <strong>una fila por pedido</strong> y mete varios platos dentro de una sola celda. No es nuestro modelo final: es el material desordenado que vamos a separar.</p>
 <div class="tabla-envuelta"><table class="optbl" style="font-size:.86em">
 <thead><tr><th>fecha</th><th>hora</th><th>mesa</th><th>puestos</th><th>mesero</th><th>doc</th><th>cliente</th><th>teléfono</th><th>platos</th><th>total</th><th>pago</th></tr></thead>
 <tbody>
@@ -745,17 +761,13 @@ plato de cada pedido.</p>
 <tr><td>2026-09-01</td><td>20:15</td><td>1</td><td><b>4</b></td><td>Luis</td><td>CC1</td><td>Ana Restrepo</td><td>3001111111</td><td>Sancocho x2</td><td>56000</td><td>efectivo</td></tr>
 </tbody></table></div>
 <div class="g3" style="margin-top:.5em">
-<div class="card"><h3>Tres platos en una celda</h3><p>«¿cuántos ajiacos vendimos?»
-No se puede contestar sin <strong>partir texto</strong>.</p></div>
-<div class="card"><h3>Los 4 puestos, dos veces</h3><p>Y si mañana la mesa 1 pasa a seis,
-hay que corregir <strong>las dos filas</strong>. Si se corrige una, la hoja se contradice
-sola.</p></div>
-<div class="card"><h3>El total, otra vez</h3><p>Se puede sumar desde los platos. Está
-guardado igualmente. <strong>Ya saben en qué acaba eso.</strong></p></div>
+<div class="card"><h3>Lista dentro de una celda</h3><p><code>Ajiaco x2; Bandeja x1</code> obliga a partir texto antes de contar, relacionar o validar.</p></div>
+<div class="card"><h3>Propiedades repetidas</h3><p><code>puestos</code> aparece una y otra vez aunque pertenece a la mesa.</p></div>
+<div class="card"><h3>Hay columnas fuera del recorte</h3><p><code>pago</code> no se “pierde”: S6 y S7 ya lo trataron como otro subproblema. Hoy lo dejamos fuera de la lupa.</p></div>
 </div>
-<div class="brand"><span>La libreta</span><span>El punto de partida es real</span></div>
+<div class="ctx" style="margin-top:.55em"><p style="margin:0"><strong>También mantenemos <code>pedido_mesa</code> en el modelo completo.</strong> Para esta muestra elegimos pedidos de una sola mesa; seleccionar una muestra simple no cambia la regla descubierta en S7.</p></div>
+<div class="brand"><span>La libreta</span><span>Fuente heredada, no modelo final</span></div>
 </section>
-
 <section class="slide dense mid" data-title="1FN">
 <div class="ey">12 minutos · juntos</div>
 <h2>Primera forma normal: una celda, un dato</h2>
@@ -776,26 +788,29 @@ guardado igualmente. <strong>Ya saben en qué acaba eso.</strong></p></div>
 <div class="brand"><span>1FN</span><span>Una celda, un dato · la PK se decide aparte</span></div>
 </section>
 <section class="slide yellow dense mid" data-title="El taller">
-<div class="ey">Taller · 35 minutos en salas</div>
-<h2>Lleven la hoja hasta el final</h2>
-<p class="lead">La hoja ya está en 1FN. Ahora muevan cada atributo al lugar donde <strong>realmente depende</strong>, sin perder información ni inventar reglas.</p>
+<div class="ey">Taller · 32 minutos en salas</div>
+<h2>De la hoja a 2FN y 3FN sin convertirlo en receta</h2>
+<p class="lead">La hoja ya está en 1FN. Ahora usen dependencias para mover atributos, pero mantengan el filtro de S6: <strong>no conviertan un patrón de esta muestra en una regla eterna</strong>.</p>
 <div class="g2">
-<div><h3>Las dos preguntas</h3>
-<ol class="steps">
-<li><strong>¿De qué depende esta columna?</strong> Eso orienta dónde debe vivir.</li>
-<li><strong>Si la separo o la quito, ¿puedo reconstruir la información sin perder significado?</strong></li>
-</ol>
-<div class="ctx"><p style="margin:0">El <b>total</b> es un buen candidato para discutir: en nuestro caso didáctico es exactamente la suma de las líneas. El <b>precio_unitario</b>, en cambio, conserva el precio histórico cobrado.</p></div></div>
+<div><h3>Mapa mínimo de las formas normales</h3>
+<table class="optbl"><tbody>
+<tr><td><b>1FN</b></td><td>un valor atómico por celda; no listas embebidas</td></tr>
+<tr><td><b>2FN</b></td><td>si una clave tiene varias partes, un atributo no debe depender solo de una parte</td></tr>
+<tr><td><b>3FN</b></td><td>un atributo que no es clave no debería depender de otro atributo que tampoco es clave</td></tr>
+</tbody></table>
+<p class="small" style="margin-top:.45em">Nuestro modelo conserva <code>linea_id</code> como PK. No vamos a inventar una clave compuesta solo para “forzar” el ejemplo de 2FN.</p>
+<div class="ctx"><p style="margin:0"><strong>Las dos preguntas operativas:</strong><br>1) ¿de qué depende esta columna?<br>2) si la separo o la quito, ¿puedo reconstruir la información sin perder significado?</p></div></div>
 <div><h3>Lo que entregan</h3>
 <ul class="checks">
-<li>Las tablas resultantes, cada una con su <strong>PK</strong>.</li>
-<li>Para cada atributo que movieron: <strong>de qué depende</strong>.</li>
-<li>Las relaciones necesarias para volver a unir la información.</li>
-<li>Una decisión que <strong>no se pueda tomar sin preguntarle al negocio</strong>.</li>
+<li>Las tablas del <strong>recorte</strong>, cada una con su PK.</li>
+<li>Para cada atributo movido: <strong>dependencia + evidencia</strong> que la sostiene.</li>
+<li>Las relaciones necesarias para reconstruir el recorte.</li>
+<li>Una observación que sea solo <strong>patrón</strong> y no se atrevan a convertir en regla.</li>
+<li>Una pregunta que todavía requiera negocio.</li>
 </ul>
-<div class="hintbox"><p style="margin:0">Normalizar no es “partir hasta que se vea bonito”. Es <strong>poner cada dato donde corresponde y comprobar que la separación no destruyó información</strong>.</p></div></div>
+<div class="hintbox"><p style="margin:0"><strong>Total vs precio histórico:</strong> en este caso didáctico <code>pedido.total</code> es exactamente reconstruible desde las líneas; <code>precio_unitario</code> conserva lo cobrado en ese momento y no se reconstruye desde el precio actual del plato.</p></div></div>
 </div>
-<div class="brand"><span>Taller · 2FN y 3FN</span><span>Dependencia + reconstrucción</span></div>
+<div class="brand"><span>Taller · 2FN y 3FN</span><span>Dependencia + evidencia + reconstrucción</span></div>
 </section>
 <section class="slide yellow mid" data-title="Pausa" data-break="15">
 <div class="ey">Pausa &middot; 15 minutos</div>
@@ -805,33 +820,31 @@ guardado igualmente. <strong>Ya saben en qué acaba eso.</strong></p></div>
 </section>
 
 <section class="slide dense mid" data-title="A donde llegaron">
-<div class="ey">Debrief &middot; 10 minutos</div>
-<h2>Miren a dónde han llegado</h2>
-<p class="lead">Cuenten cuántas tablas les salieron. Y ahora compárenlas con las que
-construyeron <strong>ayer</strong>, antes de haber oído la palabra «normalizar».</p>
-<svg style="width:100%;height:auto;display:block;margin:.4em 0" viewBox="0 0 1200 118" role="img" aria-label="La hoja de calculo se descompone en las mismas seis tablas del modelo de ayer">
-<rect x="4" y="30" width="250" height="58" rx="10" fill="#fff3e7" stroke="#ff8a24" stroke-width="2.2"/>
-<text x="129" y="54" text-anchor="middle" font-size="12.5" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">LA LIBRETA</text>
-<text x="129" y="72" text-anchor="middle" font-size="10.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">once columnas, todo repetido</text>
-<path d="M262 59 h44" stroke="#124e78" stroke-width="2.4" fill="none" marker-end="url(#f8)"/>
-<defs><marker id="f8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
-<g font-family="Consolas,monospace" font-size="11.5" font-weight="700" text-anchor="middle">
-<rect x="320" y="18" width="128" height="30" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.8"/><text x="384" y="38" fill="#124e78">mesa</text>
-<rect x="320" y="70" width="128" height="30" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.8"/><text x="384" y="90" fill="#124e78">mesero</text>
-<rect x="464" y="18" width="128" height="30" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.8"/><text x="528" y="38" fill="#124e78">cliente</text>
-<rect x="464" y="70" width="128" height="30" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.8"/><text x="528" y="90" fill="#124e78">plato</text>
-<rect x="608" y="18" width="128" height="30" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.8"/><text x="672" y="38" fill="#124e78">pedido</text>
-<rect x="608" y="70" width="128" height="30" rx="8" fill="#fff6c9" stroke="#ff8a24" stroke-width="1.8"/><text x="672" y="90" fill="#c96a00">linea_pedido</text></g>
-<rect x="762" y="24" width="434" height="70" rx="10" fill="#e9f8ef" stroke="#146c43" stroke-width="2.2"/>
-<text x="979" y="48" text-anchor="middle" font-size="12.5" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">Son las mismas seis que hicieron ayer.</text>
-<text x="979" y="68" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">Su modelo no era una opini&oacute;n: es a donde llega</text>
-<text x="979" y="84" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">esta hoja cuando se ordena. Llegaron solos.</text>
-</svg>
-<p class="lead" style="margin-top:.2em">Y una cosa desapareció por el camino: <strong>el
-total</strong>. No está en ninguna tabla. No hace falta — se calcula.</p>
-<div class="brand"><span>Debrief</span><span>No era una opinión</span></div>
+<div class="ey">Debrief · 10 minutos</div>
+<h2>Llegaron a una parte del modelo de ayer</h2>
+<p class="lead">La normalización del recorte vuelve a producir varias de las estructuras que S7 ya había defendido. Eso es buena señal, pero <strong>no significa que el modelo completo tenga solo seis tablas</strong>.</p>
+<div class="g2">
+<div><h3>Lo que reaparece en este ejercicio</h3>
+<table class="optbl"><tbody>
+<tr><td><code>mesa</code></td><td>capacidad en un solo lugar</td></tr>
+<tr><td><code>mesero</code></td><td>identidad separada del pedido</td></tr>
+<tr><td><code>cliente</code></td><td>datos del cliente separados del evento</td></tr>
+<tr><td><code>plato</code></td><td>catálogo separado de la venta</td></tr>
+<tr><td><code>pedido</code></td><td>cabecera de la transacción</td></tr>
+<tr><td><code>linea_pedido</code></td><td>cada elemento vendido y sus hechos propios</td></tr>
+</tbody></table></div>
+<div><h3>Lo que deliberadamente no estamos normalizando hoy</h3>
+<ul class="checks">
+<li><code>reserva</code> y sus reglas de fecha/hora/capacidad.</li>
+<li><code>pago</code> y la cuenta dividida.</li>
+<li><code>ingrediente</code>/<code>receta</code> e inventario.</li>
+<li><code>pedido_mesa</code>, que sigue siendo la decisión vigente tras la llamada de S7.</li>
+<li>cualquier decisión abierta como <code>turno</code>.</li>
+</ul>
+<div class="warn"><p style="margin:0"><strong>Y el total:</strong> en <em>este caso</em>, mientras sea exactamente la suma de las líneas y no tenga semántica legal propia, preferimos calcularlo. No es una ley universal.</p></div></div>
+</div>
+<div class="brand"><span>Debrief</span><span>Coincide el razonamiento, no el número de tablas</span></div>
 </section>
-
 <section class="slide dense mid" data-title="Las tres preguntas">
 <div class="ey">Debrief &middot; 8 minutos</div>
 <h2>Tres que no tienen respuesta única</h2>
@@ -961,22 +974,23 @@ JOIN totales t       ON t.pedido_id = p.pedido_id;</code></pre></div>
 
 <section class="slide yellow xdense mid" data-title="Cierre">
 <div class="ey">Cierre · 5 minutos</div>
-<h2>El modelo ya está listo para convertirse en una base real</h2>
+<h2>El modelo está listo para DDL, pero conserva sus niveles de certeza</h2>
 <div class="g2">
 <div><h3>Lo que te llevas</h3>
 <ul class="checks">
-<li>Una dependencia funcional se puede leer como: <strong>«si sé X, ¿sé Y?»</strong>.</li>
-<li>1FN evita listas dentro de una celda; <strong>no decide sola la PK</strong>.</li>
+<li>S6 sigue vigente: <strong>patrón observado ≠ regla confirmada</strong>.</li>
+<li>Una dependencia se pregunta como «si sé X, ¿debería saber Y?» y se justifica con <strong>semántica/evidencia</strong>.</li>
+<li>1FN evita listas dentro de una celda; no decide sola la PK.</li>
 <li>2FN y 3FN ayudan a colocar atributos donde realmente dependen.</li>
-<li>No basta preguntar «¿está repetido?»: pregunta <strong>de qué depende</strong> y si puedes <strong>reconstruir sin perder información o significado</strong>.</li>
-<li><code>precio_unitario</code> demuestra que <strong>mismo valor ≠ mismo dato</strong>.</li>
-<li>El modelo conserva la decisión de S7 de permitir varias mesas por pedido mediante <code>pedido_mesa</code>.</li>
+<li>No basta «¿está repetido?»: pregunta <strong>de qué depende</strong> y si puedes <strong>reconstruir sin perder significado</strong>.</li>
+<li><code>precio_unitario</code> demuestra que <strong>mismo número ≠ mismo dato</strong>.</li>
+<li>El ejercicio usó un <strong>recorte</strong>; el modelo completo conserva reservas, pagos, inventario y <code>pedido_mesa</code>.</li>
 </ul></div>
 <div><h3>Sesión 9</h3>
-<div class="hintbox"><p style="margin:0"><strong>DDL + Supabase/PostgreSQL.</strong> No inventaremos otro modelo. Tomaremos este mismo y lo traduciremos a <code>CREATE TABLE</code>, PK, FK, <code>NOT NULL</code> y <code>CHECK</code>.</p></div>
-<p style="margin-top:.8em"><strong>La prueba final:</strong> intentaremos guardar datos inválidos. Si PostgreSQL los rechaza por la razón correcta, la decisión de diseño dejó de ser un dibujo y se volvió una regla ejecutable.</p></div>
+<div class="hintbox"><p style="margin:0"><strong>DDL + Supabase/PostgreSQL.</strong> Traduciremos un recorte del modelo a tablas reales. Pero DDL <strong>no convierte una candidata en confirmada</strong>: solo haremos restricciones duras cuando la evidencia o una decisión explícita del modelo las justifique.</p></div>
+<p style="margin-top:.75em"><strong>La prueba final:</strong> distinguir qué está protegido por el motor, qué solo está representado y qué todavía debe permanecer como pregunta.</p></div>
 </div>
-<div class="brand"><span>Cierre</span><span>¿Dónde vive y qué perdería si lo quito?</span></div>
+<div class="brand"><span>Cierre</span><span>Certeza + dependencia + reconstrucción</span></div>
 </section>
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 15</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-8-modelado-y-normalizacion.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>

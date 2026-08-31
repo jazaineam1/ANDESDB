@@ -104,6 +104,19 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>La pregunta</span></div>
 </section>
+<section class="slide dense" data-title="Antes del DDL">
+<div class="ey">8–13 min · El filtro heredado de S6</div>
+<h2>DDL no convierte una suposición en verdad</h2>
+<p class="lead">Antes de escribir una restricción, preguntamos <strong>qué clase de evidencia estamos convirtiendo en código</strong>.</p>
+<table class="tbl"><thead><tr><th>Lo que traemos</th><th>Qué hacemos en S9</th><th>Ejemplo ABC</th></tr></thead><tbody>
+<tr><td><b>Regla confirmada</b></td><td>intentamos protegerla en la capa más baja que tenga información suficiente</td><td>la capacidad de una mesa importa para la reserva, pero comparar otra tabla no cabe en un <code>CHECK</code> simple</td></tr>
+<tr><td><b>Regla candidata</b></td><td>la representamos, pero no la endurecemos como si ya estuviera confirmada</td><td>la reserva “confirmada” con fecha/hora/personas/cliente</td></tr>
+<tr><td><b>Hipótesis</b></td><td>no se implementa todavía</td><td>bloquear un plato por ingrediente agotado</td></tr>
+<tr><td><b>Decisión de modelo</b></td><td>se documenta como decisión, no se atribuye al cliente</td><td><code>linea_id</code>, nombres de restricciones, códigos internos</td></tr>
+</tbody></table>
+<div class="warn"><p style="margin:0"><strong>Regla de oro:</strong> una restricción de base puede ser muy fuerte. Precisamente por eso debe tener una fuente clara.</p></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>La certeza también se modela</span></div>
+</section>
 <section class="slide " data-title="Qué es DDL">
   <div class="ey">8–18 min · Lenguaje</div>
   
@@ -163,29 +176,29 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
 <section class="slide " data-title="Anatomía de una columna">
 <div class="ey">18–33 min · Leer antes de escribir</div>
 <h2>Una columna se lee de izquierda a derecha</h2>
-<pre><code>nombre TEXT NOT NULL</code></pre>
+<pre><code>puestos INTEGER NOT NULL</code></pre>
 <div class="steps" style="margin-top:1.2em">
-<article><b>1</b><h3><code>nombre</code></h3><p>Nombre de la columna.</p></article>
-<article><b>2</b><h3><code>TEXT</code></h3><p>Tipo de dato.</p></article>
+<article><b>1</b><h3><code>puestos</code></h3><p>Nombre de la columna.</p></article>
+<article><b>2</b><h3><code>INTEGER</code></h3><p>Tipo de dato.</p></article>
 <article><b>3</b><h3><code>NOT NULL</code></h3><p>No acepta <code>NULL</code>.</p></article>
 <article><b>4</b><h3><code>,</code></h3><p>Continúa otra definición.</p></article>
 </div>
-<div class="hintbox"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> lean en voz alta <code>personas INTEGER NOT NULL</code> sin usar palabras SQL. Después inventen un valor que esa línea sí acepte y uno que no.</p></div>
+<div class="hintbox"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> lean esa línea sin palabras SQL: “cada mesa debe tener un número de puestos”. Después digan qué parte es sintaxis y qué parte es una decisión del modelo.</p></div>
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>Nombre → tipo → regla</span></div>
 </section>
 <section class="slide dense" data-title="Sintaxis de restricciones">
 <div class="ey">18–33 min · Reglas declarativas</div>
-<h2>¿Cómo se escribe cada restricción?</h2>
-<table class="tbl"><thead><tr><th>Necesidad</th><th>Sintaxis</th><th>Qué protege</th></tr></thead><tbody>
-<tr><td>Obligatorio</td><td><code>nombre TEXT NOT NULL</code></td><td>no acepta <code>NULL</code></td></tr>
-<tr><td>Sin repetir</td><td><code>codigo TEXT UNIQUE</code></td><td>no acepta dos valores iguales <b>si el negocio exige unicidad</b></td></tr>
-<tr><td>Valor por omisión</td><td><code>estado TEXT DEFAULT 'abierto'</code></td><td>rellena cuando la columna se omite</td></tr>
-<tr><td>Identidad</td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td></tr>
-<tr><td>Relación</td><td><code>FOREIGN KEY (...) REFERENCES ...</code></td><td>evita referencias huérfanas</td></tr>
-<tr><td>Condición</td><td><code>CHECK (personas &gt; 0)</code></td><td>valida una condición de la fila</td></tr>
+<h2>La sintaxis no decide si la regla es verdadera</h2>
+<table class="tbl"><thead><tr><th>Pieza</th><th>Sintaxis</th><th>Qué hace</th><th>Qué debes justificar</th></tr></thead><tbody>
+<tr><td><code>NOT NULL</code></td><td><code>puestos INTEGER NOT NULL</code></td><td>no acepta <code>NULL</code></td><td>por qué ese dato debe existir siempre</td></tr>
+<tr><td><code>UNIQUE</code></td><td><code>codigo TEXT UNIQUE</code></td><td>no repite valores</td><td>que la unicidad sea regla o decisión explícita</td></tr>
+<tr><td><code>DEFAULT</code></td><td><code>estado TEXT DEFAULT 'abierto'</code></td><td>rellena si se omite</td><td>es conveniencia, no validación</td></tr>
+<tr><td><code>PRIMARY KEY</code></td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td><td>la identidad elegida para la entidad</td></tr>
+<tr><td><code>FOREIGN KEY</code></td><td><code>FOREIGN KEY (...) REFERENCES ...</code></td><td>evita referencias huérfanas</td><td>que la relación exista en el modelo</td></tr>
+<tr><td><code>CHECK</code></td><td><code>CHECK (cantidad &gt; 0)</code></td><td>valida una condición de la fila</td><td>que la condición tenga sentido y alcance suficiente</td></tr>
 </tbody></table>
-<p class="warn"><code>DEFAULT</code> no valida una regla del negocio. Y <code>UNIQUE</code> tampoco se agrega “porque suena bien”: <strong>la unicidad debe estar justificada</strong>.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis de restricciones</span></div>
+<p class="warn"><strong>S6 sigue mandando:</strong> saber escribir <code>NOT NULL</code> no autoriza a convertir una regla candidata en una restricción implementada.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis + trazabilidad</span></div>
 </section>
 <section class="slide dense" data-title="Sintaxis CONSTRAINT">
   <div class="ey">18–33 min · Reglas con nombre</div>
@@ -209,14 +222,15 @@ CONSTRAINT fk_reserva_cliente
 <h2>Primera tabla: <code>cliente</code></h2>
 <pre><code>CREATE TABLE cliente (
     cliente_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    nombre TEXT NOT NULL,
+    nombre TEXT,
     telefono TEXT,
 
     CONSTRAINT pk_cliente PRIMARY KEY (cliente_id)
 );</code></pre>
-<p class="hintbox"><strong>Lectura natural:</strong> cada cliente tiene un identificador generado, un nombre obligatorio y un teléfono opcional.</p>
-<p class="small">No declaramos <code>UNIQUE (telefono)</code>: nadie confirmó que dos clientes no puedan compartir un teléfono. Practicaremos <code>UNIQUE</code> después con <code>mesa.codigo</code> como <strong>decisión explícita de diseño</strong>.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE</span></div>
+<p class="hintbox"><strong>Lectura natural:</strong> la tabla tiene una identidad técnica y puede guardar nombre y teléfono.</p>
+<p class="warn"><strong>¿Por qué no <code>NOT NULL</code> todavía?</strong> S6 dejó como <em>candidata</em> la regla de qué datos hacen falta para confirmar una reserva. No vamos a convertir esa incertidumbre en una prohibición global sobre todo cliente.</p>
+<p class="small">Tampoco usamos <code>UNIQUE (telefono)</code>: dos personas podrían compartir un número y nadie confirmó lo contrario.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE · no endurecer de más</span></div>
 </section>
 <section class="slide " data-title="Identity y PK">
   <div class="ey">18–33 min · Distinción crítica</div>
@@ -235,19 +249,23 @@ CONSTRAINT fk_reserva_cliente
 <h2>Segunda tabla: <code>reserva</code></h2>
 <pre class="smallcode"><code>CREATE TABLE reserva (
     reserva_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    cliente_id BIGINT NOT NULL,
-    fecha DATE NOT NULL,
-    hora TIME NOT NULL,
-    personas INTEGER NOT NULL,
+    cliente_id BIGINT,
+    mesa_id BIGINT,
+    fecha DATE,
+    hora TIME,
+    personas INTEGER,
+    estado TEXT NOT NULL DEFAULT 'pendiente',
 
     CONSTRAINT pk_reserva PRIMARY KEY (reserva_id),
     CONSTRAINT fk_reserva_cliente
-        FOREIGN KEY (cliente_id)
-        REFERENCES cliente(cliente_id),
-    CONSTRAINT ck_reserva_personas CHECK (personas &gt; 0)
+        FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id),
+    CONSTRAINT fk_reserva_mesa
+        FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id),
+    CONSTRAINT ck_reserva_personas
+        CHECK (personas IS NULL OR personas &gt; 0)
 );</code></pre>
-<div class="g2" style="margin-top:.7em"><div class="hintbox"><p style="margin:0"><strong>S7:</strong> una reserva pertenece a un cliente. <strong>S9:</strong> esa relación se vuelve <code>FOREIGN KEY</code>.</p></div><div class="ctx"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> sin ejecutar nada, escriban un <code>cliente_id</code> que debería funcionar y otro que debería fallar. Luego expliquen por qué.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Relación real</span></div>
+<div class="g2" style="margin-top:.55em"><div class="hintbox"><p style="margin:0"><strong>Representamos</strong> cliente, mesa, fecha, hora y personas porque las reglas de S6 los nombran. Pero la regla 1 sigue candidata: por eso esos datos no se vuelven <code>NOT NULL</code> globalmente.</p></div><div class="ctx"><p style="margin:0"><strong>Microactividad:</strong> un <code>cliente_id</code> inexistente sí debe fallar si se informa. En cambio <code>cliente_id = NULL</code> todavía puede existir en una reserva pendiente. <strong>Representar una relación no obliga a hacerla obligatoria.</strong></p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>FK ≠ obligatoriedad</span></div>
 </section>
 <section class="slide " data-title="Restricciones">
   <div class="ey">33–48 min · Lo que protege el motor</div>
@@ -265,16 +283,15 @@ CONSTRAINT fk_reserva_cliente
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Restricciones</span></div>
 </section>
-<section class="slide " data-title="CHECK tiene límites">
-<div class="ey">33–48 min · No todo cabe ahí</div>
-<h2>Un <code>CHECK</code> mira una condición de la fila</h2>
+<section class="slide dense" data-title="CHECK tiene límites">
+<div class="ey">33–48 min · Volvemos a las diez reglas de S6</div>
+<h2>Que una regla esté confirmada no significa que quepa en un <code>CHECK</code></h2>
 <div class="proscons">
-<section class="pro"><h3>Sí es buen candidato</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado IN (...)</code></li></ul></section>
-<section class="con"><h3>No cabe como CHECK simple</h3><ul><li>comparar con puestos guardados en otra tabla</li><li>detectar intervalos de reservas que se solapan</li><li>sumar pagos de varias filas</li></ul></section>
+<section class="pro"><h3>Condición de una fila</h3><ul><li><code>cantidad &gt; 0</code> como invariante de diseño</li><li><code>precio_unitario &gt;= 0</code> si decidimos no admitir negativos</li><li><code>personas IS NULL OR personas &gt; 0</code></li></ul></section>
+<section class="con"><h3>Necesita más contexto</h3><ul><li><b>Regla 3 confirmada:</b> comparar <code>personas</code> con <code>mesa.puestos</code></li><li><b>Regla 2 candidata:</b> detectar intervalos que se solapan</li><li><b>Regla 9 candidata:</b> sumar pagos de varias filas</li><li><b>Regla 10 confirmada:</b> saber quién está ejecutando</li></ul></section>
 </div>
-<div class="hintbox"><p style="margin:0"><strong>Microactividad · 90 segundos:</strong> inventen un valor que pase <code>CHECK (personas &gt; 0)</code> y otro que falle. Después expliquen por qué <code>personas &lt;= mesa.puestos</code> no es la misma clase de problema.</p></div>
-<p class="quote">Una restricción demasiado débil deja pasar errores; una inventada puede prohibir negocio válido.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>CHECK tiene límites</span></div>
+<div class="hintbox"><p style="margin:0"><strong>La lección:</strong> certeza y capa son ejes distintos. Una regla puede estar confirmadísima y aun así requerir transacción, lógica de base o aplicación.</p></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Confirmada no significa “CHECK”</span></div>
 </section>
 <section class="slide dense" data-title="Dialecto">
 <div class="ey">48–60 min · SQLite → PostgreSQL</div>
@@ -291,28 +308,30 @@ CONSTRAINT fk_reserva_cliente
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>Mismo diseño, otro dialecto</span></div>
 </section>
 <section class="slide dense" data-title="Antes de Supabase">
-<div class="ey">60–75 min · No inventamos otro modelo</div>
-<h2>Este es el modelo que llega de S7 y S8</h2>
-<p class="lead">S9 no vuelve a modelar. Traduce a DDL las decisiones que ya quedaron defendidas.</p>
+<div class="ey">60–75 min · Recorte de implementación</div>
+<h2>Implementamos una parte del modelo, no reemplazamos S7</h2>
+<p class="lead">Para aprender DDL necesitamos suficientes relaciones y restricciones para probar el motor. No hace falta desplegar hoy todo el restaurante.</p>
 <div class="g2">
-<div><h3>Núcleo que implementaremos</h3>
+<div><h3>Recorte que sí construiremos</h3>
 <table class="tbl"><tbody>
-<tr><td><code>cliente</code></td><td>persona que reserva</td></tr>
-<tr><td><code>reserva</code></td><td>fecha, hora y personas</td></tr>
-<tr><td><code>mesa</code></td><td>capacidad y código</td></tr>
-<tr><td><code>pedido</code></td><td>transacción operativa</td></tr>
-<tr><td><code>pedido_mesa</code></td><td>permite una o varias mesas por pedido</td></tr>
-<tr><td><code>plato</code></td><td>catálogo actual</td></tr>
-<tr><td><code>linea_pedido</code></td><td>cantidad + precio histórico</td></tr>
+<tr><td><code>cliente</code></td><td>identidad/contacto sin imponer campos candidatos</td></tr>
+<tr><td><code>mesa</code></td><td>capacidad y código interno</td></tr>
+<tr><td><code>reserva</code></td><td>relaciones y datos que S6 dejó sobre la mesa</td></tr>
+<tr><td><code>pedido</code></td><td>transacción operativa, <b>sin inventar vínculo obligatorio con reserva</b></td></tr>
+<tr><td><code>pedido_mesa</code></td><td>conserva la llamada de S7: un pedido puede usar varias mesas</td></tr>
+<tr><td><code>plato</code></td><td>catálogo</td></tr>
+<tr><td><code>linea_pedido</code></td><td>cantidad + precio histórico de S8</td></tr>
 </tbody></table></div>
-<div><h3>Dos decisiones que no cambiamos</h3>
+<div><h3>Siguen fuera del laboratorio</h3>
 <ul class="checks">
-<li><code>pedido_mesa</code> conserva la llamada de S7: un pedido puede atender varias mesas.</li>
-<li><code>linea_pedido</code> usa <code>linea_id</code> como PK: no asumimos que <code>(pedido_id, plato_id)</code> sea único sin confirmación.</li>
+<li><code>mesero</code> y permisos de la regla 10.</li>
+<li><code>pago</code> y suma dividida de la regla 9.</li>
+<li><code>ingrediente</code>/<code>receta</code> y regla 7.</li>
+<li>la hipótesis 6 sobre agotados: <strong>no se implementa</strong>.</li>
 </ul>
-<div class="hintbox"><p style="margin:0"><strong>Ahora sí:</strong> abran el constructor en modo sesión 9 y comparen su SQL con este modelo. Ajustamos el dialecto, <strong>no las reglas del negocio</strong>.</p></div></div>
+<div class="ctx"><p style="margin:0"><strong>Recorte ≠ olvido.</strong> Estas partes siguen en el modelo de S7; simplemente no son necesarias para demostrar el objetivo DDL de hoy.</p></div></div>
 </div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Continuidad S7 → S8 → S9</span></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Continuidad sin fingir un modelo más pequeño</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
@@ -359,24 +378,24 @@ CREATE TABLE reserva (...);</code></pre>
 </section>
 <section class="slide dense" data-title="Taller principal">
 <div class="ey">90–115 min · Producto</div>
-<h2>Primero una victoria pequeña; después, extensión</h2>
+<h2>Construir, justificar y etiquetar</h2>
 <div class="vs-grid">
 <section><h3>Núcleo obligatorio</h3><ul>
 <li><strong>3 tablas</strong> que sí se relacionen.</li>
 <li>PK en las 3 y al menos <strong>2 FK</strong>.</li>
-<li>Al menos un <code>NOT NULL</code> justificado.</li>
-<li>Al menos un <code>CHECK</code>.</li>
+<li>Al menos un <code>NOT NULL</code> y un <code>CHECK</code>.</li>
 <li><strong>1 INSERT válido + 2 inválidos</strong>.</li>
-</ul><p class="small"><strong>Meta:</strong> que PostgreSQL acepte lo válido y rechace lo inválido por la razón esperada.</p></section>
+<li>Para cada restricción: escribir al lado <b>fuente</b>: “regla confirmada”, “regla candidata simulada” o “decisión de modelo”.</li>
+</ul></section>
 <section><h3>Extensión si terminan</h3><ul>
 <li>Llegar a 5–7 tablas.</li>
 <li>Agregar <code>pedido_mesa</code>.</li>
 <li>Probar un <code>UNIQUE</code> justificado.</li>
-<li>Modificar una regla con <code>ALTER TABLE</code>.</li>
-</ul><p class="small">La extensión no define quién “terminó bien”. El núcleo ya demuestra el aprendizaje.</p></section>
+<li>Simular qué cambiaría si una regla candidata fuese confirmada.</li>
+</ul><p class="small">Una <strong>hipótesis de S6 no se convierte en constraint</strong> para completar el ejercicio.</p></section>
 </div>
-<p class="warn">Cada restricción debe poder leerse así: <strong>“esta línea protege esta regla o esta decisión explícita de diseño”</strong>.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primero comprender; luego ampliar</span></div>
+<p class="warn">El producto no es “mucho SQL”. Es poder señalar una línea y responder: <strong>¿qué evidencia me autorizó a escribirla?</strong></p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>DDL con trazabilidad</span></div>
 </section>
 <section class="slide dense" data-title="Tabla puente">
 <div class="ey">90–115 min · Extensión N:N</div>
@@ -395,18 +414,17 @@ CREATE TABLE reserva (...);</code></pre>
 <p class="hintbox">S7 cambió la regla: un pedido puede ocupar varias mesas. S8 conservó esa decisión. S9 la implementa con <code>pedido_mesa</code>. <strong>Es el mismo razonamiento de <code>film_category</code>.</strong></p>
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>La cardinalidad se vuelve DDL</span></div>
 </section>
-<section class="slide " data-title="Romper la base">
+<section class="slide dense" data-title="Romper la base">
 <div class="ey">115–135 min · Pruebas</div>
-<h2>Ahora intentamos guardar datos que deberían fallar</h2>
+<h2>Cuatro fallos distintos, cuatro fuentes distintas</h2>
 <div class="steps">
-<article><b>1</b><h3>NOT NULL</h3><p><code>nombre = NULL</code></p></article>
-<article><b>2</b><h3>FK</h3><p>cliente inexistente</p></article>
-<article><b>3</b><h3>CHECK</h3><p><code>personas = 0</code></p></article>
-<article><b>4</b><h3>UNIQUE</h3><p><code>mesa.codigo</code> repetido</p></article>
+<article><b>1</b><h3>NOT NULL</h3><p><code>mesa.puestos = NULL</code><br><span class="small">invariante del modelo</span></p></article>
+<article><b>2</b><h3>FK</h3><p>cliente inexistente en reserva<br><span class="small">relación representada</span></p></article>
+<article><b>3</b><h3>CHECK</h3><p><code>cantidad = 0</code><br><span class="small">decisión de dominio</span></p></article>
+<article><b>4</b><h3>UNIQUE</h3><p><code>mesa.codigo</code> repetido<br><span class="small">decisión explícita del laboratorio</span></p></article>
 </div>
-<div class="warn"><p style="margin:0"><strong>NULL no es una cadena vacía.</strong> <code>NOT NULL</code> rechaza <code>NULL</code>, pero <code>''</code> es un valor de texto y puede ser aceptado. Si el negocio también prohíbe texto vacío, hace falta otra regla.</p></div>
-<p class="quote">Que una sentencia falle puede ser exactamente la evidencia que estábamos buscando.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Probar la regla, no solo el SQL</span></div>
+<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>Y una prueba que debe pasar:</strong> una reserva <code>pendiente</code> con campos todavía nulos. Eso demuestra que no convertimos la regla 1 candidata en <code>NOT NULL</code> global.</p></div><div class="hintbox"><p style="margin:0"><strong>Resultado correcto ≠ siempre “error”.</strong> A veces la evidencia buscada es que PostgreSQL permita algo porque el negocio todavía no lo prohibió.</p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Probar también lo que debe permitirse</span></div>
 </section>
 <section class="slide " data-title="Prueba FK">
   <div class="ey">115–135 min · El payoff</div>
@@ -419,27 +437,33 @@ VALUES (999999, '2026-09-04', '20:00', 4);</code></pre>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Prueba FK</span></div>
 </section>
-<section class="slide " data-title="ALTER TABLE">
-  <div class="ey">135–145 min · Las reglas aparecen tarde</div>
-  
-  <h2>El modelo se escribe en lápiz</h2>
-<pre class=""><code>ALTER TABLE reserva
-ADD CONSTRAINT ck_reserva_personas_max
-CHECK (personas &lt;= 20);</code></pre>
-  <p class="hintbox">Conecta con la llamada de la dueña: el negocio cambia, y a veces la estructura también.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>ALTER TABLE</span></div>
+<section class="slide dense" data-title="ALTER TABLE">
+<div class="ey">135–145 min · Cuando cambia la certeza</div>
+<h2>¿Qué pasaría si la candidata 1 fuese confirmada?</h2>
+<p class="lead">No afirmamos que haya ocurrido. <strong>Simulamos una nueva entrevista</strong> para ver cómo una regla pasa de documento a estructura sin rehacer la tabla.</p>
+<pre class="smallcode"><code>ALTER TABLE reserva
+ADD CONSTRAINT ck_reserva_confirmada_completa
+CHECK (
+    estado &lt;&gt; 'confirmada'
+    OR (
+        fecha IS NOT NULL
+        AND hora IS NOT NULL
+        AND personas IS NOT NULL
+        AND cliente_id IS NOT NULL
+    )
+);</code></pre>
+<div class="g2" style="margin-top:.5em"><div class="hintbox"><p style="margin:0"><strong>Por qué no pusimos cuatro <code>NOT NULL</code> desde el comienzo:</strong> la frase de S6 hablaba de <em>confirmar</em> una reserva, no necesariamente de crear un borrador.</p></div><div class="warn"><p style="margin:0"><strong>En el script queda comentado.</strong> Solo se ejecuta si el docente declara la simulación: “la dueña acaba de confirmar la regla 1”.</p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>ALTER = la estructura también evoluciona</span></div>
 </section>
-<section class="slide " data-title="DROP TABLE">
-  <div class="ey">135–145 min · Orden importa</div>
-  
-  <h2>Para borrar también hay dependencias</h2>
-<pre class=""><code>DROP TABLE linea_pedido;
-DROP TABLE pedido;
-DROP TABLE reserva;</code></pre>
-  <p class="warn">Para crear: padres antes que hijos. Para destruir: normalmente hijos antes que padres.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE</span></div>
+<section class="slide dense" data-title="DROP TABLE" data-opcional="1">
+<div class="ey">Opcional · 3 minutos · si hay tiempo</div>
+<h2>Para borrar también importan las dependencias</h2>
+<pre><code>DROP TABLE linea_pedido;
+DROP TABLE pedido_mesa;
+DROP TABLE pedido;</code></pre>
+<p class="warn">Para crear: primero aquello que será referenciado. Para borrar: normalmente primero los objetos que dependen de otros.</p>
+<p class="small">No es el objetivo central de hoy. Si el laboratorio va justo de tiempo, esta diapositiva se salta.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE · extensión</span></div>
 </section>
 <section class="slide " data-title="Supabase en el mapa">
 <div class="ey">145–157 min · Cierre del laboratorio</div>
@@ -469,18 +493,17 @@ DROP TABLE reserva;</code></pre>
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>DP-900</span></div>
 </section>
 <section class="slide dark" data-title="Cierre">
-  <div class="ey">160–165 min · Frase final</div>
-  
-  <h2>Lo que pasó hoy</h2>
-  <p class="quote">Una conversación con el negocio terminó convertida en decisiones que un motor de base de datos puede ejecutar y hacer cumplir.</p>
-  <div class="steps">
-    <article><b>S6</b><p>regla</p></article>
-    <article><b>S7</b><p>modelo</p></article>
-    <article><b>S8</b><p>dependencia</p></article>
-    <article><b>S9</b><p>DDL real</p></article>
-  </div>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Cierre</span></div>
+<div class="ey">160–165 min · Frase final</div>
+<h2>DDL hace ejecutable una decisión; no fabrica evidencia</h2>
+<p class="quote">Una conversación con el negocio terminó convertida en estructura, pero cada constraint conserva la pregunta: “¿quién dijo que esto debía ser verdad?”</p>
+<div class="steps">
+<article><b>S6</b><p>certeza de la regla</p></article>
+<article><b>S7</b><p>decisión de modelo</p></article>
+<article><b>S8</b><p>dependencia y coherencia</p></article>
+<article><b>S9</b><p>DDL + prueba real</p></article>
+</div>
+<div class="g2" style="margin-top:.7em"><div class="ctx"><p style="margin:0"><strong>Confirmada:</strong> intentamos protegerla donde haya información suficiente.</p></div><div class="warn"><p style="margin:0"><strong>Candidata o hipótesis:</strong> se documenta, se representa si hace falta, pero no se endurece silenciosamente.</p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Cierre · trazabilidad</span></div>
 </section>
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 1</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-9-ddl-supabase.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
