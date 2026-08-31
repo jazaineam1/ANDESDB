@@ -282,17 +282,26 @@
           "fecha": "2026-09-04",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
-          "titulo": "DDL + Azure SQL",
+          "titulo": "DDL + Supabase/PostgreSQL",
           "estado": "pendiente",
-          "desc": "Convertir el modelo en CREATE TABLE y restricciones; comparar y mostrar la familia Azure SQL en servicio real.",
+          "desc": "Convertir el modelo del Restaurante ABC en CREATE TABLE y restricciones, ejecutarlo en PostgreSQL real con Supabase y comprobar qué reglas acepta o rechaza el motor.",
           "tags": [
             "CREATE TABLE",
             "PK",
             "FK",
+            "NOT NULL",
+            "UNIQUE",
             "CHECK",
-            "Azure SQL Database",
-            "Managed Instance",
-            "Azure VM"
+            "PostgreSQL",
+            "Supabase"
+          ],
+          "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
+          "recursos": [
+            {
+              "txt": "📄 Script del laboratorio · Supabase/PostgreSQL",
+              "href": "Scripts/S9.sql",
+              "download": true
+            }
           ]
         }
       ]

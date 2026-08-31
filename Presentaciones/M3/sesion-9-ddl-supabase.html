@@ -369,4 +369,5 @@ let timerOn=false,t0=0,tick=null;function fmt(s){return String(Math.floor(s/60))
 document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.className='copybtn';b.textContent='copiar';b.onclick=async()=>{await navigator.clipboard.writeText(pre.innerText.replace(/^copiar\n?/,''));b.textContent='copiado';b.classList.add('ok');setTimeout(()=>{b.textContent='copiar';b.classList.remove('ok')},1100)};pre.appendChild(b);});
 document.querySelectorAll('.q button').forEach(b=>b.onclick=()=>b.closest('.q').classList.add('ok'));
 show(i);
-</script></body></html>
+</script><script src="../../assets/learning/learning-core.js"></script>
+</body></html>
