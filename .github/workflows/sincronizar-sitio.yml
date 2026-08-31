@@ -26,6 +26,9 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
+      - name: Ajustar orquestación S7-S9
+        run: python tools/ajustar_orquestacion_s7_s9.py
+
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
 
@@ -38,13 +41,13 @@ jobs:
       - name: Publicar cambios generados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones; then
+          if git diff --quiet -- index.html Presentaciones tools/curso.json assets/learning/learning-plan.json docs/METODOLOGIA-S6-S16.md; then
             echo 'Sitio ya sincronizado'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones
-          git commit -m 'Sincronizar sitio con el manifiesto del curso'
+          git add index.html Presentaciones tools/curso.json assets/learning/learning-plan.json docs/METODOLOGIA-S6-S16.md
+          git commit -m 'Orquestar herramientas S7-S9 dentro de clase'
           git pull --rebase origin main
           git push origin main
