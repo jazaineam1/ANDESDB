@@ -1,0 +1,44 @@
+name: Ajustes finales S8 S9
+
+on:
+  push:
+    paths:
+      - '.github/workflows/tmp-fix-final-s8-s9.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Aplicar ajustes
+        run: python tools/tmp_fix_final_s8_s9.py
+      - name: Regenerar experiencia
+        run: |
+          python tools/construir-index.py
+          python tools/integrar-experiencia.py
+      - name: Verificar alcance
+        shell: bash
+        run: |
+          git diff --quiet -- Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html || { echo '::error::S7 cambió'; exit 1; }
+          git diff --quiet -- index.html || { echo '::error::index cambió'; exit 1; }
+          permitidos='^(Presentaciones/M3/sesion-8-modelado-y-normalizacion.html|Presentaciones/M3/sesion-9-ddl-supabase.html)$'
+          inesperados=$(git diff --name-only | grep -Ev "$permitidos" || true)
+          if [ -n "$inesperados" ]; then echo "$inesperados"; exit 1; fi
+      - name: Validar
+        run: |
+          python tools/pre_push_check.py
+          python tools/validar_curso.py
+      - name: Publicar
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Presentaciones/M3/sesion-8-modelado-y-normalizacion.html Presentaciones/M3/sesion-9-ddl-supabase.html
+          git commit -m 'Pulir continuidad final de S8 y S9'
+          git push
