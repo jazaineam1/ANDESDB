@@ -684,74 +684,53 @@ lo perdiste, est&aacute; ah&iacute;.</p>
 </section>
 
 <section class="slide dense mid" data-title="Otra pregunta">
-<div class="ey">10 minutos</div>
+<div class="ey">7 minutos</div>
 <h2>Una pregunta que ayer no le hicimos</h2>
-<p class="lead">Ayer le preguntamos al modelo <strong>si representaba las reglas del
-negocio</strong>. Y sí: las representa. Hoy le hacemos otra, que ayer no tocaba &mdash;
-<strong>¿qué le pasa cuando los datos cambian con el tiempo?</strong></p>
+<p class="lead">Ayer preguntamos si el modelo <strong>representaba las reglas</strong>. Hoy preguntamos otra cosa: <strong>¿qué le pasa cuando los datos cambian?</strong></p>
 <div class="g2">
-<div><h3>Una decisión que nadie había mirado</h3>
-<p>El modelo guarda <code>pedido.total</code>. Es lo que hace <strong>casi cualquier
-sistema real</strong>: una factura lleva su total escrito.</p>
-<div class="ctx"><p style="margin:0"><strong>No es un error.</strong> Es una decisión —
-y toda decisión tiene un precio. Lo que pasa es que ese precio <strong>no se ve el día que
-se diseña</strong>: se ve meses después.</p></div>
-<p style="margin-top:.45em">Vamos a medirlo. El pedido 1 cuadra, y el cliente pide
-un ajiaco más:</p>
-<pre><code>UPDATE linea_pedido SET cantidad = 3 WHERE linea_id = 1;</code></pre>
+<div><h3>Una copia que puede quedar vieja</h3>
+<p>En este ejemplo <code>pedido.total</code> guarda exactamente la suma de las líneas. Al principio cuadra.</p>
+<div class="ctx"><p style="margin:0"><strong>No es un error de sintaxis.</strong> Es una decisión de diseño. Y una decisión puede funcionar hoy y volverse costosa mañana.</p></div>
+<p style="margin-top:.45em">El cliente pide un ajiaco más:</p>
+<pre><code>UPDATE linea_pedido
+SET cantidad = 3
+WHERE linea_id = 1;</code></pre>
 </div>
-<div><h3>El precio, en números</h3>
-<svg style="width:100%;max-width:372px;height:auto;display:block;margin:.3em auto" viewBox="0 0 420 190" role="img" aria-label="El total guardado dice 102000 y las lineas suman 134000">
-<rect x="10" y="16" width="188" height="76" rx="10" fill="#fff1f0" stroke="#a52a2a" stroke-width="2.2"/>
-<text x="104" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#a52a2a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">LA CUENTA DICE</text>
-<text x="104" y="72" text-anchor="middle" font-size="27" font-weight="800" fill="#a52a2a" font-family="Segoe UI,Arial,sans-serif">102.000</text>
-<rect x="222" y="16" width="188" height="76" rx="10" fill="#e9f8ef" stroke="#146c43" stroke-width="2.2"/>
-<text x="316" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".05em">LOS PLATOS SUMAN</text>
-<text x="316" y="72" text-anchor="middle" font-size="27" font-weight="800" fill="#146c43" font-family="Segoe UI,Arial,sans-serif">134.000</text>
-<text x="210" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#c96a00" font-family="Segoe UI,Arial,sans-serif">y el motor no dijo nada</text>
-<rect x="10" y="132" width="400" height="46" rx="9" fill="#fff3e7" stroke="#ff8a24" stroke-width="1.6"/>
-<text x="210" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#171717" font-family="Segoe UI,Arial,sans-serif">El precio de guardar un total:</text>
-<text x="210" y="169" text-anchor="middle" font-size="11.5" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif">hay que acordarse de actualizarlo. Siempre.</text>
-</svg>
-<p class="small">Se paga de otras dos formas: borren la única línea de un pedido y el
-total sigue ahí; inserten uno de 95.000 <strong>sin ningún plato</strong> y lo acepta.
-<strong>Hoy vemos ese precio antes de pagarlo.</strong></p>
+<div><h3>El precio de guardar la copia</h3>
+<table class="optbl"><tbody>
+<tr><td><code>pedido.total</code></td><td><b>102.000</b></td></tr>
+<tr><td><code>SUM(linea_pedido)</code></td><td><b>134.000</b></td></tr>
+</tbody></table>
+<div class="warn" style="margin-top:.6em"><p style="margin:0">La base acepta el <code>UPDATE</code>. El problema no es que falle: <strong>el problema es que no falla</strong> y ahora dos copias dicen cosas distintas.</p></div>
+<p class="small" style="margin-top:.5em">Hoy no buscamos “borrar repetidos”. Buscamos entender <strong>de qué depende cada dato</strong> y qué información perderíamos si lo movemos o lo quitamos.</p></div>
 </div>
-</div>
-<div class="brand"><span>Apertura</span><span>No es un error: es un precio</span></div>
+<div class="brand"><span>Apertura</span><span>No es un error: es una decisión que envejeció</span></div>
 </section>
-
 <section class="slide dense mid" data-title="Dependencias">
-<div class="ey">15 minutos</div>
-<h2>«Si sé esto, sé aquello»</h2>
-<p class="lead">Eso es una <strong>dependencia funcional</strong>, y es toda la teoría que
-hace falta hoy. No hay que memorizar ninguna definición: hay que saber hacer la pregunta.</p>
+<div class="ey">12 minutos</div>
+<h2>«Si sé esto, ¿sé aquello?»</h2>
+<p class="lead">Esa pregunta es la forma práctica de reconocer una <strong>dependencia funcional</strong>. Primero se entiende; después se le pone nombre.</p>
 <div class="g2">
 <div><h3>La pregunta, siempre igual</h3>
-<div class="ctx"><p style="margin:0;font-size:1.06em">Si te digo <strong>X</strong>,
-¿sabes ya <strong>Y</strong> sin mirar nada más?</p></div>
-<table class="optbl" style="margin-top:.5em"><tbody>
-<tr><td>Si sé la <b>mesa</b></td><td>sé cuántos <b>puestos</b> tiene</td><td>sí</td></tr>
-<tr><td>Si sé el <b>mesero</b></td><td>sé su <b>documento</b></td><td>sí</td></tr>
-<tr><td>Si sé el <b>pedido</b></td><td>sé la <b>fecha</b> y la <b>mesa</b></td><td>sí</td></tr>
-<tr><td>Si sé el <b>pedido</b></td><td>sé <b>qué platos</b> lleva</td><td><b>no</b>: son varios</td></tr>
-</tbody></table></div>
-<div><h3>Y para qué sirve saberlo</h3>
-<p>Porque <strong>cada dato debe vivir donde vive aquello de lo que depende</strong>. Y solo
-ahí.</p>
+<div class="ctx"><p style="margin:0;font-size:1.06em">Si te digo <strong>X</strong>, ¿puedes conocer <strong>Y</strong> sin mirar nada más?</p></div>
+<table class="optbl"><tbody>
+<tr><td>mesa</td><td>puestos</td><td><b>sí</b></td></tr>
+<tr><td>mesero</td><td>documento</td><td><b>sí</b></td></tr>
+<tr><td>pedido</td><td>fecha</td><td><b>sí</b></td></tr>
+<tr><td>pedido</td><td>platos</td><td><b>no</b>: puede haber varios</td></tr>
+</tbody></table>
+<p class="small" style="margin-top:.5em">Luego la notación compacta será, por ejemplo: <code>mesa_id → puestos</code>.</p></div>
+<div><h3>¿Para qué sirve?</h3>
+<p><strong>La dependencia ayuda a decidir dónde debe vivir el dato.</strong></p>
 <ul class="checks">
 <li>Los puestos dependen de la <b>mesa</b> → viven en <code>mesa</code>.</li>
 <li>El documento depende del <b>mesero</b> → vive en <code>mesero</code>.</li>
-<li>Si escribes los puestos dentro de cada reserva, el mismo número queda en veinte
-    filas — y el día que una mesa cambia de tamaño hay que corregir veinte.</li>
+<li>El precio cobrado depende de la <b>línea de esa transacción</b>, no del precio actual del plato.</li>
 </ul>
-<div class="hintbox"><p style="margin:0">Normalizar <strong>no es partir tablas por
-gusto</strong>. Es poner cada dato donde depende, para que solo haya que cambiarlo en un
-sitio.</p></div></div>
+<div class="hintbox"><p style="margin:0"><strong>Primera pregunta de hoy:</strong> ¿de qué depende este atributo? Esa respuesta orienta dónde debe quedar.</p></div></div>
 </div>
 <div class="brand"><span>Dependencias</span><span>Cada dato, donde depende</span></div>
 </section>
-
 <section class="slide dense mid" data-title="La libreta">
 <div class="ey">10 minutos &middot; el material de hoy</div>
 <h2>Veinte años de libreta</h2>
@@ -778,64 +757,46 @@ guardado igualmente. <strong>Ya saben en qué acaba eso.</strong></p></div>
 </section>
 
 <section class="slide dense mid" data-title="1FN">
-<div class="ey">15 minutos &middot; juntos</div>
+<div class="ey">12 minutos · juntos</div>
 <h2>Primera forma normal: una celda, un dato</h2>
-<p class="lead">Solo hay una regla, y es esta: <strong>en cada celda cabe un dato, no una
-lista</strong>. Vamos a arreglar la celda de los platos entre todos.</p>
+<p class="lead">Aquí sí hay una idea sencilla: <strong>una celda no debería contener una lista de valores que luego tengamos que partir</strong>.</p>
 <div class="g2">
 <div><h3>Antes</h3>
-<table class="optbl"><tbody>
-<tr><td>pedido 1</td><td><b>Ajiaco x2; Bandeja paisa x1</b></td></tr>
-</tbody></table>
-<p class="small" style="margin-top:.4em">Una celda con dos platos y sus dos cantidades
-metidos con punto y coma. Para el motor es <strong>una cadena de texto</strong>, no dos
-platos: no los puede contar, ni sumar, ni relacionar con la carta.</p>
-<div class="warn"><p style="margin:0">Y en cuanto alguien escriba «Ajiaco 2» en vez de
-«Ajiaco x2», la hoja deja de poder leerse siquiera con un programa.</p></div></div>
+<table class="optbl"><tbody><tr><td>pedido 1</td><td><b>Ajiaco x2; Bandeja paisa x1</b></td></tr></tbody></table>
+<p class="small" style="margin-top:.4em">Para el motor eso es una cadena de texto. Contar platos, relacionarlos o validar cantidades exige desarmarla.</p>
+<div class="warn"><p style="margin:0">1FN habla de <strong>atomicidad de los valores</strong>. No decide automáticamente cuál debe ser la clave primaria.</p></div></div>
 <div><h3>Después</h3>
-<table class="optbl"><tbody>
-<tr><td>pedido 1</td><td>Ajiaco</td><td>2</td></tr>
-<tr><td>pedido 1</td><td>Bandeja paisa</td><td>1</td></tr>
+<table class="optbl"><thead><tr><th>linea_id</th><th>pedido_id</th><th>plato_id</th><th>cantidad</th></tr></thead><tbody>
+<tr><td>1</td><td>1</td><td>10</td><td>2</td></tr>
+<tr><td>2</td><td>1</td><td>14</td><td>1</td></tr>
 </tbody></table>
-<p style="margin-top:.5em"><strong>Una fila por plato.</strong> La tabla crece a lo alto en
-vez de a lo ancho, y eso está bien: ahora sí se puede preguntar cuántos ajiacos se
-vendieron.</p>
-<div class="hintbox"><p style="margin:0"><strong>Y fíjense en lo que acaba de aparecer:</strong>
-la clave de esta tabla ya no es el pedido. Es <b>pedido + plato</b>. Dos columnas juntas
-identifican la fila &mdash; y de ahí sale todo lo demás.</p></div></div>
+<p style="margin-top:.5em"><strong>Una fila por línea.</strong> En nuestro modelo de referencia conservamos <code>linea_id</code> como PK.</p>
+<div class="hintbox"><p style="margin:0"><code>(pedido_id, plato_id)</code> podría ser una clave <strong>si el negocio confirma</strong> que un plato solo aparece una vez por pedido y luego solo aumenta <code>cantidad</code>. Como nadie confirmó esa regla, <strong>no la inventamos</strong>.</p></div></div>
 </div>
-<div class="brand"><span>1FN</span><span>Una celda, un dato</span></div>
+<div class="brand"><span>1FN</span><span>Una celda, un dato · la PK se decide aparte</span></div>
 </section>
-
 <section class="slide yellow dense mid" data-title="El taller">
-<div class="ey">Taller &middot; 35 minutos en salas</div>
+<div class="ey">Taller · 35 minutos en salas</div>
 <h2>Lleven la hoja hasta el final</h2>
-<p class="lead">La hoja ya está en 1FN. Ahora saquen de ahí <strong>todo lo que no depende de
-(pedido + plato)</strong> y pónganlo donde depende. Mismas salas de ayer.</p>
+<p class="lead">La hoja ya está en 1FN. Ahora muevan cada atributo al lugar donde <strong>realmente depende</strong>, sin perder información ni inventar reglas.</p>
 <div class="g2">
-<div><h3>Cómo se hace, en dos preguntas</h3>
+<div><h3>Las dos preguntas</h3>
 <ol class="steps">
-<li><strong>¿De qué depende esta columna?</strong> Si depende solo del <b>pedido</b>
-    —fecha, mesa, mesero, cliente— sale a <code>pedido</code>.</li>
-<li><strong>¿Y depende de algo que ya salió?</strong> Los <b>puestos</b> son de la mesa;
-    el <b>documento</b>, del mesero; el <b>teléfono</b>, del cliente. Cada uno a su tabla.</li>
+<li><strong>¿De qué depende esta columna?</strong> Eso orienta dónde debe vivir.</li>
+<li><strong>Si la separo o la quito, ¿puedo reconstruir la información sin perder significado?</strong></li>
 </ol>
-<div class="ctx"><p style="margin:0">Y el <b>total</b>: pregúntense si hace falta guardarlo.
-Ya vieron lo que pasa cuando se guarda.</p></div></div>
-<div><h3>Lo que hay que entregar</h3>
+<div class="ctx"><p style="margin:0">El <b>total</b> es un buen candidato para discutir: en nuestro caso didáctico es exactamente la suma de las líneas. El <b>precio_unitario</b>, en cambio, conserva el precio histórico cobrado.</p></div></div>
+<div><h3>Lo que entregan</h3>
 <ul class="checks">
-<li>Las tablas que les salgan, con <strong>su clave</strong>.</li>
-<li>Para cada columna que movieron, <strong>de qué depende</strong>. En una frase.</li>
-<li><strong>Ninguna regla del negocio perdida:</strong> lo que la hoja podía decir, sus
-    tablas lo tienen que poder decir.</li>
-<li>Y una comprobación: <strong>¿pueden reconstruir la hoja original?</strong></li>
+<li>Las tablas resultantes, cada una con su <strong>PK</strong>.</li>
+<li>Para cada atributo que movieron: <strong>de qué depende</strong>.</li>
+<li>Las relaciones necesarias para volver a unir la información.</li>
+<li>Una decisión que <strong>no se pueda tomar sin preguntarle al negocio</strong>.</li>
 </ul>
-<div class="hintbox"><p style="margin:0">Esa última no es retórica: si no se puede
-reconstruir, perdieron información — y eso <strong>no</strong> es normalizar.</p></div></div>
+<div class="hintbox"><p style="margin:0">Normalizar no es “partir hasta que se vea bonito”. Es <strong>poner cada dato donde corresponde y comprobar que la separación no destruyó información</strong>.</p></div></div>
 </div>
-<div class="brand"><span>Taller &middot; 2FN y 3FN</span><span>Cada dato, donde depende</span></div>
+<div class="brand"><span>Taller · 2FN y 3FN</span><span>Dependencia + reconstrucción</span></div>
 </section>
-
 <section class="slide yellow mid" data-title="Pausa" data-break="15">
 <div class="ey">Pausa &middot; 15 minutos</div>
 <h2>Quince minutos</h2>
@@ -896,121 +857,93 @@ cambian de nombre?</p>
 </section>
 
 <section class="slide dense mid" data-title="La lente">
-<div class="ey">30 minutos &middot; en la herramienta</div>
-<h2>Ahora, sobre su propio modelo</h2>
-<p class="lead">Abran <strong>el constructor</strong> y peguen el <strong>código que dejaron
-en el chat ayer</strong>. Botón «Mi código de modelo», pegar, y «Cargar». Su modelo
-vuelve entero.</p>
+<div class="ey">22 minutos · en la herramienta</div>
+<h2>Paso 8: una lente, no un verificador automático</h2>
+<p class="lead">Abran el constructor y carguen el código del modelo. El paso 8 sirve para <strong>examinar redundancias concretas del caso</strong>; no certifica que todo el modelo esté “en 3FN”.</p>
 <div class="g2">
-<div><h3>El paso 8: la lente</h3>
+<div><h3>Qué hace la lente</h3>
 <ol class="steps">
-<li>Les <strong>señala</strong> qué datos guarda dos veces su modelo.</li>
-<li>Ejecuta el <code>UPDATE</code> que lo rompe <strong>contra su base</strong>, y les
-    dice cuántos pedidos quedan mintiendo.</li>
-<li>Les deja <strong>quitarlo</strong>.</li>
-<li>Y vuelve a correr el banco de pruebas de ayer, para que vean que reparar
-    <strong>no rompió nada</strong> de lo que ya funcionaba.</li>
+<li><strong>Señala</strong> datos que aparecen en más de un lugar.</li>
+<li>Ejecuta un cambio que puede volver inconsistentes esas copias.</li>
+<li>Permite probar qué pasa si una copia se elimina.</li>
+<li>Vuelve a ejecutar pruebas para comprobar que el modelo sigue respondiendo.</li>
 </ol></div>
-<div><h3>Lo que quiero que vean</h3>
-<div class="ctx"><p style="margin:0">La lente encuentra <strong>dos</strong> datos
-duplicados en el modelo de referencia, y les dice cosas contrarias sobre ellos.</p></div>
-<p style="margin-top:.5em">Uno hay que quitarlo. El otro <strong>hay que dejarlo</strong>.
-Y tienen exactamente la misma forma.</p>
-<p class="small">Cuando lo tengan, miren por qué. Lo discutimos al volver, y es lo más
-importante de la sesión.</p>
-<div class="hintbox"><p style="margin:0">Si perdieron el código de ayer, no pasa nada:
-pídanlo a alguien de su sala, o carguen uno cualquiera del chat. Lo que se aprende
-es el procedimiento.</p></div></div>
+<div><h3>Qué NO hace</h3>
+<ul class="checks">
+<li>No decide por ustedes si dos valores iguales significan lo mismo.</li>
+<li>No sabe qué información histórica exige el negocio.</li>
+<li>No reemplaza la pregunta <strong>“¿de qué depende?”</strong>.</li>
+</ul>
+<div class="hintbox"><p style="margin:0">La herramienta ayuda a <strong>ver consecuencias</strong>. La decisión de diseño sigue siendo de ustedes.</p></div></div>
 </div>
-<div class="brand"><span>La lente</span><span>Sobre tu modelo, no sobre un ejemplo</span></div>
+<div class="brand"><span>La lente</span><span>Observar consecuencias, no certificar</span></div>
 </section>
-
 <section class="slide dense mid" data-title="Las dos caras">
-<div class="ey">12 minutos &middot; lo más importante de hoy</div>
-<h2>Dos datos duplicados, decisiones contrarias</h2>
-<p class="lead">Los dos guardan algo que ya está en otra tabla. La forma es idéntica. Y lo
-que hay que hacer con cada uno es lo opuesto.</p>
+<div class="ey">12 minutos · lo más importante de hoy</div>
+<h2>Mismo número no significa mismo dato</h2>
+<p class="lead"><code>pedido.total</code> y <code>linea_pedido.precio_unitario</code> pueden parecer “copias”. Pero responden a <strong>dependencias y significados distintos</strong>.</p>
 <div class="tabla-envuelta"><table class="optbl">
 <thead><tr><th></th><th><code>pedido.total</code></th><th><code>linea_pedido.precio_unitario</code></th></tr></thead>
 <tbody>
-<tr><td>¿Duplica un dato?</td><td>sí</td><td>sí</td></tr>
-<tr><td><b>¿Se puede recalcular?</b></td><td><b>sí, siempre</b></td><td><b>no</b>: el precio de ayer ya no existe</td></tr>
-<tr><td>Si cambia el origen…</td><td>la cuenta <b>miente</b></td><td>la cuenta vieja <b>queda correcta</b></td></tr>
-<tr><td>Decisión</td><td>❌ <b>fuera</b></td><td>✅ <b>se queda</b></td></tr>
+<tr><td>¿De qué depende?</td><td>de las líneas del pedido</td><td>de esa línea en ese momento</td></tr>
+<tr><td>¿Se reconstruye hoy?</td><td>sí, con <code>SUM(...)</code></td><td>no desde <code>plato.precio_actual</code></td></tr>
+<tr><td>Si cambia el origen…</td><td>una copia guardada puede quedar vieja</td><td>el valor histórico debe quedarse igual</td></tr>
+<tr><td>En este caso</td><td>preferimos calcularlo</td><td><b>se conserva</b></td></tr>
 </tbody></table></div>
-<div class="ctx" style="margin-top:.5em"><p style="margin:0;font-size:1.06em">La pregunta no
-es <em>«¿está repetido?»</em>. Es <strong>«¿se puede reconstruir?»</strong>. Si se puede,
-sobra. Si no se puede, <strong>no es una copia: es un dato histórico</strong> que solo vive
-ahí.</p></div>
-<p class="small" style="margin-top:.4em">Por eso «normaliza todo» es un mal consejo, y es el
-que se da casi siempre. Sube el ajiaco de 32.000 a 40.000 y las facturas del mes pasado
-tienen que seguir diciendo 32.000. Ninguna forma normal les va a decir eso: <strong>eso lo
-decide el negocio</strong>.</p>
-<div class="brand"><span>Las dos caras</span><span>¿Se puede reconstruir?</span></div>
+<div class="ctx" style="margin-top:.5em"><p style="margin:0;font-size:1.04em"><strong>Las dos preguntas completas son:</strong> ¿de qué depende este dato? y ¿puedo reconstruirlo sin perder información ni significado histórico?</p></div>
+<p class="small" style="margin-top:.4em">Si el negocio dijera que al cerrar una factura el total queda legalmente congelado —con descuentos, impuestos o redondeos— ya no estaríamos hablando del mismo dato derivable. <strong>La semántica manda.</strong></p>
+<div class="brand"><span>Las dos caras</span><span>Dependencia + significado</span></div>
 </section>
-
 <section class="slide dense mid" data-title="Sin perdida">
 <div class="ey">12 minutos</div>
-<h2>Y comprueben que no perdieron nada</h2>
-<p class="lead">Partir una tabla es fácil. Partirla <strong>sin perder información</strong> es
-la mitad del oficio, y se comprueba de una sola forma: <strong>volviendo a montar la hoja
-original</strong>.</p>
+<h2>Comprueben que la separación no perdió información</h2>
+<p class="lead">No necesitamos sintaxis nueva. Con <code>WITH</code>, <code>GROUP BY</code> y <code>JOIN</code> —que ya conocen— podemos reconstruir la parte de la hoja que acabamos de separar.</p>
 <div class="g2">
-<div><h3>La consulta que lo demuestra</h3>
-<pre><code>SELECT p.fecha, p.hora, m.numero, m.puestos,
-       w.nombre, c.nombre, pl.nombre,
-       l.cantidad, l.precio_unitario,
-       SUM(l.cantidad * l.precio_unitario)
-         OVER (PARTITION BY p.pedido_id) AS total
-FROM   pedido p
-JOIN   mesa    m  ON m.mesa_id    = p.mesa_id
-JOIN   mesero  w  ON w.mesero_id  = p.mesero_id
-JOIN   cliente c  ON c.cliente_id = p.cliente_id
-JOIN   linea_pedido l ON l.pedido_id = p.pedido_id
-JOIN   plato   pl ON pl.plato_id  = l.plato_id;</code></pre>
-<p class="small">Si eso devuelve las mismas filas que la hoja, la descomposición
-<strong>no perdió nada</strong>.</p></div>
-<div><h3>Y fíjense en el total</h3>
-<p>No está guardado en ninguna parte, y aun así <strong>aparece en el resultado</strong>.
-Se calcula al vuelo.</p>
-<div class="hintbox"><p style="margin:0">Eso es exactamente lo que quiere decir «se puede
-reconstruir»: quitarlo <strong>no perdió información</strong>, solo dejó de guardar una copia
-que podía mentir.</p></div>
-<h3 style="margin-top:.7em">La comprobación de siempre</h3>
-<p class="small">Cuenten las filas. Si la hoja tenía tres y esto devuelve cuatro, algún
-<code>JOIN</code> está multiplicando — y eso es la trampa de la sesión 4, otra vez.</p></div>
-</div>
-<div class="brand"><span>Sin pérdida</span><span>Se comprueba reconstruyendo</span></div>
-</section>
-
-<section class="slide dense mid" data-title="A proposito">
-<div class="ey">8 minutos</div>
-<h2>Y a veces se duplica a propósito</h2>
-<p class="lead">Todo lo de hoy ha ido en una dirección: quitar copias. Ahora la otra, porque
-si no se van con media película.</p>
-<div class="g2">
-<div><div class="ctx"><p style="margin:0;font-size:1.05em">La dueña: <em>«necesito la caja
-de cada mes, y ahora tarda medio minuto en salir»</em>.</p></div>
-<p style="margin-top:.6em">Con tres años de pedidos, sumar cada vez todas las líneas de un
-mes empieza a costar. Y entonces alguien propone <strong>guardar el total del mes</strong>
-en una tabla aparte.</p>
-<p>Eso es <strong>desnormalizar</strong>: volver a guardar un dato calculable, a sabiendas,
-porque calcularlo sale caro.</p></div>
-<div><h3>La diferencia con lo de esta mañana</h3>
+<div><h3>Primero, el total por pedido</h3>
+<pre><code>WITH totales AS (
+    SELECT pedido_id,
+           SUM(cantidad * precio_unitario) AS total
+    FROM linea_pedido
+    GROUP BY pedido_id
+)
+SELECT p.pedido_id,
+       l.linea_id,
+       pl.nombre,
+       l.cantidad,
+       l.precio_unitario,
+       t.total
+FROM pedido p
+JOIN linea_pedido l ON l.pedido_id = p.pedido_id
+JOIN plato pl        ON pl.plato_id = l.plato_id
+JOIN totales t       ON t.pedido_id = p.pedido_id;</code></pre></div>
+<div><h3>¿Qué estamos comprobando?</h3>
 <ul class="checks">
-<li><strong>Se hace después</strong>, no antes: primero el modelo limpio, y se
-    desnormaliza cuando se mide que hace falta.</li>
-<li><strong>Se hace sabiendo</strong> que esa copia puede quedarse vieja, y decidiendo quién
-    la actualiza y cada cuánto.</li>
-<li><strong>Y se hace en otro sitio</strong>, no encima del modelo que opera.</li>
+<li>Las líneas siguen perteneciendo al pedido correcto.</li>
+<li>El plato y el precio histórico siguen disponibles.</li>
+<li>El total reaparece aunque ya no esté guardado en <code>pedido</code>.</li>
 </ul>
-<div class="hintbox"><p style="margin:0">Ese «otro sitio» tiene nombre, y lo oyeron el
-viernes pasado de refilón. <strong>Es el camino que aparcamos</strong>, y llega en la sesión
-12. Hoy solo quería que supieran que existe y que <b>no contradice nada de lo de hoy</b>.</p></div></div>
+<div class="hintbox"><p style="margin:0">La comprobación no es “el SQL ejecutó”. Es: <strong>¿puedo recuperar la información que el negocio necesitaba antes de separar?</strong></p></div>
+<p class="small" style="margin-top:.5em">Y hagan la comprobación de S5: si esperaban dos líneas y aparecen cuatro, revisen el nivel de agregación y los <code>JOIN</code>.</p></div>
 </div>
-<div class="brand"><span>Desnormalizar</span><span>Después, sabiendo, y en otro sitio</span></div>
+<div class="brand"><span>Sin pérdida</span><span>Reconstruir con SQL que ya conocen</span></div>
 </section>
-
+<section class="slide dense mid" data-title="A proposito">
+<div class="ey">5 minutos</div>
+<h2>Y a veces se duplica a propósito</h2>
+<p class="lead">Normalizar no significa jurar que nunca volveremos a guardar algo calculable. Significa <strong>primero diseñar limpio y después medir</strong>.</p>
+<div class="g2">
+<div><div class="ctx"><p style="margin:0">La dueña: «la caja mensual ya tarda demasiado».</p></div>
+<p>Si medir demuestra que reconstruir una cifra cuesta demasiado, se puede guardar una copia calculada conscientemente.</p></div>
+<div><h3>La diferencia</h3>
+<ul class="checks">
+<li>Se hace <strong>después de medir</strong>, no por intuición.</li>
+<li>Se define <strong>quién la actualiza</strong> y cuándo.</li>
+<li>Se acepta que esa copia tiene un <strong>costo de consistencia</strong>.</li>
+</ul>
+<div class="hintbox"><p style="margin:0">Desnormalizar no contradice lo de hoy: es una optimización deliberada sobre un modelo cuyo comportamiento ya entendemos.</p></div></div>
+</div>
+<div class="brand"><span>Desnormalizar</span><span>Después de medir, no antes</span></div>
+</section>
 <section class="slide tiny mid" data-title="DP-900">
 <div class="ey">DP-900 &middot; 2 minutos</div>
 <h2>Dos preguntas, sin presión</h2>
@@ -1027,49 +960,24 @@ viernes pasado de refilón. <strong>Es el camino que aparcamos</strong>, y llega
 </section>
 
 <section class="slide yellow xdense mid" data-title="Cierre">
-<div class="ey">Cierre &middot; 5 minutos</div>
-<h2>Ya no solo modelas: sabes por qué el modelo aguanta</h2>
+<div class="ey">Cierre · 5 minutos</div>
+<h2>El modelo ya está listo para convertirse en una base real</h2>
 <div class="g2">
 <div><h3>Lo que te llevas</h3>
 <ul class="checks">
-<li>Una <strong>dependencia funcional</strong> es «si sé esto, sé aquello» — y cada dato
-    debe vivir donde depende.</li>
-<li><strong>1FN:</strong> una celda, un dato. Y al partir la celda aparece la clave
-    compuesta.</li>
-<li><strong>2FN y 3FN:</strong> saca lo que no depende de la clave entera, y lo que depende
-    de otra cosa que ya salió.</li>
-<li>Partir bien se comprueba <strong>reconstruyendo</strong>: si no puedes volver a montar
-    la hoja, perdiste información.</li>
-<li>La pregunta no es «¿está repetido?» sino <strong>«¿se puede reconstruir?»</strong>.</li>
-<li>Y <strong>desnormalizar a propósito</strong> es legítimo: después, sabiendo, y en otro
-    sitio.</li>
+<li>Una dependencia funcional se puede leer como: <strong>«si sé X, ¿sé Y?»</strong>.</li>
+<li>1FN evita listas dentro de una celda; <strong>no decide sola la PK</strong>.</li>
+<li>2FN y 3FN ayudan a colocar atributos donde realmente dependen.</li>
+<li>No basta preguntar «¿está repetido?»: pregunta <strong>de qué depende</strong> y si puedes <strong>reconstruir sin perder información o significado</strong>.</li>
+<li><code>precio_unitario</code> demuestra que <strong>mismo valor ≠ mismo dato</strong>.</li>
+<li>El modelo conserva la decisión de S7 de permitir varias mesas por pedido mediante <code>pedido_mesa</code>.</li>
 </ul></div>
-<div><h3>El viernes, sesión 9</h3>
-<div class="hintbox" style="margin-top:.5em"><p style="margin:0"><strong>DDL y
-Supabase.</strong> Su modelo —el de ayer, reparado hoy— se convierte en tablas de verdad
-contra un <strong>PostgreSQL en la nube</strong>. Y es el día en que se abre el SQL que la
-herramienta lleva escribiendo por ustedes desde el martes.</p></div>
-<p class="small" style="margin-top:.7em"><strong>Guarden el código del modelo</strong>, que
-es lo único que hace falta traer. Y si lo pierden, está en el chat de hoy.</p>
-<p class="small">La solución de hoy no se publica sola: la hemos hecho juntos en el debrief,
-y el modelo de referencia de ayer sigue disponible.</p></div>
+<div><h3>Sesión 9</h3>
+<div class="hintbox"><p style="margin:0"><strong>DDL + Supabase/PostgreSQL.</strong> No inventaremos otro modelo. Tomaremos este mismo y lo traduciremos a <code>CREATE TABLE</code>, PK, FK, <code>NOT NULL</code> y <code>CHECK</code>.</p></div>
+<p style="margin-top:.8em"><strong>La prueba final:</strong> intentaremos guardar datos inválidos. Si PostgreSQL los rechaza por la razón correcta, la decisión de diseño dejó de ser un dibujo y se volvió una regla ejecutable.</p></div>
 </div>
-<p style="margin-top:.5em;font-size:1.06em">El viernes escuchamos un negocio. El martes lo
-dibujamos. Hoy hemos aprendido a <strong>ponerle precio a una decisión</strong> &mdash; porque
-ordenar no es quitar todo lo que se repite, sino <strong>saber cuál de las copias hay que
-pagar y cuál no</strong>.</p>
-<div class="brand"><span>Cierre</span><span>¿Se puede reconstruir?</span></div>
+<div class="brand"><span>Cierre</span><span>¿Dónde vive y qué perdería si lo quito?</span></div>
 </section>
-
-
-
-
-
-
-
-
-
-
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 15</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-8-modelado-y-normalizacion.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
 <div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>

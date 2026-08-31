@@ -161,31 +161,31 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CREATE TABLE</span></div>
 </section>
 <section class="slide " data-title="Anatomía de una columna">
-  <div class="ey">18–33 min · Leer una línea</div>
-  <h2>Una columna se lee de izquierda a derecha</h2>
+<div class="ey">18–33 min · Leer antes de escribir</div>
+<h2>Una columna se lee de izquierda a derecha</h2>
 <pre><code>nombre TEXT NOT NULL</code></pre>
-  <div class="steps" style="margin-top:1.4em">
-    <article><b>1</b><h3><code>nombre</code></h3><p>Nombre de la columna.</p></article>
-    <article><b>2</b><h3><code>TEXT</code></h3><p>Tipo de dato que acepta.</p></article>
-    <article><b>3</b><h3><code>NOT NULL</code></h3><p>Regla: el dato es obligatorio.</p></article>
-    <article><b>4</b><h3><code>,</code></h3><p>Después viene otra definición.</p></article>
-  </div>
-  <p class="hintbox"><strong>Patrón mental:</strong> nombre → tipo → reglas. Antes de escribir una línea debes poder responder esas tres cosas.</p>
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Anatomía de una columna</span></div>
+<div class="steps" style="margin-top:1.2em">
+<article><b>1</b><h3><code>nombre</code></h3><p>Nombre de la columna.</p></article>
+<article><b>2</b><h3><code>TEXT</code></h3><p>Tipo de dato.</p></article>
+<article><b>3</b><h3><code>NOT NULL</code></h3><p>No acepta <code>NULL</code>.</p></article>
+<article><b>4</b><h3><code>,</code></h3><p>Continúa otra definición.</p></article>
+</div>
+<div class="hintbox"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> lean en voz alta <code>personas INTEGER NOT NULL</code> sin usar palabras SQL. Después inventen un valor que esa línea sí acepte y uno que no.</p></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Nombre → tipo → regla</span></div>
 </section>
 <section class="slide dense" data-title="Sintaxis de restricciones">
-  <div class="ey">18–33 min · Reglas declarativas</div>
-  <h2>¿Cómo se escribe cada restricción?</h2>
-  <table class="tbl"><thead><tr><th>Regla</th><th>Sintaxis</th><th>Lectura</th></tr></thead><tbody>
-    <tr><td>Obligatorio</td><td><code>nombre TEXT NOT NULL</code></td><td>nombre no puede ser nulo</td></tr>
-    <tr><td>Sin repetir</td><td><code>telefono TEXT UNIQUE</code></td><td>no acepta dos valores iguales</td></tr>
-    <tr><td>Valor inicial</td><td><code>estado TEXT DEFAULT 'solicitada'</code></td><td>si no llega valor, usa ese</td></tr>
-    <tr><td>Identidad</td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td></tr>
-    <tr><td>Relación</td><td><code>FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)</code></td><td>el cliente debe existir</td></tr>
-    <tr><td>Condición</td><td><code>CHECK (personas &gt; 0)</code></td><td>la fila debe cumplir la expresión</td></tr>
-  </tbody></table>
-  <p class="warn"><code>DEFAULT</code> no valida el negocio: solo aporta un valor cuando la columna se omite.</p>
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis de restricciones</span></div>
+<div class="ey">18–33 min · Reglas declarativas</div>
+<h2>¿Cómo se escribe cada restricción?</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Sintaxis</th><th>Qué protege</th></tr></thead><tbody>
+<tr><td>Obligatorio</td><td><code>nombre TEXT NOT NULL</code></td><td>no acepta <code>NULL</code></td></tr>
+<tr><td>Sin repetir</td><td><code>codigo TEXT UNIQUE</code></td><td>no acepta dos valores iguales <b>si el negocio exige unicidad</b></td></tr>
+<tr><td>Valor por omisión</td><td><code>estado TEXT DEFAULT 'abierto'</code></td><td>rellena cuando la columna se omite</td></tr>
+<tr><td>Identidad</td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td></tr>
+<tr><td>Relación</td><td><code>FOREIGN KEY (...) REFERENCES ...</code></td><td>evita referencias huérfanas</td></tr>
+<tr><td>Condición</td><td><code>CHECK (personas &gt; 0)</code></td><td>valida una condición de la fila</td></tr>
+</tbody></table>
+<p class="warn"><code>DEFAULT</code> no valida una regla del negocio. Y <code>UNIQUE</code> tampoco se agrega “porque suena bien”: <strong>la unicidad debe estar justificada</strong>.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis de restricciones</span></div>
 </section>
 <section class="slide dense" data-title="Sintaxis CONSTRAINT">
   <div class="ey">18–33 min · Reglas con nombre</div>
@@ -205,20 +205,18 @@ CONSTRAINT fk_reserva_cliente
 </section>
 
 <section class="slide " data-title="Primer CREATE">
-  <div class="ey">18–33 min · Anatomía</div>
-  
-  <h2>Primera tabla: <code>cliente</code></h2>
-<pre class=""><code>CREATE TABLE cliente (
+<div class="ey">18–33 min · Anatomía</div>
+<h2>Primera tabla: <code>cliente</code></h2>
+<pre><code>CREATE TABLE cliente (
     cliente_id BIGINT GENERATED ALWAYS AS IDENTITY,
     nombre TEXT NOT NULL,
     telefono TEXT,
 
-    CONSTRAINT pk_cliente PRIMARY KEY (cliente_id),
-    CONSTRAINT uq_cliente_telefono UNIQUE (telefono)
+    CONSTRAINT pk_cliente PRIMARY KEY (cliente_id)
 );</code></pre>
-  <p class="hintbox"><strong>Lectura natural:</strong> cada cliente tiene un identificador generado, un nombre obligatorio y un teléfono que no puede repetirse si se registra.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE</span></div>
+<p class="hintbox"><strong>Lectura natural:</strong> cada cliente tiene un identificador generado, un nombre obligatorio y un teléfono opcional.</p>
+<p class="small">No declaramos <code>UNIQUE (telefono)</code>: nadie confirmó que dos clientes no puedan compartir un teléfono. Practicaremos <code>UNIQUE</code> después con <code>mesa.codigo</code> como <strong>decisión explícita de diseño</strong>.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE</span></div>
 </section>
 <section class="slide " data-title="Identity y PK">
   <div class="ey">18–33 min · Distinción crítica</div>
@@ -233,9 +231,8 @@ CONSTRAINT fk_reserva_cliente
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Identity y PK</span></div>
 </section>
 <section class="slide dense" data-title="Relación real">
-  <div class="ey">33–48 min · FK</div>
-  
-  <h2>Segunda tabla: <code>reserva</code></h2>
+<div class="ey">33–48 min · FK</div>
+<h2>Segunda tabla: <code>reserva</code></h2>
 <pre class="smallcode"><code>CREATE TABLE reserva (
     reserva_id BIGINT GENERATED ALWAYS AS IDENTITY,
     cliente_id BIGINT NOT NULL,
@@ -245,12 +242,12 @@ CONSTRAINT fk_reserva_cliente
 
     CONSTRAINT pk_reserva PRIMARY KEY (reserva_id),
     CONSTRAINT fk_reserva_cliente
-      FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id),
+        FOREIGN KEY (cliente_id)
+        REFERENCES cliente(cliente_id),
     CONSTRAINT ck_reserva_personas CHECK (personas &gt; 0)
 );</code></pre>
-  <p class="hintbox">S7 decía: RESERVA pertenece a CLIENTE. S9 lo traduce como <code>FOREIGN KEY</code>.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Relación real</span></div>
+<div class="g2" style="margin-top:.7em"><div class="hintbox"><p style="margin:0"><strong>S7:</strong> una reserva pertenece a un cliente. <strong>S9:</strong> esa relación se vuelve <code>FOREIGN KEY</code>.</p></div><div class="ctx"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> sin ejecutar nada, escriban un <code>cliente_id</code> que debería funcionar y otro que debería fallar. Luego expliquen por qué.</p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Relación real</span></div>
 </section>
 <section class="slide " data-title="Restricciones">
   <div class="ey">33–48 min · Lo que protege el motor</div>
@@ -269,51 +266,53 @@ CONSTRAINT fk_reserva_cliente
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Restricciones</span></div>
 </section>
 <section class="slide " data-title="CHECK tiene límites">
-  <div class="ey">33–48 min · No todo cabe ahí</div>
-  
-  <h2>Un <code>CHECK</code> no puede verlo todo</h2>
-  <div class="proscons">
-    <section class="pro"><h3>Sí cabe</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado IN (...)</code></li></ul></section>
-    <section class="con"><h3>No cabe como CHECK simple</h3><ul><li>comparar con puestos de otra tabla</li><li>evitar reservas solapadas complejas</li><li>validar suma de pagos</li></ul></section>
-  </div>
-  <p class="quote">Una restricción demasiado débil permite errores; una demasiado fuerte prohíbe negocio válido.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>CHECK tiene límites</span></div>
+<div class="ey">33–48 min · No todo cabe ahí</div>
+<h2>Un <code>CHECK</code> mira una condición de la fila</h2>
+<div class="proscons">
+<section class="pro"><h3>Sí es buen candidato</h3><ul><li><code>personas &gt; 0</code></li><li><code>precio &gt;= 0</code></li><li><code>estado IN (...)</code></li></ul></section>
+<section class="con"><h3>No cabe como CHECK simple</h3><ul><li>comparar con puestos guardados en otra tabla</li><li>detectar intervalos de reservas que se solapan</li><li>sumar pagos de varias filas</li></ul></section>
+</div>
+<div class="hintbox"><p style="margin:0"><strong>Microactividad · 90 segundos:</strong> inventen un valor que pase <code>CHECK (personas &gt; 0)</code> y otro que falle. Después expliquen por qué <code>personas &lt;= mesa.puestos</code> no es la misma clase de problema.</p></div>
+<p class="quote">Una restricción demasiado débil deja pasar errores; una inventada puede prohibir negocio válido.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>CHECK tiene límites</span></div>
 </section>
-<section class="slide " data-title="Dialecto">
-  <div class="ey">48–60 min · SQLite → PostgreSQL</div>
-  
-  <h2>SQL cambia un poco entre motores</h2>
-  <table class="tbl"><thead><tr><th>Necesidad</th><th>SQLite/local</th><th>PostgreSQL/Supabase</th></tr></thead><tbody>
-    <tr><td>identificador</td><td><code>INTEGER</code></td><td><code>BIGINT GENERATED ... AS IDENTITY</code></td></tr>
-    <tr><td>texto</td><td><code>TEXT</code></td><td><code>TEXT</code> o <code>VARCHAR(n)</code></td></tr>
-    <tr><td>dinero</td><td><code>REAL</code></td><td><code>NUMERIC(10,2)</code></td></tr>
-    <tr><td>booleano</td><td><code>0/1</code></td><td><code>BOOLEAN</code></td></tr>
-    <tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
-    <tr><td>claves for&aacute;neas</td><td><code>PRAGMA foreign_keys = ON;</code></td><td><b>se borra</b> &mdash; en PostgreSQL siempre est&aacute;n activas</td></tr>
-  </tbody></table>
-  <p class="warn"><b>Empiecen por esa &uacute;ltima.</b> El SQL que trae el constructor arranca con la
-  l&iacute;nea <code>PRAGMA</code>, que en SQLite enciende las claves for&aacute;neas y en PostgreSQL
-  no existe: si la pegan, el primer error sale antes de crear una sola tabla. B&oacute;rrenla y sigan.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Dialecto</span></div>
+<section class="slide dense" data-title="Dialecto">
+<div class="ey">48–60 min · SQLite → PostgreSQL</div>
+<h2>No cambia el modelo: cambia un poco el dialecto</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>SQLite/local</th><th>PostgreSQL/Supabase</th></tr></thead><tbody>
+<tr><td>identificador automático</td><td><code>INTEGER</code></td><td><code>BIGINT GENERATED ... AS IDENTITY</code></td></tr>
+<tr><td>texto</td><td><code>TEXT</code></td><td><code>TEXT</code></td></tr>
+<tr><td>dinero</td><td><code>REAL</code></td><td><code>NUMERIC(10,2)</code></td></tr>
+<tr><td>booleano</td><td><code>0/1</code></td><td><code>BOOLEAN</code></td></tr>
+<tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
+<tr><td>activar FK</td><td><code>PRAGMA foreign_keys = ON;</code></td><td>no se usa ese <code>PRAGMA</code></td></tr>
+</tbody></table>
+<p class="warn"><strong>No memoricen la tabla.</strong> Hoy solo deben reconocer tres traducciones: quitar <code>PRAGMA</code>, usar tipos PostgreSQL y generar IDs con <code>IDENTITY</code>. Las reglas PK/FK/NOT NULL siguen significando lo mismo.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Mismo diseño, otro dialecto</span></div>
 </section>
-<section class="slide " data-title="Antes de Supabase">
-  <div class="ey">60–75 min · Preparación</div>
-  
-  <h2>Del constructor al SQL</h2>
-  <div class="steps">
-    <article><b>1</b><h3>Modelo</h3><p>Usa el modelo reparado en S8.</p></article>
-    <article><b>2</b><h3>Tablas</h3><p>Elige una parte implementable.</p></article>
-    <article><b>3</b><h3>Restricciones</h3><p>Marca qué regla protege cada una.</p></article>
-    <article><b>4</b><h3>SQL</h3><p>Copia y ajusta a PostgreSQL.</p></article>
-  </div>
-  <p class="warn">No se trata de copiar mucho SQL. Se trata de justificar cada restricción.</p>
-  <p><a href="constructor-abc.html?sesion=9"><b>&#129521; Abrir el constructor</b></a> &mdash; hoy,
-  y solo hoy, se abre ah&iacute; la pesta&ntilde;a <b>El SQL</b> del paso 5 con las tablas que
-  ustedes decidieron el martes y repararon el mi&eacute;rcoles.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Antes de Supabase</span></div>
+<section class="slide dense" data-title="Antes de Supabase">
+<div class="ey">60–75 min · No inventamos otro modelo</div>
+<h2>Este es el modelo que llega de S7 y S8</h2>
+<p class="lead">S9 no vuelve a modelar. Traduce a DDL las decisiones que ya quedaron defendidas.</p>
+<div class="g2">
+<div><h3>Núcleo que implementaremos</h3>
+<table class="tbl"><tbody>
+<tr><td><code>cliente</code></td><td>persona que reserva</td></tr>
+<tr><td><code>reserva</code></td><td>fecha, hora y personas</td></tr>
+<tr><td><code>mesa</code></td><td>capacidad y código</td></tr>
+<tr><td><code>pedido</code></td><td>transacción operativa</td></tr>
+<tr><td><code>pedido_mesa</code></td><td>permite una o varias mesas por pedido</td></tr>
+<tr><td><code>plato</code></td><td>catálogo actual</td></tr>
+<tr><td><code>linea_pedido</code></td><td>cantidad + precio histórico</td></tr>
+</tbody></table></div>
+<div><h3>Dos decisiones que no cambiamos</h3>
+<ul class="checks">
+<li><code>pedido_mesa</code> conserva la llamada de S7: un pedido puede atender varias mesas.</li>
+<li><code>linea_pedido</code> usa <code>linea_id</code> como PK: no asumimos que <code>(pedido_id, plato_id)</code> sea único sin confirmación.</li>
+</ul>
+<div class="hintbox"><p style="margin:0"><strong>Ahora sí:</strong> abran el constructor en modo sesión 9 y comparen su SQL con este modelo. Ajustamos el dialecto, <strong>no las reglas del negocio</strong>.</p></div></div>
+</div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Continuidad S7 → S8 → S9</span></div>
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
@@ -338,14 +337,13 @@ CONSTRAINT fk_reserva_cliente
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Entrar a Supabase</span></div>
 </section>
 <section class="slide " data-title="Crear esquema de equipo">
-  <div class="ey">75–90 min · Evitar choques</div>
-  
-  <h2>Una opción ordenada por equipo</h2>
-<pre class=""><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
+<div class="ey">75–90 min · Evitar choques</div>
+<h2>Un espacio lógico por equipo</h2>
+<pre><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
 SET search_path TO abc_e01;</code></pre>
-  <p class="warn">Así cada equipo puede trabajar sin pisar las tablas de otro. Si trabajan todos en <code>public</code>, los nombres chocan.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Crear esquema de equipo</span></div>
+<p class="hintbox"><strong>Aquí “schema” no significa el diagrama del modelo.</strong> En PostgreSQL es un espacio lógico dentro de la base, parecido a una carpeta de nombres. Lo usamos solo para que <code>cliente</code> del equipo 1 no choque con <code>cliente</code> del equipo 2.</p>
+<p class="small">No necesitamos profundizar en schemas, permisos ni búsqueda de objetos. Para esta clase: creen el suyo, actívenlo con <code>SET search_path</code> y continúen.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Schema = espacio lógico del equipo</span></div>
 </section>
 <section class="slide " data-title="Ejecutar primer bloque">
   <div class="ey">75–90 min · Laboratorio</div>
@@ -359,53 +357,56 @@ CREATE TABLE reserva (...);</code></pre>
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Ejecutar primer bloque</span></div>
 </section>
-<section class="slide " data-title="Taller principal">
-  <div class="ey">90–115 min · Producto</div>
-  
-  <h2>Construyan una parte funcional de ABC</h2>
-  <div class="steps six">
-    <article><b>1</b><p>mínimo 5 tablas</p></article>
-    <article><b>2</b><p>PK en todas</p></article>
-    <article><b>3</b><p>mínimo 3 FK</p></article>
-    <article><b>4</b><p>NOT NULL justificados</p></article>
-    <article><b>5</b><p>1 CHECK</p></article>
-    <article><b>6</b><p>1 tabla puente</p></article>
-  </div>
-  <p class="warn">Cada equipo debe poder decir: “esta línea viene de esta regla o de esta decisión de diseño”.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Taller principal</span></div>
+<section class="slide dense" data-title="Taller principal">
+<div class="ey">90–115 min · Producto</div>
+<h2>Primero una victoria pequeña; después, extensión</h2>
+<div class="vs-grid">
+<section><h3>Núcleo obligatorio</h3><ul>
+<li><strong>3 tablas</strong> que sí se relacionen.</li>
+<li>PK en las 3 y al menos <strong>2 FK</strong>.</li>
+<li>Al menos un <code>NOT NULL</code> justificado.</li>
+<li>Al menos un <code>CHECK</code>.</li>
+<li><strong>1 INSERT válido + 2 inválidos</strong>.</li>
+</ul><p class="small"><strong>Meta:</strong> que PostgreSQL acepte lo válido y rechace lo inválido por la razón esperada.</p></section>
+<section><h3>Extensión si terminan</h3><ul>
+<li>Llegar a 5–7 tablas.</li>
+<li>Agregar <code>pedido_mesa</code>.</li>
+<li>Probar un <code>UNIQUE</code> justificado.</li>
+<li>Modificar una regla con <code>ALTER TABLE</code>.</li>
+</ul><p class="small">La extensión no define quién “terminó bien”. El núcleo ya demuestra el aprendizaje.</p></section>
+</div>
+<p class="warn">Cada restricción debe poder leerse así: <strong>“esta línea protege esta regla o esta decisión explícita de diseño”</strong>.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primero comprender; luego ampliar</span></div>
 </section>
 <section class="slide dense" data-title="Tabla puente">
-  <div class="ey">90–115 min · N:N</div>
-  
-  <h2>Cuando una relación N:N exige tabla</h2>
-<pre class="smallcode"><code>CREATE TABLE reserva_mesa (
-    reserva_id BIGINT NOT NULL,
+<div class="ey">90–115 min · Extensión N:N</div>
+<h2>La llamada de S7 ahora se vuelve tabla</h2>
+<pre class="smallcode"><code>CREATE TABLE pedido_mesa (
+    pedido_id BIGINT NOT NULL,
     mesa_id BIGINT NOT NULL,
 
-    CONSTRAINT pk_reserva_mesa PRIMARY KEY (reserva_id, mesa_id),
-    CONSTRAINT fk_reserva_mesa_reserva
-      FOREIGN KEY (reserva_id) REFERENCES reserva(reserva_id),
-    CONSTRAINT fk_reserva_mesa_mesa
-      FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id)
+    CONSTRAINT pk_pedido_mesa
+        PRIMARY KEY (pedido_id, mesa_id),
+    CONSTRAINT fk_pedido_mesa_pedido
+        FOREIGN KEY (pedido_id) REFERENCES pedido(pedido_id),
+    CONSTRAINT fk_pedido_mesa_mesa
+        FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id)
 );</code></pre>
-  <p class="hintbox">Conecta S5 <code>film_category</code>, S7 cardinalidad N:N y S9 DDL real.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Tabla puente</span></div>
+<p class="hintbox">S7 cambió la regla: un pedido puede ocupar varias mesas. S8 conservó esa decisión. S9 la implementa con <code>pedido_mesa</code>. <strong>Es el mismo razonamiento de <code>film_category</code>.</strong></p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>La cardinalidad se vuelve DDL</span></div>
 </section>
 <section class="slide " data-title="Romper la base">
-  <div class="ey">115–135 min · Pruebas</div>
-  
-  <h2>Ahora intentamos guardar basura</h2>
-  <div class="steps">
-    <article><b>1</b><h3>NOT NULL</h3><p>nombre vacío</p></article>
-    <article><b>2</b><h3>FK</h3><p>cliente inexistente</p></article>
-    <article><b>3</b><h3>CHECK</h3><p>personas = 0</p></article>
-    <article><b>4</b><h3>UNIQUE</h3><p>teléfono repetido</p></article>
-  </div>
-  <p class="quote">Si el motor rechaza algo, no es un error de clase: es el objetivo de la clase.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Romper la base</span></div>
+<div class="ey">115–135 min · Pruebas</div>
+<h2>Ahora intentamos guardar datos que deberían fallar</h2>
+<div class="steps">
+<article><b>1</b><h3>NOT NULL</h3><p><code>nombre = NULL</code></p></article>
+<article><b>2</b><h3>FK</h3><p>cliente inexistente</p></article>
+<article><b>3</b><h3>CHECK</h3><p><code>personas = 0</code></p></article>
+<article><b>4</b><h3>UNIQUE</h3><p><code>mesa.codigo</code> repetido</p></article>
+</div>
+<div class="warn"><p style="margin:0"><strong>NULL no es una cadena vacía.</strong> <code>NOT NULL</code> rechaza <code>NULL</code>, pero <code>''</code> es un valor de texto y puede ser aceptado. Si el negocio también prohíbe texto vacío, hace falta otra regla.</p></div>
+<p class="quote">Que una sentencia falle puede ser exactamente la evidencia que estábamos buscando.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Probar la regla, no solo el SQL</span></div>
 </section>
 <section class="slide " data-title="Prueba FK">
   <div class="ey">115–135 min · El payoff</div>
@@ -441,25 +442,22 @@ DROP TABLE reserva;</code></pre>
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE</span></div>
 </section>
 <section class="slide " data-title="Supabase en el mapa">
-  <div class="ey">145–160 min · Servicio real</div>
-  
-  <h2>¿Qué estamos usando realmente?</h2>
-  <div class="vs-grid">
-    <section><h3>PostgreSQL</h3><p>Motor relacional. Ejecuta SQL, guarda tablas y aplica restricciones.</p></section>
-    <section><h3>Supabase</h3><p>Plataforma que ofrece Postgres administrado, dashboard, API, auth y storage.</p></section>
-  </div>
-  <p class="hintbox">No profundizamos en Auth, Storage, RLS ni APIs. Hoy el objetivo es DDL relacional.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Supabase en el mapa</span></div>
+<div class="ey">145–157 min · Cierre del laboratorio</div>
+<h2>Qué aprendimos del servicio real</h2>
+<div class="vs-grid">
+<section><h3>PostgreSQL</h3><p>Es el motor. Interpretó el DDL, creó objetos y rechazó filas cuando una restricción se incumplió.</p></section>
+<section><h3>Supabase</h3><p>Nos dio un PostgreSQL administrado y una interfaz para ejecutar SQL y revisar las tablas.</p></section>
+</div>
+<div class="hintbox"><p style="margin:0"><strong>El aprendizaje no es “usar Supabase”.</strong> Es poder llevar un modelo a un motor real y comprobar qué reglas quedaron realmente protegidas.</p></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>El servicio sirve al objetivo</span></div>
 </section>
-<section class="slide " data-title="Seguridad mínima">
-  <div class="ey">145–160 min · No abrir de más</div>
-  
-  <h2>Nota Supabase: tablas en <code>public</code></h2>
-  <p class="lead">En Supabase, las tablas pueden exponerse por API. Para una app real se debe pensar en permisos y Row Level Security.</p>
-  <p class="warn"><strong>Hoy:</strong> lo mencionamos para no enseñar malas prácticas, pero no convertimos S9 en una clase de seguridad ni backend.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Seguridad mínima</span></div>
+<section class="slide dense" data-title="Seguridad mínima">
+<div class="ey">157–160 min · Nota, no otra unidad</div>
+<h2>Hoy no estamos publicando una API</h2>
+<p class="lead">Trabajamos desde <strong>SQL Editor</strong> en un schema de clase como <code>abc_e01</code>. No daremos permisos a clientes web ni construiremos autenticación.</p>
+<div class="g2"><div class="hintbox"><p style="margin:0"><strong>Para esta sesión:</strong> DDL, tablas y restricciones. Nada de keys, Auth, policies ni frontend.</p></div><div class="warn"><p style="margin:0"><strong>Para una app real:</strong> acceso por Data API y RLS son otra decisión de seguridad. La exposición de tablas depende de la configuración del proyecto y de los permisos otorgados.</p></div></div>
+<p class="small" style="margin-top:.6em">La separación es deliberada: primero aprendemos integridad relacional. Seguridad y acceso por usuario se enseñan cuando exista una aplicación que realmente los necesite.</p>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>Seguridad: reconocer, no implementar hoy</span></div>
 </section>
 <section class="slide dense" data-title="DP-900">
   <div class="ey">160–165 min · Recuperación</div>
