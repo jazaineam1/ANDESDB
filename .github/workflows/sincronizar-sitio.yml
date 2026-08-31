@@ -8,6 +8,7 @@ on:
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
+      - 'tools/run_ajuste_orquestacion.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
