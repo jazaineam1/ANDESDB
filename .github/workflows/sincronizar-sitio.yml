@@ -9,6 +9,7 @@ on:
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
       - 'tools/normalizar_s9_ui.py'
+      - 'tools/ajustar_validacion_s9.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -30,6 +31,9 @@ jobs:
       - name: Igualar controles de S9 con sesión 5
         run: python tools/normalizar_s9_ui.py
 
+      - name: Alinear validación y manifiesto
+        run: python tools/ajustar_validacion_s9.py
+
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
 
@@ -44,7 +48,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones/M3/sesion-9-ddl-supabase.html tools/integrar-experiencia.py assets/learning/learning-core.js
+          git add index.html Presentaciones/M3/sesion-9-ddl-supabase.html tools/curso.json tools/integrar-experiencia.py tools/validar_curso.py assets/learning/learning-core.js
           if git diff --cached --quiet; then
             echo 'S9 ya estaba normalizada'
             exit 0
