@@ -162,11 +162,11 @@ def validate_learning_plan(plan: dict) -> None:
 
     # S9 se implementa temporalmente sobre PostgreSQL real en Supabase.
     s9 = sessions.get("9", {})
-    if "Supabase" not in str(s9.get("titulo", "")):
-        err("S9 en learning-plan.json debe estar alineada con Supabase/PostgreSQL")
+    if "PostgreSQL" not in str(s9.get("titulo", "")):
+        err("S9 en learning-plan.json debe tener PostgreSQL como objetivo técnico")
     real9 = str(s9.get("servicio_real", {}).get("nombre", ""))
     if "Supabase" not in real9 or "PostgreSQL" not in real9:
-        err("S9 debe declarar Supabase + PostgreSQL como servicio real")
+        err("S9 debe declarar PostgreSQL en Supabase como entorno de servicio real")
 
 
 def validate_published_html() -> None:

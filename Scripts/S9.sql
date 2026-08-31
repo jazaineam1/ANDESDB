@@ -1,5 +1,5 @@
 -- ============================================================
--- ANDESDB · Sesión 9 · DDL + Supabase/PostgreSQL
+-- ANDESDB · Sesión 9 · DDL + PostgreSQL
 -- Convención: palabras SQL en MAYÚSCULA; objetos en minúscula.
 --
 -- PRINCIPIO HEREDADO DE S6:
@@ -202,5 +202,6 @@ JOIN totales t ON t.pedido_id = p.pedido_id;
 -- INSERT INTO reserva (estado)
 -- VALUES ('confirmada');
 
--- Nota Supabase: hoy usamos SQL Editor y un schema de clase.
+-- Entorno de clase: ejecutamos este SQL de PostgreSQL desde el SQL Editor de Supabase.
+-- Supabase es la interfaz de acceso; el objetivo técnico de la sesión es PostgreSQL.
 -- No exponemos estas tablas a una app ni configuramos Data API/RLS.

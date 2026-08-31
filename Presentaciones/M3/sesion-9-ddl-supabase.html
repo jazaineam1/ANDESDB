@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 9 - DDL y Supabase/PostgreSQL: convertir el modelo del Restaurante ABC en tablas reales, restricciones y pruebas - Diseno y Gestion de Bases de Datos con SQL"><title>Sesión 9 · DDL + Supabase/PostgreSQL</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 9 - DDL y PostgreSQL: convertir el modelo del Restaurante ABC en tablas reales, restricciones y pruebas - Diseno y Gestion de Bases de Datos con SQL"><title>Sesión 9 · DDL + PostgreSQL</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffd600'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='22' font-weight='bold' fill='%23171717'%3E9%3C/text%3E%3C/svg%3E">
 <style>
 :root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#146c43;--r:#a52a2a;--paper:#fff;--s:#f5f3ee;--bl:#e9f4ff;--gl:#e9f8ef;--rl:#fff1f0;--yl:#fff6c9;--ol:#fff3e7;--ink:#1a1a1a;--ink-soft:#5a5a5a;--dark:#0e1a24;--dark-2:#16293a;--sh:0 1px 2px rgba(16,24,32,.05),0 8px 24px rgba(16,24,32,.07);font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink)}
@@ -72,7 +72,7 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
   <div class="ey">Módulo 3 · Modelos de datos útiles</div>
   
   <h1>Del modelo a una base real</h1>
-  <p class="lead">DDL + Supabase/PostgreSQL</p>
+  <p class="lead">DDL + PostgreSQL</p>
   <div class="hero-card">
     <p>Hoy el modelo deja de ser un dibujo: lo convertimos en tablas, restricciones y pruebas que un motor real puede hacer cumplir.</p>
   </div>
@@ -130,19 +130,19 @@ pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);bo
 
   <div class="brand"><span>ANDESDB · Sesión 9</span><span>Qué es DDL</span></div>
 </section>
-<section class="slide " data-title="Supabase no es el motor">
+<section class="slide " data-title="PostgreSQL es el motor">
   <div class="ey">8–18 min · Arquitectura mínima</div>
   
-  <h2>¿Quién hace qué?</h2>
+  <h2>¿Dónde estamos ejecutando PostgreSQL?</h2>
   <div class="flowline">
     <article><span>👤</span><b>Usuario</b><p>Escribe SQL</p></article><i>→</i>
-    <article><span>🟢</span><b>Supabase</b><p>Dashboard y servicios</p></article><i>→</i>
+    <article><span>🟢</span><b>SQL Editor</b><p>Interfaz de Supabase</p></article><i>→</i>
     <article><span>🐘</span><b>PostgreSQL</b><p>Motor relacional</p></article><i>→</i>
     <article><span>🗄️</span><b>Base</b><p>Tablas y reglas</p></article>
   </div>
-  <p class="warn">Supabase es la plataforma. PostgreSQL es el motor que ejecuta el DDL.</p>
+  <p class="warn"><strong>PostgreSQL es el objetivo técnico de la sesión.</strong> Supabase solo nos da una instancia administrada y una interfaz para enviarle SQL al motor.</p>
 
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Supabase no es el motor</span></div>
+  <div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL es el motor</span></div>
 </section>
 
 <section class="slide " data-title="Convención SQL">
@@ -303,21 +303,21 @@ CONSTRAINT fk_reserva_cliente
 <div class="hintbox"><p style="margin:0"><strong>La lección:</strong> certeza y capa son ejes distintos. Una regla puede estar confirmadísima y aun así requerir transacción, lógica de base o aplicación.</p></div>
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>Confirmada no significa “CHECK”</span></div>
 </section>
-<section class="slide dense" data-title="Dialecto">
-<div class="ey">48–60 min · SQLite → PostgreSQL</div>
-<h2>No cambia el modelo: cambia un poco el dialecto</h2>
-<table class="tbl"><thead><tr><th>Necesidad</th><th>SQLite/local</th><th>PostgreSQL/Supabase</th></tr></thead><tbody>
-<tr><td>identificador automático</td><td><code>INTEGER</code></td><td><code>BIGINT GENERATED ... AS IDENTITY</code></td></tr>
-<tr><td>texto</td><td><code>TEXT</code></td><td><code>TEXT</code></td></tr>
-<tr><td>dinero</td><td><code>REAL</code></td><td><code>NUMERIC(10,2)</code></td></tr>
-<tr><td>booleano</td><td><code>0/1</code></td><td><code>BOOLEAN</code></td></tr>
-<tr><td>fecha/hora</td><td><code>TEXT</code></td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td></tr>
-<tr><td>activar FK</td><td><code>PRAGMA foreign_keys = ON;</code></td><td>no se usa ese <code>PRAGMA</code></td></tr>
+<section class="slide dense" data-title="Tipos PostgreSQL">
+<div class="ey">48–60 min · PostgreSQL en concreto</div>
+<h2>Antes del laboratorio: tipos que vamos a escribir en PostgreSQL</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>PostgreSQL</th><th>Qué expresa</th></tr></thead><tbody>
+<tr><td>identificador automático</td><td><code>BIGINT GENERATED ALWAYS AS IDENTITY</code></td><td>el motor genera el identificador</td></tr>
+<tr><td>texto</td><td><code>TEXT</code></td><td>cadena de longitud variable</td></tr>
+<tr><td>dinero</td><td><code>NUMERIC(10,2)</code></td><td>decimal exacto con dos posiciones</td></tr>
+<tr><td>booleano</td><td><code>BOOLEAN</code></td><td><code>TRUE</code> / <code>FALSE</code></td></tr>
+<tr><td>fecha y hora</td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td><td>tipos temporales propios</td></tr>
+<tr><td>integridad</td><td><code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>CHECK</code></td><td>reglas que PostgreSQL hace cumplir</td></tr>
 </tbody></table>
-<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>No memoricen la tabla.</strong> Hoy solo deben reconocer tres traducciones: quitar <code>PRAGMA</code>, usar tipos PostgreSQL y generar IDs con <code>IDENTITY</code>. Las reglas PK/FK/NOT NULL siguen significando lo mismo.</p></div><div class="hintbox"><p style="margin:0"><strong>Ahora sí abran su modelo:</strong> <a href="constructor-abc.html?sesion=9&amp;paso=5">DDL local &middot; SQLite</a>. Úsenlo únicamente para comparar el dialecto. <strong>No se pega en Supabase:</strong> allí la fuente del laboratorio es <code>Scripts/S9.sql</code>.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Mismo diseño, otro dialecto</span></div>
+<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>No memoricen una tabla de equivalencias.</strong> Desde este punto trabajamos directamente con la sintaxis que ejecutará PostgreSQL.</p></div><div class="hintbox"><p style="margin:0"><strong>Fuente única del laboratorio:</strong> <code>Scripts/S9.sql</code>. A partir de aquí, todo el SQL que ejecutamos en clase está escrito para PostgreSQL.</p></div></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL: tipos y restricciones</span></div>
 </section>
-<section class="slide dense" data-title="Antes de Supabase">
+<section class="slide dense" data-title="Antes de PostgreSQL">
 <div class="ey">60–75 min · Recorte de implementación</div>
 <h2>Implementamos una parte del modelo, no reemplazamos S7</h2>
 <p class="lead">Para aprender DDL necesitamos suficientes relaciones y restricciones para probar el motor. No hace falta desplegar hoy todo el restaurante.</p>
@@ -345,16 +345,16 @@ CONSTRAINT fk_reserva_cliente
 </section>
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
 <h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
-<p class="lead" style="margin:auto">Al volver, abrimos Supabase y ejecutamos el primer DDL real.</p>
+<p class="lead" style="margin:auto">Al volver, abrimos PostgreSQL desde el SQL Editor y ejecutamos el primer DDL real.</p>
 <button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
 <div class="brand"><span>Pausa</span><span>Segunda mitad: PostgreSQL real</span></div>
 </section>
-<section class="slide " data-title="Entrar a Supabase">
+<section class="slide " data-title="Abrir PostgreSQL">
   <div class="ey">75–90 min · Tutorial paso a paso</div>
   
-  <h2>Ruta exacta en Supabase</h2>
+  <h2>Entrar al SQL Editor que usaremos para PostgreSQL</h2>
   <ol class="biglist">
-    <li>Entrar a <strong>supabase.com</strong> y abrir el proyecto del curso.</li>
+    <li>Entrar al proyecto de clase en <strong>Supabase</strong>: ese proyecto contiene la instancia de <strong>PostgreSQL</strong> que vamos a usar.</li>
     <li>Ir a <strong>SQL Editor</strong>.</li>
     <li>Crear un <strong>New query</strong>.</li>
     <li>Pegar solo las primeras dos tablas.</li>
@@ -472,15 +472,15 @@ DROP TABLE pedido;</code></pre>
 <p class="small">No es el objetivo central de hoy. Si el laboratorio va justo de tiempo, esta diapositiva se salta.</p>
 <div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE · extensión</span></div>
 </section>
-<section class="slide " data-title="Supabase en el mapa">
+<section class="slide " data-title="PostgreSQL en el mapa">
 <div class="ey">145–157 min · Cierre del laboratorio</div>
-<h2>Qué aprendimos del servicio real</h2>
+<h2>Qué aprendimos de PostgreSQL</h2>
 <div class="vs-grid">
 <section><h3>PostgreSQL</h3><p>Es el motor. Interpretó el DDL, creó objetos y rechazó filas cuando una restricción se incumplió.</p></section>
-<section><h3>Supabase</h3><p>Nos dio un PostgreSQL administrado y una interfaz para ejecutar SQL y revisar las tablas.</p></section>
+<section><h3>Supabase</h3><p>Fue el entorno de acceso: nos dio el SQL Editor y una instancia administrada del motor.</p></section>
 </div>
-<div class="hintbox"><p style="margin:0"><strong>El aprendizaje no es “usar Supabase”.</strong> Es poder llevar un modelo a un motor real y comprobar qué reglas quedaron realmente protegidas.</p></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>El servicio sirve al objetivo</span></div>
+<div class="hintbox"><p style="margin:0"><strong>La meta es PostgreSQL.</strong> Debes poder escribir el DDL, crear los objetos, interpretar los errores y comprobar qué restricciones protege el motor. Supabase es solo la interfaz usada hoy.</p></div>
+<div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL es el objetivo</span></div>
 </section>
 <section class="slide dense" data-title="Seguridad mínima">
 <div class="ey">157–160 min · Nota, no otra unidad</div>

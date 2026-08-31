@@ -281,9 +281,9 @@
           "fecha": "2026-09-04",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
-          "titulo": "DDL + Supabase/PostgreSQL",
+          "titulo": "DDL + PostgreSQL",
           "estado": "pendiente",
-          "desc": "Convertir el modelo del Restaurante ABC en CREATE TABLE y restricciones, ejecutarlo en PostgreSQL real con Supabase y comprobar qué reglas acepta o rechaza el motor.",
+          "desc": "Convertir el modelo del Restaurante ABC en CREATE TABLE y restricciones de PostgreSQL, ejecutarlo en un motor real desde el SQL Editor de Supabase y comprobar qué reglas acepta o rechaza el motor.",
           "tags": [
             "CREATE TABLE",
             "PK",
@@ -297,11 +297,7 @@
           "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
           "recursos": [
             {
-              "txt": "🧱 DDL local de tu modelo · SQLite",
-              "href": "Presentaciones/M3/constructor-abc.html?sesion=9&paso=5"
-            },
-            {
-              "txt": "📄 Script del laboratorio · Supabase/PostgreSQL",
+              "txt": "📄 Script PostgreSQL del laboratorio",
               "href": "Scripts/S9.sql",
               "download": true
             }

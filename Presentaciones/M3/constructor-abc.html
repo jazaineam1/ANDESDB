@@ -449,7 +449,7 @@ var LENTE_ABIERTA = false;
 var SESIONES = {
   7: {paso8:false, ddl:false},
   8: {paso8:true,  ddl:false},
-  9: {paso8:true,  ddl:true}
+  9: {paso8:true,  ddl:false}
 };
 function hoy(){
   var base = SESIONES[SESION] || SESIONES[7];
@@ -467,10 +467,10 @@ function tieneP8(){
   });
 }
 function textoHoy(){
-  var elDDL = ' El DDL local se abre <b>en la sesi&oacute;n 9</b>, despu&eacute;s de explicar la sintaxis.';
+  var elDDL = ' El DDL se escribe y ejecuta en <b>PostgreSQL durante la sesi&oacute;n 9</b>.';
   if (SESION >= 9)
-    return '<b>Sesi&oacute;n 9.</b> En el paso 5 puedes ver el <b>DDL local &middot; SQLite</b> de tu modelo. ' +
-           'Se usa para comparar dialectos; el laboratorio real de Supabase usa <b>Scripts/S9.sql</b>.';
+    return '<b>Sesi&oacute;n 9.</b> Este constructor queda como referencia del <b>modelo</b>. ' +
+           'El DDL de hoy se escribe y ejecuta directamente en <b>PostgreSQL</b> con <b>Scripts/S9.sql</b>.';
   if (SESION === 8) {
     if (CASO !== 'abc')
       return '<b>Sesi&oacute;n 8.</b> La lente trabaja sobre el <b>Restaurante ABC</b>. ' +
@@ -2031,7 +2031,7 @@ function paso5(m){
     '</div>'));
 
   var pestañas = [['er','El diagrama'],
-                  ['ddl', hoy().ddl ? 'DDL local · SQLite' : 'DDL · sesión 9'],
+                  ['ddl', hoy().ddl ? 'DDL' : (SESION >= 9 ? 'DDL · PostgreSQL' : 'DDL · sesión 9')],
                   ['datos','Los datos']];
   var nav = $('#pest', m);
   pestañas.forEach(function(p){
@@ -2045,9 +2045,9 @@ function paso5(m){
   var c = $('#cuerpoPaso5', m);
   if (S.pest === 'ddl' && !hoy().ddl) {
     c.appendChild(el('<div class="nota o">'+
-      '<p><strong>El DDL local de tu modelo ya est&aacute; generado.</strong> La herramienta lo construye '+
+      '<p><strong>En la sesi&oacute;n 9 el DDL se trabaja directamente en PostgreSQL.</strong> Este constructor queda para recuperar y revisar el modelo. '+
       'a partir de las decisiones que tomaste en los pasos 1 a 4.</p>'+
-      '<p>Se abre <strong>en la sesi&oacute;n 9</strong>, despu&eacute;s de aprender la sintaxis y comparar '+
+      '<p>En la sesi&oacute;n 9 la fuente del laboratorio es <code>Scripts/S9.sql</code>: SQL escrito para '+
       'SQLite con PostgreSQL. <strong>No es el script que se pega en Supabase.</strong> El laboratorio '+
       'real usa <code>Scripts/S9.sql</code>.</p>'+
       '<p>Mientras tanto, lo que s&iacute; es de hoy est&aacute; en las otras dos pesta&ntilde;as: '+

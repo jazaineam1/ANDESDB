@@ -162,14 +162,14 @@
     },
     "9": {
       "fecha": "2026-09-04",
-      "titulo": "DDL + Supabase/PostgreSQL",
+      "titulo": "DDL + PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Convertir el modelo del Restaurante ABC en tablas y restricciones ejecutables sobre PostgreSQL real con Supabase, y comprobar qué reglas acepta o rechaza el motor.",
+      "objetivo": "Convertir el modelo del Restaurante ABC en tablas y restricciones ejecutables sobre PostgreSQL real, y comprobar qué reglas acepta o rechaza el motor. Supabase se usa únicamente como entorno de acceso al PostgreSQL de la clase.",
       "servicio_real": {
         "requerido": true,
-        "nombre": "Supabase + PostgreSQL",
-        "fallback": "SQLite local solo para continuar practicando DDL si falla el acceso individual; no reemplaza la demostración ni la ejecución en PostgreSQL real con Supabase."
+        "nombre": "PostgreSQL en Supabase",
+        "fallback": "Si falla el acceso individual, el docente mantiene la ejecución en PostgreSQL y el estudiante sigue la prueba en clase; SQLite no sustituye el objetivo de esta sesión."
       },
       "dp900": [
         {
