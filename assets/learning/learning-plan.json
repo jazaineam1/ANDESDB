@@ -5,7 +5,6 @@
     "progreso_persistente": false,
     "diferenciacion_tecnica": true,
     "diferenciacion_tecnica_sesiones": [
-      9,
       11,
       12,
       13,
@@ -163,29 +162,14 @@
     },
     "9": {
       "fecha": "2026-09-04",
-      "titulo": "DDL + Azure SQL",
+      "titulo": "DDL + Supabase/PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Convertir el modelo en tablas y reconocer las opciones reales de la familia Azure SQL.",
-      "nucleo": {
-        "titulo": "Del diagrama al CREATE TABLE",
-        "minutos": 40,
-        "instrucciones": "Implementa una parte del Restaurante ABC con CREATE TABLE, PK, FK, NOT NULL, UNIQUE y CHECK; después compara Azure SQL Database, Managed Instance y SQL Server en Azure VM.",
-        "criterios": [
-          "DDL ejecutable",
-          "restricciones justificadas",
-          "elige un servicio Azure SQL para un escenario"
-        ]
-      },
-      "reto": {
-        "titulo": "Migración con restricciones",
-        "minutos": 15,
-        "instrucciones": "Dado un sistema legado, decide entre Azure SQL Database, Managed Instance o VM y justifica qué compatibilidad o control necesitas."
-      },
+      "objetivo": "Convertir el modelo del Restaurante ABC en tablas y restricciones ejecutables sobre PostgreSQL real con Supabase, y comprobar qué reglas acepta o rechaza el motor.",
       "servicio_real": {
         "requerido": true,
-        "nombre": "Microsoft Azure SQL",
-        "fallback": "SQLite local solo para continuar el DDL si falla el acceso; no reemplaza la demostración del servicio real."
+        "nombre": "Supabase + PostgreSQL",
+        "fallback": "SQLite local solo para continuar practicando DDL si falla el acceso individual; no reemplaza la demostración ni la ejecución en PostgreSQL real con Supabase."
       },
       "dp900": [
         {
@@ -215,6 +199,17 @@
       ],
       "solucion": {
         "modo": "manual"
+      },
+      "actividad": {
+        "titulo": "Del modelo al CREATE TABLE",
+        "minutos": 40,
+        "instrucciones": "Implementa una parte funcional del Restaurante ABC con CREATE TABLE, PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE y CHECK. Ejecuta primero datos válidos y luego intenta romper el diseño con datos inválidos para identificar qué restricción protege cada regla.",
+        "criterios": [
+          "DDL ejecutable en PostgreSQL",
+          "restricciones justificadas desde reglas o decisiones de diseño",
+          "prueba al menos un INSERT válido y varios inválidos",
+          "identifica al menos una regla de negocio que no resuelve un CHECK simple"
+        ]
       }
     },
     "10": {
