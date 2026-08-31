@@ -246,11 +246,11 @@
           "recursos": [
             {
               "txt": "🧱 El constructor: de la frase a la tabla",
-              "href": "Presentaciones/M3/constructor-abc.html"
+              "href": "Presentaciones/M3/constructor-abc.html?sesion=7"
             },
             {
               "txt": "🎬 Practica con dvdrental antes de la clase",
-              "href": "Presentaciones/M3/constructor-abc.html?caso=dvd"
+              "href": "Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"
             }
           ]
         },
@@ -273,7 +273,7 @@
           "recursos": [
             {
               "txt": "🧱 El constructor · paso 8: la lente de normalización",
-              "href": "Presentaciones/M3/constructor-abc.html"
+              "href": "Presentaciones/M3/constructor-abc.html?sesion=8"
             }
           ]
         },

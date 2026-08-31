@@ -676,7 +676,7 @@ Hoy se convierten en un modelo &mdash; y descubres cu&aacute;ntas de ellas <stro
 dentro de una tabla</strong>.</p>
 <div class="g2" style="align-items:center;gap:1.2em">
 <div><div class="chips"><code>entidades</code><code>relaciones</code><code>cardinalidad</code><code>clave for&aacute;nea</code><code>tabla puente</code><code>modelo ER</code></div>
-<div class="dlrow"><a href="constructor-abc.html">&#129521; El constructor<small>de la frase a la tabla &middot; aqu&iacute; se trabaja hoy</small></a><a href="constructor-abc.html?caso=dvd">&#127916; La pr&aacute;ctica<small>dvdrental &middot; para aprender la herramienta</small></a><a href="sesion-6-reglas-de-negocio.html">&#128220; Las diez reglas<small>sesi&oacute;n 6 &middot; el material de hoy</small></a></div>
+<div class="dlrow"><a href="constructor-abc.html?sesion=7">&#129521; El constructor<small>de la frase a la tabla &middot; aqu&iacute; se trabaja hoy</small></a><a href="constructor-abc.html?caso=dvd&amp;sesion=7">&#127916; La pr&aacute;ctica<small>dvdrental &middot; para aprender la herramienta</small></a><a href="sesion-6-reglas-de-negocio.html">&#128220; Las diez reglas<small>sesi&oacute;n 6 &middot; el material de hoy</small></a></div>
 <p class="small" style="margin-top:.5em;opacity:.85">Se trabaja <strong>en equipo</strong>,
 y lo que salga de aqu&iacute; es el material de ma&ntilde;ana.</p>
 </div>
@@ -807,25 +807,24 @@ motor puede defenderla entera.</p>
 <div class="g2">
 <div><h3>Qué se puede hacer con ella</h3>
 <ul class="checks">
-<li><strong>Cuatro <code>NOT NULL</code></strong>: fecha, hora, personas y el cliente.</li>
+<li><strong>Cuatro columnas obligatorias</strong>: fecha, hora, personas y el cliente.</li>
 <li>Y «un cliente identificado» pide algo más: una <strong>clave foránea</strong>
     hacia <code>cliente</code>. No basta con guardar un nombre suelto.</li>
 </ul>
 <div class="hintbox"><p style="margin:0">Esta es de las que el motor defiende
 <strong>entera</strong>. Vas a ver que hay muy pocas.</p></div></div>
-<div><h3>Lo que la herramienta escribirá</h3>
-<pre><code>CREATE TABLE reserva (
-  reserva_id INTEGER PRIMARY KEY,
-  cliente_id INTEGER NOT NULL
-             REFERENCES cliente(cliente_id),
-  fecha      TEXT    NOT NULL,
-  hora       TEXT    NOT NULL,
-  personas   INTEGER NOT NULL
-);</code></pre>
-<p class="small"><strong>Hoy no tienen que saber escribir esto</strong> — lo genera la
-herramienta a partir de sus decisiones, y el viernes lo escribirán ustedes contra un
-servicio real. Lo que sí quiero que vean: <strong>cada línea obligatoria viene de una frase
-de la dueña</strong>. Ninguna la puse yo.</p></div>
+<div><h3>La tabla <code>reserva</code> que sale de ahí</h3>
+<table class="optbl"><thead><tr><th>Columna</th><th class="c">&iquest;Obligatoria?</th><th>De qu&eacute; frase sale</th></tr></thead>
+<tbody>
+<tr><td><code>reserva_id</code></td><td class="c">es la clave</td><td class="small">de ninguna: toda tabla necesita una</td></tr>
+<tr><td><code>cliente_id</code></td><td class="c"><b>s&iacute;</b></td><td class="small">&laquo;&hellip;y un <b>cliente identificado</b>&raquo; &mdash; y apunta a <code>cliente</code></td></tr>
+<tr><td><code>fecha</code></td><td class="c"><b>s&iacute;</b></td><td class="small">&laquo;sin <b>fecha</b>&raquo;</td></tr>
+<tr><td><code>hora</code></td><td class="c"><b>s&iacute;</b></td><td class="small">&laquo;<b>hora</b>&raquo;</td></tr>
+<tr><td><code>personas</code></td><td class="c"><b>s&iacute;</b></td><td class="small">&laquo;<b>n&uacute;mero de personas</b>&raquo;</td></tr>
+</tbody></table>
+<p class="small"><strong>Cada obligatorio viene de una frase de la due&ntilde;a.</strong> Ninguno
+lo puse yo. C&oacute;mo se escribe esta tabla en SQL es de <strong>la sesi&oacute;n 9</strong>,
+el viernes: hoy la construye la herramienta con lo que ustedes decidan.</p></div>
 </div>
 <div class="brand"><span>Ejemplo trabajado</span><span>Restricción</span></div>
 </section>
@@ -912,8 +911,8 @@ tuyas.</p></div>
 Está en <strong>la página del curso</strong>, en la tarjeta de la
 <strong>sesión 7</strong>. Dos enlaces, y son <strong>la misma página</strong>.</p></div>
 <div class="dlrow" style="margin:.4em 0 .2em">
-<a href="constructor-abc.html?caso=dvd">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; empezamos por aqu&iacute;</small></a>
-<a href="constructor-abc.html">&#129521; Abrir el constructor<small>Restaurante ABC &middot; el taller, despu&eacute;s</small></a></div>
+<a href="constructor-abc.html?caso=dvd&amp;sesion=7">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; empezamos por aqu&iacute;</small></a>
+<a href="constructor-abc.html?sesion=7">&#129521; Abrir el constructor<small>Restaurante ABC &middot; el taller, despu&eacute;s</small></a></div>
 <div class="hintbox" style="margin-top:.3em"><p style="margin:0"><strong>Arriba del todo hay
 un botón para cambiar de caso.</strong> Si prefieren teclearla:
 <code>jazaineam1.github.io/ANDESDB</code>, sesión 7.</p></div>
@@ -953,7 +952,7 @@ hagan se queda en su navegador.</p>
 <text x="12" y="118" font-size="8.5" font-weight="800" fill="#5a5a5a" font-family="Segoe UI,Arial,sans-serif" letter-spacing=".06em">Y AL FINAL, LO QUE SALE SOLO:</text>
 <g font-family="Segoe UI,Arial,sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">
 <rect x="12" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="64" y="145" fill="#124e78">tu diagrama</text><text x="64" y="158" fill="#124e78">entidad-relaci&oacute;n</text>
-<rect x="124" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="176" y="145" fill="#124e78">el SQL de</text><text x="176" y="158" fill="#124e78">sus tablas</text>
+<rect x="124" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="176" y="145" fill="#124e78">las tablas que</text><text x="176" y="158" fill="#124e78">de ah&iacute; salen</text>
 <rect x="236" y="126" width="104" height="44" rx="8" fill="#e9f4ff" stroke="#124e78" stroke-width="1.6"/><text x="288" y="145" fill="#124e78">una base viva</text><text x="288" y="158" fill="#124e78">con datos dentro</text>
 <rect x="348" y="126" width="100" height="44" rx="8" fill="#fff6c9" stroke="#ff8a24" stroke-width="1.8"/><text x="398" y="145" fill="#c96a00">12 pruebas</text><text x="398" y="158" fill="#c96a00">contra tu base</text></g>
 </svg>
@@ -963,7 +962,7 @@ hagan se queda en su navegador.</p>
 <li>Qué sustantivos son tablas.</li>
 <li>Los atributos &mdash; y <strong>qué regla justifica cada obligatorio</strong>.</li>
 <li>Las relaciones, <strong>una por una</strong>, y su cardinalidad.</li>
-<li><strong>Su diagrama ER</strong> y su SQL, generados.</li>
+<li><strong>Su diagrama ER</strong> y su base, generados.</li>
 <li>El banco de pruebas, contra su base.</li>
 <li>Y el <strong>cierre del caso</strong>: el &uacute;nico paso distinto en cada puerta.</li>
 </ol>
@@ -1003,7 +1002,7 @@ modelo con el que hay dentro de <code>dvdrental</code> de verdad, y no dice
 <p class="small" style="margin-top:.4em">Practicamos aqu&iacute; porque <code>dvdrental</code>
 <strong>tiene respuesta correcta</strong>. El Restaurante ABC no la tiene: por eso es el taller.</p>
 <div class="dlrow" style="margin-top:.4em">
-<a href="constructor-abc.html?caso=dvd">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; &aacute;branla ahora</small></a></div></div>
+<a href="constructor-abc.html?caso=dvd&amp;sesion=7">&#127916; Abrir la pr&aacute;ctica<small>dvdrental &middot; &aacute;branla ahora</small></a></div></div>
 </div>
 <div class="brand"><span>El ensayo</span><span>Con red, antes de quitarla</span></div>
 </section>
@@ -1021,7 +1020,7 @@ pantalla</strong>.</p>
 <tr><td><b>3 min</b></td><td><b>Paso 2</b> &middot; los <b>13 sustantivos</b>: entidad, atributo o ninguno.</td></tr>
 <tr><td><b>2 min</b></td><td><b>Paso 3</b> &middot; los atributos. Solo los obligatorios, y de qu&eacute; regla salen.</td></tr>
 <tr><td><b>5 min</b></td><td><b>Paso 4</b> &middot; las <b>12 relaciones</b>. Es la parte dif&iacute;cil: aqu&iacute; vamos despacio.</td></tr>
-<tr><td><b>2 min</b></td><td><b>Pasos 5 y 6</b> &middot; su diagrama, su SQL y las pruebas contra su base.</td></tr>
+<tr><td><b>2 min</b></td><td><b>Pasos 5 y 6</b> &middot; su diagrama, su base y las pruebas contra ella.</td></tr>
 <tr><td><b>3 min</b></td><td><b>Paso 7</b> &middot; la correcci&oacute;n contra <code>dvdrental</code> de verdad.</td></tr>
 </tbody></table></div>
 <div><h3>La regla del ensayo</h3>
@@ -1173,8 +1172,10 @@ y precio — <strong>y en cuanto un puente guarda algo suyo, es una entidad</str
 <div class="ey">Debrief &middot; el hallazgo</div>
 <h2>Solo dos de sus diez caben en una restricci&oacute;n declarativa</h2>
 <p class="lead">Sus diez reglas enteras, en el orden del viernes. Y &laquo;declarativa&raquo;
-quiere decir lo que hemos usado hoy: <code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>,
-<code>NOT NULL</code>, <code>UNIQUE</code> y <code>CHECK</code>. <strong>Nada m&aacute;s.</strong></p>
+quiere decir <strong>lo que el motor sabe defender solo</strong>, y que son cinco cosas con
+nombre: clave primaria, clave for&aacute;nea, obligatorio, &uacute;nico y comprobaci&oacute;n.
+<strong>Nada m&aacute;s.</strong> Escribirlas es del viernes; hoy basta con saber que existen
+y cu&aacute;les son.</p>
 <div class="tabla-envuelta"><table class="optbl">
 <thead><tr><th style="width:1.8em">#</th><th style="width:34%">Su regla, tal como qued&oacute;</th><th>Lo que casi todo el mundo intenta escribir</th><th>Lo que de verdad pasa</th></tr></thead>
 <tbody>

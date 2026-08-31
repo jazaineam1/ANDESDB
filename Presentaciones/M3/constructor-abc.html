@@ -222,11 +222,19 @@ pre.mas{max-height:none}
 .dif .mas{background:var(--gl);color:#0b4a2c;display:block}
 .dif .men{background:var(--rl);color:#7a1f1f;display:block;text-decoration:line-through}
 .dif .ig{color:var(--ink-soft);display:block}
+/* ---------- hasta donde llega la sesion de hoy ---------- */
+.hoy{background:#fff8e1;border-bottom:1.5px solid #f0d98a;padding:.5rem 1rem;
+     font-size:.87rem;color:#5d4a00;text-align:center}
+.hoy b{color:#3d3000}
+.pasos button.manana{opacity:.5}
+.pasos button.manana .num{background:var(--ink-soft)}
+.pest button.cerrada{opacity:.6}
 </style>
 </head>
 <body>
 
 <header>
+  <div class="hoy" id="hoy"></div>
   <div class="hbar">
     <div class="marca">De la frase a la tabla<small id="subMarca">Restaurante ABC</small></div>
     <div class="casos" id="casos"></div>
@@ -433,6 +441,21 @@ function cargarCaso(id, conservar){
   CASO = id;
   S = (conservar && GUARDADO[id]) ? GUARDADO[id] : estadoNuevo();
 }
+
+/* Hasta donde se llega en cada sesion. El SQL de las tablas es materia de la
+   sesion 9: antes de esa fecha se ve el candado, no el CREATE TABLE. */
+var SESION = 7;
+var SESIONES = {
+  7: {paso8:false, ddl:false,
+      t:'<b>Sesi&oacute;n 7.</b> Hoy se llega hasta el <b>paso 7</b>. El paso 8 se abre ma&ntilde;ana, ' +
+        'y el SQL de tus tablas el viernes, en la sesi&oacute;n 9.'},
+  8: {paso8:true, ddl:false,
+      t:'<b>Sesi&oacute;n 8.</b> Hoy se abre el <b>paso 8</b>, con tu modelo de ayer. ' +
+        'El SQL de tus tablas se abre el viernes, en la sesi&oacute;n 9.'},
+  9: {paso8:true, ddl:true,
+      t:'<b>Sesi&oacute;n 9.</b> Hoy se abre <b>el SQL de tus tablas</b>, en la pesta&ntilde;a del paso 5.'}
+};
+function hoy(){ return SESIONES[SESION] || SESIONES[7]; }
 
 var SQL = null;      // el módulo sql.js, una vez cargado
 var ultimoDDL = '';
@@ -1557,7 +1580,9 @@ function pintarPasos(){
   PASOS.filter(function(p){ return !p.solo || p.solo === CASO; }).forEach(function(p){
     var rot = (p.n === 7 && VERDAD) ? 'La correcci\u00f3n' : p.t;
     var b = el('<button type="button"><span class="num">'+p.n+'</span>'+esc(rot)+'</button>');
+    if (p.n === 8 && !hoy().paso8) b.title = 'Esto es de la sesión 8';
     if (S.paso === p.n) b.className = 'on';
+    else if (p.n === 8 && !hoy().paso8) b.className = 'manana';
     if (listo(p.n)) b.className += ' listo';
     b.onclick = function(){ S.paso = p.n; pintar(); window.scrollTo(0,0); };
     nav.appendChild(b);
@@ -1565,6 +1590,8 @@ function pintarPasos(){
 }
 
 function pintar(){
+  var bd = $('#btDDL'); if (bd) bd.style.display = hoy().ddl ? '' : 'none';
+  var bh = $('#hoy'); if (bh) bh.innerHTML = hoy().t;
   pintarPasos();
   pintarCasos();
   var m = $('#main');
@@ -1964,22 +1991,37 @@ function paso5(m){
     '<div class="ey">Paso 5 · de 7</div>'+
     '<h2>Tu modelo, hecho base de datos</h2>'+
     '<p class="lead">Esto es un <strong>modelo entidad-relación</strong>, y lo acabas de generar '+
-    'tú a partir de unas cuantas frases. Debajo está el SQL que le corresponde, y detrás una base '+
+    'tú a partir de unas cuantas frases. '+
+    (hoy().ddl ? 'Debajo está el SQL que le corresponde, y detrás una base '
+               : 'Y detrás hay una base ')+
     'SQLite de verdad corriendo en tu navegador con datos dentro.</p>'+
     '<div class="pest" id="pest"></div>'+
     '<div id="cuerpoPaso5"></div></div>'));
 
-  var pestañas = [['er','El diagrama'],['ddl','El SQL'],['datos','Los datos']];
+  var pestañas = [['er','El diagrama'],
+                  ['ddl', hoy().ddl ? 'El SQL' : 'El SQL · viernes'],
+                  ['datos','Los datos']];
   var nav = $('#pest', m);
   pestañas.forEach(function(p){
     var b = el('<button type="button">'+esc(p[1])+'</button>');
     if (S.pest === p[0]) b.className = 'on';
+    if (p[0] === 'ddl' && !hoy().ddl) b.className += ' cerrada';
     b.onclick = function(){ S.pest = p[0]; pintar(); };
     nav.appendChild(b);
   });
 
   var c = $('#cuerpoPaso5', m);
-  if (S.pest === 'ddl') {
+  if (S.pest === 'ddl' && !hoy().ddl) {
+    c.appendChild(el('<div class="nota o">'+
+      '<p><strong>Tu SQL ya est&aacute; escrito, y es tuyo.</strong> Lo acaba de generar la '+
+      'herramienta con las decisiones que tomaste en los pasos 1 a 4.</p>'+
+      '<p>Se abre <strong>el viernes, en la sesi&oacute;n 9</strong>, que es donde se aprende a '+
+      'escribirlo y donde vas a llevarlo a un servicio de verdad. No lo necesitas hoy para nada: '+
+      'tu base ya est&aacute; construida y el banco de pruebas corre igual.</p>'+
+      '<p>Mientras tanto, lo que s&iacute; es de hoy est&aacute; en las otras dos pesta&ntilde;as: '+
+      '<strong>el diagrama</strong>, que es tu modelo, y <strong>los datos</strong>, que son las '+
+      'filas que tu modelo acepta.</p></div>'));
+  } else if (S.pest === 'ddl') {
     var ddl = generarDDL();
     var bt = el('<button class="copiar">Copiar el SQL entero</button>');
     bt.onclick = function(){ copiar(ddl, bt); };
@@ -2474,6 +2516,13 @@ function correrAnomalia(){
 }
 
 function paso8(m){
+  if (!hoy().paso8) {
+    m.appendChild(el('<div class="panel"><div class="nota o">'+
+      '<p><strong>Este paso es de la sesi&oacute;n 8, ma&ntilde;ana.</strong> Puedes mirarlo, pero '+
+      'todav&iacute;a no hace falta: hoy el trabajo termina en el paso 7.</p>'+
+      '<p>Ma&ntilde;ana se vuelve a abrir esta herramienta con <strong>tu mismo modelo</strong> '+
+      '&mdash; por eso conviene que guardes tu c&oacute;digo antes de irte.</p></div></div>'));
+  }
   var h = redundancias();
   m.appendChild(el(
     '<div class="panel">' +
@@ -2772,6 +2821,15 @@ document.addEventListener('click', function(e){
    portada del curso. */
 var pedido = (location.search.match(/[?&]caso=([a-z]+)/) || [])[1];
 cargarCaso(CASOS[pedido] ? pedido : 'abc');
+
+/* La sesion la trae el enlace del mazo. Se recuerda la mas alta que se haya
+   abierto para que un marcador viejo no vuelva a cerrar lo que ya se dio. */
+var ses = +((location.search.match(/[?&]sesion=(\d)/) || [])[1] || 0);
+var vista = 0;
+try { vista = +(localStorage.getItem('constructor7-sesion') || 0); } catch(e){}
+SESION = Math.max(SESIONES[ses] ? ses : 7, SESIONES[vista] ? vista : 7);
+try { localStorage.setItem('constructor7-sesion', SESION); } catch(e){}
+$('#hoy').innerHTML = hoy().t;
 
 initSqlJs({ locateFile: function(f){ return '../../assets/vendor/sqljs/' + f; } })
   .then(function(mod){
