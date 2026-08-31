@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Ajustar orquestación S7-S9
-        run: python tools/ajustar_orquestacion_s7_s9.py
+        run: python tools/run_ajuste_orquestacion.py
 
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
