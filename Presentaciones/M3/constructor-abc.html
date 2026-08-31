@@ -446,16 +446,30 @@ function cargarCaso(id, conservar){
    sesion 9: antes de esa fecha se ve el candado, no el CREATE TABLE. */
 var SESION = 7;
 var SESIONES = {
-  7: {paso8:false, ddl:false,
-      t:'<b>Sesi&oacute;n 7.</b> Hoy se llega hasta el <b>paso 7</b>. El paso 8 se abre ma&ntilde;ana, ' +
-        'y el SQL de tus tablas el viernes, en la sesi&oacute;n 9.'},
-  8: {paso8:true, ddl:false,
-      t:'<b>Sesi&oacute;n 8.</b> Hoy se abre el <b>paso 8</b>, con tu modelo de ayer. ' +
-        'El SQL de tus tablas se abre el viernes, en la sesi&oacute;n 9.'},
-  9: {paso8:true, ddl:true,
-      t:'<b>Sesi&oacute;n 9.</b> Hoy se abre <b>el SQL de tus tablas</b>, en la pesta&ntilde;a del paso 5.'}
+  7: {paso8:false, ddl:false},
+  8: {paso8:true,  ddl:false},
+  9: {paso8:true,  ddl:true}
 };
 function hoy(){ return SESIONES[SESION] || SESIONES[7]; }
+
+/* El Restaurante ABC tiene ocho pasos y dvdrental siete: el 8 es `solo:'abc'`.
+   La banda no puede prometer un paso que esta puerta no tiene. */
+function tieneP8(){
+  return PASOS.some(function(p){ return p.n === 8 && (!p.solo || p.solo === CASO); });
+}
+function textoHoy(){
+  var elSQL = ' El SQL de tus tablas se abre <b>el viernes</b>, en la sesi&oacute;n 9.';
+  if (SESION >= 9)
+    return '<b>Sesi&oacute;n 9.</b> Hoy se abre <b>el SQL de tus tablas</b>, en la ' +
+           'pesta&ntilde;a del paso 5.';
+  if (SESION === 8)
+    return tieneP8()
+      ? '<b>Sesi&oacute;n 8.</b> Hoy se abre el <b>paso 8</b>, con tu modelo de ayer.' + elSQL
+      : '<b>Sesi&oacute;n 8.</b> El paso 8 es del <b>Restaurante ABC</b>: c&aacute;mbiate de caso ' +
+        'aqu&iacute; arriba.' + elSQL;
+  return '<b>Sesi&oacute;n 7.</b> Hoy se recorren los <b>siete pasos</b>' +
+         (tieneP8() ? ', y el paso 8 se abre ma&ntilde;ana' : '') + '.' + elSQL;
+}
 
 var SQL = null;      // el módulo sql.js, una vez cargado
 var ultimoDDL = '';
@@ -1591,7 +1605,7 @@ function pintarPasos(){
 
 function pintar(){
   var bd = $('#btDDL'); if (bd) bd.style.display = hoy().ddl ? '' : 'none';
-  var bh = $('#hoy'); if (bh) bh.innerHTML = hoy().t;
+  var bh = $('#hoy'); if (bh) bh.innerHTML = textoHoy();
   pintarPasos();
   pintarCasos();
   var m = $('#main');
@@ -2829,7 +2843,7 @@ var vista = 0;
 try { vista = +(localStorage.getItem('constructor7-sesion') || 0); } catch(e){}
 SESION = Math.max(SESIONES[ses] ? ses : 7, SESIONES[vista] ? vista : 7);
 try { localStorage.setItem('constructor7-sesion', SESION); } catch(e){}
-$('#hoy').innerHTML = hoy().t;
+$('#hoy').innerHTML = textoHoy();
 
 initSqlJs({ locateFile: function(f){ return '../../assets/vendor/sqljs/' + f; } })
   .then(function(mod){
