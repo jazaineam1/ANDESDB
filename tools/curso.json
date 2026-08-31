@@ -298,6 +298,10 @@
           "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
           "recursos": [
             {
+              "txt": "🧱 El constructor: aquí se abre tu SQL",
+              "href": "Presentaciones/M3/constructor-abc.html?sesion=9"
+            },
+            {
               "txt": "📄 Script del laboratorio · Supabase/PostgreSQL",
               "href": "Scripts/S9.sql",
               "download": true
