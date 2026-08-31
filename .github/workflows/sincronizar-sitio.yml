@@ -10,6 +10,7 @@ on:
       - 'tools/integrar-experiencia.py'
       - 'tools/normalizar_s9_ui.py'
       - 'tools/ajustar_validacion_s9.py'
+      - 'tools/verificar_runtime_s9.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -40,6 +41,9 @@ jobs:
       - name: Integrar PWA y experiencia S6+
         run: python tools/integrar-experiencia.py
 
+      - name: Verificar runtime de S9
+        run: python tools/verificar_runtime_s9.py
+
       - name: Validar curso
         run: python tools/validar_curso.py
 
@@ -47,12 +51,12 @@ jobs:
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email '418982b6c3b82a4f7a195a7543cbb69b74@users.noreply.github.com'
           git add index.html Presentaciones/M3/sesion-9-ddl-supabase.html tools/curso.json tools/integrar-experiencia.py tools/validar_curso.py assets/learning/learning-core.js
           if git diff --cached --quiet; then
             echo 'S9 ya estaba normalizada'
             exit 0
           fi
-          git commit -m 'Unificar S9 con controles de la sesión 5'
+          git commit -m 'Verificar controles y temporizador de S9'
           git pull --rebase origin main
           git push origin main
