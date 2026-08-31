@@ -59,12 +59,14 @@ def validate_course_manifest(course: dict) -> None:
         )
 
     numbers = []
+    sessions: list[dict] = []
     for module in course.get("modulos", []):
         for resource in module.get("recursos", []):
             p = local_path(resource.get("href", ""))
             if p and not p.exists():
                 err(f"Recurso inexistente: {resource.get('href')}")
         for session in module.get("sesiones", []):
+            sessions.append(session)
             n = session.get("n")
             numbers.append(n)
             href = session.get("href")
@@ -89,6 +91,31 @@ def validate_course_manifest(course: dict) -> None:
     if missing:
         err(f"curso.json todavía no describe estas sesiones: {missing}")
 
+    # La portada debe contar una sola historia: contador, tarjeta Hoy y materiales.
+    current = course.get("sesionActual")
+    current_session = next((s for s in sessions if s.get("n") == current), None)
+    if current_session is None:
+        err(f"sesionActual={current} no existe entre las sesiones del manifiesto")
+
+    today = [s for s in sessions if s.get("estado") == "hoy"]
+    if len(today) != 1:
+        err(f"Debe existir exactamente una sesión con estado='hoy'; hay {len(today)}")
+    elif today[0].get("n") != current:
+        err(
+            f"sesionActual={current} pero la tarjeta 'Hoy' es S{today[0].get('n')}"
+        )
+
+    if current_session is not None:
+        current_resources = {
+            r.get("href") for r in current_session.get("recursos", []) if r.get("href")
+        }
+        for material in course.get("materialesHoy", []):
+            href = material.get("href")
+            if href and href not in current_resources:
+                err(
+                    f"Material de hoy no pertenece a S{current}: {href}"
+                )
+
 
 def validate_learning_plan(plan: dict) -> None:
     sessions = plan.get("sesiones", {})
@@ -96,6 +123,13 @@ def validate_learning_plan(plan: dict) -> None:
     if missing:
         err(f"learning-plan.json no tiene S{', S'.join(missing)}")
         return
+
+    declared = set(plan.get("principios", {}).get("diferenciacion_tecnica_sesiones", []))
+    if declared != TECHNICAL_DIFFERENTIATION:
+        err(
+            "learning-plan.json debe declarar diferenciación técnica solo en "
+            f"{sorted(TECHNICAL_DIFFERENTIATION)}, no {sorted(declared)}"
+        )
 
     for n in range(6, 17):
         s = sessions[str(n)]
@@ -126,6 +160,14 @@ def validate_learning_plan(plan: dict) -> None:
         if not real.get("fallback"):
             err(f"S{n}: debe documentar fallback sin sustituir el servicio real")
 
+    # S9 se implementa temporalmente sobre PostgreSQL real en Supabase.
+    s9 = sessions.get("9", {})
+    if "Supabase" not in str(s9.get("titulo", "")):
+        err("S9 en learning-plan.json debe estar alineada con Supabase/PostgreSQL")
+    real9 = str(s9.get("servicio_real", {}).get("nombre", ""))
+    if "Supabase" not in real9 or "PostgreSQL" not in real9:
+        err("S9 debe declarar Supabase + PostgreSQL como servicio real")
+
 
 def validate_published_html() -> None:
     for path in ROOT.glob("Presentaciones/M*/sesion-*.html"):
@@ -142,10 +184,28 @@ def validate_published_html() -> None:
         if n in TECHNICAL_DIFFERENTIATION and "learning-core.js" not in text:
             err(f"S{n}: la práctica técnica publicada debe cargar learning-core.js")
 
+        if n == 9:
+            if "learning-core.js" in text or "andes-practice-btn" in text:
+                err("S9 no debe cargar ni inyectar la capa externa 'Práctica'")
+            if text.count('id="bar"') != 1:
+                err("S9 debe tener una sola barra de progreso con id='bar'")
+            for control in ("count", "prev", "next", "timeBtn", "dlBtn", "fullBtn"):
+                if f'id="{control}"' not in text:
+                    err(f"S9: falta el control estándar {control}")
+            forbidden_lower = (
+                "<code>create table ",
+                "<code>insert into ",
+                "<code>alter table ",
+                "<code>drop table ",
+            )
+            if any(token in text for token in forbidden_lower):
+                err("S9 contiene palabras clave SQL en minúscula dentro de ejemplos")
+
 
 def validate_runtime_policies() -> None:
-    learning_core = ROOT / "assets/learning/learning-core.js"
-    pwa_install = ROOT / "assets/pwa-install.js"
+    learning_core = ROOT / "assets" / "learning" / "learning-core.js"
+    pwa_install = ROOT / "assets" / "pwa-install.js"
+    service_worker = ROOT / "service-worker.js"
 
     if learning_core.exists():
         text = learning_core.read_text(encoding="utf-8", errors="replace")
@@ -161,6 +221,16 @@ def validate_runtime_policies() -> None:
                 "La PWA no debe mostrar sugerencias propias de instalación; "
                 f"se encontraron: {', '.join(found)}"
             )
+
+    if service_worker.exists():
+        text = service_worker.read_text(encoding="utf-8", errors="replace")
+        for required in (
+            "./Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html",
+            "./Presentaciones/M3/sesion-9-ddl-supabase.html",
+            "./Scripts/S9.sql",
+        ):
+            if required not in text:
+                err(f"service-worker.js no precarga recurso actual/relevante: {required}")
 
 
 def validate_required_files() -> None:
