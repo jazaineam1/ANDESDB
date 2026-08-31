@@ -8,6 +8,7 @@ on:
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
+      - 'tools/enfocar_s9_postgresql.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -26,6 +27,9 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
+      - name: Enfocar S9 en PostgreSQL
+        run: python tools/enfocar_s9_postgresql.py
+
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
 
@@ -38,13 +42,13 @@ jobs:
       - name: Publicar cambios generados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones; then
+          if git diff --quiet -- index.html Presentaciones tools/curso.json assets/learning/learning-plan.json Scripts/S9.sql; then
             echo 'Sitio ya sincronizado'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones
-          git commit -m 'Sincronizar sitio con el manifiesto del curso'
+          git add index.html Presentaciones tools/curso.json assets/learning/learning-plan.json Scripts/S9.sql
+          git commit -m 'Enfocar la sesión 9 en PostgreSQL'
           git pull --rebase origin main
           git push origin main
