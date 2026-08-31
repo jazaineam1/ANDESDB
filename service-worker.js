@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v8-sesion-8-20260830';
+const VERSION = 'andesdb-v9-sesion-7-20260830';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -19,7 +19,9 @@ const ESSENTIAL = [
   './Presentaciones/M3/sql-lab-s6.js',
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
   './Presentaciones/M3/sesion-8-modelado-y-normalizacion.html',
+  './Presentaciones/M3/sesion-9-ddl-supabase.html',
   './Presentaciones/M3/constructor-abc.html',
+  './Scripts/S9.sql',
   './assets/vendor/sqljs/sql-wasm.js',
   './assets/vendor/sqljs/sql-wasm.wasm',
   './Presentaciones/M2/base-datos/dvdrental.db'
@@ -101,7 +103,7 @@ self.addEventListener('fetch', event => {
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
   const isLearningRuntime = /\/assets\/(?:learning\/learning-core\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
-  const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet)$/i.test(url.pathname);
+  const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
   else if (isAsset) event.respondWith(cacheFirst(request));
