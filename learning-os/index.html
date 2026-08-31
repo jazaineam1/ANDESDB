@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1324">
+  <title>ANDESDB Learning OS · SuperLab</title>
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="Volver a ANDESDB">
+      <span class="brand-mark">▲</span>
+      <span><strong>ANDESDB</strong><small>Learning OS · experimento</small></span>
+    </a>
+    <div class="top-actions">
+      <button id="modeToggle" class="ghost" type="button">Modo principiante</button>
+      <button id="dailyButton" class="ghost" type="button">☕ SQL del día</button>
+      <div class="xp-pill"><span id="xpValue">0</span> XP</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="rail" aria-label="Recorrido del curso">
+      <div class="rail-head">
+        <p class="eyebrow">Ruta hasta S9</p>
+        <h1>Aprende haciendo</h1>
+        <p>Sin instalaciones. El SQL de práctica corre en tu navegador.</p>
+      </div>
+      <nav id="sessionNav" class="session-nav"></nav>
+      <section class="skill-card">
+        <div class="section-title">Mapa de habilidades</div>
+        <div id="skills"></div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <div class="mission-bar">
+        <div>
+          <p id="missionMeta" class="eyebrow">Selecciona una misión</p>
+          <h2 id="missionTitle">SuperLab SQL</h2>
+          <p id="missionPrompt" class="mission-prompt">Elige una sesión o misión para comenzar.</p>
+        </div>
+        <div class="mission-status">
+          <span id="missionXp" class="badge">+0 XP</span>
+          <span id="streak" class="badge soft">🔥 0 días</span>
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <section class="panel schema-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Base de práctica</p>
+              <h3>Esquema</h3>
+            </div>
+            <button id="resetDb" class="icon-btn" type="button" title="Restablecer base">↻</button>
+          </div>
+          <div id="schemaTree" class="schema-tree"></div>
+        </section>
+
+        <section class="panel editor-panel">
+          <div class="panel-head editor-head">
+            <div>
+              <p class="eyebrow">Consulta</p>
+              <h3>Escribe SQL</h3>
+            </div>
+            <div class="editor-actions">
+              <button id="explainButton" class="ghost small" type="button">🧠 Explícame</button>
+              <button id="hintButton" class="ghost small" type="button">💡 Pista</button>
+            </div>
+          </div>
+          <div id="starterChips" class="starter-chips" aria-label="Atajos SQL"></div>
+          <textarea id="sqlEditor" spellcheck="false" aria-label="Editor SQL" placeholder="SELECT ..."></textarea>
+          <div class="run-row">
+            <span id="engineStatus" class="engine-status">Inicializando motor local…</span>
+            <button id="runButton" class="primary" type="button">▶ Ejecutar</button>
+          </div>
+          <div id="hintBox" class="coach-box" hidden></div>
+          <div id="explainBox" class="coach-box" hidden></div>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Resultado</p>
+              <h3>Qué produjo tu consulta</h3>
+            </div>
+            <span id="queryTime" class="muted"></span>
+          </div>
+          <div id="feedback" class="feedback neutral">Ejecuta una consulta para ver el resultado y recibir feedback.</div>
+          <div id="result" class="result-wrap"></div>
+        </section>
+      </div>
+
+      <section class="panel learning-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Cómo piensa SQL</p>
+            <h3>Orden lógico de ejecución</h3>
+          </div>
+        </div>
+        <div id="logicalOrder" class="logical-order">
+          <span>FROM</span><b>→</b><span>WHERE</span><b>→</b><span>GROUP BY</span><b>→</b><span>HAVING</span><b>→</b><span>SELECT</span><b>→</b><span>ORDER BY</span><b>→</b><span>LIMIT</span>
+        </div>
+      </section>
+
+      <section class="panel class-panel">
+        <div>
+          <p class="eyebrow">Modo clase</p>
+          <h3>¿Cómo vas?</h3>
+          <p class="muted">La señal queda local en esta demo; al conectar el backend se agrega de forma anónima para el profesor.</p>
+        </div>
+        <div class="traffic">
+          <button data-signal="green" type="button">🟢 Entendí</button>
+          <button data-signal="yellow" type="button">🟡 Tengo dudas</button>
+          <button data-signal="red" type="button">🔴 Estoy perdido</button>
+        </div>
+        <span id="signalMessage" class="muted"></span>
+      </section>
+    </section>
+  </main>
+
+  <script src="../assets/vendor/sqljs/sql-wasm.js"></script>
+  <script src="./catalog.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
