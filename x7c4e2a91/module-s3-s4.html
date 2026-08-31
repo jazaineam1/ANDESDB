@@ -7,89 +7,38 @@
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
   <meta name="googlebot" content="noindex,nofollow,noarchive">
   <title>ANDESDB · Módulo interactivo S3–S4</title>
-  <link rel="stylesheet" href="./module-s3-s4.css?v=1">
+  <link rel="stylesheet" href="./module-s3-s4.css?v=2">
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="./index.html" aria-label="Volver al preview de ANDESDB">
-    <span class="mark">▲</span>
-    <span><strong>ANDESDB</strong><small>Learning OS · módulo verificable</small></span>
-  </a>
-  <div class="top-center">
-    <b id="moduleTitle">Módulo 2 · Sesiones 3 y 4</b>
-    <div class="top-progress" aria-label="Progreso del módulo"><i id="topProgress"></i></div>
-  </div>
-  <div class="top-stats">
-    <span class="pill"><span id="xp">0</span> XP</span>
-    <span class="pill">🔥 <span id="streak">0</span></span>
-  </div>
+  <a class="brand" href="./index.html" aria-label="Volver al preview de ANDESDB"><span class="mark">▲</span><span><strong>ANDESDB</strong><small>Learning OS · módulo verificable</small></span></a>
+  <div class="top-center"><b id="moduleTitle">Módulo 2 · Sesiones 3 y 4</b><div class="top-progress" aria-label="Progreso del módulo"><i id="topProgress"></i></div></div>
+  <div class="top-stats"><span class="pill"><span id="xp">0</span> XP</span><span class="pill">🔥 <span id="streak">0</span></span></div>
 </header>
-
-<div class="mobile-tabs" aria-label="Cambiar entre aprendizaje y práctica">
-  <button id="mobileLearn" class="on" type="button">📖 Aprender</button>
-  <button id="mobilePractice" type="button">⌨ Practicar</button>
-</div>
-
+<div class="mobile-tabs" aria-label="Cambiar entre aprendizaje y práctica"><button id="mobileLearn" class="on" type="button">📖 Aprender</button><button id="mobilePractice" type="button">⌨ Practicar</button></div>
 <div class="shell">
-  <aside class="rail" aria-label="Ruta del módulo">
-    <p class="ey">Ruta de aprendizaje</p>
-    <h2>S3 → S4</h2>
-    <p class="muted" style="font-size:11px;margin-top:3px">Contenido de las presentaciones actuales convertido en explicación, comprobación y laboratorio sobre la misma base.</p>
-    <div style="margin:12px 0"><span class="pill" id="moduleProgress">0/0 pasos</span></div>
-    <div id="railUnits"></div>
-  </aside>
-
+  <aside class="rail" aria-label="Ruta del módulo"><p class="ey">Ruta de aprendizaje</p><h2>S3 → S4</h2><p class="muted" style="font-size:11px;margin-top:3px">Contenido de las presentaciones actuales convertido en explicación, comprobación y laboratorio sobre la misma base.</p><div style="margin:12px 0"><span class="pill" id="moduleProgress">0/0 pasos</span></div><div id="railUnits"></div></aside>
   <main id="mainPanel" class="main">
-    <section class="lesson-head">
-      <div>
-        <p id="stepEy" class="ey">Microlección</p>
-        <h1 id="stepTitle">Cargando…</h1>
-        <p id="stepLead" class="lead"></p>
-        <div id="stepMeta" class="lesson-meta"></div>
-      </div>
-      <a id="sourceLink" class="source-link" target="_blank" rel="noopener">Abrir presentación fuente ↗</a>
-    </section>
-
+    <section class="lesson-head"><div><p id="stepEy" class="ey">Microlección</p><h1 id="stepTitle">Cargando…</h1><p id="stepLead" class="lead"></p><div id="stepMeta" class="lesson-meta"></div></div><a id="sourceLink" class="source-link" target="_blank" rel="noopener">Abrir presentación fuente ↗</a></section>
     <section id="lessonContent" class="content"></section>
-
-    <nav class="navrow" aria-label="Navegación de lecciones">
-      <button id="prevBtn" class="navbtn" type="button">← Anterior</button>
-      <button id="completeLearn" class="navbtn primary" type="button">Marcar como comprendido</button>
-      <button id="nextBtn" class="navbtn" type="button">Siguiente →</button>
-    </nav>
+    <nav class="navrow" aria-label="Navegación de lecciones"><button id="prevBtn" class="navbtn" type="button">← Anterior</button><button id="completeLearn" class="navbtn primary" type="button">Marcar como comprendido</button><button id="nextBtn" class="navbtn" type="button">Siguiente →</button></nav>
   </main>
-
   <aside id="studio" class="studio" aria-label="Laboratorio SQL">
-    <div class="studio-head">
-      <div><p class="ey">SuperLab</p><h3 id="labTitle">Laboratorio SQL</h3></div>
-      <span id="queryTime" class="muted" style="font-size:9px"></span>
-    </div>
-    <div id="engine" class="engine">Cargando dvdrental.db real…</div>
-    <p id="labPrompt" class="prompt"></p>
-    <p id="labExpected" class="expected"></p>
-    <div id="chips" class="editor-tools" aria-label="Atajos SQL"></div>
-    <textarea id="sqlEditor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Editor SQL"></textarea>
+    <div class="studio-head"><div><p class="ey">SuperLab</p><h3 id="labTitle">Laboratorio SQL</h3></div><span id="queryTime" class="muted" style="font-size:9px"></span></div>
+    <div id="engine" class="engine">Cargando dvdrental.db real…</div><p id="labPrompt" class="prompt"></p><p id="labExpected" class="expected"></p>
+    <div id="chips" class="editor-tools" aria-label="Atajos SQL"></div><textarea id="sqlEditor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Editor SQL"></textarea>
     <div class="runbar"><span class="muted" style="font-size:9px">Ctrl/Cmd + Enter</span><button id="runBtn" class="run" type="button">▶ Ejecutar</button></div>
     <div class="coach"><button id="hintBtn" type="button">💡 Pista</button><button id="explainBtn" type="button">🧠 Explícame</button><button id="dataBtn" type="button">▦ Ver datos</button></div>
-    <div id="feedback" class="feedback">Aquí puedes equivocarte sin perder puntos.</div>
-    <div id="checks" class="checks"></div>
-    <div id="result" class="result"></div>
-    <div id="hintBox" class="hintbox" hidden></div>
-    <section class="mastery">
-      <p class="ey">Mapa de dominio</p>
-      <div id="mastery"></div>
-    </section>
+    <div id="feedback" class="feedback">Aquí puedes equivocarte sin perder puntos.</div><div id="checks" class="checks"></div><div id="result" class="result"></div><div id="hintBox" class="hintbox" hidden></div>
+    <section class="mastery"><p class="ey">Mapa de dominio</p><div id="mastery"></div></section>
   </aside>
 </div>
-
-<nav class="mobile-dock" aria-label="Controles móviles">
-  <button id="dockPrev" type="button">← Paso</button>
-  <button id="dockHint" type="button">💡 Pista</button>
-  <button id="dockRun" class="run" type="button">▶ Ejecutar</button>
-  <button id="dockNext" type="button">Paso →</button>
-</nav>
-
+<nav class="mobile-dock" aria-label="Controles móviles"><button id="dockPrev" type="button">← Paso</button><button id="dockHint" type="button">💡 Pista</button><button id="dockRun" class="run" type="button">▶ Ejecutar</button><button id="dockNext" type="button">Paso →</button></nav>
 <script src="../assets/vendor/sqljs/sql-wasm.js"></script>
-<script src="./module-s3-s4.js?v=1"></script>
+<script src="./module-s3-data.js?v=2"></script>
+<script src="./module-s4-data.js?v=2"></script>
+<script src="./module-core.js?v=2"></script>
+<script src="./module-views.js?v=2"></script>
+<script src="./module-actions.js?v=2"></script>
 </body>
 </html>
