@@ -62,8 +62,6 @@ new_pg_slide = '''<section class="slide dense" data-title="Tipos PostgreSQL">
 s, n = re.subn(r'<section class="slide dense" data-title="Dialecto">.*?</section>', new_pg_slide, s, count=1, flags=re.S)
 if n != 1:
     raise RuntimeError('No pude sustituir la diapositiva Dialecto por Tipos PostgreSQL')
-
-# No debe quedar en S9 un enlace que proponga el DDL SQLite como paso de aprendizaje.
 s = re.sub(r'<a href="constructor-abc\.html\?sesion=9&amp;paso=5">.*?</a>', '', s, flags=re.S)
 write(s9_path, s)
 
@@ -128,6 +126,17 @@ sql = sql.replace('-- Nota Supabase: hoy usamos SQL Editor y un schema de clase.
 write(sql_path, sql)
 
 # ------------------------------------------------------------
+# Validador · S9 debe exigir PostgreSQL en el título, no Supabase.
+# ------------------------------------------------------------
+v_path = 'tools/validar_curso.py'
+v = read(v_path)
+v = v.replace('    if "Supabase" not in str(s9.get("titulo", "")):\n        err("S9 en learning-plan.json debe estar alineada con Supabase/PostgreSQL")',
+              '    if "PostgreSQL" not in str(s9.get("titulo", "")):\n        err("S9 en learning-plan.json debe tener PostgreSQL como objetivo técnico")')
+v = v.replace('        err("S9 debe declarar Supabase + PostgreSQL como servicio real")',
+              '        err("S9 debe declarar PostgreSQL en Supabase como entorno de servicio real")')
+write(v_path, v)
+
+# ------------------------------------------------------------
 # Verificaciones de objetivo.
 # ------------------------------------------------------------
 s = read(s9_path)
@@ -141,4 +150,5 @@ assert '  9: {paso8:true,  ddl:false}' in c
 assert s9j['titulo'] == 'DDL + PostgreSQL'
 assert len(s9j['recursos']) == 1 and s9j['recursos'][0]['href'] == 'Scripts/S9.sql'
 assert 'DDL + PostgreSQL' in read(sql_path)
+assert 'if "PostgreSQL" not in str(s9.get("titulo", ""))' in read(v_path)
 print('OK · S9 enfocada en PostgreSQL')
