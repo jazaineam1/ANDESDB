@@ -106,7 +106,7 @@ CREATE TABLE reserva_mesa (
 CREATE TABLE pedido (
     pedido_id BIGINT GENERATED ALWAYS AS IDENTITY,
     reserva_id BIGINT,
-    creado_en TIMESTAMP NOT NULL DEFAULT now(),
+    creado_en TIMESTAMP NOT NULL DEFAULT NOW(),
     estado TEXT NOT NULL DEFAULT 'abierto',
 
     CONSTRAINT pk_pedido PRIMARY KEY (pedido_id),
@@ -132,7 +132,7 @@ CREATE TABLE linea_pedido (
 );
 
 -- ============================================================
--- 5. Inserts válidos
+-- 5. INSERT válidos
 -- ============================================================
 
 INSERT INTO cliente (nombre, telefono) VALUES
@@ -166,7 +166,7 @@ INSERT INTO linea_pedido (pedido_id, plato_id, cantidad, precio_unitario) VALUES
 -- Consulta de reconstrucción: no guardamos pedido.total.
 SELECT
     p.pedido_id,
-    sum(lp.cantidad * lp.precio_unitario) AS total_calculado
+    SUM(lp.cantidad * lp.precio_unitario) AS total_calculado
 FROM pedido p
 JOIN linea_pedido lp ON lp.pedido_id = p.pedido_id
 GROUP BY p.pedido_id;
@@ -177,22 +177,22 @@ GROUP BY p.pedido_id;
 -- ============================================================
 
 -- A. NOT NULL: debe fallar porque nombre es obligatorio.
--- insert into cliente (nombre, telefono) values (null, '3999999999');
+-- INSERT INTO cliente (nombre, telefono) VALUES (NULL, '3999999999');
 
 -- B. UNIQUE: debe fallar porque el teléfono ya existe.
--- insert into cliente (nombre, telefono) values ('Cliente duplicado', '3001234567');
+-- INSERT INTO cliente (nombre, telefono) VALUES ('Cliente duplicado', '3001234567');
 
 -- C. FK huérfana: debe fallar porque no existe cliente 999999.
--- insert into reserva (cliente_id, fecha, hora, personas)
--- values (999999, '2026-09-04', '20:00', 4);
+-- INSERT INTO reserva (cliente_id, fecha, hora, personas)
+-- VALUES (999999, '2026-09-04', '20:00', 4);
 
 -- D. CHECK: debe fallar porque personas no puede ser 0.
--- insert into reserva (cliente_id, fecha, hora, personas)
--- values (1, '2026-09-04', '21:00', 0);
+-- INSERT INTO reserva (cliente_id, fecha, hora, personas)
+-- VALUES (1, '2026-09-04', '21:00', 0);
 
 -- E. CHECK: debe fallar porque cantidad debe ser positiva.
--- insert into linea_pedido (pedido_id, plato_id, cantidad, precio_unitario)
--- values (1, 2, 0, 32000);
+-- INSERT INTO linea_pedido (pedido_id, plato_id, cantidad, precio_unitario)
+-- VALUES (1, 2, 0, 32000);
 
 -- ============================================================
 -- 7. ALTER TABLE: una regla aparece tarde
@@ -203,8 +203,8 @@ ADD CONSTRAINT ck_reserva_personas_max
 CHECK (personas <= 20);
 
 -- Esta debe fallar después del ALTER.
--- insert into reserva (cliente_id, fecha, hora, personas)
--- values (1, '2026-09-05', '20:00', 25);
+-- INSERT INTO reserva (cliente_id, fecha, hora, personas)
+-- VALUES (1, '2026-09-05', '20:00', 25);
 
 -- ============================================================
 -- 8. Nota Supabase
