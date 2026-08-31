@@ -8,7 +8,6 @@ on:
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
-      - 'tools/ajustar_plan_s9_auditoria.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -27,9 +26,6 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Alinear plan de S9
-        run: python tools/ajustar_plan_s9_auditoria.py
-
       - name: Generar portada desde curso.json
         run: python tools/construir-index.py
 
@@ -39,16 +35,16 @@ jobs:
       - name: Validar curso
         run: python tools/validar_curso.py
 
-      - name: Publicar cambios auditados
+      - name: Publicar cambios generados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones assets/learning/learning-plan.json; then
-            echo 'Sitio y plan ya estaban sincronizados'
+          if git diff --quiet -- index.html Presentaciones; then
+            echo 'Sitio ya sincronizado'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones assets/learning/learning-plan.json
-          git commit -m 'Alinear S9 con Supabase y sesión actual 7'
+          git add index.html Presentaciones
+          git commit -m 'Sincronizar sitio con el manifiesto del curso'
           git pull --rebase origin main
           git push origin main
