@@ -10,7 +10,7 @@
   const SESSION_RE = /(?:sesi[oó]n|sesion)[-_\s]*(\d{1,2})/i;
 
   // Diferenciación por velocidad técnica. No es una mecánica transversal.
-  const CODE_PRACTICE_SESSIONS = new Set(['9', '11', '12', '13', '14', '15']);
+  const CODE_PRACTICE_SESSIONS = new Set(['11', '12', '13', '14', '15']);
 
   function sessionNumber() {
     const candidates = [document.title, location.pathname, document.body?.innerText?.slice(0, 500) || ''];
@@ -162,7 +162,7 @@
       return;
     }
 
-    // S6, S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
+    // S6, S7, S8, S9, S10 y S16 no reciben una capa artificial Núcleo/Reto.
     if (!CODE_PRACTICE_SESSIONS.has(n)) {
       await registerSW();
       return;

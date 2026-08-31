@@ -2,7 +2,7 @@
 """Integra la experiencia común de ANDESDB.
 
 - index.html: metadatos PWA + instalador visible.
-- S9, S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
+- S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
 - S6 conserva únicamente su laboratorio SQL específico.
 - S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
 PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
-TECHNICAL_DIFFERENTIATION = {9, 11, 12, 13, 14, 15}
+TECHNICAL_DIFFERENTIATION = {11, 12, 13, 14, 15}
 
 
 def relative_url(from_file: Path, target: Path) -> str:

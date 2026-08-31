@@ -15,7 +15,7 @@ from urllib.parse import unquote, urlparse
 ROOT = Path(__file__).resolve().parent.parent
 COURSE = ROOT / "tools" / "curso.json"
 LEARNING = ROOT / "assets" / "learning" / "learning-plan.json"
-TECHNICAL_DIFFERENTIATION = {9, 11, 12, 13, 14, 15}
+TECHNICAL_DIFFERENTIATION = {11, 12, 13, 14, 15}
 
 ERRORS: list[str] = []
 WARNINGS: list[str] = []
