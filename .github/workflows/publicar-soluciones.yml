@@ -2,10 +2,15 @@ name: Publicar soluciones programadas
 
 on:
   schedule:
-    # Se dispara a las 19:45 de Bogotá (00:45 UTC del día siguiente) y el
-    # runner espera internamente hasta la hora que fije el plan. Esto reduce
-    # el riesgo de retraso de los cron programados al inicio de la hora.
-    - cron: '45 0 * * *'
+    # Cada hora, y se publica cuando la hora de Bogotá YA pasó la del plan.
+    #
+    # Antes se disparaba una vez (00:45 UTC) y el trabajo esperaba dentro hasta
+    # la hora del plan. No puede funcionar: GitHub arrastra los cron varias
+    # horas —las corridas reales entran entre las 05:00 y las 07:30 UTC— y con
+    # ese arrastre la espera supera el límite de 6 horas de un job. El 1 de
+    # septiembre el trabajo murió a las 6 h 0 m 20 s y la solución de la S7
+    # nunca se publicó.
+    - cron: '20 * * * *'
   workflow_dispatch:
     inputs:
       session:
@@ -45,15 +50,25 @@ jobs:
           # "20:00" literal, así que cualquier sesión programada a otra hora
           # (la S7 va a las 20:15, después de su debrief) no se publicaba nunca.
           leido=$(python - <<'PY'
-          import json
+          import json, os
           from datetime import datetime
           from zoneinfo import ZoneInfo
           plan=json.load(open('assets/learning/learning-plan.json', encoding='utf-8'))
-          today=datetime.now(ZoneInfo('America/Bogota')).strftime('%Y-%m-%d')
+          ahora=datetime.now(ZoneInfo('America/Bogota'))
+          hoy=ahora.strftime('%Y-%m-%d')
+          ahora_hm=ahora.strftime('%H:%M')
+          # La hora sale del plan, no de una constante: cada sesión corta puede
+          # publicar después de su propio debrief. Y se publica cuando esa hora
+          # YA pasó — nunca se espera dentro del trabajo, que es lo que mató la
+          # publicación de la S7.
           for n,s in sorted(plan['sesiones'].items(), key=lambda x: int(x[0])):
               sol=s.get('solucion', {})
               hora=str(sol.get('publicar',''))
-              if s.get('fecha')==today and sol.get('modo')=='programada' and hora >= '20:00':
+              if s.get('fecha')!=hoy or sol.get('modo')!='programada' or not hora:
+                  continue
+              if os.path.exists('Scripts/S%s-solucion.sql' % n):
+                  continue                      # ya publicada: no hay nada que hacer
+              if ahora_hm >= hora:
                   print(n, hora)
                   break
           PY
@@ -98,7 +113,10 @@ jobs:
           tz=ZoneInfo('America/Bogota')
           now=datetime.now(tz)
           target=now.replace(hour=int(h), minute=int(m), second=0, microsecond=0)
-          print(max(0, int((target-now).total_seconds())))
+          # Red de seguridad: como el paso anterior ya exige que la hora haya
+          # pasado, aquí no debería quedar nada que esperar. Si por un salto de
+          # reloj quedara, se acota a 20 minutos: un job no puede pasar de 6 h.
+          print(min(1200, max(0, int((target-now).total_seconds()))))
           PY
           )
           echo "Esperando ${seconds}s para publicar a las ${AT} de Bogotá."
