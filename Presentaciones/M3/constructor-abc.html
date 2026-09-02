@@ -1939,11 +1939,23 @@ function paso4(m){
     var card = el('<div class="ecard"><h3>'+esc(r.frase)+'</h3><div class="cuerpo"></div></div>');
     var cu = $('.cuerpo', card);
 
+    var A = r.a.toUpperCase(), B = r.b.toUpperCase();
+    /* «N : 1» no dice quien es el 1. Con el par escrito en palabras, no hay
+       forma de llevarse la clave foranea al lado contrario sin querer. */
+    function rotulo(v){
+      if (v === 'NO')  return 'no se relacionan';
+      if (v === 'N:1') return 'cada ' + B + ', N ' + A;
+      if (v === '1:N') return 'cada ' + A + ', N ' + B;
+      if (v === '1:1') return 'cada ' + A + ', 1 ' + B;
+      return 'N ' + A + ', N ' + B;
+    }
     var fila = el('<div class="opts" style="display:flex;gap:.35em;flex-wrap:wrap;margin-bottom:.5em"></div>');
     CARDS.forEach(function(c){
       var b = el('<button type="button" style="border:1.5px solid var(--line);background:var(--paper);'+
         'border-radius:var(--pill);padding:.25em .8em;font-size:.83rem;font-weight:800;'+
-        'color:var(--ink-soft)">'+esc(c.t)+'</button>');
+        'color:var(--ink-soft)">'+esc(rotulo(c.v))+
+        (c.v === 'NO' ? '' : ' <span style="opacity:.6;font-weight:600">'+esc(c.t)+'</span>')+
+        '</button>');
       if (e.card === c.v) { b.style.background='var(--b)'; b.style.borderColor='var(--b)'; b.style.color='#fff'; }
       b.title = c.d;
       b.onclick = function(){ e.card = c.v; pintar(); };
@@ -1956,6 +1968,15 @@ function paso4(m){
         'cosas no se relacionan. Es una decisión como cualquier otra, y cuenta como hecha.</p>'));
     }
     if (e.card && e.card !== 'NO') {
+      /* La consecuencia, dicha en el momento: es lo unico que caza una clave
+         foranea puesta del lado contrario antes de llegar al paso 5. */
+      var don = e.card === 'N:N'
+        ? 'Esto obliga una <b>tabla puente</b>: ' + esc(r.puente || (r.a + '_' + r.b)) + '.'
+        : 'La <b>clave for&aacute;nea</b> queda en <b>' +
+          (e.card === '1:N' ? B : A) + '</b>, apuntando a ' + (e.card === '1:N' ? A : B) + '.';
+      cu.appendChild(el('<p class="small" style="margin:.1em 0 .5em;color:var(--b)">' + don +
+        ' &nbsp;<span style="color:var(--ink-soft)">&iquest;Es eso lo que quieres decir?</span></p>'));
+
       var obl = el('<div style="display:flex;gap:1.2em;flex-wrap:wrap;margin-bottom:.5em"></div>');
       [[0,'oblA','Todo '+r.a.toUpperCase()+' tiene '+r.b.toUpperCase()],
        [1,'oblB','Todo '+r.b.toUpperCase()+' tiene '+r.a.toUpperCase()]].forEach(function(x){
