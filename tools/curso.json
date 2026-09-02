@@ -1,13 +1,9 @@
 {
-  "_comentario": "Manifiesto único del curso. Para cambiar el recorrido se edita este archivo y se regenera index.html. La experiencia pedagógica detallada S6-S16 vive en assets/learning/learning-plan.json y se valida en CI.",
+  "_comentario": "Manifiesto único del curso. Para cambiar el recorrido se edita este archivo y se regenera index.html. La experiencia pedagógica detallada S6-S16 vive en assets/learning/learning-plan.json y se valida en CI. Continuidad S8-S9 ajustada al avance real de S7.",
   "titulo": "Diseño y Gestión de Bases de Datos con SQL",
   "institucion": "Universidad de los Andes · Colsubsidio",
   "subtitulo": "Aprende a entender un problema de datos, modelarlo, consultarlo y elegir la tecnología adecuada. Practicamos con datos reales y servicios cloud reales.",
-  "datos": [
-    "48 horas · 16 sesiones",
-    "Clases virtuales sincrónicas",
-    "Actividad práctica cada 10–15 minutos"
-  ],
+  "datos": ["48 horas · 16 sesiones","Clases virtuales sincrónicas","Actividad práctica cada 10–15 minutos"],
   "sesionActual": 7,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
@@ -31,24 +27,10 @@
     {"txt":"🍎 macOS","href":"Presentaciones/M1/guia-instalacion-beekeeper-macos.docx","download":true}
   ],
   "modulos": [
+    {"n":1,"titulo":"¿Cómo generamos valor con datos?","estado":"completado","desc":"Dato ≠ valor, actores, decisiones y el ecosistema de datos.","recursos":[{"txt":"📊 Introducción al curso","download":true,"href":"Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"}],"sesiones":[]},
     {
-      "n":1,
-      "titulo":"¿Cómo generamos valor con datos?",
-      "estado":"completado",
-      "desc":"Dato ≠ valor, actores, decisiones y el ecosistema de datos.",
-      "recursos":[{"txt":"📊 Introducción al curso","download":true,"href":"Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"}],
-      "sesiones":[]
-    },
-    {
-      "n":2,
-      "titulo":"Explorando bases de datos con SQL",
-      "estado":"completado",
-      "desc":"Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
-      "recursos":[
-        {"txt":"🗄️ La base de datos (archivo)","href":"Presentaciones/M2/base-datos/dvdrental.db","download":true},
-        {"txt":"📄 Hoja de ayuda para los ejercicios","href":"Presentaciones/M2/chuleta-taller.html"},
-        {"txt":"📘 Guía para repasar en casa","href":"Presentaciones/M2/referencia-modulo-2.html"}
-      ],
+      "n":2,"titulo":"Explorando bases de datos con SQL","estado":"completado","desc":"Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
+      "recursos":[{"txt":"🗄️ La base de datos (archivo)","href":"Presentaciones/M2/base-datos/dvdrental.db","download":true},{"txt":"📄 Hoja de ayuda para los ejercicios","href":"Presentaciones/M2/chuleta-taller.html"},{"txt":"📘 Guía para repasar en casa","href":"Presentaciones/M2/referencia-modulo-2.html"}],
       "sesiones":[
         {"n":2,"titulo":"De la decisión a la primera consulta","estado":"completado","desc":"Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.","href":"Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html","tags":["SELECT","DISTINCT","COUNT","WHERE","ORDER BY","LIMIT"],"recursos":[{"txt":"📄 Las consultas de la clase (archivo de texto)","href":"Scripts/S2.sql","download":true}]},
         {"n":3,"titulo":"Filtrar mejor y resumir","estado":"completado","desc":"Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.","href":"Presentaciones/M2/sesion-3-filtros-y-agregaciones.html","tags":["BETWEEN","IN","LIKE","GROUP BY","HAVING"],"recursos":[{"txt":"📄 Las consultas de la clase (archivo de texto)","href":"Scripts/S3.sql","download":true}]},
@@ -57,69 +39,18 @@
       ]
     },
     {
-      "n":3,
-      "titulo":"Modelos de datos útiles",
-      "estado":"curso",
-      "desc":"De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
-      "recursos":[{"txt":"🗄️ La base de datos (archivo)","href":"Presentaciones/M2/base-datos/dvdrental.db","download":true}],
+      "n":3,"titulo":"Modelos de datos útiles","estado":"curso","desc":"De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.","recursos":[{"txt":"🗄️ La base de datos (archivo)","href":"Presentaciones/M2/base-datos/dvdrental.db","download":true}],
       "sesiones":[
-        {
-          "n":6,"fecha":"2026-08-28","duracionUtil":165,"modo":"guiada","titulo":"Reglas de negocio","estado":"completado",
-          "desc":"Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.",
-          "href":"Presentaciones/M3/sesion-6-reglas-de-negocio.html","tags":["reglas de negocio","OLTP","OLAP","data lake","data warehouse","ETL / ELT"],
-          "recursos":[{"txt":"📄 Las consultas de la clase (archivo de texto)","href":"Scripts/S6.sql","download":true}]
-        },
-        {
-          "n":7,"fecha":"2026-09-01","duracionUtil":145,"modo":"autonomo_guiado","trabajoAutonomoMin":75,"titulo":"De las reglas al modelo","estado":"hoy",
-          "href":"Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html","desc":"Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.",
-          "tags":["entidades","relaciones","cardinalidad","modelo ER","workshop"],
-          "recursos":[
-            {"txt":"🧱 El constructor: de la frase a la tabla","href":"Presentaciones/M3/constructor-abc.html?sesion=7"},
-            {"txt":"🎬 Apoyo con dvdrental durante la sesión","href":"Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"}
-          ]
-        },
-        {
-          "n":8,"fecha":"2026-09-02","duracionUtil":165,"modo":"guiada","titulo":"Modelado y normalización","estado":"pendiente",
-          "href":"Presentaciones/M3/sesion-8-modelado-y-normalizacion.html",
-          "desc":"Continuar desde el avance real de S7: completar atributos y relaciones con guía paso a paso, fijar un modelo-base común y normalizar ese recorte con dependencias, 1FN, 2FN, 3FN y reconstrucción sin pérdida.",
-          "tags":["atributos","relaciones","1FN","2FN","3FN","dependencias","reconstrucción"],
-          "recursos":[{"txt":"🧱 El constructor · continúa desde entidades","href":"Presentaciones/M3/constructor-abc.html?sesion=8"}]
-        },
-        {
-          "n":9,"fecha":"2026-09-04","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"DDL + PostgreSQL","estado":"pendiente",
-          "desc":"Tutorial guiado por checkpoints para convertir un modelo-base común en tablas reales de PostgreSQL, verificar cada CREATE TABLE y distinguir PK, FK, NOT NULL, CHECK y DEFAULT mediante pruebas válidas e inválidas.",
-          "tags":["CREATE TABLE","PK","FK","NOT NULL","CHECK","DEFAULT","PostgreSQL","Supabase"],
-          "href":"Presentaciones/M3/sesion-9-ddl-supabase.html",
-          "recursos":[{"txt":"📄 Script PostgreSQL de la sesión","href":"Scripts/S9.sql","download":true}]
-        }
+        {"n":6,"fecha":"2026-08-28","duracionUtil":165,"modo":"guiada","titulo":"Reglas de negocio","estado":"completado","desc":"Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.","href":"Presentaciones/M3/sesion-6-reglas-de-negocio.html","tags":["reglas de negocio","OLTP","OLAP","data lake","data warehouse","ETL / ELT"],"recursos":[{"txt":"📄 Las consultas de la clase (archivo de texto)","href":"Scripts/S6.sql","download":true}]},
+        {"n":7,"fecha":"2026-09-01","duracionUtil":145,"modo":"autonomo_guiado","trabajoAutonomoMin":75,"titulo":"De las reglas al modelo","estado":"hoy","href":"Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html","desc":"Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.","tags":["entidades","relaciones","cardinalidad","modelo ER","workshop"],"recursos":[{"txt":"🧱 El constructor: de la frase a la tabla","href":"Presentaciones/M3/constructor-abc.html?sesion=7"},{"txt":"🎬 Apoyo con dvdrental durante la sesión","href":"Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"}]},
+        {"n":8,"fecha":"2026-09-02","duracionUtil":165,"modo":"guiada","titulo":"Modelado y normalización","estado":"pendiente","href":"Presentaciones/M3/sesion-8-modelado-y-normalizacion.html","desc":"Continuar desde el avance real de S7: completar atributos y relaciones con guía paso a paso, fijar un modelo-base común y normalizar ese recorte con dependencias, 1FN, 2FN, 3FN y reconstrucción sin pérdida.","tags":["atributos","relaciones","1FN","2FN","3FN","dependencias","reconstrucción"],"recursos":[{"txt":"🧱 El constructor · continúa desde entidades","href":"Presentaciones/M3/constructor-abc.html?sesion=8"}]},
+        {"n":9,"fecha":"2026-09-04","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"DDL + PostgreSQL","estado":"pendiente","desc":"Tutorial guiado por checkpoints para convertir un modelo-base común en tablas reales de PostgreSQL, verificar cada CREATE TABLE y distinguir PK, FK, NOT NULL, CHECK y DEFAULT mediante pruebas válidas e inválidas.","tags":["CREATE TABLE","PK","FK","NOT NULL","CHECK","DEFAULT","PostgreSQL","Supabase"],"href":"Presentaciones/M3/sesion-9-ddl-supabase.html","recursos":[{"txt":"📄 Script PostgreSQL de la sesión","href":"Scripts/S9.sql","download":true}]}
       ]
     },
-    {
-      "n":4,"titulo":"Más allá de las tablas: NoSQL","estado":"pendiente","desc":"Elegir NoSQL por requisitos y practicar documentos en servicios reales.","recursos":[],
-      "sesiones":[
-        {"n":10,"fecha":"2026-09-08","duracionUtil":145,"modo":"autonomo_guiado","trabajoAutonomoMin":75,"titulo":"Taller de casos: ¿SQL o NoSQL?","estado":"pendiente","desc":"Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.","tags":["SQL vs NoSQL","casos","trade-offs","workshop"]},
-        {"n":11,"fecha":"2026-09-09","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"Firestore + Azure Cosmos DB","estado":"pendiente","desc":"Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.","tags":["Firestore","Cosmos DB","documentos","partition key","Azure Storage"]}
-      ]
-    },
-    {
-      "n":5,"titulo":"Data warehouse, analítica y cloud","estado":"pendiente","desc":"Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.","recursos":[],
-      "sesiones":[
-        {"n":12,"fecha":"2026-09-11","duracionUtil":165,"modo":"guiada","titulo":"Fundamentos de data warehouse","estado":"pendiente","desc":"Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.","tags":["data warehouse","modelo estrella","hechos","dimensiones","batch","streaming","Fabric","Databricks"]},
-        {"n":13,"fecha":"2026-09-15","duracionUtil":145,"modo":"autonomo_guiado_con_servicio_real","trabajoAutonomoMin":75,"titulo":"Laboratorio BigQuery","estado":"pendiente","desc":"Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.","tags":["BigQuery","cloud","warehouse","SQL","workshop"]},
-        {"n":14,"fecha":"2026-09-16","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"BigQuery anidados + mapa Azure","estado":"pendiente","desc":"Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.","tags":["nested","JSON","Parquet","BigQuery","Power BI","Azure analytics"]}
-      ]
-    },
-    {
-      "n":6,"titulo":"Desafío final y consolidación","estado":"pendiente","desc":"Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.","recursos":[],
-      "sesiones":[
-        {"n":15,"fecha":"2026-09-18","duracionUtil":165,"modo":"autonomo_guiado","trabajoAutonomoMin":90,"titulo":"Desafío final integrador","estado":"pendiente","desc":"Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.","tags":["desafío","datos sucios","modelado","validación","arquitectura"]},
-        {"n":16,"fecha":"2026-09-22","duracionUtil":145,"modo":"consolidacion","titulo":"Cierre + preparación DP-900","estado":"pendiente","desc":"Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.","tags":["DP-900","cierre","retrieval practice","plan de estudio"]}
-      ]
-    }
+    {"n":4,"titulo":"Más allá de las tablas: NoSQL","estado":"pendiente","desc":"Elegir NoSQL por requisitos y practicar documentos en servicios reales.","recursos":[],"sesiones":[{"n":10,"fecha":"2026-09-08","duracionUtil":145,"modo":"autonomo_guiado","trabajoAutonomoMin":75,"titulo":"Taller de casos: ¿SQL o NoSQL?","estado":"pendiente","desc":"Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.","tags":["SQL vs NoSQL","casos","trade-offs","workshop"]},{"n":11,"fecha":"2026-09-09","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"Firestore + Azure Cosmos DB","estado":"pendiente","desc":"Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.","tags":["Firestore","Cosmos DB","documentos","partition key","Azure Storage"]}]},
+    {"n":5,"titulo":"Data warehouse, analítica y cloud","estado":"pendiente","desc":"Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.","recursos":[],"sesiones":[{"n":12,"fecha":"2026-09-11","duracionUtil":165,"modo":"guiada","titulo":"Fundamentos de data warehouse","estado":"pendiente","desc":"Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.","tags":["data warehouse","modelo estrella","hechos","dimensiones","batch","streaming","Fabric","Databricks"]},{"n":13,"fecha":"2026-09-15","duracionUtil":145,"modo":"autonomo_guiado_con_servicio_real","trabajoAutonomoMin":75,"titulo":"Laboratorio BigQuery","estado":"pendiente","desc":"Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.","tags":["BigQuery","cloud","warehouse","SQL","workshop"]},{"n":14,"fecha":"2026-09-16","duracionUtil":165,"modo":"guiada_con_servicio_real","titulo":"BigQuery anidados + mapa Azure","estado":"pendiente","desc":"Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.","tags":["nested","JSON","Parquet","BigQuery","Power BI","Azure analytics"]}]},
+    {"n":6,"titulo":"Desafío final y consolidación","estado":"pendiente","desc":"Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.","recursos":[],"sesiones":[{"n":15,"fecha":"2026-09-18","duracionUtil":165,"modo":"autonomo_guiado","trabajoAutonomoMin":90,"titulo":"Desafío final integrador","estado":"pendiente","desc":"Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.","tags":["desafío","datos sucios","modelado","validación","arquitectura"]},{"n":16,"fecha":"2026-09-22","duracionUtil":145,"modo":"consolidacion","titulo":"Cierre + preparación DP-900","estado":"pendiente","desc":"Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.","tags":["DP-900","cierre","retrieval practice","plan de estudio"]}]}
   ],
   "glosario":"El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
-  "materialesHoy":[
-    {"txt":"🧱 El constructor: de la frase a la tabla","href":"Presentaciones/M3/constructor-abc.html?sesion=7"},
-    {"txt":"🎬 Apoyo con dvdrental durante la sesión","href":"Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"}
-  ]
+  "materialesHoy":[{"txt":"🧱 El constructor: de la frase a la tabla","href":"Presentaciones/M3/constructor-abc.html?sesion=7"},{"txt":"🎬 Apoyo con dvdrental durante la sesión","href":"Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"}]
 }
