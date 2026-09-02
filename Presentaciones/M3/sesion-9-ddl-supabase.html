@@ -1,555 +1,78 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 9 - DDL y PostgreSQL: convertir el modelo del Restaurante ABC en tablas reales, restricciones y pruebas - Diseno y Gestion de Bases de Datos con SQL"><title>Sesión 9 · DDL + PostgreSQL</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffd600'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='22' font-weight='bold' fill='%23171717'%3E9%3C/text%3E%3C/svg%3E">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesion 9 - Tutorial guiado de DDL en PostgreSQL desde un modelo base común"><title>Sesión 9 · DDL + PostgreSQL</title>
 <style>
-:root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#146c43;--r:#a52a2a;--paper:#fff;--s:#f5f3ee;--bl:#e9f4ff;--gl:#e9f8ef;--rl:#fff1f0;--yl:#fff6c9;--ol:#fff3e7;--ink:#1a1a1a;--ink-soft:#5a5a5a;--dark:#0e1a24;--dark-2:#16293a;--sh:0 1px 2px rgba(16,24,32,.05),0 8px 24px rgba(16,24,32,.07);font-family:"Segoe UI",Arial,system-ui,sans-serif;color:var(--ink)}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}button,a{font:inherit}
-.stage{position:relative;width:min(100vw,177.777vh);height:min(100vh,56.25vw);margin:auto;top:50%;background:var(--paper);border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.45);overflow:hidden;container-type:size;container-name:stage;transform:translateY(-50%)}
-.slide{position:absolute;inset:0;display:none;padding:5.2% 6.2% 7%;overflow:hidden;background:var(--paper);color:var(--ink);font-size:1.3cqw;--gap:1.6cqw;--r-sm:.62cqw;--r-md:1.05cqw;--pill:999px}
-.slide.active{display:block}.slide.dense{font-size:1.08cqw}.slide.dark{background:linear-gradient(160deg,var(--dark),var(--dark-2));color:#fff}.slide.yellow{background:linear-gradient(160deg,#ffe14d,var(--y));color:var(--ink)}.slide.mid{display:none;place-content:center}.slide.mid.active{display:grid}
-.slide:after{content:"";position:absolute;right:0;bottom:0;width:34%;height:44%;background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);pointer-events:none}.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
-h1,h2,h3,p{margin-top:0}h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:14ch;margin-bottom:.35em}h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}h3{font-size:1.2em;line-height:1.2}p,li{font-size:1em;line-height:1.45}.lead{font-size:1.55em;line-height:1.3;max-width:44ch}.small{font-size:.72em;color:var(--ink-soft)}.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}.dark .ey{color:var(--y)}.quote{font-size:2.0em;font-weight:800;line-height:1.15;max-width:32ch;letter-spacing:-.02em}code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
-.brand{position:absolute;left:6.2%;right:6.2%;bottom:2.4%;display:flex;justify-content:space-between;align-items:center;gap:1em;font-size:.66em;font-weight:700;color:var(--ink-soft);z-index:3}.dark .brand{color:#b9c7d3}
-.hero-card,.card,.flowline article,.steps article,.vs-grid section,.proscons section,.hintbox,.warn,.q{color:var(--ink);background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1.15em;border-left:.4em solid var(--y)}.hero-card{max-width:48ch;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16);box-shadow:none}
-.warn{background:var(--ol);border-left-color:var(--o);font-size:.9em}.hintbox{background:var(--bl);border-left-color:var(--b);font-size:.9em}.hintbox strong{color:var(--b)}
-.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}.flowline article{flex:1;min-width:0;text-align:center;border-left:0;border-top:.4em solid var(--y);padding:1em .75em}.flowline article:nth-of-type(2n){background:var(--bl);border-top-color:var(--b)}.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}.flowline span{font-size:1.9em}.flowline p{margin:.25em 0 0;font-size:.78em;color:var(--ink-soft)}.flowline>i{align-self:center;display:grid;place-items:center;width:2em;height:2em;border-radius:50%;background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;box-shadow:var(--sh)}
-.steps,.vs-grid,.proscons{display:grid;gap:var(--gap);margin-top:1.4em}.steps{grid-template-columns:repeat(4,1fr)}.steps.six{grid-template-columns:repeat(6,1fr)}.vs-grid,.proscons{grid-template-columns:1fr 1fr}.steps article,.vs-grid section,.proscons section{position:relative;background:var(--s)}.steps article:nth-child(even),.vs-grid section:nth-child(2){background:var(--bl);border-left-color:var(--b)}.steps b{display:inline-grid;place-items:center;min-width:2em;height:2em;padding:0 .55em;border-radius:999px;background:var(--ink);color:var(--y);font-size:.9em;font-weight:800;white-space:nowrap}.steps p,.steps h3{margin:.35em 0 0}.proscons .pro{background:var(--gl);border-left-color:var(--g)}.proscons .con{background:var(--rl);border-left-color:var(--r)}
-pre{margin:0;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);border-radius:var(--r-md);padding:1.1em 1.2em;font:.82em/1.48 Consolas,"Cascadia Mono",monospace;white-space:pre-wrap;overflow:auto;box-shadow:var(--sh);position:relative}pre.smallcode{font-size:.72em}.copybtn{position:absolute;top:.5em;right:.5em;z-index:3;font:800 .68em/1 "Segoe UI",Arial,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#cfe3f0;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.24);border-radius:999px;padding:.42em .85em;cursor:pointer;opacity:.55}pre:hover .copybtn{opacity:1}.copybtn.ok{opacity:1;color:#0d1b26;background:var(--y);border-color:var(--y)}
-.tbl{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--r-sm);overflow:hidden;font-size:.88em;box-shadow:var(--sh);background:var(--paper)}.tbl th{background:var(--ink);color:#fff;text-align:left;padding:.7em .9em}.tbl td{padding:.65em .9em;border-top:1px solid #e6eaee}.tbl tr:nth-child(even) td{background:#fafafa}
-.ladder{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr;gap:.45em;align-items:center;margin:1em 0 1.2em}.ladder div{text-align:center;background:var(--bl);border-radius:var(--r-md);padding:1em;font-weight:900;color:var(--b)}.ladder b{color:var(--o);font-size:1.6em;transform:rotate(-90deg)}.ladder .gap{background:var(--yl);color:#3a2f00}.biglist{font-size:1.1em;line-height:1.65;max-width:58ch}.biglist li{margin:.3em 0}.q{margin:.85em 0;background:var(--bl);border-left-color:var(--b)}.q .qt{font-weight:900;margin-bottom:.55em}.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:.5em}.opts button,.q button{border:2px solid #d7e3ec;background:#fff;border-radius:999px;padding:.55em .75em;font-weight:800;cursor:pointer}.q .fb{display:none;margin:.65em 0 0}.q.ok .fb{display:block}.q.ok button:nth-child(2){background:var(--gl);border-color:var(--g)}.q[data-answer="c"].ok button:nth-child(3){background:var(--gl);border-color:var(--g)}
-@media(max-aspect-ratio:1/1), (max-width:700px){.slide,.slide.dense{font-size:16px;overflow:auto}.stage{width:100vw;height:100vh;border-radius:0;top:0;transform:none}.flowline,.steps,.steps.six,.vs-grid,.proscons,.ladder{grid-template-columns:1fr;display:grid}.flowline>i,.ladder b{transform:rotate(0deg);justify-self:center}.opts{grid-template-columns:1fr}}
-
-
-/* ======================================================================
-   CONTROLES ESTÁNDAR ANDESDB · mismo contrato funcional que sesión 5
-   ====================================================================== */
-.progress{position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:6px!important;background:rgba(0,0,0,.10)!important;z-index:20!important}
-.progress .bar{height:100%!important;background:linear-gradient(90deg,var(--y),var(--o))!important;transition:.25s!important;border-radius:0 var(--pill) var(--pill) 0!important}
-.toolbar{position:fixed!important;right:1rem!important;top:1rem!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:80!important;display:flex!important;align-items:center!important;gap:.4rem!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;color:#111!important;backdrop-filter:none!important}
-.toolbar .ctl{width:42px!important;height:42px!important;border-radius:50%!important;border:1px solid rgba(0,0,0,.10)!important;background:rgba(255,255,255,.94)!important;color:#111!important;font-weight:800!important;cursor:pointer!important;box-shadow:0 4px 16px rgba(0,0,0,.25)!important;padding:0!important;text-decoration:none!important;display:grid!important;place-items:center!important}
-.toolbar .ctl:hover{background:#fff!important}
-.toolbar .count{background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem}
-.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
-.overlay.open{display:grid}
-.panel{width:min(92vw,880px);max-height:88vh;overflow:auto;background:#fff;color:#111;padding:2rem;border-radius:18px;border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5)}
-.panel h2{font-size:28px;margin-bottom:1rem}
-.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
-.overlay .timer{position:static!important;right:auto!important;top:auto!important;display:block!important;background:transparent!important;color:#111!important;border-radius:0!important;padding:0!important;font:900 82px/1 Consolas,monospace!important;text-align:center!important;font-variant-numeric:tabular-nums!important;margin:1rem!important}
-.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
-.presets button,.actions button{border:2px solid #111;background:#fff;color:#111;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
-.actions button:first-child{background:var(--y)}
-.panel .libre{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;margin-top:.8rem}
-.panel .libre label{font-size:.9rem;font-weight:700}
-.panel .libre input{width:4.6rem;font:900 1.15rem/1 Consolas,monospace;text-align:center;padding:.5rem .4rem;border-radius:999px;border:2px solid #111;background:#fff;color:#111}
-.panel .libre input:focus{outline:3px solid var(--y);outline-offset:1px}
-.panel .libre span{font-size:.9rem;font-weight:700;margin-left:-.15rem}
-.panel .libre button{border:2px solid #111;background:var(--y);color:#111;padding:.6em 1.1em;border-radius:999px;font-weight:800;cursor:pointer}
-.panel .libre button:hover{background:#111;color:var(--y)}
-.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.minitimer{position:fixed;left:1.1rem;bottom:1.1rem;z-index:90;display:none;align-items:center;gap:.55rem;padding:.5rem .6rem .5rem .9rem;background:rgba(17,17,17,.94);color:#fff;border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.3);font-family:"Segoe UI",Arial,sans-serif;cursor:grab;touch-action:none;user-select:none;transition:background .2s}
-.minitimer.on{display:flex}
-.minitimer.arrastrando{cursor:grabbing;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-.minitimer .mt{font:900 2.1rem/1 Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;min-width:3.5em;text-align:center}
-.minitimer button{border:0;width:2.4rem;height:2.4rem;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:.9rem;font-weight:800;cursor:pointer;display:grid;place-items:center}
-.minitimer button:hover{background:rgba(255,255,255,.28)}
-.minitimer .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--y);font-weight:800;margin-right:.1rem}
-.minitimer.avisa{background:rgba(193,18,63,.95)}
-.minitimer.avisa .lbl{color:#fff}
-.minitimer.fin{background:rgba(193,18,63,.97);animation:latido 1s ease-in-out infinite}
-@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.break{height:100%;display:grid;place-content:center;text-align:center}
-.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
-.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:.85em 1.6em;background:var(--ink);color:#fff;text-decoration:none;font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh)}
-.btn:hover{background:#000}
-[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
-[data-r].shown{opacity:1;visibility:visible;transform:none}
-@media(max-aspect-ratio:1/1),(max-width:700px){.toolbar{top:.6rem!important;right:.6rem!important;gap:.3rem!important}.toolbar .ctl{width:38px!important;height:38px!important}.toolbar .count{font-size:11px}.overlay .timer{font-size:52px!important}.clock{font-size:4em}.minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}.minitimer .lbl{display:none}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
-@media print{.minitimer{display:none!important}}
-
+:root{--y:#ffd600;--o:#ff8a24;--b:#124e78;--g:#146c43;--r:#a52a2a;--paper:#fff;--s:#f5f3ee;--bl:#e9f4ff;--gl:#e9f8ef;--rl:#fff1f0;--yl:#fff6c9;--ol:#fff3e7;--ink:#1a1a1a;--soft:#5a5a5a;--dark:#0e1a24;--dark2:#16293a;--sh:0 1px 2px rgba(16,24,32,.05),0 8px 24px rgba(16,24,32,.08);font-family:"Segoe UI",Arial,system-ui,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218;color:var(--ink)}.stage{position:relative;width:min(100vw,177.777vh);height:min(100vh,56.25vw);margin:auto;top:50%;transform:translateY(-50%);background:#fff;overflow:hidden;container-type:size}.slide{position:absolute;inset:0;display:none;padding:4.6% 5.7% 6.4%;font-size:1.16cqw;background:#fff;overflow:auto}.slide.active{display:block}.slide.dark{background:linear-gradient(155deg,var(--dark),var(--dark2));color:#fff}.slide.yellow{background:linear-gradient(155deg,#ffe55c,var(--y))}h1,h2,h3,p{margin-top:0}h1{font-size:3.4em;line-height:1.03;max-width:16ch;margin-bottom:.35em}h2{font-size:2.2em;line-height:1.08;margin-bottom:.55em}h3{font-size:1.15em;margin-bottom:.35em}p,li{font-size:1em;line-height:1.43}.lead{font-size:1.42em;line-height:1.3;max-width:50ch}.ey{font-size:.76em;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8a7300;margin-bottom:.45em}.dark .ey{color:var(--y)}code{font-family:Consolas,monospace;font-size:.94em}.small{font-size:.76em;color:var(--soft)}.dark .small{color:#c9d6e0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.15em}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1em}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em}.card,.call,.warn,.ok{background:var(--s);border-radius:14px;padding:1em 1.05em;border-left:.38em solid var(--y);box-shadow:var(--sh);color:var(--ink)}.card.blue,.call{background:var(--bl);border-left-color:var(--b)}.warn{background:var(--ol);border-left-color:var(--o)}.ok{background:var(--gl);border-left-color:var(--g)}.card p,.call p,.warn p,.ok p{margin:0}.steps{counter-reset:n;list-style:none;padding:0;margin:.5em 0 0}.steps li{counter-increment:n;position:relative;margin:.48em 0;padding:.56em .8em .56em 3em;background:#f7f8fa;border-radius:12px}.steps li:before{content:counter(n);position:absolute;left:.65em;top:.47em;width:1.7em;height:1.7em;border-radius:50%;display:grid;place-items:center;background:var(--b);color:#fff;font-weight:900}.tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--sh);font-size:.82em}.tbl th{background:var(--ink);color:#fff;text-align:left;padding:.55em .65em}.tbl td{padding:.46em .65em;border-top:1px solid #e5e9ed;vertical-align:top}.tbl tr:nth-child(even) td{background:#fafafa}.tbl td:first-child{font-weight:800}pre{position:relative;background:#0d1b26;color:#eef6fb;border-left:.4em solid var(--y);border-radius:14px;padding:1em 1.1em;font:.79em/1.5 Consolas,monospace;white-space:pre-wrap;overflow:auto;margin:.6em 0}.copy{position:absolute;top:.45em;right:.45em;border:1px solid #ffffff55;background:#ffffff18;color:#fff;border-radius:999px;padding:.35em .65em;font:800 .75em Arial;cursor:pointer}.check{list-style:none;padding:0}.check li{position:relative;padding-left:1.5em;margin:.42em 0}.check li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}.stop{background:var(--rl);border:2px solid #e5aaaa;border-radius:14px;padding:1em 1.1em;color:#651b1b;font-weight:800}.checkpoint{background:var(--yl);border-left:.38em solid var(--o);border-radius:14px;padding:1em;color:var(--ink)}.brand{position:absolute;left:5.7%;right:5.7%;bottom:2.2%;display:flex;justify-content:space-between;font-size:.65em;font-weight:800;color:var(--soft)}.dark .brand{color:#c9d6e0}.toolbar{position:fixed;top:1rem;right:1rem;z-index:20;display:flex;gap:.4rem;align-items:center}.ctl{width:42px;height:42px;border-radius:50%;border:0;background:#fff;box-shadow:0 4px 15px #0004;font-weight:900;cursor:pointer}.count{background:#101820dd;color:#fff;border-radius:999px;padding:.45em .75em;font:700 13px Arial}.progress{position:absolute;bottom:0;left:0;right:0;height:6px;background:#0001}.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o))}a.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;border-radius:999px;padding:.7em 1.1em;font-weight:900;margin:.3em .35em .3em 0}@media(max-width:700px),(max-aspect-ratio:1/1){.stage{width:100vw;height:100dvh;top:0;transform:none}.slide{font-size:16px;padding:4.8rem 1.2rem 4rem}.g2,.g3,.g4{grid-template-columns:1fr}.brand{position:static;margin-top:1.2rem}.toolbar{top:.55rem;right:.55rem}.ctl{width:38px;height:38px}.count{font-size:11px}}
 </style></head><body><main class="stage">
-<section class="slide dark cover" data-title="Portada">
-  <div class="ey">Módulo 3 · Modelos de datos útiles</div>
-  
-  <h1>Del modelo a una base real</h1>
-  <p class="lead">DDL + PostgreSQL</p>
-  <div class="hero-card">
-    <p>Hoy el modelo deja de ser un dibujo: lo convertimos en tablas, restricciones y pruebas que un motor real puede hacer cumplir.</p>
-  </div>
+<section class="slide dark" data-title="Portada"><div class="ey">Sesión 9 · Módulo 3</div><h1>Del modelo-base a tablas reales</h1><p class="lead">DDL + PostgreSQL, con un tutorial por checkpoints. Hoy no se premia copiar siete tablas: se premia entender cada línea que ejecutamos.</p><div class="call"><p><strong>PostgreSQL es el motor.</strong> Supabase será únicamente la interfaz desde la que abrimos el SQL Editor y enviamos SQL.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL</span></div></section>
+<section class="slide" data-title="Punto de partida"><div class="ey">0–8 min · Recuperación</div><h2>No necesitas tener terminado todo Restaurante ABC</h2><p class="lead">Partiremos del recorte común de S8. Tres tablas comprendidas valen más que siete copiadas sin entender.</p><pre>PEDIDO 1 ─────&lt; LINEA_PEDIDO &gt;───── 1 PLATO
 
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Portada</span></div>
-</section>
-<section class="slide " data-title="El hilo">
-  <div class="ey">0–8 min · Continuidad</div>
-  
-  <h2>Venimos construyendo una cadena</h2>
-  <div class="flowline five">
-    <article><span>🗣️</span><b>S6</b><p>¿Qué dice el negocio?</p></article><i>→</i>
-    <article><span>🧩</span><b>S7</b><p>¿Cómo lo represento?</p></article><i>→</i>
-    <article><span>🔎</span><b>S8</b><p>¿Dónde vive cada dato?</p></article><i>→</i>
-    <article><span>⚙️</span><b>S9</b><p>¿Cómo lo hace cumplir el motor?</p></article>
-  </div>
-  <p class="quote">Hoy no empezamos desde cero: ejecutamos lo que ustedes ya decidieron.</p>
+pedido          linea_pedido          plato
+pedido_id       linea_id              plato_id
+creado_en       pedido_id             nombre
+estado          plato_id              precio_actual
+                cantidad
+                precio_unitario</pre><div class="checkpoint"><strong>Meta del núcleo:</strong> crear estas tres tablas, insertar datos válidos y provocar errores de FK y CHECK explicando por qué ocurren.</div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Punto de partida</span></div></section>
+<section class="slide" data-title="Qué es DDL"><div class="ey">8–15 min · Lenguaje</div><h2>DDL define la estructura que recibirá los datos</h2><table class="tbl"><thead><tr><th>Necesidad</th><th>Comandos</th><th>Familia</th></tr></thead><tbody><tr><td>leer</td><td><code>SELECT</code></td><td>consulta</td></tr><tr><td>cambiar filas</td><td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td>DML</td></tr><tr><td>definir estructura</td><td><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code></td><td><strong>DDL</strong></td></tr></tbody></table><div class="warn" style="margin-top:.8em"><p><strong>DDL no fabrica evidencia.</strong> Saber escribir <code>NOT NULL</code> no autoriza a convertir una regla candidata en una regla confirmada.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Qué es DDL</span></div></section>
+<section class="slide" data-title="Arquitectura"><div class="ey">15–20 min · Dónde ejecutamos</div><h2>Qué es Supabase y qué es PostgreSQL</h2><div class="g3"><div class="card"><h3>1 · Tú</h3><p>Escribes una instrucción SQL.</p></div><div class="card blue"><h3>2 · SQL Editor</h3><p>Supabase envía esa instrucción.</p></div><div class="card"><h3>3 · PostgreSQL</h3><p>El motor crea tablas, valida constraints y responde.</p></div></div><div class="ok" style="margin-top:.9em"><p><strong>Objetivo técnico:</strong> PostgreSQL. No enseñaremos Auth, API, RLS ni frontend en esta sesión.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Arquitectura</span></div></section>
+<section class="slide" data-title="Entrar al editor"><div class="ey">20–28 min · Tutorial operativo</div><h2>Checkpoint 0 · abrir el lugar correcto</h2><ol class="steps"><li>Entra al proyecto de clase en <strong>Supabase</strong>.</li><li>En el menú lateral abre <strong>SQL Editor</strong>.</li><li>Haz clic en <strong>New query</strong>.</li><li>No pegues todavía todo el script.</li><li>Localiza el botón <strong>Run</strong>.</li></ol><div class="checkpoint"><strong>¿Cómo sé que terminé?</strong> Debes tener un editor vacío y el botón Run visible. Si no ves eso, no avances.</div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 0</span></div></section>
+<section class="slide" data-title="Schema de equipo"><div class="ey">28–35 min · Checkpoint 1</div><h2>Crea un espacio para tu equipo</h2><pre><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
+SET search_path TO abc_e01;</code></pre><ol class="steps"><li>Cambia <code>01</code> por el número de tu equipo.</li><li>Selecciona esas dos líneas.</li><li>Presiona <strong>Run</strong>.</li><li>Lee el resultado: no debe haber error.</li></ol><div class="call"><p><strong>“schema” aquí no es el diagrama ER.</strong> En PostgreSQL es un espacio lógico de nombres; lo usamos para que las tablas de los equipos no choquen.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 1</span></div></section>
+<section class="slide" data-title="Leer una columna"><div class="ey">35–42 min · Antes de crear</div><h2>Una columna se lee de izquierda a derecha</h2><pre><code>estado TEXT NOT NULL DEFAULT 'abierto'</code></pre><div class="g4"><div class="card"><h3><code>estado</code></h3><p>nombre</p></div><div class="card blue"><h3><code>TEXT</code></h3><p>tipo</p></div><div class="card"><h3><code>NOT NULL</code></h3><p>no admite NULL</p></div><div class="card blue"><h3><code>DEFAULT</code></h3><p>valor si se omite</p></div></div><div class="warn" style="margin-top:.8em"><p>Convención del curso: palabras SQL en <strong>MAYÚSCULA</strong>; nombres nuestros en <strong>minúscula</strong>.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Leer una columna</span></div></section>
+<section class="slide" data-title="Crear pedido"><div class="ey">42–52 min · Checkpoint 2</div><h2>Primera tabla: <code>pedido</code></h2><pre><code>CREATE TABLE pedido (
+    pedido_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    creado_en TIMESTAMP NOT NULL DEFAULT NOW(),
+    estado TEXT NOT NULL DEFAULT 'abierto',
+    CONSTRAINT pk_pedido PRIMARY KEY (pedido_id)
+);</code></pre><ol class="steps"><li>Copia solo este bloque debajo del <code>SET search_path</code>.</li><li>Selecciona el <code>CREATE TABLE</code>.</li><li>Presiona <strong>Run</strong>.</li><li>Abre <strong>Table Editor</strong> y busca tu schema.</li><li>Comprueba que exista <code>pedido</code> con tres columnas.</li></ol><div class="checkpoint"><strong>No sigas si no encuentras la tabla.</strong> El objetivo no es llegar rápido; es comprobar cada efecto.</div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 2</span></div></section>
+<section class="slide" data-title="Insertar pedido"><div class="ey">52–60 min · Checkpoint 3</div><h2>Comprueba qué hicieron IDENTITY y DEFAULT</h2><pre><code>INSERT INTO pedido DEFAULT VALUES;
 
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>El hilo</span></div>
-</section>
-<section class="slide " data-title="La pregunta">
-  <div class="ey">0–8 min · Pregunta central</div>
-  
-  <h2>¿Qué falta entre el modelo y la base real?</h2>
-  <div class="ladder">
-    <div>REGLA</div><b>↓</b><div>MODELO</div><b>↓</b><div>NORMALIZACIÓN</div><b>↓</b><div class="gap">¿?</div><b>↓</b><div>BASE REAL</div>
-  </div>
-  <p class="warn"><strong>Respuesta:</strong> DDL. El lenguaje con el que definimos tablas, columnas y reglas estructurales.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>La pregunta</span></div>
-</section>
-<section class="slide dense" data-title="Antes del DDL">
-<div class="ey">8–13 min · El filtro heredado de S6</div>
-<h2>DDL no convierte una suposición en verdad</h2>
-<p class="lead">Antes de escribir una restricción, preguntamos <strong>qué clase de evidencia estamos convirtiendo en código</strong>.</p>
-<table class="tbl"><thead><tr><th>Lo que traemos</th><th>Qué hacemos en S9</th><th>Ejemplo ABC</th></tr></thead><tbody>
-<tr><td><b>Regla confirmada</b></td><td>intentamos protegerla en la capa más baja que tenga información suficiente</td><td>la capacidad de una mesa importa para la reserva, pero comparar otra tabla no cabe en un <code>CHECK</code> simple</td></tr>
-<tr><td><b>Regla candidata</b></td><td>la representamos, pero no la endurecemos como si ya estuviera confirmada</td><td>la reserva “confirmada” con fecha/hora/personas/cliente</td></tr>
-<tr><td><b>Hipótesis</b></td><td>no se implementa todavía</td><td>bloquear un plato por ingrediente agotado</td></tr>
-<tr><td><b>Decisión de modelo</b></td><td>se documenta como decisión, no se atribuye al cliente</td><td><code>linea_id</code>, nombres de restricciones, códigos internos</td></tr>
-</tbody></table>
-<div class="warn"><p style="margin:0"><strong>Regla de oro:</strong> una restricción de base puede ser muy fuerte. Precisamente por eso debe tener una fuente clara.</p></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>La certeza también se modela</span></div>
-</section>
-<section class="slide " data-title="Qué es DDL">
-  <div class="ey">8–18 min · Lenguaje</div>
-  
-  <h2>DDL define la estructura</h2>
-  <table class="tbl"><thead><tr><th>Necesidad</th><th>Comando</th><th>Idea</th></tr></thead><tbody>
-  <tr><td>Leer datos</td><td><code>SELECT</code></td><td>consulta</td></tr>
-  <tr><td>Cambiar filas</td><td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td>DML</td></tr>
-  <tr><td>Definir estructura</td><td><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code></td><td><strong>DDL</strong></td></tr>
-  </tbody></table>
-  <p class="quote">DML cambia los datos. DDL cambia la estructura que recibirá esos datos.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Qué es DDL</span></div>
-</section>
-<section class="slide " data-title="PostgreSQL es el motor">
-  <div class="ey">8–18 min · Arquitectura mínima</div>
-  
-  <h2>¿Dónde estamos ejecutando PostgreSQL?</h2>
-  <div class="flowline">
-    <article><span>👤</span><b>Usuario</b><p>Escribe SQL</p></article><i>→</i>
-    <article><span>🟢</span><b>SQL Editor</b><p>Interfaz de Supabase</p></article><i>→</i>
-    <article><span>🐘</span><b>PostgreSQL</b><p>Motor relacional</p></article><i>→</i>
-    <article><span>🗄️</span><b>Base</b><p>Tablas y reglas</p></article>
-  </div>
-  <p class="warn"><strong>PostgreSQL es el objetivo técnico de la sesión.</strong> Supabase solo nos da una instancia administrada y una interfaz para enviarle SQL al motor.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL es el motor</span></div>
-</section>
-
-<section class="slide " data-title="Convención SQL">
-  <div class="ey">18–33 min · Antes de escribir</div>
-  <h2>Cómo escribimos SQL en este curso</h2>
-  <div class="vs-grid">
-    <section><h3>Palabras del lenguaje</h3><p><code>CREATE TABLE</code>, <code>PRIMARY KEY</code>, <code>NOT NULL</code>, <code>REFERENCES</code>...</p><p><strong>Siempre en MAYÚSCULA.</strong></p></section>
-    <section><h3>Nombres que inventamos</h3><p><code>cliente</code>, <code>cliente_id</code>, <code>nombre</code>...</p><p><strong>En minúscula y con guion bajo.</strong></p></section>
-  </div>
-  <p class="warn"><strong>Convención del curso:</strong> PostgreSQL acepta palabras clave en minúscula, pero aquí las escribimos en MAYÚSCULA para distinguir inmediatamente la sintaxis SQL de los nombres del modelo.</p>
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Convención SQL</span></div>
-</section>
-<section class="slide dense" data-title="Sintaxis CREATE TABLE">
-  <div class="ey">18–33 min · Plantilla</div>
-  <h2>La forma general de <code>CREATE TABLE</code></h2>
-<pre><code>CREATE TABLE nombre_tabla (
-    columna_1 TIPO_DE_DATO RESTRICCIONES,
-    columna_2 TIPO_DE_DATO RESTRICCIONES,
-    ...,
-    CONSTRAINT nombre_regla TIPO_RESTRICCION (...)
-);</code></pre>
-  <table class="tbl" style="margin-top:1em"><thead><tr><th>Parte</th><th>Qué significa</th></tr></thead><tbody>
-    <tr><td><code>CREATE TABLE</code></td><td>Orden: crear una tabla nueva.</td></tr>
-    <tr><td><code>nombre_tabla</code></td><td>Nombre que nosotros damos al objeto.</td></tr>
-    <tr><td><code>( ... )</code></td><td>Dentro van columnas y restricciones.</td></tr>
-    <tr><td><code>,</code></td><td>Separa una definición de la siguiente.</td></tr>
-    <tr><td><code>;</code></td><td>Termina la instrucción.</td></tr>
-  </tbody></table>
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CREATE TABLE</span></div>
-</section>
-<section class="slide " data-title="Anatomía de una columna">
-<div class="ey">18–33 min · Leer antes de escribir</div>
-<h2>Una columna se lee de izquierda a derecha</h2>
-<pre><code>puestos INTEGER NOT NULL</code></pre>
-<div class="steps" style="margin-top:1.2em">
-<article><b>1</b><h3><code>puestos</code></h3><p>Nombre de la columna.</p></article>
-<article><b>2</b><h3><code>INTEGER</code></h3><p>Tipo de dato.</p></article>
-<article><b>3</b><h3><code>NOT NULL</code></h3><p>No acepta <code>NULL</code>.</p></article>
-<article><b>4</b><h3><code>,</code></h3><p>Continúa otra definición.</p></article>
-</div>
-<div class="hintbox"><p style="margin:0"><strong>Microactividad · 60 segundos:</strong> lean esa línea sin palabras SQL: “cada mesa debe tener un número de puestos”. Después digan qué parte es sintaxis y qué parte es una decisión del modelo.</p></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Nombre → tipo → regla</span></div>
-</section>
-<section class="slide dense" data-title="Sintaxis de restricciones">
-<div class="ey">18–33 min · Reglas declarativas</div>
-<h2>La sintaxis no decide si la regla es verdadera</h2>
-<table class="tbl"><thead><tr><th>Pieza</th><th>Sintaxis</th><th>Qué hace</th><th>Qué debes justificar</th></tr></thead><tbody>
-<tr><td><code>NOT NULL</code></td><td><code>puestos INTEGER NOT NULL</code></td><td>no acepta <code>NULL</code></td><td>por qué ese dato debe existir siempre</td></tr>
-<tr><td><code>UNIQUE</code></td><td><code>codigo TEXT UNIQUE</code></td><td>no repite valores</td><td>que la unicidad sea regla o decisión explícita</td></tr>
-<tr><td><code>DEFAULT</code></td><td><code>estado TEXT DEFAULT 'abierto'</code></td><td>rellena si se omite</td><td>es conveniencia, no validación</td></tr>
-<tr><td><code>PRIMARY KEY</code></td><td><code>PRIMARY KEY (cliente_id)</code></td><td>identifica una fila</td><td>la identidad elegida para la entidad</td></tr>
-<tr><td><code>FOREIGN KEY</code></td><td><code>FOREIGN KEY (...) REFERENCES ...</code></td><td>evita referencias huérfanas</td><td>que la relación exista en el modelo</td></tr>
-<tr><td><code>CHECK</code></td><td><code>CHECK (cantidad &gt; 0)</code></td><td>valida una condición de la fila</td><td>que la condición tenga sentido y alcance suficiente</td></tr>
-</tbody></table>
-<p class="warn"><strong>S6 sigue mandando:</strong> saber escribir <code>NOT NULL</code> no autoriza a convertir una regla candidata en una restricción implementada.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis + trazabilidad</span></div>
-</section>
-<section class="slide dense" data-title="Sintaxis CONSTRAINT">
-  <div class="ey">18–33 min · Reglas con nombre</div>
-  <h2>¿Para qué usamos <code>CONSTRAINT</code>?</h2>
-<pre><code>CONSTRAINT pk_cliente
-    PRIMARY KEY (cliente_id)
-
-CONSTRAINT fk_reserva_cliente
-    FOREIGN KEY (cliente_id)
-    REFERENCES cliente(cliente_id)</code></pre>
-  <div class="vs-grid" style="margin-top:1em">
-    <section><h3><code>CONSTRAINT pk_cliente</code></h3><p>Le damos un nombre a la regla para reconocerla en el esquema y en los errores.</p></section>
-    <section><h3><code>PRIMARY KEY (...)</code></h3><p>Indicamos qué clase de restricción es y sobre qué columna o columnas actúa.</p></section>
-  </div>
-  <p class="hintbox"><code>FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)</code> se lee: “este valor debe existir como <code>cliente_id</code> en <code>cliente</code>”.</p>
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Sintaxis CONSTRAINT</span></div>
-</section>
-
-<section class="slide " data-title="Primer CREATE">
-<div class="ey">18–33 min · Anatomía</div>
-<h2>Primera tabla: <code>cliente</code></h2>
-<pre><code>CREATE TABLE cliente (
-    cliente_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    nombre TEXT,
-    telefono TEXT,
-
-    CONSTRAINT pk_cliente PRIMARY KEY (cliente_id)
-);</code></pre>
-<p class="hintbox"><strong>Lectura natural:</strong> la tabla tiene una identidad técnica y puede guardar nombre y teléfono.</p>
-<p class="warn"><strong>¿Por qué no <code>NOT NULL</code> todavía?</strong> S6 dejó como <em>candidata</em> la regla de qué datos hacen falta para confirmar una reserva. No vamos a convertir esa incertidumbre en una prohibición global sobre todo cliente.</p>
-<p class="small">Tampoco usamos <code>UNIQUE (telefono)</code>: dos personas podrían compartir un número y nadie confirmó lo contrario.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primer CREATE · no endurecer de más</span></div>
-</section>
-<section class="slide dense" data-title="Identity y PK">
-<div class="ey">18–33 min · Distinción crítica</div>
-<h2><code>IDENTITY</code> y <code>PRIMARY KEY</code> no son lo mismo</h2>
-<div class="g2">
-<div><div class="vs-grid" style="grid-template-columns:1fr">
-<section><h3><code>GENERATED ALWAYS AS IDENTITY</code></h3><p>Genera números automáticamente.</p></section>
-<section><h3><code>PRIMARY KEY</code></h3><p>Identifica de forma única cada fila.</p></section>
-</div></div>
-<div><h3>Antes de crear <code>reserva</code>, necesitamos <code>mesa</code></h3>
-<pre class="smallcode"><code>CREATE TABLE mesa (
-    mesa_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    codigo TEXT NOT NULL,
-    puestos INTEGER NOT NULL,
-
-    CONSTRAINT pk_mesa PRIMARY KEY (mesa_id),
-    CONSTRAINT uq_mesa_codigo UNIQUE (codigo),
-    CONSTRAINT ck_mesa_puestos CHECK (puestos &gt; 0)
-);</code></pre>
-<p class="small">El código único es una <strong>decisión explícita del laboratorio</strong>; la capacidad sí es necesaria para representar la regla 3 de S6.</p></div>
-</div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Primero las tablas que serán referenciadas</span></div>
-</section>
-<section class="slide dense" data-title="Relación real">
-<div class="ey">33–48 min · FK</div>
-<h2>Segunda tabla: <code>reserva</code></h2>
-<pre class="smallcode"><code>CREATE TABLE reserva (
-    reserva_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    cliente_id BIGINT,
-    mesa_id BIGINT,
-    fecha DATE,
-    hora TIME,
-    personas INTEGER,
-    estado TEXT NOT NULL DEFAULT 'pendiente',
-
-    CONSTRAINT pk_reserva PRIMARY KEY (reserva_id),
-    CONSTRAINT fk_reserva_cliente
-        FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id),
-    CONSTRAINT fk_reserva_mesa
-        FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id),
-    CONSTRAINT ck_reserva_personas
-        CHECK (personas IS NULL OR personas &gt; 0)
-);</code></pre>
-<div class="g2" style="margin-top:.55em"><div class="hintbox"><p style="margin:0"><strong>Representamos</strong> cliente, mesa, fecha, hora y personas porque las reglas de S6 los nombran. Pero la regla 1 sigue candidata: por eso esos datos no se vuelven <code>NOT NULL</code> globalmente.</p></div><div class="ctx"><p style="margin:0"><strong>Microactividad:</strong> un <code>cliente_id</code> inexistente sí debe fallar si se informa. En cambio <code>cliente_id = NULL</code> todavía puede existir en una reserva pendiente. <strong>Representar una relación no obliga a hacerla obligatoria.</strong></p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>FK ≠ obligatoriedad</span></div>
-</section>
-<section class="slide " data-title="Restricciones">
-  <div class="ey">33–48 min · Lo que protege el motor</div>
-  
-  <h2>Las seis piezas de hoy</h2>
-  <div class="steps six">
-    <article><b>PK</b><p>Identidad</p></article>
-    <article><b>FK</b><p>Relación válida</p></article>
-    <article><b>NOT NULL</b><p>Obligatorio</p></article>
-    <article><b>UNIQUE</b><p>No repetir</p></article>
-    <article><b>CHECK</b><p>Condición simple</p></article>
-    <article><b>DEFAULT</b><p>Valor sugerido</p></article>
-  </div>
-  <p class="warn"><strong>Clave:</strong> DDL declarativo protege algunas reglas, no todas.</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Restricciones</span></div>
-</section>
-<section class="slide dense" data-title="CHECK tiene límites">
-<div class="ey">33–48 min · Volvemos a las diez reglas de S6</div>
-<h2>Que una regla esté confirmada no significa que quepa en un <code>CHECK</code></h2>
-<div class="proscons">
-<section class="pro"><h3>Condición de una fila</h3><ul><li><code>cantidad &gt; 0</code> como invariante de diseño</li><li><code>precio_unitario &gt;= 0</code> si decidimos no admitir negativos</li><li><code>personas IS NULL OR personas &gt; 0</code></li></ul></section>
-<section class="con"><h3>Necesita más contexto</h3><ul><li><b>Regla 3 confirmada:</b> comparar <code>personas</code> con <code>mesa.puestos</code></li><li><b>Regla 2 candidata:</b> detectar intervalos que se solapan</li><li><b>Regla 9 candidata:</b> sumar pagos de varias filas</li><li><b>Regla 10 confirmada:</b> saber quién está ejecutando</li></ul></section>
-</div>
-<div class="hintbox"><p style="margin:0"><strong>La lección:</strong> certeza y capa son ejes distintos. Una regla puede estar confirmadísima y aun así requerir transacción, lógica de base o aplicación.</p></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Confirmada no significa “CHECK”</span></div>
-</section>
-<section class="slide dense" data-title="Tipos PostgreSQL">
-<div class="ey">48–60 min · PostgreSQL en concreto</div>
-<h2>Antes del laboratorio: tipos que vamos a escribir en PostgreSQL</h2>
-<table class="tbl"><thead><tr><th>Necesidad</th><th>PostgreSQL</th><th>Qué expresa</th></tr></thead><tbody>
-<tr><td>identificador automático</td><td><code>BIGINT GENERATED ALWAYS AS IDENTITY</code></td><td>el motor genera el identificador</td></tr>
-<tr><td>texto</td><td><code>TEXT</code></td><td>cadena de longitud variable</td></tr>
-<tr><td>dinero</td><td><code>NUMERIC(10,2)</code></td><td>decimal exacto con dos posiciones</td></tr>
-<tr><td>booleano</td><td><code>BOOLEAN</code></td><td><code>TRUE</code> / <code>FALSE</code></td></tr>
-<tr><td>fecha y hora</td><td><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code></td><td>tipos temporales propios</td></tr>
-<tr><td>integridad</td><td><code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>CHECK</code></td><td>reglas que PostgreSQL hace cumplir</td></tr>
-</tbody></table>
-<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>No memoricen una tabla de equivalencias.</strong> Desde este punto trabajamos directamente con la sintaxis que ejecutará PostgreSQL.</p></div><div class="hintbox"><p style="margin:0"><strong>Fuente única del laboratorio:</strong> <code>Scripts/S9.sql</code>. A partir de aquí, todo el SQL que ejecutamos en clase está escrito para PostgreSQL.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL: tipos y restricciones</span></div>
-</section>
-<section class="slide dense" data-title="Antes de PostgreSQL">
-<div class="ey">60–75 min · Recorte de implementación</div>
-<h2>Implementamos una parte del modelo, no reemplazamos S7</h2>
-<p class="lead">Para aprender DDL necesitamos suficientes relaciones y restricciones para probar el motor. No hace falta desplegar hoy todo el restaurante.</p>
-<div class="g2">
-<div><h3>Recorte que sí construiremos</h3>
-<table class="tbl"><tbody>
-<tr><td><code>cliente</code></td><td>identidad/contacto sin imponer campos candidatos</td></tr>
-<tr><td><code>mesa</code></td><td>capacidad y código interno</td></tr>
-<tr><td><code>reserva</code></td><td>relaciones y datos que S6 dejó sobre la mesa</td></tr>
-<tr><td><code>pedido</code></td><td>transacción operativa, <b>sin inventar vínculo obligatorio con reserva</b></td></tr>
-<tr><td><code>pedido_mesa</code></td><td>conserva la llamada de S7: un pedido puede usar varias mesas</td></tr>
-<tr><td><code>plato</code></td><td>catálogo</td></tr>
-<tr><td><code>linea_pedido</code></td><td>cantidad + precio histórico de S8</td></tr>
-</tbody></table></div>
-<div><h3>Siguen fuera del laboratorio</h3>
-<ul class="checks">
-<li><code>mesero</code> y permisos de la regla 10.</li>
-<li><code>pago</code> y suma dividida de la regla 9.</li>
-<li><code>ingrediente</code>/<code>receta</code> y regla 7.</li>
-<li>la hipótesis 6 sobre agotados: <strong>no se implementa</strong>.</li>
-</ul>
-<div class="ctx"><p style="margin:0"><strong>Recorte ≠ olvido.</strong> Estas partes siguen en el modelo de S7; simplemente no son necesarias para demostrar el objetivo DDL de hoy.</p></div></div>
-</div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Continuidad sin fingir un modelo más pequeño</span></div>
-</section>
-<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div>
-<h2 style="margin-top:3%">Volvemos en 15 minutos</h2>
-<p class="lead" style="margin:auto">Al volver, abrimos PostgreSQL desde el SQL Editor y ejecutamos el primer DDL real.</p>
-<button class="btn" data-start-break style="margin-top:2.5%">Iniciar los 15 minutos</button></div>
-<div class="brand"><span>Pausa</span><span>Segunda mitad: PostgreSQL real</span></div>
-</section>
-<section class="slide " data-title="Abrir PostgreSQL">
-  <div class="ey">75–90 min · Tutorial paso a paso</div>
-  
-  <h2>Entrar al SQL Editor que usaremos para PostgreSQL</h2>
-  <ol class="biglist">
-    <li>Entrar al proyecto de clase en <strong>Supabase</strong>: ese proyecto contiene la instancia de <strong>PostgreSQL</strong> que vamos a usar.</li>
-    <li>Ir a <strong>SQL Editor</strong>.</li>
-    <li>Crear un <strong>New query</strong>.</li>
-    <li>Pegar solo las primeras dos tablas.</li>
-    <li>Presionar <strong>Run</strong>.</li>
-    <li>Revisar las tablas en <strong>Table Editor</strong>.</li>
-  </ol>
-  <p class="hintbox">Si hay equipos, usar nombres o esquemas separados: <code>abc_e01</code>, <code>abc_e02</code>...</p>
-
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>Entrar a Supabase</span></div>
-</section>
-<section class="slide " data-title="Crear esquema de equipo">
-<div class="ey">75–90 min · Evitar choques</div>
-<h2>Un espacio lógico por equipo</h2>
-<pre><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
-SET search_path TO abc_e01;</code></pre>
-<p class="hintbox"><strong>Aquí “schema” no significa el diagrama del modelo.</strong> En PostgreSQL es un espacio lógico dentro de la base, parecido a una carpeta de nombres. Lo usamos solo para que <code>cliente</code> del equipo 1 no choque con <code>cliente</code> del equipo 2.</p>
-<p class="small">No necesitamos profundizar en schemas, permisos ni búsqueda de objetos. Para esta clase: creen el suyo, actívenlo con <code>SET search_path</code> y continúen.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Schema = espacio lógico del equipo</span></div>
-</section>
-<section class="slide dense" data-title="Ejecutar primer bloque">
-<div class="ey">75–90 min · Laboratorio</div>
-<h2>Bloque 1: <code>cliente</code> → <code>mesa</code> → <code>reserva</code></h2>
-<pre><code>SET search_path TO abc_e01;
-
-CREATE TABLE cliente (...);
-CREATE TABLE mesa (...);
-CREATE TABLE reserva (...);</code></pre>
-<div class="g2" style="margin-top:.7em"><div class="hintbox"><p style="margin:0"><strong>Orden:</strong> <code>reserva</code> tiene FK hacia <code>cliente</code> y <code>mesa</code>; por eso esas dos tablas deben existir primero.</p></div><div class="ctx"><p style="margin:0">El archivo <code>Scripts/S9.sql</code> trae el bloque completo. Ejecútenlo <strong>por partes</strong> y revisen en Table Editor qué objeto apareció después de cada <code>CREATE TABLE</code>.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Crear respetando dependencias</span></div>
-</section>
-<section class="slide dense" data-title="Taller principal">
-<div class="ey">90–115 min · Producto</div>
-<h2>Construir, justificar y etiquetar</h2>
-<div class="vs-grid">
-<section><h3>Núcleo obligatorio</h3><ul>
-<li><strong>3 tablas</strong> que sí se relacionen.</li>
-<li>PK en las 3 y al menos <strong>2 FK</strong>.</li>
-<li>Al menos un <code>NOT NULL</code> y un <code>CHECK</code>.</li>
-<li><strong>1 INSERT válido + 2 inválidos</strong>.</li>
-<li>Para cada restricción: escribir al lado <b>fuente</b>: “regla confirmada”, “regla candidata simulada” o “decisión de modelo”.</li>
-</ul></section>
-<section><h3>Extensión si terminan</h3><ul>
-<li>Llegar a 5–7 tablas.</li>
-<li>Agregar <code>pedido_mesa</code>.</li>
-<li>Probar un <code>UNIQUE</code> justificado.</li>
-<li>Simular qué cambiaría si una regla candidata fuese confirmada.</li>
-</ul><p class="small">Una <strong>hipótesis de S6 no se convierte en constraint</strong> para completar el ejercicio.</p></section>
-</div>
-<p class="warn">El producto no es “mucho SQL”. Es poder señalar una línea y responder: <strong>¿qué evidencia me autorizó a escribirla?</strong></p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>DDL con trazabilidad</span></div>
-</section>
-<section class="slide dense" data-title="Tabla puente">
-<div class="ey">90–115 min · Extensión N:N</div>
-<h2>La llamada de S7 ahora se vuelve tabla</h2>
-<pre class="smallcode"><code>CREATE TABLE pedido_mesa (
+SELECT *
+FROM pedido;</code></pre><ol class="steps"><li>Ejecuta el <code>INSERT</code>.</li><li>Ejecuta el <code>SELECT</code>.</li><li>Busca el <code>pedido_id</code>: PostgreSQL lo generó.</li><li>Busca <code>creado_en</code> y <code>estado</code>: aparecen aunque no los escribiste.</li></ol><div class="ok"><p><strong>Debes poder explicar:</strong> IDENTITY genera el identificador; PRIMARY KEY define identidad; DEFAULT rellena un valor omitido. Son ideas distintas.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 3</span></div></section>
+<section class="slide" data-title="Crear plato"><div class="ey">60–70 min · Checkpoint 4</div><h2>Segunda tabla: <code>plato</code> y un <code>CHECK</code></h2><pre><code>CREATE TABLE plato (
+    plato_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    precio_actual NUMERIC(10,2),
+    CONSTRAINT pk_plato PRIMARY KEY (plato_id),
+    CONSTRAINT ck_plato_precio
+        CHECK (precio_actual IS NULL OR precio_actual >= 0)
+);</code></pre><ol class="steps"><li>Ejecuta el bloque.</li><li>Verifica <code>plato</code> en Table Editor.</li><li>Lee el CHECK en español: “si hay precio, no puede ser negativo”.</li></ol><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 4</span></div></section>
+<section class="slide" data-title="Romper CHECK"><div class="ey">70–77 min · Checkpoint 5</div><h2>Ahora queremos que PostgreSQL diga NO</h2><pre><code>INSERT INTO plato (nombre, precio_actual)
+VALUES ('Prueba', -100);</code></pre><ol class="steps"><li>Ejecuta únicamente este INSERT.</li><li>Debe aparecer un error.</li><li>Busca en el mensaje el nombre <code>ck_plato_precio</code>.</li><li>Explica qué valor violó la condición.</li></ol><div class="checkpoint"><strong>Resultado correcto = error.</strong> Una prueba negativa demuestra que la restricción está activa.</div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 5</span></div></section>
+<section class="slide yellow" data-title="Pausa"><div class="ey">77–92 min · Pausa</div><h2>Quince minutos</h2><p class="lead">Al volver creamos la tabla que conecta pedido con plato y probamos una clave foránea.</p><div class="brand"><span>ANDESDB · Sesión 9</span><span>Pausa</span></div></section>
+<section class="slide" data-title="Crear línea"><div class="ey">92–105 min · Checkpoint 6</div><h2>Tercera tabla: <code>linea_pedido</code></h2><pre><code>CREATE TABLE linea_pedido (
+    linea_id BIGINT GENERATED ALWAYS AS IDENTITY,
     pedido_id BIGINT NOT NULL,
-    mesa_id BIGINT NOT NULL,
-
-    CONSTRAINT pk_pedido_mesa
-        PRIMARY KEY (pedido_id, mesa_id),
-    CONSTRAINT fk_pedido_mesa_pedido
+    plato_id BIGINT NOT NULL,
+    cantidad INTEGER NOT NULL,
+    precio_unitario NUMERIC(10,2) NOT NULL,
+    CONSTRAINT pk_linea_pedido PRIMARY KEY (linea_id),
+    CONSTRAINT fk_linea_pedido_pedido
         FOREIGN KEY (pedido_id) REFERENCES pedido(pedido_id),
-    CONSTRAINT fk_pedido_mesa_mesa
-        FOREIGN KEY (mesa_id) REFERENCES mesa(mesa_id)
-);</code></pre>
-<p class="hintbox">S7 cambió la regla: un pedido puede ocupar varias mesas. S8 conservó esa decisión. S9 la implementa con <code>pedido_mesa</code>. <strong>Es el mismo razonamiento de <code>film_category</code>.</strong></p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>La cardinalidad se vuelve DDL</span></div>
-</section>
-<section class="slide dense" data-title="Romper la base">
-<div class="ey">115–135 min · Pruebas</div>
-<h2>Cuatro fallos distintos, cuatro fuentes distintas</h2>
-<div class="steps">
-<article><b>1</b><h3>NOT NULL</h3><p><code>mesa.puestos = NULL</code><br><span class="small">invariante del modelo</span></p></article>
-<article><b>2</b><h3>FK</h3><p>cliente inexistente en reserva<br><span class="small">relación representada</span></p></article>
-<article><b>3</b><h3>CHECK</h3><p><code>cantidad = 0</code><br><span class="small">decisión de dominio</span></p></article>
-<article><b>4</b><h3>UNIQUE</h3><p><code>mesa.codigo</code> repetido<br><span class="small">decisión explícita del laboratorio</span></p></article>
-</div>
-<div class="g2" style="margin-top:.7em"><div class="warn"><p style="margin:0"><strong>Y una prueba que debe pasar:</strong> una reserva <code>pendiente</code> con campos todavía nulos. Eso demuestra que no convertimos la regla 1 candidata en <code>NOT NULL</code> global.</p></div><div class="hintbox"><p style="margin:0"><strong>Resultado correcto ≠ siempre “error”.</strong> A veces la evidencia buscada es que PostgreSQL permita algo porque el negocio todavía no lo prohibió.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Probar también lo que debe permitirse</span></div>
-</section>
-<section class="slide " data-title="Prueba FK">
-<div class="ey">115–135 min · El payoff</div>
-<h2>Una relación del modelo se vuelve integridad referencial</h2>
-<pre><code>INSERT INTO reserva (cliente_id, estado)
-VALUES (999999, 'pendiente');</code></pre>
-<p class="warn"><strong>Debe fallar:</strong> si informamos un <code>cliente_id</code>, ese cliente debe existir. La FK protege la relación; <strong>no afirma que el cliente sea obligatorio</strong>.</p>
-<p class="quote">La misma base distingue entre “puede faltar” y “si está, debe apuntar a algo real”.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>FK ≠ NOT NULL</span></div>
-</section>
-<section class="slide dense" data-title="ALTER TABLE">
-<div class="ey">135–145 min · Cuando cambia la certeza</div>
-<h2>¿Qué pasaría si la candidata 1 fuese confirmada?</h2>
-<p class="lead">No afirmamos que haya ocurrido. <strong>Simulamos una nueva entrevista</strong> para ver cómo una regla pasa de documento a estructura sin rehacer la tabla.</p>
-<pre class="smallcode"><code>ALTER TABLE reserva
-ADD CONSTRAINT ck_reserva_confirmada_completa
-CHECK (
-    estado &lt;&gt; 'confirmada'
-    OR (
-        fecha IS NOT NULL
-        AND hora IS NOT NULL
-        AND personas IS NOT NULL
-        AND cliente_id IS NOT NULL
-    )
-);</code></pre>
-<div class="g2" style="margin-top:.5em"><div class="hintbox"><p style="margin:0"><strong>Por qué no pusimos cuatro <code>NOT NULL</code> desde el comienzo:</strong> la frase de S6 hablaba de <em>confirmar</em> una reserva, no necesariamente de crear un borrador.</p></div><div class="warn"><p style="margin:0"><strong>En el script queda comentado.</strong> Solo se ejecuta si el docente declara la simulación: “la dueña acaba de confirmar la regla 1”.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>ALTER = la estructura también evoluciona</span></div>
-</section>
-<section class="slide dense" data-title="DROP TABLE" data-opcional="1">
-<div class="ey">Opcional · 3 minutos · si hay tiempo</div>
-<h2>Para borrar también importan las dependencias</h2>
-<pre><code>DROP TABLE linea_pedido;
-DROP TABLE pedido_mesa;
-DROP TABLE pedido;</code></pre>
-<p class="warn">Para crear: primero aquello que será referenciado. Para borrar: normalmente primero los objetos que dependen de otros.</p>
-<p class="small">No es el objetivo central de hoy. Si el laboratorio va justo de tiempo, esta diapositiva se salta.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>DROP TABLE · extensión</span></div>
-</section>
-<section class="slide " data-title="PostgreSQL en el mapa">
-<div class="ey">145–157 min · Cierre del laboratorio</div>
-<h2>Qué aprendimos de PostgreSQL</h2>
-<div class="vs-grid">
-<section><h3>PostgreSQL</h3><p>Es el motor. Interpretó el DDL, creó objetos y rechazó filas cuando una restricción se incumplió.</p></section>
-<section><h3>Supabase</h3><p>Fue el entorno de acceso: nos dio el SQL Editor y una instancia administrada del motor.</p></section>
-</div>
-<div class="hintbox"><p style="margin:0"><strong>La meta es PostgreSQL.</strong> Debes poder escribir el DDL, crear los objetos, interpretar los errores y comprobar qué restricciones protege el motor. Supabase es solo la interfaz usada hoy.</p></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>PostgreSQL es el objetivo</span></div>
-</section>
-<section class="slide dense" data-title="Seguridad mínima">
-<div class="ey">157–160 min · Nota, no otra unidad</div>
-<h2>Hoy no estamos publicando una API</h2>
-<p class="lead">Trabajamos desde <strong>SQL Editor</strong> en un schema de clase como <code>abc_e01</code>. No daremos permisos a clientes web ni construiremos autenticación.</p>
-<div class="g2"><div class="hintbox"><p style="margin:0"><strong>Para esta sesión:</strong> DDL, tablas y restricciones. Nada de keys, Auth, policies ni frontend.</p></div><div class="warn"><p style="margin:0"><strong>Para una app real:</strong> acceso por Data API y RLS son otra decisión de seguridad. La exposición de tablas depende de la configuración del proyecto y de los permisos otorgados.</p></div></div>
-<p class="small" style="margin-top:.6em">La separación es deliberada: primero aprendemos integridad relacional. Seguridad y acceso por usuario se enseñan cuando exista una aplicación que realmente los necesite.</p>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Seguridad: reconocer, no implementar hoy</span></div>
-</section>
-<section class="slide dense" data-title="DP-900">
-  <div class="ey">160–165 min · Recuperación</div>
-  
-  <h2>Dos preguntas rápidas</h2>
-  <div class="q" data-answer="b"><div class="qt">¿Qué comando define una tabla nueva?</div><div class="opts"><button>SELECT</button><button>CREATE TABLE</button><button>UPDATE</button><button>DELETE</button></div><p class="fb">DDL define estructura: <code>CREATE TABLE</code>.</p></div>
-  <div class="q" data-answer="c"><div class="qt">¿Qué restricción evita una FK huérfana?</div><div class="opts"><button>CHECK</button><button>DEFAULT</button><button>FOREIGN KEY</button><button>ORDER BY</button></div><p class="fb">La FK exige que el valor exista en la tabla referenciada.</p></div>
+    CONSTRAINT fk_linea_pedido_plato
+        FOREIGN KEY (plato_id) REFERENCES plato(plato_id),
+    CONSTRAINT ck_linea_cantidad CHECK (cantidad > 0),
+    CONSTRAINT ck_linea_precio CHECK (precio_unitario >= 0)
+);</code></pre><div class="call"><p><strong>Lectura natural de la FK:</strong> “si una línea dice pedido_id = 7, el pedido 7 debe existir en pedido”.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 6</span></div></section>
+<section class="slide" data-title="Datos válidos"><div class="ey">105–115 min · Checkpoint 7</div><h2>Primero una ruta que debe funcionar</h2><pre><code>INSERT INTO plato (nombre, precio_actual)
+VALUES ('Ajiaco', 28000), ('Limonada', 7000);
 
-  <div class="brand"><span>ANDESDB · Sesión 9</span><span>DP-900</span></div>
-</section>
-<section class="slide dark" data-title="Cierre">
-<div class="ey">160–165 min · Frase final</div>
-<h2>DDL hace ejecutable una decisión; no fabrica evidencia</h2>
-<p class="quote">Una conversación con el negocio terminó convertida en estructura, pero cada constraint conserva la pregunta: “¿quién dijo que esto debía ser verdad?”</p>
-<div class="steps">
-<article><b>S6</b><p>certeza de la regla</p></article>
-<article><b>S7</b><p>decisión de modelo</p></article>
-<article><b>S8</b><p>dependencia y coherencia</p></article>
-<article><b>S9</b><p>DDL + prueba real</p></article>
-</div>
-<div class="g2" style="margin-top:.7em"><div class="ctx"><p style="margin:0"><strong>Confirmada:</strong> intentamos protegerla donde haya información suficiente.</p></div><div class="warn"><p style="margin:0"><strong>Candidata o hipótesis:</strong> se documenta, se representa si hace falta, pero no se endurece silenciosamente.</p></div></div>
-<div class="brand"><span>ANDESDB · Sesión 9</span><span>Cierre · trazabilidad</span></div>
-</section>
-<div class="progress"><div class="bar" id="bar"></div></div></main>
-<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 1</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-9-ddl-supabase.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
-<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
-<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">❚❚</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">⏳</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">×</button></div>
-<div class="sr" id="announce" aria-live="assertive"></div>
-<script>
-(()=>{'use strict';
-const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),announce=document.getElementById('announce'),clock=document.querySelector('.clock');
-let i=0;
-function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length+(ss[i].dataset.opcional?' · opcional':'');bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
-function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
-function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
-function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
-function closeAll(){timeOv.classList.remove('open')}
-async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
-document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
-document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
-document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(timeOv.classList.contains('open'))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on')});
-// Compatibilidad con las preguntas rápidas de S9 sin interferir con el temporizador.
-document.querySelectorAll('.q').forEach(q=>{q.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{q.classList.add('ok');q.querySelectorAll('.opts button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')})});
-let remain=900000,initial=remain,end=0,running=false,tick=null;
-const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
-function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function cur(){return running?Math.max(0,end-Date.now()):remain}
-function render(){const q=cur(),v=fmt(q);document.getElementById('timer').textContent=v;if(miniT){miniT.textContent=v;mini.classList.toggle('avisa',running&&q>0&&q<=60000);mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));miniPP.innerHTML=running?'❚❚':'▶';miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar')}if(clock&&ss[i].dataset.break==='15')clock.textContent=v;if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
-function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
-function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
-function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
-function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
-function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
-document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
-const inpLibre=document.getElementById('minLibre'),btnLibre=document.getElementById('ponLibre');if(inpLibre&&btnLibre){const ponLibre=()=>{let m=parseFloat(String(inpLibre.value).replace(',','.'));if(!isFinite(m)||m<=0)return inpLibre.focus();m=Math.min(180,m);inpLibre.value=m;setTimer(m,false);if(miniLbl)miniLbl.textContent=m+' min';start()};btnLibre.onclick=ponLibre;inpLibre.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ponLibre()}})}
-const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
-document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
-if(mini){miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};let ax=0,ay=0,px=0,py=0,mov=false;const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}mini.addEventListener('pointerdown',e=>{if(e.target.tagName==='BUTTON')return;const r=mini.getBoundingClientRect();ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;mini.setPointerCapture(e.pointerId);mini.classList.add('arrastrando')});mini.addEventListener('pointermove',e=>{if(!mini.classList.contains('arrastrando'))return;if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;if(!mov)return;const r=mini.getBoundingClientRect();const x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width);const y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});mini.addEventListener('pointerup',e=>{mini.classList.remove('arrastrando');try{mini.releasePointerCapture(e.pointerId)}catch(_){}if(mov)guardar()});addEventListener('resize',()=>{const r=mini.getBoundingClientRect();if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}})}
-let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
-// Copiar SQL como en S5: solo bloques que realmente contienen SQL.
-document.querySelectorAll('.slide pre').forEach(pre=>{if(!/\b(SELECT|WITH|FROM|JOIN|WHERE|GROUP BY|ORDER BY|COUNT|SUM|AVG|CASE|CREATE|INSERT|UPDATE|DELETE|ALTER|DROP|SET)\b/i.test(pre.textContent))return;const b=document.createElement('button');b.type='button';b.className='copybtn';b.textContent='copiar';b.setAttribute('aria-label','Copiar este código al portapapeles');b.onclick=async e=>{e.stopPropagation();const t=pre.cloneNode(true);t.querySelectorAll('.copybtn').forEach(x=>x.remove());const txt=t.textContent.replace(/\s+$/,'');try{await navigator.clipboard.writeText(txt);b.textContent='copiado';b.classList.add('ok');setTimeout(()=>{b.textContent='copiar';b.classList.remove('ok')},1500)}catch(_){b.textContent='no se pudo'}};pre.appendChild(b)});
-upd();render()})();
-</script>
-</body></html>
+INSERT INTO linea_pedido
+    (pedido_id, plato_id, cantidad, precio_unitario)
+VALUES
+    (1, 1, 2, 28000),
+    (1, 2, 4, 7000);
+
+SELECT * FROM linea_pedido;</code></pre><ol class="steps"><li>Ejecuta el INSERT de platos.</li><li>Comprueba que exista el pedido 1.</li><li>Ejecuta el INSERT de líneas.</li><li>Ejecuta el SELECT y comprueba dos filas.</li></ol><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 7</span></div></section>
+<section class="slide" data-title="Romper FK"><div class="ey">115–124 min · Checkpoint 8</div><h2>Prueba una referencia que no existe</h2><pre><code>INSERT INTO linea_pedido
+    (pedido_id, plato_id, cantidad, precio_unitario)
+VALUES
+    (999999, 1, 1, 28000);</code></pre><ol class="steps"><li>Ejecuta solo este INSERT.</li><li>Debe fallar.</li><li>Busca <code>fk_linea_pedido_pedido</code> en el error.</li><li>Explica la diferencia entre <strong>FK</strong> y <strong>NOT NULL</strong>.</li></ol><div class="ok"><p><strong>Respuesta:</strong> NOT NULL exige que haya un valor. FK exige que, si hay un valor, apunte a una fila real.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 8</span></div></section>
+<section class="slide" data-title="Romper cantidad"><div class="ey">124–132 min · Checkpoint 9</div><h2>Un segundo error, una causa distinta</h2><pre><code>INSERT INTO linea_pedido
+    (pedido_id, plato_id, cantidad, precio_unitario)
+VALUES
+    (1, 1, 0, 28000);</code></pre><ol class="steps"><li>Ejecuta el INSERT.</li><li>Debe fallar.</li><li>Esta vez busca <code>ck_linea_cantidad</code>.</li><li>Di por qué no fue una FK.</li></ol><div class="checkpoint"><strong>Si puedes distinguir el error de FK del error de CHECK, el núcleo está funcionando.</strong></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Checkpoint 9</span></div></section>
+<section class="slide" data-title="Mapa de restricciones"><div class="ey">132–140 min · Consolidación</div><h2>Cada restricción responde una pregunta distinta</h2><table class="tbl"><thead><tr><th>Pieza</th><th>Pregunta</th><th>Ejemplo</th></tr></thead><tbody><tr><td>PRIMARY KEY</td><td>¿cómo identifico la fila?</td><td><code>pedido_id</code></td></tr><tr><td>FOREIGN KEY</td><td>¿a qué fila real puede apuntar?</td><td><code>linea_pedido.pedido_id</code></td></tr><tr><td>NOT NULL</td><td>¿puede faltar el dato?</td><td><code>cantidad</code></td></tr><tr><td>CHECK</td><td>¿qué condición de la fila debe cumplirse?</td><td><code>cantidad > 0</code></td></tr><tr><td>DEFAULT</td><td>¿qué valor se usa si se omite?</td><td><code>estado='abierto'</code></td></tr></tbody></table><div class="brand"><span>ANDESDB · Sesión 9</span><span>Mapa de restricciones</span></div></section>
+<section class="slide" data-title="Extensión guiada"><div class="ey">140–153 min · Solo después del núcleo</div><h2>Extensión: <code>cliente</code>, <code>mesa</code> y <code>reserva</code></h2><p class="lead">No empieces esta parte si todavía no entendiste los checkpoints anteriores. El archivo <code>Scripts/S9.sql</code> la deja separada y comentada como extensión.</p><div class="g2"><div><h3>Qué añade</h3><ul class="check"><li>otra PK técnica en <code>cliente</code>;</li><li>capacidad de <code>mesa</code>;</li><li>dos FK desde <code>reserva</code>;</li><li>una reserva pendiente que puede estar incompleta.</li></ul></div><div><h3>Qué enseña</h3><ul class="check"><li>R1 sigue siendo candidata.</li><li>Representar una relación no la hace obligatoria.</li><li>DDL no convierte “confirmar” en “existir”.</li></ul></div></div><div class="warn"><p><strong>No convertimos fecha, hora, personas y cliente en NOT NULL global.</strong> La frase hablaba de confirmar la reserva y todavía no hemos confirmado la política exacta.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Extensión guiada</span></div></section>
+<section class="slide" data-title="Reglas que no caben"><div class="ey">153–160 min · Límite del DDL</div><h2>Que una regla esté confirmada no significa que quepa en un <code>CHECK</code></h2><table class="tbl"><thead><tr><th>Regla</th><th>Por qué necesita más contexto</th></tr></thead><tbody><tr><td>R2 solapes</td><td>compara intervalos entre varias reservas</td></tr><tr><td>R3 capacidad</td><td>compara <code>reserva.personas</code> con <code>mesa.puestos</code></td></tr><tr><td>R9 pagos</td><td>suma varias filas</td></tr><tr><td>R10 mesero</td><td>depende de quién ejecuta la operación</td></tr></tbody></table><div class="call" style="margin-top:.7em"><p><strong>Certeza y capa son ejes diferentes.</strong> Una regla puede estar confirmada y aun así necesitar lógica de transacción, base o aplicación.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Límite del DDL</span></div></section>
+<section class="slide yellow" data-title="Cierre"><div class="ey">160–165 min · Salida</div><h2>La prueba de que aprendiste no es cuánto SQL pegaste</h2><ul class="check"><li>Puedes abrir SQL Editor y crear tu schema.</li><li>Puedes leer <code>nombre TIPO RESTRICCIÓN</code>.</li><li>Puedes crear una tabla y verificarla en Table Editor.</li><li>Puedes explicar IDENTITY, PK, FK, NOT NULL, CHECK y DEFAULT.</li><li>Puedes provocar un error y reconocer qué constraint lo causó.</li><li>Puedes decir qué parte es regla del negocio y qué parte es decisión del modelo.</li></ul><div class="call"><p><strong>Frase final:</strong> DDL hace ejecutable una decisión; no fabrica la evidencia que la justifica.</p></div><div class="brand"><span>ANDESDB · Sesión 9</span><span>Cierre</span></div></section>
+<div class="progress"><div class="bar" id="bar"></div></div></main><nav class="toolbar"><span class="count" id="count"></span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button></nav><script>(()=>{const s=[...document.querySelectorAll('.slide')],c=document.getElementById('count'),b=document.getElementById('bar');let i=0;function u(){s.forEach((x,n)=>x.classList.toggle('active',n===i));c.textContent=(i+1)+' / '+s.length;b.style.width=((i+1)/s.length*100)+'%';document.title=(i+1)+'/'+s.length+' · '+s[i].dataset.title}function n(){if(i<s.length-1){i++;u()}}function p(){if(i>0){i--;u()}}document.getElementById('next').onclick=n;document.getElementById('prev').onclick=p;document.addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();n()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();p()}else if(e.key==='Home'){i=0;u()}else if(e.key==='End'){i=s.length-1;u()}});document.querySelectorAll('pre').forEach(pre=>{if(!/\b(CREATE|INSERT|SELECT|SET|CHECK|FOREIGN KEY)\b/i.test(pre.textContent))return;const x=document.createElement('button');x.className='copy';x.textContent='copiar';x.onclick=async()=>{try{const t=pre.cloneNode(true);t.querySelectorAll('button').forEach(z=>z.remove());await navigator.clipboard.writeText(t.textContent.trim());x.textContent='copiado';setTimeout(()=>x.textContent='copiar',1200)}catch(e){x.textContent='no se pudo'}};pre.appendChild(x)});u()})();</script></body></html>
