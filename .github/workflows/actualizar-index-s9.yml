@@ -1,0 +1,84 @@
+name: Actualizar index S9
+
+on:
+  push:
+    paths:
+      - '.github/workflows/actualizar-index-s9.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Actualizar manifiestos y cache S9
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          curso_path = Path('tools/curso.json')
+          curso = json.loads(curso_path.read_text(encoding='utf-8'))
+          s9 = next(
+              s for m in curso['modulos'] for s in m.get('sesiones', [])
+              if s.get('n') == 9
+          )
+          s9['titulo'] = 'Supabase paso a paso + normalización visual + DDL'
+          s9['desc'] = (
+              'Tutorial completo desde el Dashboard de Supabase: proyecto, SQL Editor, Table Editor, '
+              'nombres de PK/FK y diferencia frente a API keys. La práctica se hace en grupos Zoom de 5 '
+              'con un operador y observadores; si una sala falla, usa el proyecto demo del docente. '
+              '1FN, 2FN y 3FN se muestran con tablas y diagramas antes/después antes de construir DDL '
+              'PostgreSQL con PK, FK, NOT NULL, CHECK y DEFAULT.'
+          )
+          s9['tags'] = [
+              'tutorial Supabase','SQL Editor','Table Editor','1FN','2FN','3FN',
+              'diagramas','grupos Zoom','CREATE TABLE','PK','FK','CHECK','PostgreSQL'
+          ]
+          curso_path.write_text(json.dumps(curso, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          lp_path = Path('assets/learning/learning-plan.json')
+          lp = json.loads(lp_path.read_text(encoding='utf-8'))
+          l9 = lp['sesiones']['9']
+          l9['titulo'] = 'Supabase paso a paso + normalización visual + DDL'
+          l9['objetivo'] = (
+              'Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir '
+              'PK/FK de API keys; hacer visibles 1FN, 2FN y 3FN con tablas y diagramas antes/después; '
+              'trabajar en grupos pequeños con un operador y construir el modelo final con DDL PostgreSQL.'
+          )
+          l9['servicio_real']['fallback'] = (
+              'Si un estudiante o una sala no logra entrar, el docente abre el proyecto '
+              'andesdb-s9-demo-profesor ya preparado y comparte pantalla para que el grupo continúe '
+              'la misma práctica en PostgreSQL real.'
+          )
+          lp_path.write_text(json.dumps(lp, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          sw_path = Path('service-worker.js')
+          sw = sw_path.read_text(encoding='utf-8')
+          import re
+          sw = re.sub(
+              r"const VERSION = '[^']+';",
+              "const VERSION = 'andesdb-v11-s9-supabase-visual-20260903';",
+              sw,
+              count=1,
+          )
+          sw_path.write_text(sw, encoding='utf-8')
+          PY
+
+      - name: Publicar cambios fuente
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tools/curso.json assets/learning/learning-plan.json service-worker.js
+          git commit -m 'Actualizar index y cache para la nueva S9'
+          git pull --rebase origin main
+          git push origin main
