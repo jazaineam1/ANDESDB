@@ -162,10 +162,10 @@
     },
     "9": {
       "fecha": "2026-09-04",
-      "titulo": "DDL + PostgreSQL",
+      "titulo": "Del problema al DDL · PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Convertir el modelo del Restaurante ABC en tablas y restricciones ejecutables sobre PostgreSQL real, y comprobar qué reglas acepta o rechaza el motor. Supabase se usa únicamente como entorno de acceso al PostgreSQL de la clase.",
+      "objetivo": "Usar consultas SQL conocidas para hacer visibles anomalías de 1FN, 2FN y 3FN, reparar las dependencias que las producen y convertir el modelo resultante en tablas y restricciones ejecutables sobre PostgreSQL real en Supabase.",
       "servicio_real": {
         "requerido": true,
         "nombre": "PostgreSQL en Supabase",
@@ -201,14 +201,15 @@
         "modo": "manual"
       },
       "actividad": {
-        "titulo": "Del modelo al CREATE TABLE",
-        "minutos": 40,
-        "instrucciones": "Implementa una parte funcional del Restaurante ABC con CREATE TABLE, PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE y CHECK. Ejecuta primero datos válidos y luego intenta romper el diseño con datos inválidos para identificar qué restricción protege cada regla.",
+        "titulo": "Tres incidentes reales: 1FN, 2FN y 3FN → DDL",
+        "minutos": 61,
+        "instrucciones": "Ejecuta tres diseños deliberadamente problemáticos. En 1FN intenta consultar cantidades escondidas dentro de texto; en 2FN provoca dos nombres para un mismo plato y detecta la contradicción con COUNT(DISTINCT) y HAVING; en 3FN provoca dos capacidades para una misma mesa. En cada caso identifica de qué depende el dato, repara la estructura y reconstruye la información con SQL. Después implementa PLATO, PEDIDO y LINEA_PEDIDO con DDL real.",
         "criterios": [
-          "DDL ejecutable en PostgreSQL",
-          "restricciones justificadas desde reglas o decisiones de diseño",
-          "prueba al menos un INSERT válido y varios inválidos",
-          "identifica al menos una regla de negocio que no resuelve un CHECK simple"
+          "detecta el problema de 1FN mediante una consulta de negocio",
+          "explica qué atributo depende de una parte de una clave compuesta en 2FN",
+          "detecta una dependencia transitiva visible en 3FN",
+          "reconstruye información con JOIN después de separar tablas",
+          "crea y prueba PK, FK, NOT NULL, CHECK y DEFAULT en PostgreSQL"
         ]
       }
     },

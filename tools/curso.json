@@ -283,23 +283,27 @@
           "fecha": "2026-09-04",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
-          "titulo": "DDL + PostgreSQL",
+          "titulo": "Del problema al DDL · PostgreSQL",
           "estado": "pendiente",
-          "desc": "Tutorial guiado por checkpoints para convertir un modelo-base común en tablas reales de PostgreSQL, verificar cada CREATE TABLE y distinguir PK, FK, NOT NULL, CHECK y DEFAULT mediante pruebas válidas e inválidas.",
+          "desc": "Primero usamos consultas SQL conocidas para provocar y detectar problemas de 1FN, 2FN y 3FN; después reparamos dependencias y convertimos el modelo correcto en DDL real sobre PostgreSQL, probando PK, FK, NOT NULL, CHECK y DEFAULT en Supabase.",
           "tags": [
+            "1FN",
+            "2FN",
+            "3FN",
+            "dependencias",
+            "COUNT(DISTINCT)",
+            "HAVING",
             "CREATE TABLE",
             "PK",
             "FK",
-            "NOT NULL",
             "CHECK",
-            "DEFAULT",
             "PostgreSQL",
             "Supabase"
           ],
           "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
           "recursos": [
             {
-              "txt": "📄 Script PostgreSQL de la sesión",
+              "txt": "📄 Laboratorio 1FN–3FN + DDL PostgreSQL",
               "href": "Scripts/S9.sql",
               "download": true
             }
