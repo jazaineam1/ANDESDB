@@ -162,14 +162,14 @@
     },
     "9": {
       "fecha": "2026-09-04",
-      "titulo": "Del problema al DDL · PostgreSQL",
+      "titulo": "Supabase paso a paso + normalización visual + DDL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Usar consultas SQL conocidas para hacer visibles anomalías de 1FN, 2FN y 3FN, reparar las dependencias que las producen y convertir el modelo resultante en tablas y restricciones ejecutables sobre PostgreSQL real en Supabase.",
+      "objetivo": "Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir PK/FK de API keys; hacer visibles 1FN, 2FN y 3FN con tablas y diagramas antes/después; trabajar en grupos pequeños con un operador y construir el modelo final con DDL PostgreSQL.",
       "servicio_real": {
         "requerido": true,
         "nombre": "PostgreSQL en Supabase",
-        "fallback": "Si falla el acceso individual, el docente mantiene la ejecución en PostgreSQL y el estudiante sigue la prueba en clase; SQLite no sustituye el objetivo de esta sesión."
+        "fallback": "Si un estudiante o una sala no logra entrar, el docente abre el proyecto andesdb-s9-demo-profesor ya preparado y comparte pantalla para que el grupo continúe la misma práctica en PostgreSQL real."
       },
       "dp900": [
         {

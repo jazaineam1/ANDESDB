@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v10-s9-normalizacion-20260902';
+const VERSION = 'andesdb-v11-s9-supabase-visual-20260903';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
