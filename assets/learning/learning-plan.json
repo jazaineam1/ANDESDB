@@ -162,7 +162,7 @@
     },
     "9": {
       "fecha": "2026-09-04",
-      "titulo": "Supabase paso a paso + normalización visual + DDL",
+      "titulo": "Supabase paso a paso + normalización visual + DDL PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
       "objetivo": "Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir PK/FK de API keys; hacer visibles 1FN, 2FN y 3FN con tablas y diagramas antes/después; trabajar en grupos pequeños con un operador y construir el modelo final con DDL PostgreSQL.",
