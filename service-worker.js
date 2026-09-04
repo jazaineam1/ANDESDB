@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-v12-s9-index-mobile-20260903';
+const VERSION = 'andesdb-auto-ea196ab017df';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
