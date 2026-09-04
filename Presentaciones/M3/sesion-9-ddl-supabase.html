@@ -1,37 +1,1684 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Sesión 9 · Supabase paso a paso + DDL PostgreSQL</title><meta name="description" content="Tutorial suave de Supabase, formas normales simplificadas y DDL PostgreSQL."><style>:root{--y:#ffd600;--b:#124e78;--g:#146c43;--r:#a52a2a;--ink:#1a1a1a;--soft:#5a5a5a;--bl:#e9f4ff;--gl:#e9f8ef;--rl:#fff1f0;--dark:#0e1a24;font-family:"Segoe UI",Arial,sans-serif}*{box-sizing:border-box}body{margin:0;height:100vh;overflow:hidden;background:#0b1218;color:var(--ink)}.stage{position:relative;width:min(100vw,177.777vh);height:min(100vh,56.25vw);margin:auto;top:50%;transform:translateY(-50%);background:#fff;overflow:hidden;container-type:size}.slide{position:absolute;inset:0;display:none;padding:5.5cqw 6.5cqw 7cqw;font-size:1.25cqw}.slide.active{display:block}.dark{background:linear-gradient(160deg,var(--dark),#16293a);color:#fff}.dense{font-size:1.05cqw}h2{font-size:2.45em;line-height:1.05;margin:.1em 0 .35em}p{font-size:1em;line-height:1.42}.lead{font-size:1.42em;color:var(--soft);max-width:48ch}.dark .lead{color:#d6e4ed}.ey{font-size:.76em;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a7300}.dark .ey{color:var(--y)}.brand{position:absolute;left:6.5cqw;right:6.5cqw;bottom:2.3cqw;display:flex;justify-content:space-between;font-size:.66em;color:var(--soft);font-weight:700}.dark .brand{color:#b9c7d3}pre{background:#0d1b26;color:#eef6fb;padding:1em;border-radius:1em;border-left:.4em solid var(--y);white-space:pre-wrap;font:.82em/1.45 Consolas,monospace}.box{margin-top:1em;border-radius:1em;padding:1em;box-shadow:0 8px 24px rgba(16,24,32,.08);color:var(--ink)}.bad{background:var(--rl);border-left:.45em solid var(--r)}.good{background:var(--gl);border-left:.45em solid var(--g)}.warn{background:#fff3e7;border-left:.45em solid #ff8a24}table{width:100%;border-collapse:collapse;font-size:.86em;background:#fff}th,td{border-bottom:1px solid #dde3ea;padding:.48em;text-align:left}th{background:#f2f5f7}.diagram,.cards{display:grid;gap:1em;margin-top:1em}.two{grid-template-columns:1fr 1fr}.three,.cards{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}.diagram section,.cards article{background:var(--bl);border-left:.42em solid var(--b);border-radius:1em;padding:1em;color:var(--ink);font-weight:700}.biglink{display:inline-block;margin-top:1em;background:var(--y);color:#3a2f00;text-decoration:none;padding:.8em 1.2em;border-radius:999px;font-weight:900}.controls{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:.45rem;background:rgba(255,255,255,.92);border-radius:999px;padding:.35rem;z-index:10}.controls button,.controls a,.controls span{border:0;background:#111;color:#fff;border-radius:999px;min-width:2.2rem;height:2.2rem;padding:0 .75rem;display:grid;place-items:center;text-decoration:none;font-weight:800;font-size:.8rem}.controls span{background:#fff;color:#111}.progress{position:fixed;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.2)}#bar{height:100%;width:0;background:var(--y)}@media(max-width:850px),(max-aspect-ratio:1/1){body{height:auto;overflow:auto;background:#fff}.stage{width:100vw;height:auto;min-height:100dvh;top:0;transform:none;overflow:visible}.slide{position:relative;display:none;min-height:100dvh;padding:2rem 1.2rem 5.2rem;font-size:16px;overflow:visible}.slide.active{display:block}.dense{font-size:15px}h2{font-size:2rem}.lead{font-size:1.12rem}.two,.three,.four,.cards{grid-template-columns:1fr}.brand{position:static;margin-top:2rem}.controls{left:8px;right:8px;transform:none;justify-content:center;flex-wrap:wrap}} </style></head><body><main id="deck" class="stage"></main><nav class="controls"><button id="prev">←</button><span id="count">1/35</span><button id="next">→</button><button id="timeBtn">⏱ 00:00</button><a id="dlBtn" href="sesion-9-ddl-supabase.html" download>↓</a><button id="fullBtn">⛶</button><a href="../../Scripts/S9.sql" target="_blank" rel="noopener">SQL</a><a href="../../index.html">Índice</a></nav><div class="progress"><div id="bar"></div></div><script>const slides=[
-['dark','Portada','Sesión 9 · Supabase paso a paso + DDL PostgreSQL','Entrar a Supabase, ejecutar SQL por bloques y convertir un modelo sencillo en tablas reales.',''],
-['','Qué debe salir hoy','Tres resultados visibles','Llegar al SQL Editor, entender PK/FK sin confundirlas con API keys y crear tablas con DDL PostgreSQL.',''],
-['','Trabajo en salas Zoom','Grupos de 5, no 5 computadores peleando','Una persona opera, otra lee, otra verifica, otra toma nota y otra pregunta. Todos entienden; no todos hacen clic.',''],
-['','Roles del grupo','Cada estudiante tiene tarea','Operador, lector, auditor, relator y observador. La clase funciona si el grupo conversa mientras ejecuta.',''],
-['','Mapa de Supabase','Primero ubicarse, luego escribir SQL','Dashboard → proyecto → SQL Editor para ejecutar código → Table Editor para ver tablas.','<div class="diagram four"><section>Dashboard</section><section>Proyecto</section><section>SQL Editor</section><section>Table Editor</section></div>'],
-['','Crear o abrir proyecto','Ruta segura','Entrar a supabase.com/dashboard. Abrir proyecto existente o crear uno llamado andesdb-s9-equipoXX.',''],
-['','Formulario del proyecto','Qué significa cada campo','Project name es el nombre. Database password es contraseña, no es PK. Region es ubicación del servidor.',''],
-['','Entrar al SQL Editor','Dónde se pega el código','Menú izquierdo → SQL Editor → New query. Ahí pegamos los bloques del archivo S9.sql.',''],
-['','Archivo de la clase','Script clicable','Abrir Scripts/S9.sql desde la portada o desde el índice. No ejecutar todo de una.','<a class="biglink" href="../../Scripts/S9.sql" target="_blank" rel="noopener">Abrir Scripts/S9.sql ↗</a>'],
-['','Cómo ejecutar','Regla de oro','Selecciona un bloque pequeño, ejecútalo, mira el resultado y solo después avanza. Si sale error, primero se lee.',''],
-['','Table Editor','Dónde ver lo creado','Después de CREATE TABLE o INSERT, abre Table Editor para mirar tablas, columnas y filas.',''],
-['','Dos tipos de claves','No confundir nombres','PK/FK son claves del modelo de datos. API keys conectan aplicaciones. Hoy usamos PK/FK.',''],
-['','Cómo nombrar claves','Convención simple','La PK se llama tabla_id: plato_id, pedido_id, mesa_id. La FK conserva el mismo nombre que la PK a la que apunta.',''],
-['','Plan B docente','Si un grupo no logra entrar','El profesor abre andesdb-s9-demo-profesor y comparte pantalla. El grupo sigue pensando aunque no opere.','<div class="box good">Proyecto docente: <code>andesdb-s9-demo-profesor</code><br>Uso: respaldo de pantalla, no secretos.</div>'],
-['','Idea central','Normalizar es preguntar: ¿dónde vive este dato?','No memorizamos definiciones. Miramos una tabla incómoda y movemos el dato al lugar correcto.',''],
-['dense','1FN · problema visible','Una celda tiene una lista escondida','Dentro de una sola celda hay varios platos y cantidades.','<div class="box bad"><b>Tabla mala</b><table><tr><th>pedido_id</th><th>platos</th></tr><tr><td>1</td><td>Ajiaco x2; Limonada x4</td></tr><tr><td>2</td><td>Bandeja x1</td></tr><tr><td>3</td><td>Ajiaco x1; Bandeja x2</td></tr></table></div>'],
-['dense','1FN · consulta que sufre','La pregunta parece fácil, pero no lo es','¿Cuántos ajiacos vendimos? Si el plato está mezclado en texto, la consulta se vuelve frágil.','<pre>SELECT *\nFROM lab_1fn_pedido_mal\nWHERE platos = \'Ajiaco\';</pre><div class="box warn">Resultado esperado: 0 filas o búsqueda frágil.</div>'],
-['dense','1FN · arreglo visual','Una fila por plato vendido','Pedido 1 aparece en dos filas: Ajiaco 2 y Limonada 4.','<div class="box good"><b>Tabla buena</b><table><tr><th>pedido_id</th><th>plato</th><th>cantidad</th></tr><tr><td>1</td><td>Ajiaco</td><td>2</td></tr><tr><td>1</td><td>Limonada</td><td>4</td></tr><tr><td>2</td><td>Bandeja</td><td>1</td></tr><tr><td>3</td><td>Ajiaco</td><td>1</td></tr></table></div>'],
-['','1FN · regla suave','Primera forma normal','Una celda debe guardar un solo dato, no una lista. Una fila, un hecho claro.',''],
-['dense','2FN · problema visible','Datos del pedido y del plato mezclados','La fecha pertenece al pedido; el nombre pertenece al plato; cantidad pertenece a la combinación.','<div class="box bad"><table><tr><th>pedido_id</th><th>plato_id</th><th>fecha</th><th>nombre</th><th>cantidad</th></tr><tr><td>1</td><td>10</td><td>2026-09-04</td><td>Ajiaco</td><td>2</td></tr><tr><td>1</td><td>20</td><td>2026-09-04</td><td>Limonada</td><td>4</td></tr><tr><td>2</td><td>10</td><td>2026-09-05</td><td>Ajiaco</td><td>1</td></tr></table></div>'],
-['dense','2FN · contradicción','El mismo plato puede quedar con dos nombres','Si actualizo Ajiaco solo en una fila, plato_id=10 queda con dos nombres.','<pre>SELECT plato_id, COUNT(DISTINCT nombre_plato)\nFROM lab_2fn_linea_mal\nGROUP BY plato_id\nHAVING COUNT(DISTINCT nombre_plato) > 1;</pre>'],
-['dense','2FN · arreglo visual','Separar lo que pertenece a cada cosa','PEDIDO guarda fecha. PLATO guarda nombre. LINEA_PEDIDO guarda cantidad.','<div class="diagram three"><section>PEDIDO<br>pedido_id<br>fecha</section><section>PLATO<br>plato_id<br>nombre</section><section>LINEA_PEDIDO<br>pedido_id<br>plato_id<br>cantidad</section></div>'],
-['','2FN · regla suave','Segunda forma normal','Si una fila se identifica con dos columnas, los datos deben depender de la combinación completa.',''],
-['dense','3FN · problema visible','Un dato vive demasiado lejos','puestos no describe el pedido; describe la mesa.','<div class="box bad"><table><tr><th>pedido_id</th><th>mesa_id</th><th>puestos</th></tr><tr><td>1</td><td>1</td><td>4</td></tr><tr><td>2</td><td>2</td><td>2</td></tr><tr><td>3</td><td>1</td><td>4</td></tr></table></div>'],
-['dense','3FN · arreglo visual','Mover puestos a MESA','MESA guarda puestos. PEDIDO guarda mesa_id. La capacidad se actualiza una sola vez.','<div class="diagram two"><section>MESA<br>mesa_id<br>puestos</section><section>PEDIDO<br>pedido_id<br>mesa_id</section></div>'],
-['','3FN · regla suave','Tercera forma normal','No guardes un dato en una tabla si realmente depende de otro dato que ya está allí.',''],
-['dark','Pausa','15 minutos','Volvemos para convertir el modelo bueno en DDL real.',''],
-['dense','Puente a DDL','Ya sabemos qué tablas necesitamos','Ahora usamos SQL para construir estructura: CREATE TABLE, PRIMARY KEY, FOREIGN KEY, NOT NULL, CHECK y DEFAULT.','<div class="cards"><article>CREATE TABLE<br><small>crear estructura</small></article><article>PRIMARY KEY<br><small>identificar fila</small></article><article>FOREIGN KEY<br><small>conectar tablas</small></article></div>'],
-['dense','Crear PLATO','Primera tabla real','plato_id identifica cada plato. nombre no puede ser nulo. precio debe ser mayor que cero.','<pre>CREATE TABLE plato (\n  plato_id BIGINT GENERATED ALWAYS AS IDENTITY,\n  nombre TEXT NOT NULL,\n  precio NUMERIC(10,2) NOT NULL CHECK (precio > 0),\n  PRIMARY KEY (plato_id)\n);</pre>'],
-['dense','Crear MESA y PEDIDO','Dos tablas conectables','MESA guarda puestos. PEDIDO guarda estado y la mesa asignada.','<pre>CREATE TABLE mesa (\n  mesa_id BIGINT GENERATED ALWAYS AS IDENTITY,\n  puestos INTEGER NOT NULL CHECK (puestos > 0),\n  PRIMARY KEY (mesa_id)\n);\n\nCREATE TABLE pedido (\n  pedido_id BIGINT GENERATED ALWAYS AS IDENTITY,\n  mesa_id BIGINT REFERENCES mesa(mesa_id),\n  estado TEXT NOT NULL DEFAULT \'abierto\',\n  PRIMARY KEY (pedido_id)\n);</pre>'],
-['dense','Crear LINEA_PEDIDO','La tabla que conecta pedido con plato','Aquí aparecen dos FK: pedido_id apunta a PEDIDO y plato_id apunta a PLATO.','<pre>CREATE TABLE linea_pedido (\n  pedido_id BIGINT REFERENCES pedido(pedido_id),\n  plato_id BIGINT REFERENCES plato(plato_id),\n  cantidad INTEGER NOT NULL CHECK (cantidad > 0),\n  PRIMARY KEY (pedido_id, plato_id)\n);</pre>'],
-['dense','Probar errores','El motor también enseña','cantidad nula prueba NOT NULL; plato inexistente prueba FK; cantidad cero prueba CHECK.','<div class="cards"><article>cantidad = NULL<br><small>NOT NULL</small></article><article>plato_id inexistente<br><small>FK</small></article><article>cantidad = 0<br><small>CHECK</small></article></div>'],
-['dense','Reconstruir con JOIN','Separar no significa perder información','Unimos pedido, línea y plato para volver a ver el pedido completo.','<pre>SELECT pe.pedido_id, pl.nombre, l.cantidad\nFROM pedido pe\nJOIN linea_pedido l ON l.pedido_id = pe.pedido_id\nJOIN plato pl ON pl.plato_id = l.plato_id;</pre>'],
-['','Cierre','La pregunta que se llevan','Antes de crear una columna pregunta: ¿este dato de qué depende y dónde debería vivir?',''],
-['dark','Ticket de salida','Explica en una frase','1FN: no listas en celdas. 2FN: no mezclar datos de partes de una clave compuesta. 3FN: no guardar datos en el lugar equivocado.','']
-];const deck=document.getElementById('deck');deck.innerHTML=slides.map((s,i)=>`<section class="slide ${s[0]}" data-title="${s[1]}"><div class="ey">Sesión 9 · diapositiva ${i+1}</div><h2>${s[1]}</h2><p class="lead">${s[2]}</p><p>${s[3]}</p>${s[4]}<div class="brand"><span>ANDESDB · Sesión 9</span><span>${i+1}/${slides.length}</span></div></section>`).join('');const ss=[...document.querySelectorAll('.slide')],count=document.getElementById('count'),bar=document.getElementById('bar');let i=0,t0=null,tInt=null;function show(n){i=(n+ss.length)%ss.length;ss.forEach((s,j)=>s.classList.toggle('active',j===i));count.textContent=(i+1)+'/'+ss.length;bar.style.width=((i+1)/ss.length*100)+'%'}function tick(){if(t0===null)return;const sec=Math.floor((Date.now()-t0)/1000),m=String(Math.floor(sec/60)).padStart(2,'0'),s=String(sec%60).padStart(2,'0');document.getElementById('timeBtn').textContent='⏱ '+m+':'+s}document.getElementById('prev').onclick=()=>show(i-1);document.getElementById('next').onclick=()=>show(i+1);document.getElementById('fullBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();document.getElementById('timeBtn').onclick=()=>{if(t0===null){t0=Date.now();tInt=setInterval(tick,500)}else{clearInterval(tInt);tInt=null;t0=null;document.getElementById('timeBtn').textContent='⏱ 00:00'}};addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(i+1);if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);if(e.key.toLowerCase()==='t')document.getElementById('timeBtn').click();if(e.key.toLowerCase()==='f')document.getElementById('fullBtn').click()});show(0);</script></body></html>
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Sesión 9 del módulo 3: Supabase paso a paso, las tres formas normales provocadas en SQL, y DDL en PostgreSQL."><title>Sesión 9 · Supabase, normalización y DDL · ANDESDB</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23ffd600%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22bold%22%20fill%3D%22%23171717%22%3E9%3C/text%3E%3C/svg%3E">
+<style>
+/* ---- tema v2 y estilos propios de la S9, para que sus componentes
+   sigan existiendo dentro del armazon de la sesion 6. Van primero
+   a proposito: en lo compartido debe ganar la 6. ---- */
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%;
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;min-width:2em;height:2em;padding:0 .55em;
+  border-radius:999px;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;white-space:nowrap;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl,.res tr:nth-child(2n) td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.tnode{cursor:pointer}
+.tnode rect{transition:fill .15s,stroke-width .15s}
+.tnode:hover rect{stroke-width:4.5}
+.tnode:focus{outline:none}
+.tnode:focus rect{stroke:#ff8a24;stroke-width:5}
+.tnode.sel rect{stroke:#ff8a24;stroke-width:5}
+.tinfo{height:15cqh;overflow:auto;margin-top:.5em;padding:.7em 1em;background:var(--bl);border-left:.4em solid var(--b);border-radius:var(--r-md);color:var(--ink)}
+.tinfo h3{margin:0 0 .4em;font-family:Consolas,monospace;color:var(--b)}
+.tinfo h3 small{font-family:"Segoe UI",Arial,sans-serif;font-weight:600;color:var(--ink-soft);font-size:.62em;margin-left:.6em}
+.tinfo .res td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;width:14em}
+.tinfo-hint{margin:0;color:var(--ink-soft);font-size:.92em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15em 1.6em}
+.dgrid div{display:flex;gap:.6em;align-items:baseline;border-bottom:1px solid rgba(18,78,120,.12);padding:.16em 0}
+.dgrid b{font-family:Consolas,monospace;color:var(--b);flex:0 0 10.5em;font-size:.92em}
+.dgrid span{font-size:.88em;line-height:1.3}
+.tdata{display:none}
+.k{border-radius:var(--pill);padding:.05em .5em;font-size:.72em;font-weight:800;font-family:"Segoe UI",Arial,sans-serif}
+.k.pk{background:var(--ink);color:var(--y)}
+.k.fk{background:var(--b);color:#fff}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{display:flex;align-items:center;gap:.75em;max-width:14em;max-height:4.5em;object-fit:contain}
+.slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+
+/* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
+.minitimer{
+  position:fixed; left:1.1rem; bottom:1.1rem; z-index:90;
+  display:none; align-items:center; gap:.55rem;
+  padding:.5rem .6rem .5rem .9rem;
+  background:rgba(17,17,17,.94); color:#fff;
+  border-radius:999px; box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-family:"Segoe UI",Arial,sans-serif;
+  cursor:grab; touch-action:none; user-select:none;
+  transition:background .2s;
+}
+.minitimer.on{display:flex}
+.minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.minitimer .mt{
+  font:900 2.1rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.5em; text-align:center;
+}
+.minitimer button{
+  border:0; width:2.4rem; height:2.4rem; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff;
+  font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
+}
+.minitimer button:hover{background:rgba(255,255,255,.28)}
+.minitimer .lbl{
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--y); font-weight:800; margin-right:.1rem;
+}
+/* últimos 60 segundos */
+.minitimer.avisa{background:rgba(193,18,63,.95)}
+.minitimer.avisa .lbl{color:#fff}
+/* se acabó */
+.minitimer.fin{background:rgba(193,18,63,.97); animation:latido 1s ease-in-out infinite}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media print{ .minitimer{display:none!important} }
+
+/* ===== arte de portada: ocupa la mitad que quedaba vacía ===== */
+.arte{
+  position:absolute; right:5.4%; top:50%; transform:translateY(-50%);
+  width:38%; max-height:70cqh; z-index:1; pointer-events:none;
+}
+@media (max-aspect-ratio:1/1){ .arte{display:none} }
+
+/* ===== los cuatro JOIN, de un vistazo ===== */
+.venns{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.2em 0 1.3em}
+.venns figure{margin:0;text-align:center}
+.venns svg{width:100%;max-height:11cqh;display:block;margin:0 auto}
+.venns figcaption{margin-top:.35em;line-height:1.25}
+.venns figcaption code{display:block;font-weight:800;font-size:.86em;color:var(--b)}
+.venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
+
+/* ===== reparto vertical: sin tercio inferior muerto ===== */
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
+.slide.mid.active>.brand{position:absolute}
+
+/* ===== esquema entrada -> resultado ===== */
+.joinviz{display:block;width:100%;max-height:34cqh;margin:.9em 0 0}
+
+/* ===== el mapa con la cardinalidad ===== */
+.mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}
+
+/* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
+.cnode{cursor:pointer}
+.cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
+.cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
+.cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
+.cdata{display:none}
+
+.cpanel{
+  position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
+  background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink); border-radius:var(--r-lg);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
+  padding:1.1em 1.3em 1em; z-index:5;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
+.cclose{
+  position:absolute; top:.5em; right:.6em; z-index:2;
+  border:0; background:var(--ink); color:#fff;
+  width:44px; height:44px; border-radius:50%;
+  font-size:1em; font-weight:800; cursor:pointer; line-height:1;
+}
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
+.cbadge{
+  font-family:Consolas,monospace; font-size:.82em; font-weight:800;
+  color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
+}
+.cbadge.tipo-1n{background:var(--o);color:#171717}
+.cbadge.tipo-11{background:var(--b);color:#fff}
+.cbadge.tipo-nn{background:var(--r);color:#fff}
+
+
+
+
+
+.ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
+.cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
+.ct{margin:0;flex:0 1 auto;min-width:0}
+.cth{
+  font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
+  background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.ct.o .cth{background:var(--o)} .ct.res-final .cth{background:var(--ink)}
+.ct.y .cth{background:var(--y);color:var(--ink)}
+.ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
+  border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
+.ct th{background:#f4f7fa;color:var(--ink-soft);font-family:Consolas,monospace;
+  font-weight:700;text-align:left;padding:.3em .6em;font-size:.92em;white-space:nowrap}
+.ct td{padding:.28em .6em;border-top:1px solid #eef3f7;color:var(--ink);
+  font-family:Consolas,monospace;white-space:nowrap}
+.ct tr.mas td{text-align:center;color:var(--ink-soft);letter-spacing:.2em}
+.ct figcaption{font-size:.72em;color:var(--ink-soft);margin-top:.3em;text-align:center}
+.cnota{margin:1em 0 0;font-size:.86em;line-height:1.45;
+  background:var(--yl);border-left:.35em solid var(--y);
+  border-radius:var(--r-sm);padding:.7em .9em;color:var(--ink)}
+
+/* los valores que se repiten en el puente, para ver el N:N */
+.ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
+.ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 12px 36px rgba(0,0,0,.28)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
+
+/* ===== columnas de números: a la derecha, como en una hoja de cálculo ===== */
+.res td.num,.res th.num,.optbl td.num,.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* la tabla del panel no debe heredar la píldora .k de PK/FK */
+.ct,.ct table,.ct td,.ct th{border-radius:0;letter-spacing:normal}
+.ct table{border-radius:0 0 var(--r-sm) var(--r-sm)}
+
+/* ===== el escudo de Uniandes ===== */
+.escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
+.logo span{line-height:1.2}
+
+/* ===== botón de copiar en cada bloque de código ===== */
+pre{position:relative}
+.copybtn{
+  position:absolute; top:.5em; right:.5em; z-index:3;
+  font:800 .68em/1 "Segoe UI",Arial,sans-serif; letter-spacing:.07em; text-transform:uppercase;
+  color:#cfe3f0; background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.24);
+  border-radius:var(--pill); padding:.42em .85em; cursor:pointer; opacity:.55;
+  transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+pre:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.2); color:#fff}
+.copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
+.copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.copybtn{transition:none}}
+
+/* --- minutos a mano: los botones fijos nunca cuadran con el taller --- */
+.panel .libre{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:.5rem;margin-top:.8rem}
+.panel .libre label{font-size:.9rem;font-weight:700}
+.panel .libre input{width:4.6rem;font:900 1.15rem/1 Consolas,monospace;text-align:center;
+  padding:.5rem .4rem;border-radius:999px;border:2px solid #111;background:#fff;color:#111}
+.panel .libre input:focus{outline:3px solid var(--y);outline-offset:1px}
+.panel .libre span{font-size:.9rem;font-weight:700;margin-left:-.15rem}
+.panel .libre button{border:2px solid #111;background:var(--y);color:#111;
+  padding:.6em 1.1em;border-radius:999px;font-weight:800;cursor:pointer}
+.panel .libre button:hover{background:#111;color:var(--y)}
+
+
+
+.ok{background:var(--gl);border-left:.35em solid var(--g);border-radius:var(--r-sm);padding:.85em 1em;color:var(--ink);font-size:.82em;box-shadow:var(--sh)}
+.stop{background:var(--rl);border:2px solid #e5aaaa;border-radius:var(--r-sm);padding:.85em 1em;color:#651b1b;font-weight:800;box-shadow:var(--sh)}
+.checkpoint{background:var(--yl);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:.85em 1em;color:var(--ink);font-size:.82em;box-shadow:var(--sh)}
+.mt{margin-top:.75em}.soft{font-size:.8em;color:var(--ink-soft)}.wide{grid-template-columns:1fr 1.25fr}.accent{color:var(--y)}
+.timeline,.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.7em}.timeline article,.card{background:#fff;border-radius:var(--r-md);box-shadow:var(--sh);padding:.85em;border-top:.4em solid var(--y)}.timeline article:nth-child(even),.card.blue{border-top-color:var(--b);background:var(--bl)}.timeline b{font-size:1.35em;color:var(--o)}
+.steps{font-size:.9em;line-height:1.45}.steps li{margin:.33em 0}.steps.compact{columns:2;column-gap:2em}.biglist{font-size:1em;line-height:1.55}.biglist li{margin:.25em 0}.giant{font-weight:900;font-size:2.1em;text-align:center;color:var(--b);margin:.55em 0}.smallg{font-size:1.35em;color:var(--o)}
+.mock{background:#0b1116;color:#e9f5ef;border-radius:var(--r-md);box-shadow:var(--sh);overflow:hidden;border:1px solid #24333a;position:relative;min-height:21em}.browser{background:#1b252c;padding:.55em 1em;color:#b8c8d1;font-size:.75em}.side{position:absolute;left:0;top:2.2em;bottom:0;width:10.5em;background:#0f1519;padding:1em;display:flex;flex-direction:column;gap:.55em}.side b{font-size:1.15em}.side span{color:#c8d3d8;font-size:.78em;padding:.3em;border-radius:.4em}.side .sel{background:#103c2c;color:#6ee7a8}.pane{margin-left:12.5em;padding:1.1em;position:relative}.green{background:#2ebd75;color:white;border:0;border-radius:.45em;padding:.55em .8em;font-weight:900}.run{position:absolute;right:1em;top:1em}.project,.input,.tab,.results{background:#151f25;border:1px solid #32424c;border-radius:.5em;padding:.6em;margin:.6em 0}.input.yellow{border-color:#ffdb39;color:#fff4a8}.input.blue{border-color:#57a8ff;color:#bfe3ff}.green.input{border-color:#4ade80;color:#c6f6d5;background:#12251b}.editor{background:#071017;color:#f3f7f4;border-radius:.5em;padding:1em;min-height:8em;font-size:.72em}.pin{position:absolute;background:#ffd600;color:#171717;border-radius:.55em;padding:.45em .65em;font-weight:900;box-shadow:var(--sh);font-size:.76em}.p1{left:1em;bottom:1em}.p2{right:1em;bottom:1.1em}.p3{right:.7em;top:7em;background:#65b8ff}.p4{right:6em;top:6em}.tables{display:flex;gap:.5em;flex-wrap:wrap;margin:.8em 0}.tables span{border:1px solid #344854;border-radius:999px;padding:.35em .65em;color:#e7f3ed}.tables .sel{background:#103c2c;color:#6ee7a8}
+.flow,.chain{display:flex;gap:.5em;align-items:center;justify-content:center;margin:.8em 0;flex-wrap:wrap}.flow span,.chain span{background:#fff;border:1px solid #dbe5ec;border-radius:var(--r-sm);padding:.58em .82em;font-weight:800;box-shadow:var(--sh)}.flow i,.chain i,.arrowbig{font-style:normal;font-weight:900;color:var(--o);font-size:1.45em}.chain span{font-size:1.15em;background:var(--bl);border-color:#b7d3e8}
+.before-after{display:grid;grid-template-columns:1fr auto 1.35fr;gap:.7em;align-items:center}.before-after.one{grid-template-columns:1.6fr .85fr}.callout.bad{background:var(--rl);border-radius:var(--r-md);padding:1em;color:#651b1b;border:2px solid #e5aaaa}.data{width:100%;border-collapse:collapse;background:#fff;color:#171717;border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--sh);font-size:.75em}.data th{background:#123f5b;color:#fff;text-align:left}.data td,.data th{padding:.45em .52em;border:1px solid #dfe7ee}.data .badcol{background:#fff1d6}.data.small{font-size:.68em}
+.deps{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:.65em}.keybox,.dep{border-radius:var(--r-md);padding:.9em;text-align:center;box-shadow:var(--sh);font-weight:800}.keybox{background:#0d1b26;color:#fff}.dep.good{background:var(--gl);border:2px solid #91cba8}.dep.warn{background:var(--yl);border:2px solid #ffca7a}.dep span{display:block;font-size:.72em;margin-top:.45em;color:var(--ink-soft)}
+.schema3,.schema2,.schema4{display:grid;gap:.7em;align-items:center}.schema3{grid-template-columns:repeat(3,1fr)}.schema2{grid-template-columns:1fr auto 1fr}.schema4{grid-template-columns:repeat(4,1fr)}.schema3 article,.schema2 article,.schema4 article{background:#fff;border-radius:var(--r-md);box-shadow:var(--sh);padding:.9em;border-top:.42em solid var(--y);text-align:center}.schema3 article:nth-child(2),.schema2 article:nth-child(3){border-top-color:var(--b);background:var(--bl)}.schema3 article:nth-child(3){border-top-color:var(--o)}.schema2 i{font-style:normal;color:var(--o);font-weight:900;text-align:center}
+nav.controls{position:fixed;left:50%;bottom:.7rem;transform:translateX(-50%);z-index:40;display:flex;gap:.35rem;align-items:center;background:rgba(20,20,20,.86);backdrop-filter:blur(8px);border-radius:999px;padding:.28rem .45rem;box-shadow:0 8px 30px rgba(0,0,0,.22)}nav.controls button,nav.controls a{border:0;background:#fff;color:#171717;border-radius:999px;padding:.38rem .62rem;font-weight:800;text-decoration:none;cursor:pointer;font-size:.8rem}nav.controls span{color:#fff;font-weight:800;min-width:4.8em;text-align:center;font-size:.78rem}.progress{position:fixed;left:0;right:0;bottom:0;height:.22rem;background:rgba(0,0,0,.08);z-index:39}.progress #bar{height:100%;width:0;background:var(--o);transition:width .2s ease}
+@media(max-width:850px),(max-aspect-ratio:1/1){.wide,.before-after,.before-after.one,.deps,.schema3,.schema2,.schema4,.timeline,.g4{grid-template-columns:1fr}.arrowbig,.schema2 i{transform:rotate(90deg);margin:auto}.steps.compact{columns:1}.pane{margin-left:0}.side{display:none}.giant{font-size:1.5em}}
+/* --- S9: modo móvil probado en vertical ---------------------------------- */
+@media (max-aspect-ratio: 3/4) {
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--paper,#fff)}
+  .stage{width:100vw;height:100dvh;max-width:none;max-height:none;top:0;margin:0;transform:none;border-radius:0;box-shadow:none;overflow:hidden}
+  .slide,.slide.mid,.slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{
+    inset:0;padding:7.5% 6.5% 19%;font-size:3.45cqw;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch
+  }
+  .slide.dark{min-height:100%}
+  .g2,.g3,.g4,.timeline,.before-after,.before-after.one,.deps,.schema3,.schema2,.schema4,.wide{grid-template-columns:1fr !important}
+  .schema2 i,.arrowbig{transform:rotate(90deg);margin:auto}
+  h1{font-size:2.7em;max-width:12ch}
+  h2{font-size:2.05em;margin-bottom:.55em}
+  .lead{font-size:1.28em;max-width:none}
+  .ey{font-size:.75em}
+  .brand{position:static;display:flex;margin-top:1.25em;padding:0 0 1.5em;gap:.5em;font-size:.72em}
+  .brand span:last-child{text-align:right}
+  .mock{min-height:25em}
+  .data{font-size:.82em}
+  pre{font-size:.78em;max-height:none;overflow:auto}
+  nav.controls{bottom:.55rem;width:calc(100vw - 1rem);justify-content:center;padding:.35rem .45rem}
+  nav.controls button,nav.controls a{padding:.48rem .72rem;font-size:.84rem}
+  nav.controls span{min-width:3.7em}
+  .progress{bottom:0}
+}
+
+/* Pasos de tutorial: panel claro con campos etiquetados, al estilo del
+   mazo de Astra. Sustituye al pantallazo oscuro con etiquetas encima. */
+.pasopill{display:inline-flex;align-items:center;gap:.45em;background:var(--y);color:#3a2f00;border-radius:999px;padding:.32em .95em;font-weight:900;font-size:.74em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35em}
+.uiform{background:#fff;border:1px solid #dfe6ec;border-radius:var(--r-md);box-shadow:var(--sh);padding:.9em 1.05em}
+.uihead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #eef2f5;padding-bottom:.55em;margin-bottom:.5em}
+.uihead b{font-size:1.02em;color:var(--ink)}
+.uihead span{font-size:.72em;color:#8a94a0}
+.uilab{font-size:.68em;letter-spacing:.1em;text-transform:uppercase;color:#8a94a0;font-weight:800;margin:.65em 0 .25em}
+.uibox{border:1px solid #dfe6ec;border-radius:.5em;padding:.5em .8em;font-family:Consolas,monospace;font-size:.84em;color:var(--ink);background:#fff;margin-bottom:.3em}
+.uiopts{display:flex;gap:.5em;flex-wrap:wrap}
+.uiopt{border:1.5px solid #dfe6ec;border-radius:.5em;padding:.45em .85em;font-size:.83em;color:var(--ink-soft)}
+.uiopt.sel{border:2px solid var(--b);font-weight:800;color:var(--b);background:var(--bl)}
+.pasos-v{display:grid;grid-template-columns:1fr;gap:.35em;margin:.2em 0 0;padding-left:1.15em}
+.pasos-v li{margin:.1em 0}
+
+</style>
+<style>
+/* ====================================================================
+   TEMA v2 · Diseño y Gestión de Bases de Datos con SQL
+   Universidad de los Andes · Colsubsidio
+
+   Tres cambios respecto a v1:
+
+   1. ADAPTABLE. El escenario es un contenedor de consulta y toda la
+      tipografía interna se mide en cqw/cqh, no en vw/vh. Resultado:
+      la diapositiva se ve IDÉNTICA en ventana y en pantalla completa,
+      solo cambia de escala. Los controles fijos (barra, overlays) sí
+      siguen midiendo contra el viewport, porque viven fuera del
+      escenario.
+
+   2. CONTRASTE. Toda superficie clara declara su propio color de
+      texto (--ink). Así el texto nunca hereda el blanco de una
+      diapositiva oscura, que era el origen del texto invisible.
+
+   3. FORMAS. Radios generosos, sombras suaves en dos capas y una
+      pastilla de acento en lugar de la barra maciza superior.
+   ==================================================================== */
+
+:root{
+  /* marca (sin cambios, para no romper la continuidad con la sesión 1) */
+  --y:#ffd600; --o:#ff8a24; --b:#124e78; --g:#146c43; --r:#a52a2a;
+
+  /* superficies */
+  --paper:#ffffff;
+  --s:#f5f3ee;        /* beige */
+  --bl:#e9f4ff;       /* azul claro */
+  --gl:#e9f8ef;       /* verde claro */
+  --rl:#fff1f0;       /* rojo claro */
+  --yl:#fff6c9;       /* amarillo claro */
+  --ol:#fff3e7;       /* naranja claro */
+
+  /* tinta: SIEMPRE explícita sobre superficies claras */
+  --ink:#1a1a1a;
+  --ink-soft:#5a5a5a;
+
+  /* oscuro con cuerpo, emparentado con el azul de marca */
+  --dark:#0e1a24;
+  --dark-2:#16293a;
+
+  /* sombras suaves en dos capas */
+  --sh:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --sh-lg:0 2px 6px rgba(16,24,32,.06), 0 18px 44px rgba(16,24,32,.10);
+
+  font-family:"Segoe UI",Arial,system-ui,sans-serif;
+  color:var(--ink);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+button,a{font:inherit}
+
+/* --- escenario: el contenedor de consulta ------------------------- */
+.stage{
+  position:relative;
+  width:min(100vw,177.777vh);
+  height:min(100vh,56.25vw);
+  margin:auto; top:50%;
+  background:var(--paper);
+  border-radius:10px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  overflow:hidden;
+  container-type:size;
+  container-name:stage;
+  transform:translateY(-50%);
+  will-change:transform;   /* capa de composición propia: evita rastros de repintado */
+}
+
+/* --- diapositiva: aquí nace la escala tipográfica ------------------ */
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:5.2% 6.2% 7%;
+  overflow:hidden;
+  background:var(--paper);
+  color:var(--ink);
+  /* TODO lo demás se expresa en em respecto a este tamaño */
+  font-size:1.3cqw;
+  --r-sm:.62cqw; --r-md:1.05cqw; --r-lg:1.6cqw; --pill:999px;
+  --gap:1.6cqw;
+}
+.slide.active{display:block}
+/* diapositivas con mucho contenido: se baja la escala tipografica */
+.slide.dense{font-size:1.14cqw}
+.slide.xdense{font-size:1.0cqw}
+.slide.xxdense{font-size:.92cqw}
+.slide.tiny{font-size:.83cqw}
+.slide.dark{background-color:var(--dark);background-image:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.slide.yellow{background-color:var(--y);background-image:linear-gradient(160deg,#ffe14d 0%,var(--y) 100%);color:var(--ink)}
+
+/* halo decorativo suave (reemplaza el punteado anterior) */
+.slide:after{
+  content:""; position:absolute; right:0; bottom:0;
+  width:34%; height:44%;
+  background:radial-gradient(120% 120% at 100% 100%,rgba(255,214,0,.22),transparent 70%);
+  pointer-events:none;
+}
+.slide.dark:after{background:radial-gradient(closest-side,rgba(255,214,0,.14),transparent 72%)}
+.slide.yellow:after{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent 72%)}
+
+/* --- tipografía (toda en em → escala con el contenedor) ------------ */
+h1,h2,h3,p{margin-top:0}
+h1{font-size:3.55em;line-height:1;letter-spacing:-.035em;max-width:13ch;margin-bottom:.35em}
+h2{font-size:2.35em;line-height:1.06;letter-spacing:-.028em;margin-bottom:.7em}
+h3{font-size:1.2em;line-height:1.2}
+p,li{font-size:1em;line-height:1.45}
+.lead{font-size:1.55em;line-height:1.3;max-width:44ch}
+.small{font-size:.72em;color:var(--ink-soft)}
+.dark .small{color:#c9d6e0}
+.ey{font-size:.8em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a7300;margin-bottom:.5em}
+.dark .ey{color:var(--y)}
+.yellow .ey{color:#4a3d00}
+.accent{background:linear-gradient(transparent 62%,rgba(255,214,0,.85) 62%);padding:0 .1em}
+.quote{font-size:2.1em;font-weight:800;line-height:1.15;max-width:30ch;letter-spacing:-.02em}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.94em}
+
+/* --- pie de diapositiva ------------------------------------------- */
+.brand{
+  position:absolute; left:6.2%; right:6.2%; bottom:2.4%;
+  display:flex; justify-content:space-between; align-items:center; gap:1em;
+  font-size:.66em; font-weight:700; color:var(--ink-soft); z-index:3;
+}
+.dark .brand{color:#b9c7d3}
+.yellow .brand{color:#6b5a00}
+
+/* ==================================================================
+   SUPERFICIES CLARAS
+   Todas declaran color propio: nunca heredan el blanco de .dark.
+   ================================================================== */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.hintbox,
+.q,.warn,.ctx,.question-purpose,.chal article,.pivot,.excel-anchor,
+.res,.optbl,.opt,.fb,.glossary{ color:var(--ink); }
+
+/* pastilla de acento: sustituye la barra maciza superior */
+.card,.flowline article,.shapes article,.steps article,.vs-grid section,
+.agenda-grid article,.tablegroups section,.proscons section,.chal article{
+  position:relative;
+  background:var(--s);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh);
+  padding:1.35em 1.35em 1.25em 1.15em;
+  border-left:.4em solid var(--y);
+}
+/* alternancia de color por posición */
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ background:var(--bl); }
+.card.blue,.flowline article:nth-of-type(2n),.shapes article:nth-child(3),
+.steps article:nth-child(2n),.vs-grid section:nth-child(2),
+.agenda-grid article:nth-child(2n),.tablegroups section:nth-child(3),
+.chal article:nth-child(2){ border-left-color:var(--b); }
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){background:var(--yl)}
+.shapes article:nth-child(2),.tablegroups section:nth-child(2){border-left-color:var(--o)}
+.proscons .pro{background:var(--gl);border-left-color:var(--g)}
+.proscons .con{background:var(--rl);border-left-color:var(--r)}
+
+/* --- rejillas ------------------------------------------------------ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.agenda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:1.4em}
+.shapes,.vs-grid,.proscons,.tablegroups,.chal,.pivot{display:grid;gap:var(--gap);margin-top:1.4em}
+.shapes,.tablegroups,.pivot{grid-template-columns:repeat(3,1fr)}
+.vs-grid,.proscons,.chal{grid-template-columns:1fr 1fr}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:1.4em}
+
+.card h3,.agenda-grid h3,.steps h3,.shapes h3,.vs-grid h3,.tablegroups h3,.chal h3{margin:.15em 0 .4em}
+.card p,.steps p,.shapes p,.chal p,.agenda-grid p{margin:0}
+.vs-grid ul,.proscons ul{margin:.5em 0 0;padding-left:1.15em}
+.vs-grid li,.proscons li{font-size:.86em;margin:.35em 0}
+.vs-grid .tagline{margin:0;font-weight:800;color:var(--b);font-size:.92em}
+
+/* numeritos y viñetas circulares */
+.agenda-grid b,.steps b,.pivot .step{
+  display:inline-grid;place-items:center;min-width:2em;height:2em;padding:0 .55em;
+  border-radius:999px;background:var(--ink);color:var(--y);
+  font-size:.9em;font-weight:800;white-space:nowrap;
+}
+
+/* --- cadena de flujo (arquitectura, puente Omnibug…) --------------- */
+.flowline{display:flex;align-items:stretch;gap:.7em;margin-top:1.5em}
+.flowline article{flex:1;min-width:0;text-align:center;padding:1.15em .8em 1.15em;border-left:0;border-top:.4em solid var(--y)}
+.flowline article:nth-of-type(2n){border-top-color:var(--b)}
+.flowline b{display:block;font-size:1.05em;font-weight:800;color:var(--b);margin-top:.15em}
+.flowline .em{
+  width:2.15em;height:2.15em;margin:0 auto .35em;
+  display:grid;place-items:center;border-radius:50%;
+  background:rgba(18,78,120,.10);
+  font:400 1.9em/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+}
+.slide.dark .flowline .em{background:rgba(255,255,255,.12)}
+.flowline p{margin:.35em 0 0;font-size:.76em;color:var(--ink-soft)}
+.flowline>i{
+  align-self:center;flex:0 0 auto;display:grid;place-items:center;
+  width:2em;height:2em;border-radius:50%;
+  background:var(--o);color:#fff;font-style:normal;font-weight:800;font-size:.95em;
+  box-shadow:var(--sh);
+}
+
+/* --- avisos y contexto --------------------------------------------- */
+.warn{background:var(--ol);border-left:.35em solid var(--o);border-radius:var(--r-sm);padding:1em 1.1em;font-size:.86em}
+.ctx{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.85em 1em;margin-bottom:.9em;font-size:.84em}
+.question-purpose{background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.8em 1em;margin:0 0 1.2em;max-width:80ch;font-size:.86em}
+.hintbox{background:var(--bl);border-left:.35em solid var(--b);border-radius:var(--r-sm);padding:1em 1.1em;margin-top:1.2em;font-size:.86em}
+.hintbox strong{color:var(--b)}
+.hintbox ul{margin:.5em 0 0;padding-left:1.15em}
+.glossary{background:var(--paper);border-left:.3em solid var(--o);border-radius:var(--r-sm);padding:.8em 1em;font-size:.8em}
+.checks{list-style:none;padding:0;margin:.4em 0 0}
+.checks li{margin:.45em 0;padding-left:1.6em;position:relative;font-size:.92em}
+.checks li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:900}
+
+/* --- código --------------------------------------------------------- */
+pre{
+  margin:0;background:#0d1b26;color:#eef6fb;
+  border-left:.4em solid var(--y);
+  border-radius:var(--r-md);
+  padding:1.1em 1.2em;
+  font:.82em/1.5 Consolas,"Cascadia Mono",monospace;
+  white-space:pre-wrap;overflow:auto;
+  box-shadow:var(--sh);
+}
+.dark pre{box-shadow:none;background:#081219}
+
+/* --- tablas --------------------------------------------------------- */
+.res,.optbl,.tbl{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:var(--r-sm);overflow:hidden;
+  font-size:.8em;box-shadow:var(--sh);background:var(--paper);
+}
+.res caption{caption-side:top;text-align:left;font-weight:800;color:var(--b);padding-bottom:.5em;font-size:1em}
+.res th,.optbl th,.tbl th{background:var(--b);color:#fff;text-align:left;padding:.6em .7em;font-weight:700}
+.optbl th,.tbl th{background:var(--ink)}
+.res td,.optbl td,.tbl td{padding:.55em .7em;border-top:1px solid #dfe7ee;color:var(--ink)}
+.res tr:nth-child(2n) td{background:#f4fafe}
+.res td.hl,.res tr:nth-child(2n) td.hl{background:var(--yl);font-weight:800}
+.optbl td:first-child{font-family:Consolas,monospace;font-weight:800;background:var(--yl);width:9em}
+
+/* --- puente Excel → SQL --------------------------------------------- */
+.excel-anchor{
+  display:flex;align-items:center;gap:1em;margin-top:1.5em;
+  padding:.9em 1.2em;border-radius:var(--pill);
+  background:var(--ink);color:#fff;font-size:.82em;font-weight:700;
+  box-shadow:var(--sh);
+}
+.excel-anchor span{color:var(--y);letter-spacing:.1em;text-transform:uppercase;font-size:.82em;flex:0 0 auto}
+.excel-anchor i{font-style:normal;color:var(--o);font-size:1.2em}
+.excel-anchor code{background:rgba(255,255,255,.12);color:var(--y);padding:.2em .5em;border-radius:var(--r-sm)}
+
+/* --- quiz ------------------------------------------------------------ */
+.q{background:var(--bl);border:2px solid rgba(18,78,120,.25);border-radius:var(--r-lg);padding:1.3em;box-shadow:var(--sh)}
+.qt{font-weight:800;color:var(--b);font-size:1.02em;margin-bottom:.7em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.opt{
+  border:2px solid #cddced;background:var(--paper);border-radius:var(--r-md);
+  padding:.8em .9em;text-align:left;font-size:.8em;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.opt:hover{border-color:var(--b);transform:translateY(-1px)}
+.opt.sel{border-color:var(--b);box-shadow:0 0 0 3px rgba(18,78,120,.18)}
+.opt.ok{background:var(--gl);border-color:var(--g)}
+.opt.no{background:var(--rl);border-color:var(--r)}
+.verify{
+  margin-top:.9em;border:0;border-radius:var(--pill);
+  padding:.75em 1.4em;background:var(--b);color:#fff;
+  font-weight:800;font-size:.82em;cursor:pointer;box-shadow:var(--sh);
+}
+.verify:hover{background:#0e3f62}
+.fb{display:none;margin-top:.8em;padding:.8em 1em;border-radius:var(--r-md);font-size:.8em;font-weight:700}
+.fb.show{display:block}
+.fb.good{background:var(--gl);color:#0d5533}
+.fb.bad{background:var(--rl);color:#8d2020}
+
+.dlrow{display:flex;flex-wrap:wrap;gap:.6em;margin-top:1.2em}
+.dlrow a{display:inline-flex;flex-direction:column;gap:.1em;padding:.6em 1.1em;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:.88em;box-shadow:var(--sh)}
+.dlrow a:hover{background:#000;transform:translateY(-1px)}
+.dlrow a:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.dlrow small{font-weight:600;font-size:.78em;color:var(--y)}
+
+/* --- botones --------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--pill);padding:.85em 1.6em;
+  background:var(--ink);color:#fff;text-decoration:none;
+  font-size:.9em;font-weight:800;cursor:pointer;box-shadow:var(--sh);
+}
+.btn:hover{background:#000}
+.btn:focus-visible,.opt:focus-visible,.ctl:focus-visible,.verify:focus-visible{
+  outline:3px solid var(--o);outline-offset:3px;
+}
+
+/* --- diagramas y otros ------------------------------------------------ */
+.ui-map{display:block;width:100%;max-height:52cqh;margin:.6em 0 .8em}
+.ui-legend{display:grid;grid-template-columns:1fr 1fr;gap:.25em 1.4em;font-size:.78em}
+.ui-legend span{color:var(--ink)}
+.ui-legend i{font-style:normal;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--y);color:#3a2200;font-size:.85em;margin-right:.4em;vertical-align:middle}
+.schema-sm{max-height:18cqh}
+.diagram-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:.2em .1em .45em;scrollbar-gutter:stable}
+.diagram-scroll:focus-visible{outline:4px solid var(--o);outline-offset:2px;border-radius:var(--r-sm)}
+.interaction-note{display:inline-flex;align-items:center;margin-left:.5em;padding:.15em .7em;border-radius:var(--pill);background:var(--y);color:#3a2f00;font-size:.72em;font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.tnode{cursor:pointer}
+.tnode rect{transition:fill .15s,stroke-width .15s}
+.tnode:hover rect{stroke-width:4.5}
+.tnode:focus{outline:none}
+.tnode:focus rect{stroke:#ff8a24;stroke-width:5}
+.tnode.sel rect{stroke:#ff8a24;stroke-width:5}
+.tinfo{height:15cqh;overflow:auto;margin-top:.5em;padding:.7em 1em;background:var(--bl);border-left:.4em solid var(--b);border-radius:var(--r-md);color:var(--ink)}
+.tinfo h3{margin:0 0 .4em;font-family:Consolas,monospace;color:var(--b)}
+.tinfo h3 small{font-family:"Segoe UI",Arial,sans-serif;font-weight:600;color:var(--ink-soft);font-size:.62em;margin-left:.6em}
+.tinfo .res td:first-child{font-family:Consolas,monospace;font-weight:700;white-space:nowrap;width:14em}
+.tinfo-hint{margin:0;color:var(--ink-soft);font-size:.92em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15em 1.6em}
+.dgrid div{display:flex;gap:.6em;align-items:baseline;border-bottom:1px solid rgba(18,78,120,.12);padding:.16em 0}
+.dgrid b{font-family:Consolas,monospace;color:var(--b);flex:0 0 10.5em;font-size:.92em}
+.dgrid span{font-size:.88em;line-height:1.3}
+.tdata{display:none}
+.k{border-radius:var(--pill);padding:.05em .5em;font-size:.72em;font-weight:800;font-family:"Segoe UI",Arial,sans-serif}
+.k.pk{background:var(--ink);color:var(--y)}
+.k.fk{background:var(--b);color:#fff}
+.schema,.marbles{display:block;width:100%;max-height:46cqh;margin-top:1.2em}
+.sqlgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:var(--gap);margin-top:1.2em;align-items:start}
+.sqlgrid pre{max-height:34cqh}
+.pivot h3{font-size:.92em;margin:0 0 .5em;color:var(--b)}
+.pivot .step{margin-right:.5em;font-size:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips code{
+  background:var(--ink);color:#fff;padding:.4em .75em;
+  border-radius:var(--pill);font-family:Consolas,monospace;font-size:.78em;
+}
+.logo{display:flex;align-items:center;gap:.75em;max-width:14em;max-height:4.5em;object-fit:contain}
+.slide.dark .portada-logo{display:block;background:#fff;padding:.55em .8em;border-radius:var(--r-md);box-shadow:0 10px 28px rgba(0,0,0,.22);box-sizing:content-box}
+
+/* --- barras de cuota de mercado ------------------------------------- */
+.bars{margin:1.6em 0}
+.bar{display:grid;grid-template-columns:11.5em 1fr 3.8em;gap:1em;align-items:center;margin:.62em 0;font-size:.95em}
+.bar i{font-style:normal;font-weight:700}
+.bar .track{background:#e7edf2;border-radius:var(--pill);height:1.55em;overflow:hidden;box-shadow:inset 0 1px 2px rgba(16,24,32,.07)}
+.bar .fill{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--b),#3f8fc4)}
+.bar.hi .fill{background:linear-gradient(90deg,var(--o),var(--y))}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+kbd{background:#eef2f5;border:1px solid #cfd8df;border-bottom-width:2px;border-radius:5px;padding:.06em .4em;font-family:Consolas,monospace;font-size:.85em;color:var(--ink)}
+
+/* --- pausa ------------------------------------------------------------ */
+.break{height:100%;display:grid;place-content:center;text-align:center}
+.clock{font-size:8em;font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+
+/* --- revelados progresivos -------------------------------------------- */
+[data-r]{opacity:0;visibility:hidden;transform:translateY(10px);transition:.24s ease}
+[data-r].shown{opacity:1;visibility:visible;transform:none}
+
+/* ======================================================================
+   CONTROLES FIJOS — viven FUERA del escenario, miden contra el viewport
+   ====================================================================== */
+.progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.10);z-index:20}
+.bar{height:100%;background:linear-gradient(90deg,var(--y),var(--o));transition:.25s;border-radius:0 var(--pill) var(--pill) 0}
+.toolbar{position:fixed;right:1rem;top:1rem;z-index:80;display:flex;align-items:center;gap:.4rem}
+.ctl{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.94);color:#111;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.ctl:hover{background:#fff}
+.count{
+  background:rgba(10,16,22,.82);color:#fff;padding:.42em .7em;border-radius:var(--pill);
+  font-size:13px;font-weight:700;white-space:nowrap;margin-right:.3rem;
+}
+.overlay{position:fixed;inset:0;background:rgba(6,10,14,.72);z-index:100;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.open{display:grid}
+.panel{
+  width:min(92vw,880px);max-height:88vh;overflow:auto;
+  background:#fff;color:#111;padding:2rem;border-radius:18px;
+  border-top:10px solid var(--y);box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.panel h2{font-size:28px;margin-bottom:1rem}
+.close{float:right;border:0;background:#111;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
+.timer{font:900 82px/1 Consolas,monospace;text-align:center;font-variant-numeric:tabular-nums;margin:1rem}
+.presets,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:.8rem}
+.presets button,.actions button{border:2px solid #111;background:#fff;padding:.6em 1em;border-radius:999px;font-weight:800;cursor:pointer}
+.actions button:first-child{background:var(--y)}
+
+/* notas docentes: ocultas en la diapositiva, se ven en el overlay */
+.notes{display:none}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.ng div{padding:.85rem;background:#f5f3ee;border-radius:12px;font-size:15px;line-height:1.45;color:#1a1a1a}
+.ng div:first-child{background:#fff6c9}
+.ng strong{display:block;color:#8a7300;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ======================================================================
+   VENTANA ANGOSTA / MÓVIL — se abandona el 16:9 y las diapositivas fluyen
+   ====================================================================== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .stage{width:100vw;height:100dvh;top:0;transform:none;border-radius:0;container-type:normal}
+  .slide{font-size:16px;padding:4.5rem 1.4rem 5rem;overflow-y:auto;--r-sm:8px;--r-md:14px;--r-lg:18px;--gap:1rem}
+  h1{font-size:2.1em}h2{font-size:1.6em}
+  .g2,.g3,.sqlgrid,.vs-grid,.proscons,.chal,.pivot,.agenda-grid,.shapes,.tablegroups,.steps,.opts{grid-template-columns:1fr}
+  .flowline{flex-wrap:wrap}
+  .flowline article{flex:0 0 100%}
+  .flowline>i{transform:rotate(90deg);margin:0 auto}
+  .schema,.marbles,.sqlgrid pre{max-height:none}
+  .brand{position:static;margin-top:1.6rem;flex-direction:column;align-items:flex-start;gap:.3rem}
+  .excel-anchor{flex-direction:column;align-items:flex-start;border-radius:14px}
+  .toolbar{top:.6rem;right:.6rem;gap:.3rem}
+  .ctl{width:38px;height:38px}
+  .count{font-size:11px}
+  .clock{font-size:4em}
+  .timer{font-size:52px}
+  .ng{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{transition:none!important;animation:none!important}
+}
+
+/* ===== temporizador flotante: se arrastra y no tapa el ejercicio ===== */
+.minitimer{
+  position:fixed; left:1.1rem; bottom:1.1rem; z-index:90;
+  display:none; align-items:center; gap:.55rem;
+  padding:.5rem .6rem .5rem .9rem;
+  background:rgba(17,17,17,.94); color:#fff;
+  border-radius:999px; box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-family:"Segoe UI",Arial,sans-serif;
+  cursor:grab; touch-action:none; user-select:none;
+  transition:background .2s;
+}
+.minitimer.on{display:flex}
+.minitimer.arrastrando{cursor:grabbing; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.minitimer .mt{
+  font:900 2.1rem/1 Consolas,monospace; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; min-width:3.5em; text-align:center;
+}
+.minitimer button{
+  border:0; width:2.4rem; height:2.4rem; border-radius:50%;
+  background:rgba(255,255,255,.14); color:#fff;
+  font-size:.9rem; font-weight:800; cursor:pointer; display:grid; place-items:center;
+}
+.minitimer button:hover{background:rgba(255,255,255,.28)}
+.minitimer .lbl{
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--y); font-weight:800; margin-right:.1rem;
+}
+/* últimos 60 segundos */
+.minitimer.avisa{background:rgba(193,18,63,.95)}
+.minitimer.avisa .lbl{color:#fff}
+/* se acabó */
+.minitimer.fin{background:rgba(193,18,63,.97); animation:latido 1s ease-in-out infinite}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media print{ .minitimer{display:none!important} }
+
+/* ===== arte de portada: ocupa la mitad que quedaba vacía ===== */
+.arte{
+  position:absolute; right:5.4%; top:50%; transform:translateY(-50%);
+  width:38%; max-height:70cqh; z-index:1; pointer-events:none;
+}
+@media (max-aspect-ratio:1/1){ .arte{display:none} }
+
+/* ===== los cuatro JOIN, de un vistazo ===== */
+.venns{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.2em 0 1.3em}
+.venns figure{margin:0;text-align:center}
+.venns svg{width:100%;max-height:11cqh;display:block;margin:0 auto}
+.venns figcaption{margin-top:.35em;line-height:1.25}
+.venns figcaption code{display:block;font-weight:800;font-size:.86em;color:var(--b)}
+.venns figcaption span{display:block;font-size:.72em;color:var(--ink-soft)}
+
+/* ===== reparto vertical: sin tercio inferior muerto ===== */
+.slide.mid.active{display:flex;flex-direction:column;justify-content:safe center}
+.slide.mid.active>.brand{position:absolute}
+
+/* ===== esquema entrada -> resultado ===== */
+.joinviz{display:block;width:100%;max-height:34cqh;margin:.9em 0 0}
+
+/* ===== el mapa con la cardinalidad ===== */
+.mapacard{display:block;width:100%;max-height:57cqh;margin:.6em auto 0}
+
+/* ===== cardinalidad pulsable: ejemplo con tabla 1, tabla 2 y resultado ===== */
+.cnode{cursor:pointer}
+.cnode rect{transition:filter .15s}
+.cnode .hit-target{fill:transparent;stroke:none;pointer-events:all}
+.cnode:hover rect:first-of-type,.cnode:focus-visible rect:first-of-type{filter:brightness(.94)}
+.cnode.sel rect:first-of-type{stroke:#ff8a24;stroke-width:3.4}
+.cdata{display:none}
+
+.cpanel{
+  position:absolute; left:6.2%; right:6.2%; bottom:7.2%;
+  background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink); border-radius:var(--r-lg);
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
+  padding:1.1em 1.3em 1em; z-index:5;
+  max-height:66cqh; overflow:auto;
+  /* visibility + opacity en vez de display: evita el artefacto de
+     repintado dentro de .stage, que tiene transform y overflow:hidden */
+  visibility:hidden; opacity:0; pointer-events:none;
+  transform:translateY(6px);
+  will-change:opacity,transform;
+  transition:opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+}
+.cpanel.open{visibility:visible; opacity:1; pointer-events:auto;
+  transform:translateY(0); transition-delay:0s}
+.cclose{
+  position:absolute; top:.5em; right:.6em; z-index:2;
+  border:0; background:var(--ink); color:#fff;
+  width:44px; height:44px; border-radius:50%;
+  font-size:1em; font-weight:800; cursor:pointer; line-height:1;
+}
+.cclose:hover{background:#000}
+.cclose:focus-visible{outline:4px solid var(--o);outline-offset:3px}
+.cbody h3{margin:0 0 .7em;font-size:1.1em;display:flex;align-items:center;gap:.6em}
+.cbadge{
+  font-family:Consolas,monospace; font-size:.82em; font-weight:800;
+  color:#fff; background:var(--b); padding:.18em .7em; border-radius:var(--pill);
+}
+.cbadge.tipo-1n{background:var(--o);color:#171717}
+.cbadge.tipo-11{background:var(--b);color:#fff}
+.cbadge.tipo-nn{background:var(--r);color:#fff}
+
+
+
+
+
+.ctabs{display:flex;align-items:flex-start;justify-content:center;gap:.7em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2em}
+.cop{align-self:center;font-size:1.5em;font-weight:800;color:var(--ink-soft);flex:0 0 auto;padding:0 .1em}
+.ct{margin:0;flex:0 1 auto;min-width:0}
+.cth{
+  font-family:Consolas,monospace; font-weight:700; font-size:.86em; color:#fff;
+  background:var(--b); padding:.3em .7em; border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.ct.o .cth{background:var(--o)} .ct.res-final .cth{background:var(--ink)}
+.ct.y .cth{background:var(--y);color:var(--ink)}
+.ct table{border-collapse:collapse;width:100%;background:#fff;font-size:.84em;
+  border:1px solid #dfe7ee;border-top:0;border-radius:0 0 var(--r-sm) var(--r-sm)}
+.ct th{background:#f4f7fa;color:var(--ink-soft);font-family:Consolas,monospace;
+  font-weight:700;text-align:left;padding:.3em .6em;font-size:.92em;white-space:nowrap}
+.ct td{padding:.28em .6em;border-top:1px solid #eef3f7;color:var(--ink);
+  font-family:Consolas,monospace;white-space:nowrap}
+.ct tr.mas td{text-align:center;color:var(--ink-soft);letter-spacing:.2em}
+.ct figcaption{font-size:.72em;color:var(--ink-soft);margin-top:.3em;text-align:center}
+.cnota{margin:1em 0 0;font-size:.86em;line-height:1.45;
+  background:var(--yl);border-left:.35em solid var(--y);
+  border-radius:var(--r-sm);padding:.7em .9em;color:var(--ink)}
+
+/* los valores que se repiten en el puente, para ver el N:N */
+.ct .rep,.cnota .rep{background:var(--b);color:#fff;padding:.05em .45em;border-radius:var(--pill)}
+.ct .rep2,.cnota .rep2{background:var(--o);color:#171717;padding:.05em .45em;border-radius:var(--pill)}
+
+/* ===== lectura y tacto en ventanas angostas ===== */
+@media (max-aspect-ratio:1/1), (max-width:700px){
+  .slide.dense,.slide.xdense,.slide.xxdense,.slide.tiny{font-size:16px}
+  .slide.mid.active{display:block;justify-content:initial}
+  .slide.mid.active>.brand{position:static}
+  .diagram-scroll{margin:.35rem -1.4rem .65rem;padding:.35rem 1.4rem .8rem;scroll-snap-type:x proximity}
+  .diagram-scroll .schema-sm{width:1320px;min-width:1320px;max-height:none;scroll-snap-align:start}
+  .diagram-scroll .mapacard{width:1440px;min-width:1440px;max-height:none;scroll-snap-align:start}
+  .tinfo{height:auto;min-height:4rem;max-height:none;overflow:visible}
+  .dgrid{grid-template-columns:1fr}
+  .cpanel{position:fixed;inset:4.1rem .75rem .75rem;max-height:none;padding:4rem 1rem 1rem;z-index:100;overscroll-behavior:contain;box-shadow:0 12px 36px rgba(0,0,0,.28)}
+  .cbody h3{align-items:flex-start;padding-right:2.6rem;line-height:1.25}
+  .ctabs{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.55rem}
+  .ct{width:100%;overflow-x:auto}
+  .cop{justify-self:center;padding:0;line-height:1}
+  .venns{grid-template-columns:1fr 1fr}
+  .dlrow a{width:100%;min-height:3.5rem;justify-content:center}
+  .minitimer{left:.75rem;bottom:.75rem;max-width:calc(100vw - 1.5rem);gap:.3rem;padding:.42rem .5rem}
+  .minitimer .lbl{display:none}
+}
+
+@media (max-height:700px){
+  .slide.mid.active{justify-content:flex-start}
+  .slide.mid.active>.brand{position:static;margin-top:1.6rem}
+}
+
+/* ===== columnas de números: a la derecha, como en una hoja de cálculo ===== */
+.res td.num,.res th.num,.optbl td.num,.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* la tabla del panel no debe heredar la píldora .k de PK/FK */
+.ct,.ct table,.ct td,.ct th{border-radius:0;letter-spacing:normal}
+.ct table{border-radius:0 0 var(--r-sm) var(--r-sm)}
+
+/* ===== el escudo de Uniandes ===== */
+.escudo{width:2.6em;height:auto;flex:0 0 auto;color:currentColor}
+.logo span{line-height:1.2}
+
+/* ===== botón de copiar en cada bloque de código ===== */
+pre{position:relative}
+.copybtn{
+  position:absolute; top:.5em; right:.5em; z-index:3;
+  font:800 .68em/1 "Segoe UI",Arial,sans-serif; letter-spacing:.07em; text-transform:uppercase;
+  color:#cfe3f0; background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.24);
+  border-radius:var(--pill); padding:.42em .85em; cursor:pointer; opacity:.55;
+  transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+pre:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.2); color:#fff}
+.copybtn:focus-visible{outline:2px solid var(--y); outline-offset:2px; opacity:1}
+.copybtn.ok{opacity:1; color:#0d1b26; background:var(--y); border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.copybtn{transition:none}}
+.slide svg.joinviz{cursor:zoom-in}
+#lupa{position:fixed;inset:0;z-index:900;display:none;background:rgba(9,13,17,.985);
+  padding:2.4vh 2.4vw 1vh;cursor:zoom-out}
+#lupa.on{display:flex;flex-direction:column}
+#lupa .caja{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+#lupa .caja svg{width:100%;height:100%;max-width:100%;max-height:100%}
+#lupa .pie{flex:none;padding-top:1.1vh;text-align:center;color:#cfe3f0;
+  font:800 .78rem/1 "Segoe UI",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.frgrid{display:grid;grid-template-columns:1fr 1fr;gap:.3em .9em;margin-top:.5em}
+.fr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.5em;
+  border:1.5px solid var(--line,#dfe6ec);border-radius:.6em;padding:.28em .5em;background:#fff}
+.fr:nth-child(even){background:#fafbfc}
+.fr.si{border-color:var(--g);background:#e8f5e9}
+.fr.no{border-color:var(--r);background:#fdecee}
+.fr .fn{font-weight:800;color:var(--b);min-width:1.4em;text-align:right}
+.fr .ft{font-size:.94em;line-height:1.25}
+.fr .fb{display:flex;gap:.25em}
+.fr .fb button{font:800 .78em/1 inherit;padding:.32em .7em;border-radius:999px;
+  border:1.5px solid var(--line,#dfe6ec);background:#fff;color:var(--ink);cursor:pointer}
+.fr .fb button:hover{border-color:var(--b)}
+.fr .fb button.el{background:var(--b);border-color:var(--b);color:#fff}
+.fr[data-hecho] .fb button{cursor:default;opacity:.75}
+.marc{font-weight:800;color:var(--b);white-space:nowrap}
+.porq{margin:.55em 0 0;padding:.5em .8em;border-radius:.6em;background:#fff8e1;
+  border-left:5px solid var(--y);font-size:.92em;min-height:2.2em}
+.porq.si{background:#e8f5e9;border-left-color:var(--g)}
+.porq.no{background:#fdecee;border-left-color:var(--r)}
+/* --- minutos a mano: los botones fijos nunca cuadran con el taller --- */
+.panel .libre{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:.5rem;margin-top:.8rem}
+.panel .libre label{font-size:.9rem;font-weight:700}
+.panel .libre input{width:4.6rem;font:900 1.15rem/1 Consolas,monospace;text-align:center;
+  padding:.5rem .4rem;border-radius:999px;border:2px solid #111;background:#fff;color:#111}
+.panel .libre input:focus{outline:3px solid var(--y);outline-offset:1px}
+.panel .libre span{font-size:.9rem;font-weight:700;margin-left:-.15rem}
+.panel .libre button{border:2px solid #111;background:var(--y);color:#111;
+  padding:.6em 1.1em;border-radius:999px;font-weight:800;cursor:pointer}
+.panel .libre button:hover{background:#111;color:var(--y)}
+
+.cgrid{margin-top:.45em}
+.cq{border:1.5px solid var(--line,#dfe6ec);border-radius:.6em;padding:.34em .6em;margin:.28em 0;
+  background:#fff}
+.cq:nth-child(even){background:#fafbfc}
+.cq.si{border-color:var(--g);background:#e8f5e9}
+.cq.no{border-color:var(--r);background:#fdecee}
+.cq .cn{font-weight:800;color:var(--b);margin-right:.4em}
+.cq .ce{font-size:.95em}
+.cq .co{display:flex;flex-wrap:wrap;gap:.3em;margin-top:.25em}
+.cq .co button{font:700 .8em/1.15 inherit;padding:.3em .7em;border-radius:999px;text-align:left;
+  border:1.5px solid var(--line,#dfe6ec);background:#fff;color:var(--ink);cursor:pointer}
+.cq .co button:hover{border-color:var(--b)}
+.cq .co button.el{background:var(--b);border-color:var(--b);color:#fff}
+.cq[data-hecho] .co button{cursor:default}
+.cq[data-hecho] .co button.ok{background:#e8f5e9;border-color:var(--g);color:#1b5e20}
+
+/* La forma normal, visible dentro del propio titulo: el rotulo pequeno
+   no se notaba. */
+.fnpill{display:inline-block;background:var(--b);color:#fff;border-radius:.42em;padding:.06em .5em;font-weight:900;letter-spacing:.01em;margin-right:.15em}
+
+/* Capturas reales de Supabase, ya anotadas, en assets/Supabase. */
+.toma{width:100%;height:auto;display:block;border-radius:var(--r-md);box-shadow:var(--sh);border:1px solid #dfe6ec}
+</style></head>
+<body><main class="stage">
+
+<section class="slide dark dense" data-title="Portada"><img class="logo portada-logo" src="../../Imagenes/Presentaci%C3%B3n-removebg-preview.png" alt="Universidad de los Andes &middot; Colsubsidio"><div class="ey">Sesi&oacute;n 9 &middot; M&oacute;dulo 3</div><h1>Supabase, y el modelo se vuelve <span class="accent">real</span></h1><div class="g2" style="align-items:center;gap:1.2em"><div><p class="lead">El mi&eacute;rcoles el modelo estaba en una herramienta. Hoy se ejecuta en un <strong>PostgreSQL de verdad</strong>: se rompe a prop&oacute;sito, se repara con las tres formas normales, y se escribe con <code>CREATE TABLE</code>.</p><div class="chips"><code>Supabase</code><code>PostgreSQL</code><code>1FN &middot; 2FN &middot; 3FN</code><code>CREATE TABLE</code><code>PRIMARY KEY</code><code>FOREIGN KEY</code><code>CHECK</code></div><div class="dlrow"><a href="../../Scripts/S9.sql" target="_blank" rel="noopener">&#128196; El gui&oacute;n de hoy<small>Scripts/S9.sql &middot; se pega por bloques</small></a><a href="constructor-abc.html?sesion=9">&#129521; El constructor<small>hoy se abre tu SQL</small></a><a href="sesion-8-modelado-y-normalizacion.html">&#128202; La sesi&oacute;n de ayer<small>el modelo del que partimos</small></a></div><p class="small" style="margin-top:.55em;opacity:.85">No se instala nada: todo pasa en el navegador.</p></div><div><svg style="width:100%;max-width:296px;height:auto;display:block;margin:0 auto" viewBox="0 0 420 300" role="img" aria-label="Las tres capas: Supabase es la plataforma, PostgreSQL es el motor, y dentro estan tus tablas" font-family="Segoe UI,Arial,sans-serif"><defs><marker id="p9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ffd600" fill-opacity=".85"/></marker></defs><text x="210" y="22" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fff" fill-opacity=".72">T&Uacute; ESCRIBES SQL</text><path d="M210 32 v22" fill="none" stroke="#ffd600" stroke-width="2.4" stroke-opacity=".85" marker-end="url(#p9)"/><rect x="18" y="62" width="384" height="212" rx="14" fill="#ffd600" fill-opacity=".06" stroke="#ffd600" stroke-width="2.2" stroke-dasharray="8 5"/><text x="34" y="84" font-size="12.5" font-weight="800" fill="#ffd600">SUPABASE</text><text x="34" y="100" font-size="11" fill="#fff" fill-opacity=".62">la plataforma: panel, editores, API</text><rect x="40" y="112" width="340" height="146" rx="12" fill="#ffd600" fill-opacity=".12" stroke="#ffd600" stroke-width="2.4"/><text x="56" y="134" font-size="12.5" font-weight="800" fill="#ffd600">POSTGRESQL</text><text x="56" y="150" font-size="11" fill="#fff" fill-opacity=".62">el motor: ejecuta y hace cumplir las reglas</text><g font-family="Consolas,monospace" font-size="11.5" font-weight="700"><rect x="60" y="162" width="94" height="76" rx="8" fill="#0e1a24" stroke="#ffd600" stroke-width="1.8"/><text x="107" y="182" text-anchor="middle" fill="#ffd600">plato</text><line x1="70" y1="190" x2="144" y2="190" stroke="#ffd600" stroke-opacity=".38"/><text x="107" y="206" text-anchor="middle" fill="#fff" fill-opacity=".72">plato_id</text><text x="107" y="224" text-anchor="middle" fill="#fff" fill-opacity=".5">precio</text><rect x="166" y="162" width="94" height="76" rx="8" fill="#0e1a24" stroke="#ffd600" stroke-width="1.8"/><text x="213" y="182" text-anchor="middle" fill="#ffd600">pedido</text><line x1="176" y1="190" x2="250" y2="190" stroke="#ffd600" stroke-opacity=".38"/><text x="213" y="206" text-anchor="middle" fill="#fff" fill-opacity=".72">pedido_id</text><text x="213" y="224" text-anchor="middle" fill="#fff" fill-opacity=".5">mesa_id</text><rect x="272" y="162" width="88" height="76" rx="8" fill="#0e1a24" stroke="#ffd600" stroke-width="1.8"/><text x="316" y="182" text-anchor="middle" fill="#ffd600">mesa</text><line x1="282" y1="190" x2="350" y2="190" stroke="#ffd600" stroke-opacity=".38"/><text x="316" y="206" text-anchor="middle" fill="#fff" fill-opacity=".72">mesa_id</text><text x="316" y="224" text-anchor="middle" fill="#fff" fill-opacity=".5">puestos</text></g><text x="210" y="252" text-anchor="middle" font-size="11" fill="#fff" fill-opacity=".55">tus tablas y tus reglas</text><text x="210" y="292" text-anchor="middle" font-size="13" font-weight="800" fill="#ffd600">la plataforma cambia. El SQL, no.</text></svg></div></div><div class="brand"><span>Sesi&oacute;n 9 &middot; M&oacute;dulo 3</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div></section>
+<section class="slide mid" data-title="Ruta de hoy"><div class="ey">Ruta de hoy &middot; 0–4 min</div><h2>No empezamos por definiciones</h2><div class="timeline"><article><b>1</b><h3>Supabase</h3><p>Crear/abrir proyecto, SQL Editor, Table Editor.</p></article><article><b>2</b><h3>Claves</h3><p>Separar API keys de PK y FK.</p></article><article><b>3</b><h3>Normalización</h3><p>1FN, 2FN y 3FN con gráficas.</p></article><article><b>4</b><h3>DDL</h3><p>CREATE TABLE y restricciones.</p></article></div><div class="checkpoint mt"><strong>Regla:</strong> primero evidencia; después nombre técnico.</div><div class="stop mt"><strong>Lo que hoy NO hacemos:</strong> frontend, login de usuarios, SDKs, JavaScript ni producci&oacute;n. Supabase es, por tres horas, un laboratorio de PostgreSQL.</div><div class="brand"><span>Mapa de clase</span><span>ANDESDB · Sesión 9</span></div></section>
+<section class="slide dense" data-title="Paso 1 · entrar"><div class="pasopill">&#9654; Paso 1 &middot; entrar &middot; 7–10 min</div><h2>Entra al panel y ubica tu organizaci&oacute;n</h2><div class="g2 wide"><div><ol class="pasos-v"><li>Abre <a href="https://supabase.com/dashboard" target="_blank" rel="noopener"><strong>supabase.com/dashboard</strong></a></li><li>Inicia sesi&oacute;n con tu cuenta.</li><li>Comprueba arriba a la izquierda en qu&eacute; <strong>organizaci&oacute;n</strong> est&aacute;s.</li><li>Localiza el bot&oacute;n <strong>New project</strong>. <b>No lo pulses todav&iacute;a.</b></li></ol><div class="ok mt"><strong>&iquest;Por qu&eacute; empezamos aqu&iacute;?</strong> Porque todav&iacute;a <b>no est&aacute;s en ninguna base</b>: est&aacute;s en el panel que las administra. Una organizaci&oacute;n contiene proyectos, y cada proyecto contiene <b>una</b> base PostgreSQL. Confundir los dos niveles es el primer tropiezo de todo el mundo.</div></div><div><img class="toma" src="../../assets/Supabase/0110bbc5-e54a-4854-a0aa-c640411dbe71.png" alt="Panel de Supabase: la organización a la izquierda y el botón New project arriba a la derecha" loading="lazy"></div><div class="uiform" hidden><div class="uihead"><b>Projects</b><span>representaci&oacute;n</span></div><div class="uilab">Organizaci&oacute;n</div><div class="uibox">Equipo SQL</div><div class="uilab">Proyectos que ya existen</div><div class="uibox">andesdb-demo &middot; PostgreSQL &middot; Active</div><div class="uibox">curso-sql &middot; PostgreSQL &middot; Active</div><div class="uilab">Lo que buscas</div><div class="uiopts"><span class="uiopt sel">+ New project</span><span class="uiopt">Templates</span><span class="uiopt">Settings</span></div></div></div><div class="brand"><span>Paso 1 &middot; Panel</span><span>Organizaci&oacute;n &rarr; proyecto &rarr; base</span></div></section>
+<section class="slide dense" data-title="Paso 2 · crear"><div class="pasopill">&#9654; Paso 2 &middot; crear &middot; 10–14 min</div><h2>Crea el proyecto con un nombre que puedas reconocer</h2><div class="g2 wide"><div><ol class="pasos-v"><li><strong>Project name</strong>: <code>andesdb-s9-equipo01</code>, con el n&uacute;mero de su sala.</li><li><strong>Database password</strong>: una contrase&ntilde;a larga, y <b>gu&aacute;rdenla</b>.</li><li><strong>Region</strong>: la que indique el docente. Si hay varios recursos, todos en la misma.</li><li>Clic en <strong>Create new project</strong> y esperen.</li></ol><div class="stop mt"><strong>La <i>database password</i> no es una clave primaria ni una clave for&aacute;nea.</strong> Es la contrase&ntilde;a del servidor. Se guarda, no se comparte y no se pega en el chat.</div></div><div><img class="toma" src="../../assets/Supabase/981b4798-7a80-471e-bebf-a89924fb6462.png" alt="Crear un proyecto nuevo: nombre, contraseña de la base y región" loading="lazy"></div><div class="uiform" hidden><div class="uihead"><b>Create a new project</b><span>representaci&oacute;n</span></div><div class="uilab">Project name</div><div class="uibox">andesdb-s9-equipo01</div><div class="uilab">Database password</div><div class="uibox">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div><div class="uilab">Region</div><div class="uibox">South America &middot; la m&aacute;s cercana</div><div class="uilab">Y entonces</div><div class="uiopts"><span class="uiopt sel">Create new project</span><span class="uiopt">Cancel</span></div></div></div><div class="brand"><span>Paso 2 &middot; Crear</span><span>La contrase&ntilde;a del servidor no se comparte</span></div></section>
+<section class="slide dense" data-title="Paso 3 · mientras el proyecto se aprovisiona"><div class="ey">Paso 3 &middot; mientras el proyecto se aprovisiona &middot; 14–17 min</div><h2>Con&eacute;ctate ya a una base que existe</h2><p class="lead">Crear el proyecto tarda un par de minutos. No los perdamos: vamos a consultar <strong>una base de Supabase de verdad ahora mismo</strong>, sin instalar nada y sin cuenta.</p><div class="g2"><div><div class="browser">https://&hellip;.supabase.co/rest/v1/demo_menu?select=*&amp;apikey=&hellip;</div><p class="small" style="margin-top:.4em">Sale JSON: ocho platos con su categor&iacute;a y su precio. <strong>Es una tabla de PostgreSQL contestando por internet.</strong></p><div class="ok"><strong>La l&iacute;nea completa est&aacute; en el chat.</strong> C&oacute;pienla entera y p&eacute;guenla en la barra de direcciones &mdash; sirve igual en el tel&eacute;fono.</div></div><div><h3>Ahora c&aacute;mbienle el final</h3><table class="tbl"><thead><tr><th>A&ntilde;ade esto</th><th>Y escribiste</th></tr></thead><tbody><tr><td><code>&amp;select=plato,precio</code></td><td><code>SELECT plato, precio</code></td></tr><tr><td><code>&amp;categoria=eq.Sopa</code></td><td><code>WHERE categoria = 'Sopa'</code></td></tr><tr><td><code>&amp;order=precio.desc</code></td><td><code>ORDER BY precio DESC</code></td></tr><tr><td><code>&amp;limit=3</code></td><td><code>LIMIT 3</code></td></tr></tbody></table><p class="small">Es SQL de la <b>sesi&oacute;n 2</b>. Misma base, mismo idioma: solo cambia que entra por una URL.</p></div></div><div class="warn mt"><strong>Y es de solo lectura.</strong> Int&eacute;ntenlo: no se puede escribir ni borrar nada. No est&aacute; escondido &mdash; es una regla del motor, y la vamos a escribir nosotros despu&eacute;s de la pausa.</div><div class="brand"><span>Paso 3 &middot; Primera conexi&oacute;n</span><span>ANDESDB &middot; Sesi&oacute;n 9</span></div></section>
+<section class="slide dense" data-title="Paso 4 · el SQL Editor"><div class="pasopill">&#9654; Paso 4 &middot; el SQL Editor &middot; 17–22 min</div><h2>Aqu&iacute; ocurre la clase entera</h2><div class="g2 wide"><div><ol class="pasos-v"><li>Men&uacute; izquierdo &rarr; <strong>SQL Editor</strong>.</li><li>Clic en <strong>New query</strong>, o en el <strong>+</strong>.</li><li>N&oacute;mbrenla <code>s9-equipo01</code>, para reconocerla despu&eacute;s.</li><li>Peguen ah&iacute; <a href="../../Scripts/S9.sql" target="_blank" rel="noopener"><code>Scripts/S9.sql</code> &#8599;</a> entero.</li></ol><div class="ok mt"><strong>Pegar el archivo entero no ejecuta nada.</strong> Solo se ejecuta <b>lo que est&eacute; seleccionado</b> cuando pulsen Run. Por eso se pega todo de una vez y luego se va bloque por bloque.</div></div><div><img class="toma" src="../../assets/Supabase/2afb3b48-7307-4190-ab92-3f7a52f6b32d.png" alt="El SQL Editor de Supabase, con dónde pegar el guión y dónde pulsar Run" loading="lazy"></div><div class="uiform" hidden><div class="uihead"><b>SQL Editor</b><span>representaci&oacute;n</span></div><div class="uilab">Consulta</div><div class="uiopts"><span class="uiopt sel">s9-equipo01</span><span class="uiopt">+ New query</span></div><div class="uilab">Contenido</div><div class="uibox">-- Scripts/S9.sql, pegado entero<br>-- CHECKPOINT 0<br>CREATE SCHEMA IF NOT EXISTS abc_e01;<br>SET search_path TO abc_e01;</div><div class="uilab">Y para ejecutar</div><div class="uiopts"><span class="uiopt sel">&#9654; Run</span><span class="uiopt">solo lo seleccionado</span></div></div></div><div class="brand"><span>Paso 4 &middot; SQL Editor</span><span>Se ejecuta lo seleccionado</span></div></section>
+<section class="slide dense" data-title="Pasos 5 y 6 · cómo se llama y dónde vive"><div class="ey">Pasos 5 y 6 &middot; c&oacute;mo se llama y d&oacute;nde vive &middot; 22–29 min</div><h2>Los nombres, y el espacio de cada equipo</h2><div class="g2"><div><h3>C&oacute;mo nombramos</h3><table class="data"><tr><th>Qu&eacute;</th><th>Regla</th><th>Ejemplo</th></tr><tr><td>Tabla</td><td>min&uacute;sculas + guion bajo</td><td><code>linea_pedido</code></td></tr><tr><td>PK</td><td><code>tabla_id</code></td><td><code>pedido_id</code></td></tr><tr><td>FK</td><td>igual que la PK referenciada</td><td><code>plato_id</code></td></tr><tr><td>Schema del equipo</td><td><code>abc_eNN</code></td><td><code>abc_e01</code></td></tr></table><div class="stop mt"><strong>No uses</strong> espacios, tildes ni nombres como <code>IdPedidoFinalNuevo</code>.</div></div><div><h3>CHECKPOINT 0 &middot; su espacio</h3><pre><code>CREATE SCHEMA IF NOT EXISTS abc_e01;
+SET search_path TO abc_e01;</code></pre><div class="g2"><div class="card"><h3>Equipo 01</h3><p><code>abc_e01</code></p></div><div class="card blue"><h3>Equipo 07</h3><p><code>abc_e07</code></p></div></div><div class="checkpoint mt"><strong>&iquest;Por qu&eacute;?</strong> Para que las siete salas usen el mismo proyecto <b>sin pisarse las tablas</b>. Cada quien cambia el n&uacute;mero por el de su sala.</div></div></div><div class="brand"><span>Pasos 5 y 6</span><span>Cada sala, su propio espacio</span></div></section>
+<section class="slide dense" data-title="Pasos 7 y 8 · ejecutar"><div class="pasopill">&#9654; Pasos 7 y 8 &middot; ejecutar &middot; 29–36 min</div><h2>Se ejecuta por bloques, no de un tir&oacute;n</h2><div class="g2 wide"><div><ol class="pasos-v"><li>Busquen <strong>CHECKPOINT 0</strong> dentro del archivo.</li><li><strong>Seleccionen</strong> esas l&iacute;neas con el rat&oacute;n.</li><li>Clic en <strong>Run</strong>.</li><li>Ahora seleccionen <strong>LABORATORIO &middot; PREPARACI&Oacute;N</strong>.</li><li>Run otra vez.</li></ol><div class="stop mt"><strong>No seleccionen todav&iacute;a INCIDENTE 1.</strong> Ese lo abrimos juntos, y la gracia est&aacute; en predecir antes de ejecutarlo.</div></div><div class="uiform"><div class="uihead"><b>SQL Editor &middot; seleccionar y ejecutar</b><span>representaci&oacute;n</span></div><div class="uilab">Seleccionado ahora</div><div class="uibox">-- CHECKPOINT 0<br>CREATE SCHEMA IF NOT EXISTS abc_e01;<br>SET search_path TO abc_e01;</div><div class="uilab">Todav&iacute;a no</div><div class="uiopts"><span class="uiopt">-- INCIDENTE 1 &middot; 1FN</span></div><div class="uilab">Y lo que responde</div><div class="uibox">Success. No rows returned</div></div></div><div class="g2 mt"><div class="ok"><h3>Eso es correcto</h3><p><code>CREATE</code> cambia la <b>estructura</b>. No tiene por qu&eacute; devolver filas.</p></div><div class="stop"><h3>No significa</h3><p>Que &laquo;no hizo nada&raquo;. Se comprueba en <b>Table Editor</b>, que es el paso siguiente.</p></div></div><div class="brand"><span>Pasos 7 y 8</span><span>Seleccionar antes de Run</span></div></section>
+<section class="slide dense" data-title="Paso 9 · comprobar"><div class="pasopill">&#9654; Paso 9 &middot; comprobar &middot; 36–39 min</div><h2>Verifica las tablas en Table Editor</h2><div class="g2 wide"><div><ol class="pasos-v"><li>Men&uacute; izquierdo &rarr; <strong>Table Editor</strong>.</li><li>Arriba, busquen el <strong>selector de schema</strong>.</li><li>Elijan el suyo: <code>abc_e01</code>.</li><li>Deben ver <strong>tres tablas</strong> que acaban en <code>_mal</code>.</li></ol><div class="ok mt"><strong>Si est&aacute;n las tres, la preparaci&oacute;n funcion&oacute;</strong> y ya tienen las bases mal hechas que vamos a interrogar. Si falta alguna, vuelvan al bloque de PREPARACI&Oacute;N y ejec&uacute;tenlo otra vez: no rompe nada repetirlo.</div></div><div class="uiform"><div class="uihead"><b>Table Editor</b><span>representaci&oacute;n</span></div><div class="uilab">Schema</div><div class="uiopts"><span class="uiopt sel">abc_e01</span><span class="uiopt">public</span></div><div class="uilab">Tablas que deben aparecer</div><div class="uiopts"><span class="uiopt sel">lab_1fn_pedido_mal</span><span class="uiopt">lab_2fn_linea_mal</span><span class="uiopt">lab_3fn_pedido_mal</span></div><div class="uilab">Y dentro de la primera</div><table class="data small"><tr><th>pedido_id</th><th>platos</th></tr><tr><td>1</td><td>Ajiaco x2; Limonada x4</td></tr><tr><td>2</td><td>Bandeja x1</td></tr><tr><td>3</td><td>Ajiaco x1; Bandeja x2</td></tr></table></div></div><div class="brand"><span>Paso 9 &middot; Comprobar</span><span>Tres tablas, y empezamos</span></div></section>
+<section class="slide dense" data-title="Antes de normalizar"><div class="ey">Antes de normalizar &middot; 39–42 min</div><h2>Todos deben tener esto listo</h2><ul class="biglist"><li>Proyecto Supabase abierto.</li><li>SQL Editor abierto.</li><li>Consulta llamada <code>s9-normalizacion-ddl-equipo01</code>.</li><li><a href="../../Scripts/S9.sql" target="_blank" rel="noopener"><code>Scripts/S9.sql</code> ↗</a> abierto o pegado.</li><li>Table Editor ubicado.</li></ul><div class="ok mt">Ahora sí: vamos a romper diseños para entender normalización.</div><div class="brand"><span>Checklist Supabase</span><span>ANDESDB · Sesión 9</span></div></section>
+<section class="slide dense" data-title="Trabajo en Zoom"><div class="ey">Trabajo en Zoom &middot; 42–47 min</div><h2>Sí: trabajaremos en grupos pequeños</h2><p class="lead">La dinámica recomendada es <strong>salas de 5 personas</strong>: una persona opera Supabase y las otras cuatro observan, dictan, predicen errores y revisan resultados.</p><div class="schema4"><article><h3>1 operador</h3><p>Comparte pantalla y ejecuta SQL.</p></article><article><h3>1 lector</h3><p>Lee el paso exacto del tutorial.</p></article><article><h3>1 auditor</h3><p>Verifica si el resultado coincide.</p></article><article><h3>2 observadores</h3><p>Anotan dudas y errores.</p></article></div><div class="checkpoint mt"><strong>Regla:</strong> no todos deben pelear al mismo tiempo con la interfaz. Primero ven el camino; luego lo repiten con más seguridad.</div><div class="brand"><span>Zoom · Breakout rooms</span><span>1 hace · 4 entienden · todos validan</span></div></section>
+<section class="slide dense" data-title="La sala · quién hace qué, y cómo"><div class="ey">La sala &middot; qui&eacute;n hace qu&eacute;, y c&oacute;mo &middot; 47–55 min</div><h2>Cinco personas, cinco tareas, un ritual</h2><div class="g2"><div><h3>Cada persona tiene una tarea</h3><table class="data"><tr><th>Rol</th><th>Qu&eacute; hace</th></tr><tr><td><strong>Operador</strong></td><td>Comparte pantalla; no improvisa, sigue el tutorial.</td></tr><tr><td><strong>Lector</strong></td><td>Dice qu&eacute; bloque ejecutar y qu&eacute; resultado esperar.</td></tr><tr><td><strong>Auditor</strong></td><td>Compara SQL Editor y Table Editor con la diapositiva.</td></tr><tr><td><strong>Observador A</strong></td><td>Explica con sus palabras por qu&eacute; aparece la anomal&iacute;a.</td></tr><tr><td><strong>Observador B</strong></td><td>Escribe una duda o un error para la plenaria.</td></tr></table><p class="small">Nadie queda mirando sin tarea. Y los roles <b>rotan</b> en cada incidente.</p></div><div><h3>Y no es &laquo;copiar y pegar&raquo;</h3><div class="flow"><span>1 &middot; Leer</span><i>&rarr;</i><span>2 &middot; Predecir</span><i>&rarr;</i><span>3 &middot; Ejecutar</span><i>&rarr;</i><span>4 &middot; Mirar</span><i>&rarr;</i><span>5 &middot; Explicar</span></div><div class="card mt"><h3>Antes de Run</h3><p>&laquo;Creemos que ocurrir&aacute;&hellip;&raquo;</p></div><div class="card blue mt"><h3>Despu&eacute;s</h3><p>&laquo;El resultado fue&hellip;&raquo;</p></div><div class="card mt"><h3>Entonces</h3><p>&laquo;El dise&ntilde;o permite / evita&hellip;&raquo;</p></div><div class="checkpoint mt"><strong>La predicci&oacute;n va antes del Run.</strong> Si se ejecuta primero y se piensa despu&eacute;s, no se aprende nada.</div></div></div><div class="brand"><span>Disciplina de laboratorio</span><span>Predecir antes de ejecutar</span></div></section>
+<section class="slide dense" data-title="Plan B del docente"><div class="ey">Plan B del docente &middot; 55–59 min</div><h2>Si alguien no puede ver Supabase, tú muestras tu proyecto espejo</h2><div class="before-after one"><div><h3>Proyecto del docente</h3><table class="data"><tr><th>Elemento</th><th>Valor a preparar antes de clase</th></tr><tr><td>Nombre</td><td><code>andesdb-s9-demo-profesor</code></td></tr><tr><td>Query</td><td><code>s9-demo-profesor</code></td></tr><tr><td>Script</td><td><code>Scripts/S9.sql</code></td></tr><tr><td>Schema</td><td><code>abc_demo</code></td></tr><tr><td>Project URL</td><td><code>https://gnpouhsvsisqoxketlfr.supabase.co</code></td></tr><tr><td>Dashboard docente</td><td><a href="https://supabase.com/dashboard/project/gnpouhsvsisqoxketlfr" target="_blank" rel="noopener">Abrir proyecto ↗</a></td></tr></table></div><div class="callout bad"><h3>Uso</h3><p>Este proyecto es espejo: sirve para compartir pantalla, resolver bloqueos y mostrar cómo debería verse el resultado.</p></div></div><div class="checkpoint mt"><strong>Clave pedagógica:</strong> si una sala se bloquea por login, no se detiene la clase; miran tu pantalla y siguen el razonamiento. <strong>Para SQL Editor no se comparte ninguna API key.</strong></div><div class="brand"><span>Fallback</span><span>Proyecto espejo del docente</span></div></section>
+<section class="slide dense" data-title="Si quieren conectarse"><div class="ey">Si quieren conectarse &middot; 59–63 min</div><h2>Qu&eacute; se puede repartir y qu&eacute; no</h2><p class="lead">Hoy ya compartimos una conexi&oacute;n: la del <code>demo_menu</code> del minuto 14. Y sin embargo hay cosas que no se comparten nunca. La diferencia no es el secreto: <strong>es lo que cada llave permite hacer</strong>.</p><div class="g2"><div class="card blue"><h3>S&iacute; se reparte</h3><ul><li>La <b>Project URL</b>.</li><li>La clave <b>publishable</b> (<code>anon</code>). Est&aacute; dise&ntilde;ada para viajar en el navegador de cualquiera.</li><li>El resultado del SQL Editor, en pantalla compartida.</li></ul><p class="small">Con esas dos, lo &uacute;nico que se puede hacer con nuestra base es <b>leer <code>demo_menu</code></b>. Nada m&aacute;s, porque no hay ninguna otra regla que lo permita.</p></div><div class="card"><h3>No se reparte jam&aacute;s</h3><ul><li>El <b>database password</b>.</li><li>La clave <b>secret</b> / <code>service_role</code>.</li><li>La cadena de conexi&oacute;n directa a Postgres.</li></ul><p class="small">Esas <b>se saltan todas las reglas</b>. Quien las tiene puede leer, escribir y borrar cualquier tabla del proyecto.</p></div></div><div class="checkpoint mt"><strong>La idea que hay que llevarse:</strong> una base en la nube no se protege escondiendo la direcci&oacute;n. Se protege <b>decidiendo qu&eacute; puede hacer cada llave</b> &mdash; y eso se escribe, como se escribe un <code>NOT NULL</code>. Su proyecto de hoy es suyo: la contrase&ntilde;a no la pega nadie en el chat.</div><div class="brand"><span>Seguridad</span><span>No es esconder: es permitir</span></div></section>
+<section class="slide dense" data-title="Dos significados de «clave»"><div class="ey">Dos significados de &laquo;clave&raquo; &middot; 63–72 min</div><h2>API key &ne; PRIMARY KEY</h2><div class="g2"><div class="card"><h3>Clave de Supabase</h3><p>Identifica una <b>aplicaci&oacute;n</b> que llama a un servicio.</p><p><code>sb_publishable_&hellip;</code></p></div><div class="card blue"><h3>Clave de la tabla</h3><p>Identifica <b>filas</b>, o conecta tablas.</p><p><code>PRIMARY KEY</code> / <code>FOREIGN KEY</code></p></div></div><div class="stop mt">Hoy <strong>no necesitas copiar ninguna API key</strong> para trabajar dentro del SQL Editor. Se nombran para reconocerlas, no para configurarlas.</div><h3 style="margin-top:.5em">Y si alg&uacute;n d&iacute;a conectas una aplicaci&oacute;n</h3><table class="data"><tr><th>Clave</th><th>Uso</th><th>&iquest;Se puede compartir?</th></tr><tr><td><code>publishable</code></td><td>Cliente o navegador, con pol&iacute;ticas adecuadas</td><td>S&iacute;: est&aacute; hecha para eso</td></tr><tr><td><code>secret</code></td><td>Backend, con privilegios elevados</td><td><strong>Nunca</strong></td></tr></table><p class="small">D&oacute;nde est&aacute;n: <b>Connect</b>, o <b>Settings &rarr; API Keys</b>.</p><div class="brand"><span>No mezclar conceptos</span><span>Una identifica apps; la otra, filas</span></div></section>
+<section class="slide dense" data-title="Antes de las formas normales"><div class="ey">Antes de las formas normales &middot; 72–76 min</div><h2>Ayer en el modelo, hoy en el motor</h2><p class="lead">Los tres problemas que vamos a ver <strong>ya los vieron el mi&eacute;rcoles</strong>, sobre el papel: la celda con varios platos, la clave de dos partes y el dato que se copia. Hoy los vamos a <strong>provocar en una base de verdad</strong> y a arreglarlos con SQL.</p><div class="ok"><strong>Y cambia una cosa importante.</strong> Ustedes no van a dise&ntilde;ar nada mal a prop&oacute;sito. <b>Yo les entrego las bases mal hechas, ya creadas.</b> Ustedes solo van a intentar hacerles una pregunta del negocio &mdash; y van a ver que la estructura no deja.</div><div class="g2"><div class="card blue"><h3>Qu&eacute; escriben hoy</h3><p><code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>. Consultas. Lo del m&oacute;dulo 2.</p></div><div class="card"><h3>Qu&eacute; NO escriben todav&iacute;a</h3><p>Nada de <code>CREATE TABLE</code>. Ni el de las tablas malas ni el de las reparadas: todas vienen hechas. En este bloque solo se <b>pregunta</b> y se <b>mira</b>. Escribir estructura es despu&eacute;s de la pausa.</p></div></div><div class="brand"><span>Continuidad</span><span>La sesi&oacute;n 8, ahora ejecutada</span></div></section>
+<section class="slide dense" data-title="La pregunta central"><div class="ey">La pregunta central &middot; 76–80 min</div><h2>Todo se reduce a una pregunta</h2><div class="giant">&iquest;De qu&eacute; depende este dato?</div><p class="lead">Las tres formas normales son la misma pregunta hecha tres veces, cada vez m&aacute;s fina. Y la se&ntilde;al de que algo va mal es siempre la misma: <strong>un dato escrito en dos sitios acaba diciendo dos cosas distintas</strong>.</p><table class="tbl"><thead><tr><th>Forma</th><th>La pregunta</th><th>Y si falla&hellip;</th></tr></thead><tbody><tr><td><b>1FN</b></td><td>&iquest;Esta celda guarda <b>un</b> valor?</td><td>la pregunta <b>no se puede ni formular</b></td></tr><tr><td><b>2FN</b></td><td>&iquest;Depende de <b>toda</b> la clave?</td><td>el dato <b>no se puede guardar</b></td></tr><tr><td><b>3FN</b></td><td>&iquest;Depende de la clave <b>y de nada m&aacute;s</b>?</td><td>la base contesta y <b>miente</b></td></tr></tbody></table><div class="checkpoint">Van en ese orden por algo. Las dos primeras fallan de frente y se ven venir. La tercera funciona &mdash; y por eso es la peligrosa.</div><div class="brand"><span>La pregunta de S9</span><span>Una pregunta, tres veces</span></div></section>
+<section class="slide dense" data-title="1FN · la base y la pregunta"><div class="ey">1FN &middot; 80&ndash;88 min</div><h2><span class="fnpill">1FN</span> &iquest;Cu&aacute;ntos ajiacos vendimos?</h2><div class="g2 wide"><div><h3>La base que les entrego</h3><table class="tbl"><thead><tr><th>pedido_id</th><th>platos</th></tr></thead><tbody><tr><td>1</td><td>Ajiaco x2; Limonada x4</td></tr><tr><td>2</td><td>Bandeja x1</td></tr><tr><td>3</td><td>Ajiaco x1; Bandeja x2</td></tr></tbody></table><div class="ok mt"><strong>La respuesta est&aacute; ah&iacute;.</strong> Son tres. La estamos leyendo con los ojos ahora mismo &mdash; y aun as&iacute; no hay forma de sacarla.</div></div><div><h3>Y ninguna consulta la contesta</h3><div class="g3"><div class="card"><h3>1 &middot; el obvio</h3><pre><code>SELECT * FROM lab_1fn_pedido_mal
+WHERE platos = 'Ajiaco';</code></pre><p class="bad" style="padding:.35em .6em;border-radius:6px"><b>0 filas.</b> Y s&iacute; hay ajiaco.</p></div><div class="card"><h3>2 &middot; el listo</h3><pre><code>SELECT * FROM lab_1fn_pedido_mal
+WHERE platos ILIKE '%Ajiaco%';</code></pre><p class="warn" style="padding:.35em .6em;border-radius:6px"><b>2 filas.</b> Encuentra <b>pedidos</b>, no <b>cantidades</b>.</p></div><div class="card"><h3>3 &middot; el que cierra</h3><pre><code>SELECT SUM(cantidad)
+FROM lab_1fn_pedido_mal
+WHERE platos ILIKE '%Ajiaco%';</code></pre><p class="bad" style="padding:.35em .6em;border-radius:6px"><b>ERROR:</b> column "cantidad" does not exist</p></div></div><div class="stop">La pregunta no es dif&iacute;cil: es <b>imposible</b>. No hay ninguna columna que sumar. El dato est&aacute; escrito, pero para la base eso no son dos ajiacos: es una frase. Y una frase no se suma.</div></div></div><div class="brand"><span>1FN &middot; el muro</span><span>No es dif&iacute;cil: es imposible</span></div></section>
+
+<section class="slide dense" data-title="1FN · qué cambia"><div class="ey">1FN &middot; qu&eacute; cambia &middot; 88–92 min</div><h2><span class="fnpill">1FN</span> Una celda guarda un valor, y solo uno</h2><p class="lead">No cambian los datos. Cambia <strong>la forma</strong>: donde hab&iacute;a una fila con una lista, hay una fila por cada hecho.</p><svg style="width:100%;max-width:640px;height:auto;display:block;margin:.3em auto" viewBox="0 0 584 168" role="img" aria-label="La celda con varios platos se convierte en una fila por plato" font-family="Segoe UI,Arial,sans-serif"><text x="292" y="14" font-size="10" font-weight="800" fill="#c96a00" text-anchor="middle">UNA FILA POR CADA HECHO</text><rect x="6" y="40" width="258" height="85" rx="7" fill="#fff1f0" stroke="#a52a2a" stroke-width="2"/><text x="15" y="56" font-size="11" font-weight="800" fill="#a52a2a">lab_1fn_pedido_mal</text><text x="15" y="70" font-size="9.5" font-weight="700" font-family="Consolas,monospace" fill="#a52a2a" opacity=".8">pedido_id | platos</text><line x1="13" y1="74" x2="257" y2="74" stroke="#a52a2a" stroke-opacity=".3"/><text x="15" y="87" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">1  Ajiaco x2; Limonada x4</text><text x="15" y="102" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">2  Bandeja x1</text><text x="15" y="117" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">3  Ajiaco x1; Bandeja x2</text><rect x="330" y="22" width="244" height="115" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="339" y="38" font-size="11" font-weight="800" fill="#146c43">lab_1fn_linea_bien</text><text x="339" y="52" font-size="9.5" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">pedido_id | plato | cantidad</text><line x1="337" y1="56" x2="567" y2="56" stroke="#146c43" stroke-opacity=".3"/><text x="339" y="69" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">1  Ajiaco     2</text><text x="339" y="84" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">1  Limonada   4</text><text x="339" y="99" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">2  Bandeja    1</text><text x="339" y="114" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">3  Ajiaco     1</text><text x="339" y="129" font-size="9.5" font-family="Consolas,monospace" fill="#3d4a55">3  Bandeja    2</text><path d="M272 78 h50" stroke="#c96a00" stroke-width="2.8" fill="none"/><path d="M322 78 l0 -7 l10 7 l-10 7 z" fill="#c96a00"/><text x="135" y="160" font-size="9.5" font-weight="800" fill="#a52a2a" text-anchor="middle">3 filas &middot; ninguna columna que sumar</text><text x="452" y="160" font-size="9.5" font-weight="800" fill="#146c43" text-anchor="middle">5 filas &middot; cantidad es un n&uacute;mero</text></svg><div class="g2"><div class="card"><h3>Lo que prohibe</h3><p>Guardar <b>varios hechos en una celda</b> &mdash; y tambi&eacute;n disfrazarlos de columnas numeradas: <code>plato_1</code>, <code>plato_2</code>, <code>plato_3</code>. La segunda parece m&aacute;s ordenada y es peor: &iquest;qu&eacute; pasa con el pedido de cuatro platos?</p></div><div class="card blue"><h3>C&oacute;mo se reconoce</h3><p>Si para contestar hay que <b>partir texto</b>, la tabla no est&aacute; en 1FN. Ese es todo el criterio.</p></div></div><div class="brand"><span>1FN &middot; la forma</span><span>Una celda, un valor</span></div></section>
+<section class="slide dense" data-title="1FN · reparar y comprobar"><div class="ey">1FN &middot; 92&ndash;100 min</div><h2><span class="fnpill">1FN</span> Se pega, se ejecuta, y la pregunta se contesta</h2><div class="g2 wide"><div><h3>La reparaci&oacute;n</h3><p class="small">La tabla nueva <strong>ya viene creada</strong> en el gui&oacute;n. Hoy no nos interesa c&oacute;mo se escribe &mdash; eso es despu&eacute;s de la pausa. Lo que importa es <b>qu&eacute; forma tiene</b>.</p><div class="uiform"><div class="uihead"><b>lab_1fn_linea_bien</b><span>la estructura nueva</span></div><div class="uilab">Columnas</div><div class="uibox">pedido_id &middot; plato &middot; cantidad</div><div class="uilab">Qu&eacute; cambia</div><div class="uibox">3 filas &rarr; 5 filas: el pedido 1 se parte en dos</div></div><div class="checkpoint">Lo que acaba de aparecer es <code>linea_pedido</code>, la tabla que ustedes decidieron el mi&eacute;rcoles &mdash; antes de o&iacute;r la palabra &laquo;normalizar&raquo;.</div></div><div><h3>Y la comprobaci&oacute;n</h3><pre><code>SELECT SUM(cantidad) AS ajiacos_vendidos
+FROM lab_1fn_linea_bien
+WHERE plato = 'Ajiaco';</code></pre><div class="giant good" style="border-radius:10px;padding:.25em">3</div><div class="ok"><strong>No cambiamos ni un dato.</strong> Los mismos ajiacos, los mismos pedidos. Cambiamos la forma, y una pregunta que era imposible pas&oacute; a ser una l&iacute;nea de SQL.</div><p class="small">Prueben tambi&eacute;n <code>GROUP BY plato</code> y vean el men&uacute; entero con sus cantidades. Eso tampoco se pod&iacute;a antes.</p></div></div><div class="brand"><span>1FN &middot; comprobado</span><span>De imposible a una l&iacute;nea</span></div></section>
+
+<section class="slide dense" data-title="2FN · la base y la pregunta"><div class="ey">2FN &middot; 100&ndash;109 min</div><h2><span class="fnpill">2FN</span> Registren el Tamal en la carta</h2><div class="g2 wide"><div><h3>La base, con clave de dos partes</h3><table class="tbl"><thead><tr><th>pedido &#128273;</th><th>plato &#128273;</th><th>fecha</th><th>nombre_plato</th><th>cant.</th></tr></thead><tbody><tr><td>1</td><td>10</td><td>04-sep</td><td>Ajiaco</td><td>2</td></tr><tr><td>1</td><td>20</td><td>04-sep</td><td>Limonada</td><td>4</td></tr><tr><td>2</td><td>10</td><td>05-sep</td><td>Ajiaco</td><td>1</td></tr><tr><td>3</td><td>10</td><td>06-sep</td><td>Ajiaco</td><td>2</td></tr></tbody></table><div class="ok mt">Hacen falta <b>las dos columnas</b> para saber de qu&eacute; fila hablamos. Es una <b>clave compuesta</b>, y es la &uacute;nica situaci&oacute;n en la que la 2FN puede romperse.</div></div><div><h3>Y la cocina a&ntilde;ade el Tamal</h3><p class="lead">Nadie lo ha pedido todav&iacute;a. No es una consulta rara: es lo primero que hace un restaurante cuando cambia el men&uacute;.</p><pre><code>INSERT INTO lab_2fn_linea_mal
+  (pedido_id, plato_id, fecha_pedido, nombre_plato, cantidad)
+VALUES (NULL, 30, NULL, 'Tamal', NULL);</code></pre><div class="stop">ERROR: null value in column "pedido_id" violates not-null constraint</div><div class="ok"><strong>Para dar de alta un plato hay que inventarse un pedido que no existe, una fecha que no existe y una cantidad que no existe.</strong> En esta estructura <b>un plato no puede existir hasta que alguien lo pida</b>. La carta no cabe en la base.</div></div></div><div class="brand"><span>2FN &middot; el muro</span><span>No se puede ni guardar</span></div></section>
+
+<section class="slide dense" data-title="2FN · y además"><div class="ey">2FN &middot; y adem&aacute;s &middot; 109–113 min</div><h2><span class="fnpill">2FN</span> El mismo nombre, escrito tres veces</h2><div class="g2"><div><pre><code>SELECT nombre_plato,
+       COUNT(*) AS veces_escrito
+FROM lab_2fn_linea_mal
+GROUP BY nombre_plato;</code></pre><table class="tbl"><thead><tr><th>nombre_plato</th><th>veces_escrito</th></tr></thead><tbody><tr><td>Ajiaco</td><td><b>3</b></td></tr><tr><td>Limonada</td><td>1</td></tr></tbody></table></div><div><div class="checkpoint"><strong>Renombrar el ajiaco son tres <code>UPDATE</code>.</strong> Y si se escapa uno, la base dir&aacute; dos nombres distintos para el mismo plato &mdash; sin dar un solo error.</div><h3>La pregunta que lo decide</h3><p><code>nombre_plato</code>, &iquest;necesita saber de qu&eacute; pedido hablamos? <b>No</b>: depende solo de <code>plato_id</code>.</p><p><code>fecha_pedido</code>, &iquest;necesita saber qu&eacute; plato es? <b>No</b>: depende solo de <code>pedido_id</code>.</p><p class="bad" style="padding:.4em .7em;border-radius:6px">Las dos dependen de <b>media clave</b>. Eso es lo que prohibe la 2FN.</p><p class="small">Solo <code>cantidad</code> sobrevive: es la &uacute;nica que necesita las dos partes.</p></div></div><div class="brand"><span>2FN &middot; la dependencia parcial</span><span>Media clave no basta</span></div></section>
+<section class="slide dense" data-title="2FN · qué cambia"><div class="ey">2FN &middot; qu&eacute; cambia &middot; 113–117 min</div><h2><span class="fnpill">2FN</span> Cada dato se muda a donde depende</h2><p class="lead">Una tabla se convierte en tres. Ninguna guarda nada dos veces, y la de en medio conserva lo &uacute;nico que de verdad necesita las dos partes de la clave.</p><svg style="width:100%;max-width:660px;height:auto;display:block;margin:.3em auto" viewBox="0 0 700 180" role="img" aria-label="La tabla con clave compuesta se separa en pedido, plato y linea" font-family="Segoe UI,Arial,sans-serif"><rect x="4" y="30" width="300" height="100" rx="7" fill="#fff1f0" stroke="#a52a2a" stroke-width="2"/><text x="12" y="46" font-size="10.5" font-weight="800" fill="#a52a2a">lab_2fn_linea_mal</text><text x="12" y="59" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#a52a2a" opacity=".8">pedido | plato | fecha | nombre | cant</text><line x1="10" y1="63" x2="298" y2="63" stroke="#a52a2a" stroke-opacity=".3"/><text x="12" y="76" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  10  04-sep  Ajiaco    2</text><text x="12" y="91" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  20  04-sep  Limonada  4</text><text x="12" y="106" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2  10  05-sep  Ajiaco    1</text><text x="12" y="121" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">3  10  06-sep  Ajiaco    2</text><path d="M310 88 h38" stroke="#c96a00" stroke-width="2.8" fill="none"/><path d="M348 88 l0 -7 l10 7 l-10 7 z" fill="#c96a00"/><text x="334" y="76" font-size="9" font-weight="800" fill="#c96a00" text-anchor="middle">cada dato, a donde depende</text><rect x="352" y="6" width="170" height="85" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="360" y="22" font-size="10.5" font-weight="800" fill="#146c43">pedido_bien</text><text x="360" y="35" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">pedido | fecha</text><line x1="358" y1="39" x2="516" y2="39" stroke="#146c43" stroke-opacity=".3"/><text x="360" y="52" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  04-sep</text><text x="360" y="67" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2  05-sep</text><text x="360" y="82" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">3  06-sep</text><rect x="352" y="92" width="170" height="70" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="360" y="108" font-size="10.5" font-weight="800" fill="#146c43">plato_bien</text><text x="360" y="121" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">plato | nombre</text><line x1="358" y1="125" x2="516" y2="125" stroke="#146c43" stroke-opacity=".3"/><text x="360" y="138" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">10  Ajiaco</text><text x="360" y="153" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">20  Limonada</text><rect x="534" y="44" width="156" height="100" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="542" y="60" font-size="10.5" font-weight="800" fill="#146c43">linea_bien</text><text x="542" y="73" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">pedido | plato | cant</text><line x1="540" y1="77" x2="684" y2="77" stroke="#146c43" stroke-opacity=".3"/><text x="542" y="90" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  10  2</text><text x="542" y="105" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  20  4</text><text x="542" y="120" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2  10  1</text><text x="542" y="135" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">3  10  2</text><text x="154" y="172" font-size="9.5" font-weight="800" fill="#a52a2a" text-anchor="middle">&laquo;Ajiaco&raquo; escrito 3 veces &middot; el Tamal no cabe</text><text x="520" y="172" font-size="9.5" font-weight="800" fill="#146c43" text-anchor="middle">cada nombre, una sola vez &middot; el Tamal ya cabe</text></svg><div class="ok"><strong>Y f&iacute;jense en la del medio:</strong> <code>linea_bien</code> es la misma <code>linea_pedido</code> del mi&eacute;rcoles. La 1FN la hizo aparecer; la 2FN la deja limpia.</div><div class="brand"><span>2FN &middot; la forma</span><span>Una tabla, tres tablas</span></div></section>
+<section class="slide dense" data-title="2FN · reparar y comprobar"><div class="ey">2FN &middot; 117&ndash;126 min</div><h2><span class="fnpill">2FN</span> Cada dato a su tabla, y el Tamal entra</h2><div class="g2 wide"><div><h3>Tres tablas donde hab&iacute;a una</h3><pre><code>lab_2fn_pedido_bien  (pedido_id, fecha_pedido)
+lab_2fn_plato_bien   (plato_id,  nombre_plato)
+lab_2fn_linea_bien   (pedido_id, plato_id, cantidad)</code></pre><div class="checkpoint">Si una columna se puede contestar mirando <b>media</b> clave, no vive aqu&iacute;: vive en la tabla de esa mitad.</div></div><div><h3>Y la comprobaci&oacute;n</h3><div class="g2"><div><h3>La pregunta de antes</h3><pre><code>INSERT INTO lab_2fn_plato_bien
+VALUES (30, 'Tamal');</code></pre><div class="ok"><b>Entra.</b> Un plato existe en la carta sin que nadie lo haya pedido, que es como funciona un restaurante.</div></div><div><h3>Y el renombrado</h3><pre><code>UPDATE lab_2fn_plato_bien
+SET nombre_plato = 'Ajiaco santafere&ntilde;o'
+WHERE plato_id = 10;</code></pre><div class="ok"><b>Un solo <code>UPDATE</code></b> donde antes hac&iacute;an falta tres. Reconstruyan con <code>JOIN</code> y las tres l&iacute;neas muestran el nombre nuevo.</div></div></div><div class="checkpoint">Separar <b>no</b> es perder informaci&oacute;n: la vista de antes se reconstruye entera con un <code>JOIN</code>. Si no se pudiera reconstruir, no ser&iacute;a normalizar &mdash; ser&iacute;a romper.</div></div></div><div class="brand"><span>2FN &middot; comprobado</span><span>Un cambio, un solo sitio</span></div></section>
+
+<section class="slide dense" data-title="3FN · la base y la respuesta falsa"><div class="ey">3FN &middot; 126&ndash;134 min</div><h2><span class="fnpill">3FN</span> &iquest;Cu&aacute;ntos puestos tiene el sal&oacute;n?</h2><div class="g2 wide"><div><h3>La base, con clave simple</h3><table class="tbl"><thead><tr><th>pedido_id &#128273;</th><th>mesa_id</th><th>puestos</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>4</td></tr><tr><td>2</td><td>2</td><td>2</td></tr><tr><td>3</td><td>1</td><td>4</td></tr><tr><td>4</td><td>1</td><td>4</td></tr></tbody></table><div class="ok mt"><strong>Gu&aacute;rdense esto:</strong> el sal&oacute;n tiene <b>dos mesas</b>. La 1 de cuatro puestos, la 2 de dos. <b>Seis en total.</b></div></div><div><h3>Y ahora pregunten</h3><pre><code>SELECT SUM(puestos) AS puestos_del_salon
+FROM lab_3fn_pedido_mal;</code></pre><div class="giant bad" style="border-radius:10px;padding:.25em">14</div><div class="stop">No hubo error. No hubo aviso. La consulta funcion&oacute; perfectamente &mdash; y <b>la respuesta es mentira</b>. Son <b>seis</b>. La base cont&oacute; la mesa 1 tres veces, porque tuvo tres pedidos.</div><p class="small">Deja el silencio unos segundos. Este es el momento del bloque: los dos problemas anteriores fallaban de frente y este <b>funciona</b>.</p></div></div><div class="brand"><span>3FN &middot; el muro</span><span>Contesta, y miente</span></div></section>
+
+<section class="slide dense" data-title="3FN · y además"><div class="ey">3FN &middot; y adem&aacute;s &middot; 134–138 min</div><h2><span class="fnpill">3FN</span> La mesa 3 existe, y para la base no</h2><div class="g2"><div><pre><code>SELECT DISTINCT mesa_id, puestos
+FROM lab_3fn_pedido_mal
+WHERE mesa_id = 3;</code></pre><div class="stop">0 filas.</div></div><div><div class="checkpoint"><strong>La mesa 3 est&aacute; en el sal&oacute;n</strong>, la est&aacute;n viendo. Pero como nunca ha tenido un pedido, <b>para la base no existe</b>. Es el mismo problema del Tamal, otra vez.</div><h3>El rodeo</h3><div class="chain"><span class="dep">pedido_id</span><i class="arrowbig">&#8594;</i><span class="dep">mesa_id</span><i class="arrowbig">&#8594;</i><span class="dep">puestos</span></div><p><code>puestos</code> no describe al pedido: describe a la <b>mesa</b>. Y la mesa se sabe por <code>mesa_id</code>, que <b>no es la clave</b>. Depende de la clave <b>dando un rodeo</b>, y eso es lo que quita la 3FN.</p></div></div><div class="brand"><span>3FN &middot; la dependencia transitiva</span><span>Depende dando un rodeo</span></div></section>
+<section class="slide dense" data-title="3FN · qué cambia"><div class="ey">3FN &middot; qu&eacute; cambia &middot; 138–142 min</div><h2><span class="fnpill">3FN</span> La capacidad vive una sola vez</h2><p class="lead">El pedido conserva <b>a qu&eacute; mesa fue</b>. La capacidad se muda a la mesa, que es de quien depende.</p><svg style="width:100%;max-width:600px;height:auto;display:block;margin:.3em auto" viewBox="0 0 530 200" role="img" aria-label="puestos deja de vivir dentro de pedido y pasa a mesa" font-family="Segoe UI,Arial,sans-serif"><text x="129" y="20" font-size="10" font-weight="800" fill="#a52a2a" text-anchor="middle">pedido_id &#8594; mesa_id &#8594; puestos &nbsp;(el rodeo)</text><rect x="4" y="34" width="250" height="100" rx="7" fill="#fff1f0" stroke="#a52a2a" stroke-width="2"/><text x="12" y="50" font-size="10.5" font-weight="800" fill="#a52a2a">lab_3fn_pedido_mal</text><text x="12" y="63" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#a52a2a" opacity=".8">pedido | mesa | puestos</text><line x1="10" y1="67" x2="248" y2="67" stroke="#a52a2a" stroke-opacity=".3"/><text x="12" y="80" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1   1   4</text><text x="12" y="95" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2   2   2</text><text x="12" y="110" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">3   1   4</text><text x="12" y="125" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">4   1   4</text><path d="M262 100 h38" stroke="#c96a00" stroke-width="2.8" fill="none"/><path d="M300 100 l0 -7 l10 7 l-10 7 z" fill="#c96a00"/><text x="286" y="88" font-size="9" font-weight="800" fill="#c96a00" text-anchor="middle">una sola vez</text><rect x="330" y="12" width="180" height="70" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="338" y="28" font-size="10.5" font-weight="800" fill="#146c43">mesa_bien</text><text x="338" y="41" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">mesa | puestos</text><line x1="336" y1="45" x2="504" y2="45" stroke="#146c43" stroke-opacity=".3"/><text x="338" y="58" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  4</text><text x="338" y="73" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2  2</text><rect x="330" y="106" width="180" height="100" rx="7" fill="#e9f8ef" stroke="#146c43" stroke-width="2"/><text x="338" y="122" font-size="10.5" font-weight="800" fill="#146c43">pedido_bien</text><text x="338" y="135" font-size="9" font-weight="700" font-family="Consolas,monospace" fill="#146c43" opacity=".8">pedido | mesa</text><line x1="336" y1="139" x2="504" y2="139" stroke="#146c43" stroke-opacity=".3"/><text x="338" y="152" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">1  1</text><text x="338" y="167" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">2  2</text><text x="338" y="182" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">3  1</text><text x="338" y="197" font-size="9" font-family="Consolas,monospace" fill="#3d4a55">4  1</text><text x="129" y="192" font-size="9.5" font-weight="800" fill="#a52a2a" text-anchor="middle">la capacidad, copiada 3 veces</text><text x="420" y="192" font-size="9.5" font-weight="800" fill="#146c43" text-anchor="middle">la capacidad, en un solo sitio</text></svg><div class="ok"><strong>La se&ntilde;al de que est&aacute; bien hecho</strong> es siempre la misma: cambiar la capacidad de una mesa se hace en <b>un</b> sitio, no en todos los pedidos de esa mesa.</div><div class="brand"><span>3FN &middot; la forma</span><span>Sin rodeos</span></div></section>
+<section class="slide dense" data-title="3FN · reparar y comprobar"><div class="ey">3FN &middot; 142&ndash;151 min</div><h2><span class="fnpill">3FN</span> La capacidad vive una sola vez</h2><div class="g2 wide"><div><h3>Dos tablas donde hab&iacute;a una</h3><pre><code>lab_3fn_mesa_bien   (mesa_id, puestos)
+lab_3fn_pedido_bien (pedido_id, mesa_id)</code></pre><div class="checkpoint">Y ojo con la excepci&oacute;n, que ma&ntilde;ana importa: hay copias que <b>s&iacute;</b> se guardan. El <code>precio_unitario</code> de una venta no es el precio de hoy del plato: es <b>otro dato</b>, el de aquel d&iacute;a.</div></div><div><h3>Y la comprobaci&oacute;n</h3><div class="g2"><div><pre><code>SELECT SUM(puestos) AS puestos_del_salon
+FROM lab_3fn_mesa_bien;</code></pre><div class="giant good" style="border-radius:10px;padding:.2em;font-size:1.7em">6</div><p class="small">Que es la verdad. Cada mesa cuenta una vez.</p></div><div><h3>Y la mesa 3, que ahora s&iacute; cabe</h3><pre><code>INSERT INTO lab_3fn_mesa_bien VALUES (3, 6);
+
+SELECT SUM(puestos) FROM lab_3fn_mesa_bien;</code></pre><div class="ok"><b>12.</b> Aunque nadie se haya sentado nunca en ella.</div></div></div><div class="checkpoint">Reconstruyan con <code>JOIN</code> y cada pedido vuelve a mostrar los puestos de su mesa &mdash; pero ahora, si la mesa 1 pasa a seis puestos, es <b>un</b> <code>UPDATE</code> y lo ven los cuatro pedidos a la vez.</div></div></div><div class="brand"><span>3FN &middot; comprobado</span><span>Seis, que es la verdad</span></div></section>
+
+<section class="slide dense" data-title="Resumen visual"><div class="ey">Resumen visual &middot; 151–155 min</div><h2>Las tres, en la forma en que las vivimos</h2><svg style="width:100%;max-width:720px;height:auto;display:block;margin:.35em auto" viewBox="0 0 680 168" role="img" aria-label="Las tres formas normales: antes y despues de cada una" font-family="Segoe UI,Arial,sans-serif"><rect x="4" y="8" width="212" height="150" rx="9" fill="#fff8e1" stroke="#a06800" stroke-width="2.2"/><text x="110" y="30" font-size="14" font-weight="800" fill="#a06800" text-anchor="middle">1FN</text><text x="110" y="47" font-size="9.5" fill="#5a5a5a" text-anchor="middle">una celda, un valor</text><rect x="16" y="58" width="188" height="38" rx="6" fill="#fff1f0" stroke="#a52a2a" stroke-width="1.5"/><text x="110" y="74" font-size="9" font-weight="800" fill="#a52a2a" text-anchor="middle">ANTES</text><text x="110" y="88" font-size="9" fill="#3d4a55" text-anchor="middle">una celda con una lista</text><text x="110" y="110" font-size="14" font-weight="900" fill="#c96a00" text-anchor="middle">&#8595;</text><rect x="16" y="116" width="188" height="34" rx="6" fill="#e9f8ef" stroke="#146c43" stroke-width="1.5"/><text x="110" y="131" font-size="9" font-weight="800" fill="#146c43" text-anchor="middle">DESPU&Eacute;S</text><text x="110" y="144" font-size="9" fill="#3d4a55" text-anchor="middle">una fila por hecho</text><rect x="232" y="8" width="212" height="150" rx="9" fill="#e9f4ff" stroke="#124e78" stroke-width="2.2"/><text x="338" y="30" font-size="14" font-weight="800" fill="#124e78" text-anchor="middle">2FN</text><text x="338" y="47" font-size="9.5" fill="#5a5a5a" text-anchor="middle">nada depende de media clave</text><rect x="244" y="58" width="188" height="38" rx="6" fill="#fff1f0" stroke="#a52a2a" stroke-width="1.5"/><text x="338" y="74" font-size="9" font-weight="800" fill="#a52a2a" text-anchor="middle">ANTES</text><text x="338" y="88" font-size="9" fill="#3d4a55" text-anchor="middle">el plato no existe solo</text><text x="338" y="110" font-size="14" font-weight="900" fill="#c96a00" text-anchor="middle">&#8595;</text><rect x="244" y="116" width="188" height="34" rx="6" fill="#e9f8ef" stroke="#146c43" stroke-width="1.5"/><text x="338" y="131" font-size="9" font-weight="800" fill="#146c43" text-anchor="middle">DESPU&Eacute;S</text><text x="338" y="144" font-size="9" fill="#3d4a55" text-anchor="middle">cada dato en su tabla</text><rect x="460" y="8" width="212" height="150" rx="9" fill="#f7edf8" stroke="#7a2e7a" stroke-width="2.2"/><text x="566" y="30" font-size="14" font-weight="800" fill="#7a2e7a" text-anchor="middle">3FN</text><text x="566" y="47" font-size="9.5" fill="#5a5a5a" text-anchor="middle">nada depende dando un rodeo</text><rect x="472" y="58" width="188" height="38" rx="6" fill="#fff1f0" stroke="#a52a2a" stroke-width="1.5"/><text x="566" y="74" font-size="9" font-weight="800" fill="#a52a2a" text-anchor="middle">ANTES</text><text x="566" y="88" font-size="9" fill="#3d4a55" text-anchor="middle">la capacidad, copiada</text><text x="566" y="110" font-size="14" font-weight="900" fill="#c96a00" text-anchor="middle">&#8595;</text><rect x="472" y="116" width="188" height="34" rx="6" fill="#e9f8ef" stroke="#146c43" stroke-width="1.5"/><text x="566" y="131" font-size="9" font-weight="800" fill="#146c43" text-anchor="middle">DESPU&Eacute;S</text><text x="566" y="144" font-size="9" fill="#3d4a55" text-anchor="middle">la capacidad, una vez</text></svg><table class="tbl"><thead><tr><th>Forma</th><th>La pregunta que no se pod&iacute;a</th><th>Qu&eacute; pasaba</th></tr></thead><tbody><tr><td><b>1FN</b></td><td>&iquest;Cu&aacute;ntos ajiacos vendimos?</td><td>ni se pod&iacute;a <b>formular</b>: no hab&iacute;a columna que sumar</td></tr><tr><td><b>2FN</b></td><td>Registren el Tamal en la carta</td><td>no se pod&iacute;a <b>guardar</b>: un plato no exist&iacute;a hasta que alguien lo ped&iacute;a</td></tr><tr><td><b>3FN</b></td><td>&iquest;Cu&aacute;ntos puestos tiene el sal&oacute;n?</td><td>se contestaba, y <b>ment&iacute;a</b>: 14 en vez de 6</td></tr></tbody></table><div class="ok"><strong>Normalizar no es partir tablas por gusto.</strong> Es dejar que la base pueda contestar las preguntas del negocio <b>sin inventarse la respuesta</b>.</div><div class="brand"><span>Resumen</span><span>Tres preguntas, tres formas</span></div></section>
+<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa &middot; 155&ndash;170 min</div><div class="clock">15:00</div><h2 style="margin-top:3%">Volvemos en 15 minutos</h2><p class="lead" style="margin:auto">Ya entraron a Supabase, provocaron las tres anomal&iacute;as y las repararon. Al volver, lo &uacute;ltimo: <strong>escribir ustedes el <code>CREATE TABLE</code></strong> que hasta ahora hab&iacute;an estado pegando.</p></div><div class="brand"><span>Pausa</span><span>Y despu&eacute;s, el DDL</span></div></section>
+<section class="slide dense" data-title="Volvemos · qué es DDL"><div class="ey">Volvemos &middot; 170&ndash;178 min</div><h2>Ya ejecutaste DDL sin estudiarlo</h2><div class="flow"><span>S6 &middot; reglas</span><i>&rarr;</i><span>S7 &middot; entidades</span><i>&rarr;</i><span>S8/S9 &middot; normalizar</span><i>&rarr;</i><span>DDL</span><i>&rarr;</i><span>PostgreSQL</span></div><div class="checkpoint mt"><strong>Ahora s&iacute;:</strong> vamos a leer conscientemente las instrucciones que construyen la estructura &mdash; las mismas que llevan toda la tarde pegando.</div><h3 style="margin-top:.6em">Tres familias de SQL, y solo una cambia el recipiente</h3><table class="data"><tr><th>Familia</th><th>Ejemplo</th><th>Qu&eacute; cambia</th></tr><tr><td>Consulta</td><td><code>SELECT</code></td><td>lo que vemos</td></tr><tr><td>DML</td><td><code>INSERT / UPDATE / DELETE</code></td><td>las filas</td></tr><tr><td><strong>DDL</strong></td><td><code>CREATE / ALTER / DROP</code></td><td><strong>la estructura y sus reglas</strong></td></tr></table><div class="brand"><span>DDL</span><span>Data Definition Language</span></div></section>
+
+<section class="slide dense" data-title="Anatomía · IDENTITY"><div class="ey">Anatom&iacute;a &middot; 178&ndash;186 min</div><h2>Lee un CREATE TABLE de afuera hacia adentro</h2><div class="g2 wide"><div><pre><code>CREATE TABLE plato (
+    plato_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    precio_actual NUMERIC(10,2) NOT NULL,
+    CONSTRAINT pk_plato PRIMARY KEY (plato_id),
+    CONSTRAINT ck_plato_precio CHECK (precio_actual &gt;= 0)
+);</code></pre><div class="g3 mt"><div class="card"><h3>1 &middot; Columna</h3><p><code>nombre</code></p></div><div class="card blue"><h3>2 &middot; Tipo</h3><p><code>TEXT</code></p></div><div class="card"><h3>3 &middot; Regla</h3><p><code>NOT NULL</code></p></div></div></div><div><h3>Y una distinci&oacute;n que se confunde siempre</h3><div class="card"><h3>IDENTITY</h3><p>PostgreSQL <b>genera el n&uacute;mero</b> solo.</p><p><code>GENERATED ALWAYS AS IDENTITY</code></p></div><div class="card blue mt"><h3>PRIMARY KEY</h3><p>Ese valor <b>identifica</b> la fila de forma &uacute;nica.</p><p><code>PRIMARY KEY</code></p></div><div class="stop mt">Son <b>dos decisiones distintas</b>, aunque casi siempre se usen juntas. Se puede numerar sin que sea clave, y se puede tener clave sin numerar.</div></div></div><div class="brand"><span>Anatom&iacute;a</span><span>Numerar no es identificar</span></div></section>
+
+<section class="slide dense" data-title="Restricciones"><div class="ey">Restricciones &middot; 186–190 min</div><h2>Cada palabra protege una regla diferente</h2><table class="data"><tr><th>Restricción</th><th>Pregunta que responde</th></tr><tr><td><code>PRIMARY KEY</code></td><td>¿Cómo identifico una fila?</td></tr><tr><td><code>FOREIGN KEY</code></td><td>¿A qué fila existente puede apuntar?</td></tr><tr><td><code>NOT NULL</code></td><td>¿Puede faltar este dato?</td></tr><tr><td><code>CHECK</code></td><td>¿Qué valores son válidos?</td></tr><tr><td><code>DEFAULT</code></td><td>¿Qué valor se usa si no lo envío?</td></tr><tr><td><code>UNIQUE</code></td><td>¿El negocio prohíbe repetirlo?</td></tr></table><div class="brand"><span>Restricciones</span><span>Reglas ejecutables</span></div></section>
+<section class="slide dense" data-title="Crear y probar PLATO"><div class="ey">CHECKPOINT 1 &middot; 190&ndash;198 min</div><h2>Constr&uacute;yela, y despu&eacute;s intenta romperla</h2><div class="g2 wide"><div><h3>Constr&uacute;yela</h3><pre><code>CREATE TABLE plato (
+    plato_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    precio_actual NUMERIC(10,2) NOT NULL,
+    CONSTRAINT pk_plato PRIMARY KEY (plato_id),
+    CONSTRAINT ck_plato_precio CHECK (precio_actual &gt;= 0)
+);</code></pre><div class="checkpoint">Despu&eacute;s de Run: <strong>Table Editor &rarr; el schema de tu equipo &rarr; plato</strong>.</div></div><div><h3>Y compru&eacute;bala por los dos lados</h3><p class="small">Una restricci&oacute;n sirve si <b>deja pasar lo v&aacute;lido</b> y <b>rechaza lo inv&aacute;lido</b>. Hay que probar las dos cosas.</p><div class="ok"><b>Debe pasar</b><pre><code>INSERT INTO plato (nombre, precio_actual)
+VALUES ('Ajiaco', 28000);</code></pre></div><div class="stop mt"><b>Debe fallar</b><pre><code>INSERT INTO plato (nombre, precio_actual)
+VALUES ('Imposible', -1000);</code></pre></div><div class="checkpoint mt">Antes de ejecutar el segundo: <strong>&iquest;qu&eacute; nombre de <code>CONSTRAINT</code> esperas ver en el error?</strong> Pred&iacute;celo en voz alta.</div></div></div><div class="brand"><span>CHECKPOINT 1</span><span>Permitir lo v&aacute;lido, rechazar lo inv&aacute;lido</span></div></section>
+
+<section class="slide dense" data-title="Crear PEDIDO · y el N:N"><div class="ey">CHECKPOINT 2 &middot; 198&ndash;207 min</div><h2>DEFAULT es un inicio razonable, no un relleno</h2><div class="g2 wide"><div><pre><code>CREATE TABLE pedido (
+    pedido_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    creado_en TIMESTAMPTZ NOT NULL DEFAULT now(),
+    estado TEXT NOT NULL DEFAULT 'abierto',
+    CONSTRAINT pk_pedido PRIMARY KEY (pedido_id),
+    CONSTRAINT ck_pedido_estado
+      CHECK (estado IN ('abierto','en cocina','cerrado'))
+);</code></pre><div class="ok"><code>INSERT INTO pedido DEFAULT VALUES RETURNING *;</code> &mdash; sin dar ning&uacute;n dato, y aun as&iacute; nace bien.</div></div><div><h3>&iquest;Y por qu&eacute; existe <code>LINEA_PEDIDO</code>?</h3><div class="schema3"><article><h3>PEDIDO</h3><p>un pedido tiene muchos platos</p></article><article><h3>LINEA_PEDIDO</h3><p><strong>cantidad</strong><br><strong>precio_unitario</strong></p></article><article><h3>PLATO</h3><p>un plato aparece en muchos pedidos</p></article></div><div class="checkpoint mt"><strong>cantidad y precio_unitario describen la relaci&oacute;n</strong>, no el plato ni el pedido: describen <b>ese plato dentro de ese pedido</b>. Por eso la tabla del medio tiene que existir.</div></div></div><div class="brand"><span>CHECKPOINT 2</span><span>La tabla que exige el varios-a-varios</span></div></section>
+
+<section class="slide dense" data-title="Crear LINEA_PEDIDO · leer la FK"><div class="ey">CHECKPOINT 3 &middot; 207&ndash;216 min</div><h2>Ahora las flechas del modelo son reglas</h2><div class="g2 wide"><div><pre><code>CREATE TABLE linea_pedido (
+  linea_id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pedido_id BIGINT NOT NULL,
+  plato_id BIGINT NOT NULL,
+  cantidad INTEGER NOT NULL,
+  precio_unitario NUMERIC(10,2) NOT NULL,
+
+  CONSTRAINT pk_linea_pedido PRIMARY KEY (linea_id),
+  CONSTRAINT fk_linea_pedido_pedido
+    FOREIGN KEY (pedido_id) REFERENCES pedido(pedido_id),
+  CONSTRAINT fk_linea_pedido_plato
+    FOREIGN KEY (plato_id) REFERENCES plato(plato_id)
+);</code></pre></div><div><h3>Y ahora tr&aacute;ducela a espa&ntilde;ol</h3><div class="chain"><span>linea_pedido.pedido_id</span><i>&rarr;</i><span>pedido.pedido_id</span></div><div class="giant smallg">&laquo;Toda l&iacute;nea debe pertenecer a un pedido que exista.&raquo;</div><pre><code>FOREIGN KEY (pedido_id)
+REFERENCES pedido(pedido_id)</code></pre><div class="ok">Esa frase es la <b>flecha</b> que dibujaron el mi&eacute;rcoles. Ya no es un dibujo: es una regla que el motor hace cumplir.</div></div></div><div class="brand"><span>CHECKPOINT 3</span><span>La flecha, vuelta regla</span></div></section>
+
+<section class="slide dense" data-title="CHECKPOINT 4 y 5"><div class="ey">CHECKPOINT 4 y 5 &middot; 216&ndash;226 min</div><h2>Primero lo que debe entrar; luego lo que no</h2><div class="g2 wide"><div><h3>Lo que debe entrar</h3><pre><code>INSERT INTO linea_pedido
+(pedido_id, plato_id, cantidad, precio_unitario)
+VALUES (1, 1, 2, 28000)
+RETURNING *;
+
+SELECT pedido_id,
+       SUM(cantidad * precio_unitario) AS total
+FROM linea_pedido
+GROUP BY pedido_id;</code></pre><div class="giant">56.000</div><p class="small">El total <b>no est&aacute; guardado</b>: se reconstruye. Es la decisi&oacute;n del bloque de 3FN, ya en SQL.</p></div><div><h3>Y lo que no debe entrar</h3><p class="small">Antes de ejecutar cada una: <b>predigan qu&eacute; regla la detiene</b>.</p><table class="data"><tr><th>Intento</th><th>Qu&eacute; deber&iacute;a detenerlo</th></tr><tr><td><code>cantidad = NULL</code></td><td><code>NOT NULL</code></td></tr><tr><td><code>pedido_id = 999999</code></td><td><code>FOREIGN KEY</code></td></tr><tr><td><code>cantidad = 0</code></td><td><code>CHECK</code></td></tr></table><div class="checkpoint mt">Ejec&uacute;tenlas <strong>una por una</strong> y lean el mensaje de PostgreSQL: trae el nombre del <code>CONSTRAINT</code> que la par&oacute;.</div></div></div><div class="brand"><span>CHECKPOINT 4 y 5</span><span>Predecir antes de ejecutar</span></div></section>
+
+<section class="slide dense" data-title="UNIQUE con criterio"><div class="ey">UNIQUE con criterio &middot; 226–230 min</div><h2>El motor puede imponer una regla falsa perfectamente</h2><div class="g2"><div class="ok"><h3>Sí imponer</h3><p>Reglas confirmadas por negocio.</p></div><div class="stop"><h3>No inventar</h3><p><code>UNIQUE(nombre)</code> solo porque “parece lógico”.</p></div></div><pre class="mt"><code>-- Solo si el negocio lo confirma:
+ALTER TABLE plato
+ADD CONSTRAINT uq_plato_nombre UNIQUE (nombre);</code></pre><div class="brand"><span>Diseño responsable</span><span>DDL ejecuta decisiones; no las valida</span></div></section>
+<section class="slide dense" data-title="ALTER y DROP · verificación"><div class="ey">Cierre del laboratorio &middot; 230&ndash;239 min</div><h2>DDL tambi&eacute;n modifica y elimina</h2><div class="g2 wide"><div><div class="g2"><div><h3>ALTER</h3><pre><code>ALTER TABLE pedido
+ADD COLUMN observacion TEXT;</code></pre></div><div><h3>DROP</h3><pre><code>DROP TABLE linea_pedido;</code></pre></div></div><div class="stop mt"><strong><code>DROP TABLE</code> elimina la tabla, no solo sus filas.</strong> Y para borrar tambi&eacute;n hay orden: primero la que apunta, despu&eacute;s la apuntada.</div></div><div><h3>Y antes de cerrar, comprueben el n&uacute;cleo</h3><img class="toma" src="../../assets/Supabase/f87b6182-b76e-41bf-b683-f62e45ea9ac1.png" alt="Table Editor con las tres tablas creadas: plato, pedido y linea_pedido" loading="lazy"><p class="small" style="margin-top:.35em"><b>plato</b> PK + CHECK &middot; <b>pedido</b> PK + DEFAULT + CHECK &middot; <b>linea_pedido</b> PK + 2 FK + CHECK</p><div class="checkpoint mt">Abran cada tabla en <b>Table Editor</b> y localicen columnas, tipos y relaciones. La interfaz tiene que coincidir con el modelo que entendieron &mdash; si no coincide, una de las dos cosas est&aacute; mal.</div></div></div><div class="brand"><span>Cierre del laboratorio</span><span>La interfaz debe coincidir con el modelo</span></div></section>
+
+<section class="slide mid" data-title="Cierre"><div class="ey">Cierre &middot; 239–244 min</div><h2>Hoy hicimos mucho más que “crear tablas”</h2><div class="timeline"><article><b>1</b><h3>Navegamos</h3><p>Supabase sin depender del profesor.</p></article><article><b>2</b><h3>Diagnosticamos</h3><p>Problemas visibles de 1FN, 2FN y 3FN.</p></article><article><b>3</b><h3>Reparamos</h3><p>Movimos cada dato a su dueño.</p></article><article><b>4</b><h3>Construimos</h3><p>PostgreSQL hizo ejecutables las reglas.</p></article></div><div class="giant smallg">¿De qué depende este dato?</div><div class="brand"><span>Cierre</span><span>La pregunta que te llevas</span></div></section>
+<section class="slide dark mid" data-title="Salida"><div class="ey">Ticket de salida</div><h2>Sin mirar las diapositivas, explica a tu sala:</h2><ol class="biglist"><li>¿Qué problema visual te ayuda a detectar 1FN?</li><li>¿Cuándo aparece el problema de 2FN?</li><li>¿Qué “rodeo” busca 3FN?</li><li>¿Cuál es la diferencia entre una API key y una PK?</li><li>¿Qué hace una FK cuando insertas datos?</li></ol><div class="brand"><span>Fin · Sesión 9</span><span>ANDESDB</span></div></section>
+
+
+
+
+
+
+
+
+
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 54</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-9-ddl-supabase.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
+<div class="sr" id="announce" aria-live="assertive"></div>
+<script>
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),timeOv=document.getElementById('timeOv'),noteOv=document.getElementById('noteOv'),noteBody=document.getElementById('noteBody'),announce=document.getElementById('announce'),clock=document.querySelector('.clock'),noteBtn=document.getElementById('noteBtn');
+let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length+(ss[i].dataset.opcional?' · opcional':'');bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;if(noteOv&&noteOv.classList.contains('open'))fillNotes();if(ss[i].dataset.break==='15'){setTimer(15,false);render()}}
+function fillNotes(){if(!noteBody)return;const n=ss[i].querySelector('.notes');noteBody.innerHTML=n?n.innerHTML:'<p>Esta diapositiva no tiene notas.</p>'}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
+function closeAll(){timeOv.classList.remove('open');if(noteOv)noteOv.classList.remove('open')}
+function anyOpen(){return timeOv.classList.contains('open')||(noteOv&&noteOv.classList.contains('open'))}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){announce.textContent='Pantalla completa no disponible'}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;
+if(noteBtn)noteBtn.onclick=()=>{fillNotes();noteOv.classList.add('open')};
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();return}if(anyOpen())return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on');else if(e.key.toLowerCase()==='n'&&noteBtn){fillNotes();noteOv.classList.add('open')}});
+document.querySelectorAll('.q').forEach(q=>{const f=q.querySelector('.fb');q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel','ok','no'));b.classList.add('sel');f.className='fb';f.textContent=''});q.querySelector('.verify').onclick=()=>{const b=q.querySelector('.opt.sel');if(!b){f.textContent='Elige una opción antes de verificar.';f.className='fb show bad';f.tabIndex=-1;f.focus();return}const ok=b.dataset.o===q.dataset.answer;b.classList.add(ok?'ok':'no');f.textContent=b.dataset.f;f.className='fb show '+(ok?'good':'bad');f.tabIndex=-1;f.focus()}});
+let remain=900000,initial=remain,end=0,running=false,tick=null;
+const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){const q=cur(),v=fmt(q);document.getElementById('timer').textContent=v;
+ if(miniT){miniT.textContent=v;
+  mini.classList.toggle('avisa',running&&q>0&&q<=60000);
+  mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));
+  miniPP.innerHTML=running?'&#10074;&#10074;':'&#9654;';
+  miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar');}
+ if(clock&&ss[i].dataset.break==='15')clock.textContent=v;
+ if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
+function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
+function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
+function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
+/* al arrancar, el panel se quita de en medio y queda la pastilla flotante */
+function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);
+ if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
+function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});const inpLibre=document.getElementById('minLibre'),btnLibre=document.getElementById('ponLibre');if(inpLibre&&btnLibre){const ponLibre=()=>{let m=parseFloat(String(inpLibre.value).replace(',','.'));if(!isFinite(m)||m<=0)return inpLibre.focus();m=Math.min(180,m);inpLibre.value=m;setTimer(m,false);if(miniLbl)miniLbl.textContent=m+' min';start();};btnLibre.onclick=ponLibre;inpLibre.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ponLibre();}});}
+const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
+document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+if(mini){
+ miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};
+ document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};
+ document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
+ /* arrastrar a cualquier lado; la posición se recuerda */
+ let ax=0,ay=0,px=0,py=0,mov=false;
+ const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};
+ try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');
+  if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}
+ mini.addEventListener('pointerdown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  const r=mini.getBoundingClientRect();
+  ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;
+  mini.setPointerCapture(e.pointerId);mini.classList.add('arrastrando')});
+ mini.addEventListener('pointermove',e=>{
+  if(!mini.hasPointerCapture||!mini.classList.contains('arrastrando'))return;
+  if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;
+  if(!mov)return;
+  const r=mini.getBoundingClientRect();
+  const x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width);
+  const y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);
+  mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});
+ mini.addEventListener('pointerup',e=>{
+  mini.classList.remove('arrastrando');
+  try{mini.releasePointerCapture(e.pointerId)}catch(_){}
+  if(mov)guardar();});
+ addEventListener('resize',()=>{const r=mini.getBoundingClientRect();
+  if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}});
+}
+let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
+upd();render()})();
+/* --- copiar el código de un bloque, para que nadie lo transcriba a mano --- */
+document.querySelectorAll('.slide pre').forEach(function(pre){
+  // solo los bloques que son código: las etiquetas y los esquemas no se copian
+  if(pre.hasAttribute('data-nocopy'))return;
+  if(!/\b(SELECT|WITH|FROM|JOIN|WHERE|GROUP BY|ORDER BY|COUNT|SUM|AVG|CASE|CREATE|INSERT|UPDATE|DELETE)\b/i.test(pre.textContent))return;
+  var b=document.createElement('button');
+  b.type='button'; b.className='copybtn'; b.textContent='copiar';
+  b.setAttribute('aria-label','Copiar este c\u00f3digo al portapapeles');
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    var t=pre.cloneNode(true);
+    t.querySelectorAll('.copybtn').forEach(function(x){x.remove()});
+    var txt=t.textContent.replace(/\s+$/,'');
+    var listo=function(){b.textContent='copiado';b.classList.add('ok');
+      setTimeout(function(){b.textContent='copiar';b.classList.remove('ok')},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(listo,function(){b.textContent='no se pudo'})
+    }else{
+      var ta=document.createElement('textarea');ta.value=txt;
+      ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
+      ta.select();try{document.execCommand('copy');listo()}catch(_){b.textContent='no se pudo'}
+      ta.remove()
+    }
+  });
+  pre.appendChild(b);
+});
+
+</script>
+<script>
+/* La lupa: clic en un dibujo para verlo grande. Clic o Escape para cerrar. */
+(function(){
+  var lupa = document.createElement('div');
+  lupa.id = 'lupa';
+  lupa.innerHTML = '<div class="caja"></div><div class="pie">Clic o Escape para cerrar</div>';
+  document.body.appendChild(lupa);
+  var caja = lupa.querySelector('.caja');
+
+  function abierta(){ return lupa.classList.contains('on'); }
+  function cerrar(){ lupa.classList.remove('on'); caja.innerHTML = ''; }
+
+  function abrir(svg){
+    var c = svg.cloneNode(true);
+    c.removeAttribute('class');           /* fuera el limite de altura */
+    c.removeAttribute('style');
+    c.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    caja.innerHTML = '';
+    caja.appendChild(c);
+    lupa.classList.add('on');
+  }
+
+  document.addEventListener('click', function(e){
+    if(abierta()){ e.preventDefault(); e.stopPropagation(); cerrar(); return; }
+    var svg = e.target.closest && e.target.closest('.slide svg.joinviz');
+    if(svg){ e.preventDefault(); e.stopPropagation(); abrir(svg); }
+  }, true);
+
+  document.addEventListener('keydown', function(e){
+    if(!abierta()) return;
+    e.preventDefault(); e.stopPropagation();     /* que no navegue por detras */
+    cerrar();
+  }, true);
+})();
+</script>
+<script>
+/* Taller 3: doce frases, un clic cada una. Las respuestas van cifradas para que
+   no se lean en el codigo fuente de una pagina publica. */
+(function(){
+  var D = 'vekWYlvQ9CcDvfNaPsz5po9gw7m1EyAkx5aGTcOGnZtp14YZTdQEco1x8LAkxfozk2Rn9H2qcI82FZ+hWiw+2azwownrIimH26PoIyuDPImrdKN7poNq6OIYUDOc+l0Aawk9NYrg831h8vzXm1g/gM9N93nNkC0oC6xzWgD2gWQVSlCK5nQv+zTX1r27iJc8n3sBwO2ig8yk+0mZ5C2Rw8LjkRbiANSTTSbp4fAubLxAPZ9jDunNHQ2rK3ua8jY9roBiezy4udV1bAzyM1V2tSb8Q3kK/JWBQ8rdDaSCynajqsVcF1A3BOsPbEFec0j2jvEBjXG0szdNgBHT40bqOuh8+dFrxFpJWCAk7FbAWRPj8QWzzEYUwqR5R8S/SdIudrLR9TJTScIH+jmtwZNCoKNS9Y3+8jlsYu9a5xoYa+83Njtn6CZBKjJf0CyKF1rFOQGGyPVJl0xYKSz3eMS2UzVggXaomU0xiL/SmZjGzMnxhRyoJ0Og3lr/7Yj+iEKKk+wr+OxYeatgxTYu41xJb4HaRgHRtwuYZXf2FM7Y/VGcgrj0rJy+uu09TNSm430U7MXTWpn6NGeAOJWy4lQh/Dxsu+7ovq94lP30Cg/P9t40fOsxVSnXk9l31K6O8F9BlEVRZac/YhoNiPJZ9/GXvRQM4l35Kd5GsjChK7Tmn3QPnCYuQN+Did8bwP5Z1aOuNKtwA8jBiyQyGAunS27wBWnZXi9G8u3D3snKWBzW4BRfyvq4EAoLgJTfMTK1JhurFOUSgo0tVZYCn0glrc4XQK//FBbQYM22ToIbBxtOZvzhm5Xm3UwFsDIry9ZMHvTrZ9WBpTEydTgNqvH3TXUZqltaWfaOg1cVvmSs0V3l87vKeZbbevEEF4yy2a2Cb3MO3gLtOQjKQWEkNpKEiTJFriscsfST0FCYaZnaG3IAEVN5HnDuOqC3haMVrDhi2er2yLveGYQQNthJawiRv5YzWEtEja5uWaWBpgPGI5Ivsy62n5rZzgptAjI5M5EqYEiEHUguiIfzTO4JB9+Ac6c4MJLGZyB/4QqZRp3KtGZfjvI/Xu0ob6L/7sd3a3m+0NSsQ7dEIDceNu2Cfzu8Ap83Dml2XlaoMl1XNODXE+E4sxLxsdztXgPE8QCUieYbMRXYg57AcaIlysXpqC3o18c8D7hR7SZBMa/PkG+d6ECvZusQqW1YDKMPxGfT6AnAggv2pRJ/86ICS3mUgJA35RB0Alrz6AjkNEDRrNU7UfSoCPa0t0dVKArAlk9dPLM7J489ksVDg1UbCpCv2LzygDkzqPBWmOp+jR3ugq7yv1tKvQUpEXr5wB00lb9ytXlptSVD1DQoiDtxQ8388WnSsVFZbYg/O9GrOVmz7WuUwDuEKQEiNSJlzRtf6ZlbkDYgWsnlVMl5cA==';
+  function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
+    h=Math.imul(h,16777619)>>>0; } return h||1; }
+  var bin; try{ bin = atob(D); }catch(e){ return; }
+  var x = semilla('TALLER6'), out = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++){
+    x=(x^(x<<13))>>>0; x=(x^(x>>>17))>>>0; x=(x^(x<<5))>>>0;
+    out[i]=bin.charCodeAt(i)^(x&255);
+  }
+  var txt = new TextDecoder('utf-8').decode(out);
+  if(txt.slice(0,4)!=='S6OK') return;
+  var CLAVE = JSON.parse(txt.slice(4));
+
+  var hechas = 0, bien = 0;
+  var marc = document.getElementById('frMarc');
+  var porq = document.getElementById('frPorq');
+
+  document.querySelectorAll('.fr').forEach(function(fr){
+    var i = +fr.dataset.i - 1;
+    fr.querySelectorAll('.fb button').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(fr.dataset.hecho) return;
+        var v = +b.dataset.v, ok = (v === CLAVE[i].k);
+        fr.dataset.hecho = '1';
+        fr.className = 'fr ' + (ok ? 'si' : 'no');
+        b.classList.add('el');
+        hechas++; if(ok) bien++;
+        marc.textContent = bien + ' de ' + hechas + ' bien';
+        porq.className = 'porq ' + (ok ? 'si' : 'no');
+        porq.innerHTML = '<strong>' + fr.dataset.i + ' &middot; ' +
+          (ok ? 'Bien.' : 'No.') + '</strong> ' + CLAVE[i].w;
+      });
+    });
+  });
+})();
+</script>
+<script>
+/* Las diez preguntas, dentro de la presentacion. Respuestas cifradas. */
+(function(){
+  var D = '+a4yvWrcek4Q7jsAFv40eKfGCUHmkPZ3GDWqzp4y4UvalJtHyld8pcO6WFFYaewaCo2wR2v3Ia4GJr7Mb/rrcjpQ5PV082Rc38CDIhHA0M50HD3k24t+Jx7j4SJ1blUKcOysYORTjgN3zYbSuTputgZ+tjzS7BXGF7r0XkuHAD4TB5YTYOBG7UFXnOTbxjhKvhP/WRHGEXzgzwMSbv6oEh7HBAxwB24sMm1FDn+LFoNKK6JW2iQGtCxLd44q2XjKohUY/vNqH0fm9YcF4F8RsfL6oG7fbdGZ+GRWyk2qeiUYBBGAIDUBdXq+w5Q0Si4qu+cPYko7JYkHPNh/E6wqGDI6clsG3Eo/HVW/B1QQXsAvG+jNk5QWGun7GG7W16Y86X+qIWy0wBvra5BziZfy7GEgzMkdqSfOIfYD9IdlQjD0qoB1zbSe+ELE+fgyxXYCixYPqOeHs7PzRB/OssrFmiE1Fj8E/zUhuZWjYvbUyGf62YYN/g3ejGoomq/xTgi8s/Ajj58T4jJ9ep5x/KgzFxA38F5tmKfo7VWSZdAoHZcbmdCrQ2svJTiILM82a3jIm9xQz1Xv59spuMlaEYVbJ8U7DkrzDI/1a9o4LyzvnulAZHaY8odC80ohEdzNWJdpdOtHHfo/dr0aNyjuawyN7YUXLIVQ8BF/HKCFAPVFbqRHUj2sQYg9dwqmiu6omnDlmkIkJHwyT+eeLsFXx8AvPmaIh99dzqa4LO22JX98QyyyH15PAZ21f33himacESwhtgEXSHQJBohiiSskk7RRHf89ZO3d7zuMYVeJCdBQgUHL9PGeW076HOSGatI5wYpnuhRKEsJRNwoUhyvQZuvEnN/11u4wCzRIoVoRkBGDbA/mS3hbsRCDJ14by0NwG4WnAUZZxxkyOy64V9znunOqJ8Ln49FsDvYtWFllNJjeerJz3SKxPBaPgVbuA47N1QXr7jLP944CJprhtRJF+Tn6YgPi05tCNplbovM7pXNgMkwKCNudUdpbv3NAQT/ic4SgozU25CbYoDDLuDWPs9uTWAZE5vr3QTgHGh9ocIRDi2jgj3SqzfjZJ58y6fX/c0Gdzqr87c4QF9Z7XgwMuA03+4n9xRLphsQ1DnG9VtQ3rOl9KFWIdpqoB1qZfWEAPVJkS1Us9Tb6/vf02IuVLVosklbiI3NN2/BUzKmE7e+Cq9a4wulmvBaFawR+CIQjFQe54YBlbzbJnRz/fEnzOwvtpentfTNJ/rDthQmW+xVk0Ad8voPtObjkFrtKdQK7jvrOqu8wpntNnLhy/62akvbxvIK19Z+ZopH7QegrBwUIyExVNk/oFPnDH+jW5YxjdXhQLcZorCDtBdumKlwceSKgN727EniOvTtsmX8UU34Q7HFdyuicSDCfOswIppG+38JmlAVwLJZ8oasos2VZChByvfGNn6evF9pt7/10lhURJYcvp/INUeVNFgbyaBdnFiI7vkvkgVBNHTrm6rVDo0CIoI0Ci8JihZnnukvHQuZ68JTMtuZizVRMUjkkgP0tcscepUWE7XIqN2vXjH2GHQ+UxDG6X0VY6pEOoEcFf5TctdoipAFopwOkLQZkgS2355CArBRKHmKKsn6y7RdzdAlMMxF06l68LCILlV9QgWnYKPHVNycMdZleZqbQGn/9uVvlJuHva/TeGBcjCEa9AeX0pZ8fWxnGapiCKmIOJm2LUG2ghA==';
+  function semilla(c){ var h=2166136261; for(var i=0;i<c.length;i++){ h^=c.charCodeAt(i);
+    h=Math.imul(h,16777619)>>>0; } return h||1; }
+  var bin; try{ bin = atob(D); }catch(e){ return; }
+  var x = semilla('CONCURSO6'), out = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++){
+    x=(x^(x<<13))>>>0; x=(x^(x>>>17))>>>0; x=(x^(x<<5))>>>0;
+    out[i]=bin.charCodeAt(i)^(x&255);
+  }
+  var txt = new TextDecoder('utf-8').decode(out);
+  if(txt.slice(0,4)!=='S6OK') return;
+  var CLAVE = JSON.parse(txt.slice(4));
+
+  document.querySelectorAll('.cgrid').forEach(function(g){
+    var p = g.dataset.p, hechas = 0, bien = 0;
+    var marc = document.getElementById('cMarc'+p);
+    var porq = document.getElementById('cPorq'+p);
+    g.querySelectorAll('.cq').forEach(function(cq){
+      var i = +cq.dataset.i;
+      cq.querySelectorAll('.co button').forEach(function(b, j){
+        b.addEventListener('click', function(){
+          if(cq.dataset.hecho) return;
+          var k = CLAVE[p][i], ok = (j === k);
+          cq.dataset.hecho = '1';
+          cq.className = 'cq ' + (ok ? 'si' : 'no');
+          b.classList.add('el');
+          cq.querySelectorAll('.co button')[k].classList.add('ok');
+          hechas++; if(ok) bien++;
+          marc.textContent = bien + ' de ' + hechas + ' bien';
+          porq.className = 'porq ' + (ok ? 'si' : 'no');
+          porq.innerHTML = '<strong>' + (i+1) + ' &middot; ' + (ok ? 'Bien.' : 'No.') +
+            '</strong> ' + CLAVE[p][i+'w'];
+        });
+      });
+    });
+  });
+})();
+</script>
+<script src="sql-lab-s6.js"></script>
+</body></html>
