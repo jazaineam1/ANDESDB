@@ -345,36 +345,25 @@
           "duracionUtil": 145,
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
-          "titulo": "Introducción a bases NoSQL",
+          "titulo": "Taller de casos: ¿SQL o NoSQL?",
           "estado": "hoy",
-          "desc": "Clave-valor, documentos y grafos; sistemas distribuidos y teorema CAP; qué cambia frente a lo relacional. Y de ahí a Firestore: cada uno levanta su base de documentos en Firebase y modela una aplicación de su móvil.",
+          "desc": "Seis casos de negocio y una decisión por cada uno: relacional, documentos, clave-valor o grafo. Con dos argumentos técnicos, un riesgo y la consulta que la elección contesta peor. La tecnología va detrás del problema, no delante.",
           "tags": [
-            "NoSQL",
+            "SQL vs NoSQL",
+            "patrón de acceso",
+            "consistencia",
+            "CAP",
+            "desnormalización",
             "clave-valor",
             "documentos",
             "grafos",
-            "CAP",
-            "consistencia eventual",
-            "desnormalización",
-            "escalabilidad",
-            "Firebase",
-            "Firestore",
-            "colecciones"
+            "decisión técnica"
           ],
-          "href": "Presentaciones/M4/sesion-10-nosql.html",
+          "href": "Presentaciones/M4/sesion-10-sql-o-nosql.html",
           "recursos": [
             {
-              "txt": "🔥 Ejercicio: tu primera base de documentos",
-              "href": "Presentaciones/M4/ejercicio-firebase.html"
-            },
-            {
-              "txt": "📊 La presentación original en PowerPoint",
+              "txt": "📊 Material original del módulo (PowerPoint)",
               "href": "Presentaciones/M4/M4C1 V4 Introducción a bases NoSQL.pptx",
-              "download": true
-            },
-            {
-              "txt": "📄 El ejercicio original en Word",
-              "href": "Presentaciones/M4/M4C1 Ejercicio Firebase.docx",
               "download": true
             }
           ]
@@ -393,6 +382,17 @@
             "documentos",
             "partition key",
             "Azure Storage"
+          ],
+          "recursos": [
+            {
+              "txt": "🔥 Ejercicio: tu primera base de documentos en Firestore",
+              "href": "Presentaciones/M4/ejercicio-firebase.html"
+            },
+            {
+              "txt": "📄 El ejercicio original en Word",
+              "href": "Presentaciones/M4/M4C1 Ejercicio Firebase.docx",
+              "download": true
+            }
           ]
         }
       ]
@@ -502,10 +502,5 @@
     }
   ],
   "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
-  "materialesHoy": [
-    {
-      "txt": "🔥 Ejercicio de hoy: tu primera base de documentos",
-      "href": "Presentaciones/M4/ejercicio-firebase.html"
-    }
-  ]
+  "materialesHoy": []
 }

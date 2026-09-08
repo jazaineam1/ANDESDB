@@ -236,6 +236,15 @@ $$;
 -- formulario. Se le quita todo y se le devuelven exactamente tres
 -- permisos de ejecución.
 --
+-- RLS ya bloquea las filas sin políticas, pero revocar también los
+-- privilegios de tabla deja la superficie pública explícitamente
+-- cerrada: el navegador no puede usar /rest/v1/<tabla>.
+-- ============================================================
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
+
+-- ============================================================
+-- SOLO LAS TRES PUERTAS DEL FORMULARIO
+--
 -- REVOKE ... FROM PUBLIC es importante: al crear una función,
 -- PostgreSQL se la deja ejecutar a todo el mundo por defecto.
 -- ============================================================
