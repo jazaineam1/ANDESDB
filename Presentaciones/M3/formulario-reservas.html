@@ -155,6 +155,20 @@ tbody tr.nueva{background:var(--y-sua)}
         <div class="aviso mal"  id="error" hidden></div>
       </section>
 
+      <section class="tarj" id="impacto" hidden aria-live="polite">
+        <h2>Impacto de esta reserva en las 11 tablas</h2>
+        <p id="resumenImpacto"></p>
+        <div class="desliza">
+          <table>
+            <thead><tr><th>Tabla</th><th>Qué ocurrió al guardar</th></tr></thead>
+            <tbody id="filasImpacto"></tbody>
+          </table>
+        </div>
+        <p class="marca">Después, al actualizar la lista, la página solo lee
+          <code>reserva</code>, <code>cliente</code>, <code>mesa</code> y
+          <code>mesero</code>; esa lectura no cambia ninguna fila.</p>
+      </section>
+
       <section class="tarj">
         <h2>Qué acaba de pasar</h2>
         <p>El navegador <b>no toca las tablas</b>. Las once están cerradas con
@@ -342,6 +356,33 @@ tbody tr.nueva{background:var(--y-sua)}
   }
 
   var vistas = {};
+
+  function mostrarImpacto(clienteAccion) {
+    var cliente = clienteAccion === 'creado'
+      ? 'INSERT: se creó el cliente porque no estaba registrado.'
+      : 'SELECT: se reutilizó el cliente que ya estaba registrado.';
+    var impacto = [
+      ['cliente', cliente],
+      ['mesero', 'Sin cambio.'],
+      ['mesa', 'SELECT: se comprobó que existe y cuántos puestos tiene.'],
+      ['reserva', 'INSERT: se creó la nueva reserva.'],
+      ['plato', 'Sin cambio.'],
+      ['ingrediente', 'Sin cambio.'],
+      ['receta', 'Sin cambio.'],
+      ['pedido', 'Sin cambio.'],
+      ['pedido_mesa', 'Sin cambio.'],
+      ['linea_pedido', 'Sin cambio.'],
+      ['pago', 'Sin cambio.']
+    ];
+    $('resumenImpacto').textContent = clienteAccion === 'creado'
+      ? 'Esta reserva escribió dos filas: una en cliente y otra en reserva.'
+      : 'Esta reserva escribió una sola fila: reserva. El cliente ya existía.';
+    $('filasImpacto').innerHTML = impacto.map(function (fila) {
+      return '<tr><th scope="row">' + fila[0] + '</th><td>' + fila[1] + '</td></tr>';
+    }).join('');
+    $('impacto').hidden = false;
+  }
+
   function cargarReservas(recien) {
     return rpc('listar_reservas').then(function (rs) {
       rs = rs || [];
@@ -406,6 +447,7 @@ tbody tr.nueva{background:var(--y-sua)}
       var fila = (r && r[0]) || {};
       pinta($('ok'), (fila.mensaje || 'Reserva guardada.') +
         ' Búscala abajo, resaltada en amarillo.', '✓ Quedó en la base');
+      mostrarImpacto(fila.cliente_accion);
       $('form').reset();
       $('hora').value = '19:00';
       $('personas').value = '2';

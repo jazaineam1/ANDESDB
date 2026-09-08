@@ -61,6 +61,28 @@ ALTER TABLE pago         ENABLE ROW LEVEL SECURITY;
 
 
 -- ============================================================
+-- PASO 1.5 · BORRAR LAS FUNCIONES ANTERIORES
+--
+-- CREATE OR REPLACE sabe cambiar el cuerpo de una función, pero
+-- NO su tipo de retorno. Si se le añade una columna a lo que
+-- devuelve, PostgreSQL responde:
+--
+--     ERROR: cannot change return type of existing function
+--     HINT:  Use DROP FUNCTION ... first.
+--
+-- Y entonces se queda desplegada la versión vieja, que es peor
+-- que un error a secas: la página pide un campo que no llega y
+-- no se entera.
+--
+-- Por eso se borran antes. Así este guion se puede volver a
+-- ejecutar siempre, como todos los del curso.
+-- ============================================================
+DROP FUNCTION IF EXISTS public.registrar_reserva(TEXT, TEXT, DATE, TIME, INTEGER, INTEGER);
+DROP FUNCTION IF EXISTS public.listar_reservas();
+DROP FUNCTION IF EXISTS public.mesas_disponibles();
+
+
+-- ============================================================
 -- PASO 2 · LA PUERTA DE ENTRADA · registrar_reserva
 --
 -- SECURITY DEFINER quiere decir «esta función se ejecuta con los
@@ -82,7 +104,13 @@ CREATE OR REPLACE FUNCTION public.registrar_reserva(
     p_personas INTEGER,
     p_mesa     INTEGER
 )
-RETURNS TABLE (reserva_id INTEGER, mesa INTEGER, puestos INTEGER, mensaje TEXT)
+RETURNS TABLE (
+    reserva_id INTEGER,
+    mesa INTEGER,
+    puestos INTEGER,
+    cliente_accion TEXT,
+    mensaje TEXT
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
@@ -94,6 +122,7 @@ DECLARE
     v_puestos  INTEGER;
     v_cliente  INTEGER;
     v_reserva  INTEGER;
+    v_cliente_accion TEXT := 'reutilizado';
 BEGIN
     -- --- limpiar lo que llega del navegador -------------------
     v_nombre   := btrim(COALESCE(p_nombre, ''));
@@ -149,6 +178,7 @@ BEGIN
         INSERT INTO cliente (nombre, telefono)
         VALUES (v_nombre, v_telefono)
         RETURNING cliente.cliente_id INTO v_cliente;
+        v_cliente_accion := 'creado';
     END IF;
 
     -- --- y por fin la reserva ---------------------------------
@@ -160,6 +190,7 @@ BEGIN
     SELECT v_reserva,
            p_mesa,
            v_puestos,
+           v_cliente_accion,
            format('Reserva %s confirmada para %s personas en la mesa %s.',
                   v_reserva, p_personas, p_mesa);
 END;
