@@ -283,27 +283,36 @@
           "fecha": "2026-09-04",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
-          "titulo": "Supabase paso a paso + DDL PostgreSQL",
+          "titulo": "SQL para creación de tablas",
           "estado": "pendiente",
-          "desc": "Tutorial guiado para entrar a Supabase, usar SQL Editor y Table Editor, trabajar en grupos Zoom y crear tablas con DDL PostgreSQL. Las formas normales quedan más suaves: 1FN es no guardar listas en celdas; 2FN es no mezclar datos de pedido y plato; 3FN es no guardar un dato en el lugar equivocado.",
+          "desc": "Tipos de datos y cómo elegir el correcto, restricciones de columna y de tabla, y las seis instrucciones que cambian una base: CREATE, INSERT, UPDATE, DELETE, DROP y ALTER, cada una con ejemplo y ejercicio. Supabase es el motor donde se escribe y se comprueba todo.",
           "tags": [
-            "Supabase",
-            "SQL Editor",
-            "Table Editor",
-            "1FN suave",
-            "2FN suave",
-            "3FN suave",
-            "CREATE TABLE",
-            "PK",
-            "FK",
+            "tipos de datos",
+            "INTEGER",
+            "VARCHAR",
+            "restricciones",
+            "PRIMARY KEY",
+            "FOREIGN KEY",
             "CHECK",
+            "CREATE TABLE",
+            "INSERT",
+            "UPDATE",
+            "DELETE",
+            "DROP",
+            "ALTER",
+            "Supabase",
             "PostgreSQL"
           ],
-          "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
+          "href": "Presentaciones/M3/sesion-9-sql-creacion-tablas.html",
           "recursos": [
             {
-              "txt": "📄 Laboratorio 1FN–3FN + DDL PostgreSQL",
-              "href": "Scripts/S9.sql",
+              "txt": "📐 Ejercicio de creación de tablas",
+              "href": "Presentaciones/M3/Clase4/Ejercicio creación de tablas.pdf",
+              "download": true
+            },
+            {
+              "txt": "📊 La presentación original en PowerPoint",
+              "href": "Presentaciones/M3/Clase4/M3C4 V2 - SQL para creación de tablas.pptx",
               "download": true
             }
           ]

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sesi&oacute;n 9 &middot; SQL para creaci&oacute;n de tablas &middot; ANDESDB</title>
+<meta name="description" content="Sesi&oacute;n 9 del m&oacute;dulo 3: tipos de datos, restricciones y las instrucciones CREATE, INSERT, UPDATE, DELETE, DROP y ALTER, con Supabase como motor.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='19' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3E9%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#ffffff; --sombra:0 10px 34px rgba(16,32,48,.16);
+  --codigo:#3a2f00;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945;
+    --papel:#0d151c; --carta:#141f29; --az-sua:#16303f; --y-sua:#3a3410; --codigo:#ffe97a;
+    --sombra:0 10px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945;
+  --papel:#0d151c; --carta:#141f29; --az-sua:#16303f; --y-sua:#3a3410; --codigo:#ffe97a;
+  --sombra:0 10px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow:hidden}
+
+/* la fila y la columna se fijan a minmax(0,1fr): dejadas en auto crecian con
+   la lamina y el max-height:100% de la imagen no ataba a nada, asi que el pie
+   de cada diapositiva del PowerPoint se salia por abajo */
+.mazo{position:fixed;inset:0;display:grid;place-items:center;padding:2.2vmin;
+  grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+.lam{display:none;width:100%;height:100%;min-width:0;min-height:0}
+.lam.viva{display:grid;place-items:center}
+/* el limite se mide contra el viewport y no en porcentaje: el porcentaje
+   colgaba de una cadena de alturas que no llegaba a ser definida, y la lamina
+   salia a lo ancho y se cortaba por abajo */
+.lam img{max-width:calc(100vw - 4.4vmin);max-height:calc(100vh - 4.4vmin);
+  width:auto;height:auto;object-fit:contain;
+  border-radius:var(--r);box-shadow:var(--sombra);background:#fff}
+
+/* --- las de Supabase, que si son HTML --- */
+/* la tarjeta se ajusta a lo que lleva dentro, no al alto de la pantalla:
+   estirarla dejaba un hueco muerto entre el contenido y el pie */
+.lam.propia.viva{display:grid;grid-template-rows:auto auto auto;align-content:start;
+  width:min(1600px,100%);height:auto;max-height:100%;background:var(--carta);
+  border-radius:var(--r);box-shadow:var(--sombra);padding:3.2vmin 4vmin;overflow:auto}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;font-size:.72rem;color:var(--az)}
+.cinta::before{content:"";width:2.1em;height:.42em;background:var(--y);border-radius:2px}
+.lam.propia h2{margin:.28em 0 .5em;font-size:clamp(1.5rem,3.1vmin,2.5rem);line-height:1.12;
+  letter-spacing:-.015em;text-wrap:balance}
+.dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2.4vmin;align-items:start}
+.pila{display:flex;flex-direction:column;gap:1.4vmin;min-width:0}
+.toma{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--linea);
+  box-shadow:0 3px 14px rgba(16,32,48,.13)}
+.lam.propia ol,.lam.propia ul{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:.5em}
+.lam.propia li{font-size:clamp(.9rem,1.75vmin,1.08rem)}
+.caja{border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua);
+  border-radius:10px;padding:.85em 1.05em;font-size:clamp(.85rem,1.7vmin,1.03rem)}
+.caja.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.caja h3{margin:0 0 .3em;font-size:1em;letter-spacing:.02em}
+/* el color del codigo es un token, no un literal: escrito a pelo se volvia
+   marron sobre marron en cuanto el tema pasaba a oscuro */
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.94em;color:var(--codigo)}
+.pie{display:flex;justify-content:space-between;gap:1em;margin-top:1.2vmin;
+  padding-top:.7vmin;border-top:1px solid var(--linea);
+  font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
+
+/* --- barra --- */
+.barra{position:fixed;top:1.1vmin;right:1.4vmin;z-index:40;display:flex;gap:.4em;align-items:center}
+.barra button,.barra a{border:1px solid var(--linea);background:var(--carta);color:var(--tinta);
+  width:2.5rem;height:2.5rem;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+  font:800 .95rem/1 inherit;text-decoration:none;box-shadow:0 2px 8px rgba(16,32,48,.12)}
+.barra button:hover,.barra a:hover{background:var(--az);color:#fff;border-color:var(--az)}
+.barra button:focus-visible,.barra a:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.count{font-variant-numeric:tabular-nums;font-weight:800;font-size:.82rem;background:var(--tinta);
+  color:var(--papel);padding:.42em .72em;border-radius:999px}
+.bar{position:fixed;left:0;bottom:0;height:4px;background:var(--y);z-index:41;
+  transition:width .18s ease}
+.clockBox{position:fixed;left:1.4vmin;top:1.1vmin;z-index:40;background:var(--tinta);color:var(--papel);
+  padding:.4em .8em;border-radius:999px;font:800 .95rem/1 Consolas,monospace;
+  font-variant-numeric:tabular-nums;display:none}
+.clockBox.viva{display:block}
+.nowTitle{position:fixed;left:1.4vmin;bottom:1.2vmin;z-index:40;font-size:.72rem;
+  color:var(--tenue);letter-spacing:.05em;text-transform:uppercase;max-width:52vw;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.barra,.avance,.reloj,.nowTitle{display:none}}
+</style>
+</head>
+<body>
+<div class="mazo">
+<section class="lam" data-title="Portada"><img src="Clase4/laminas/01.jpg" alt="Diapositiva 1: Portada" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Contenido"><img src="Clase4/laminas/02.jpg" alt="Diapositiva 2: Contenido" loading="lazy" decoding="async"></section>
+<section class="lam propia" data-title="Supabase · entrar"><div><div class="cinta">Supabase &middot; 1 de 5</div><h2>D&oacute;nde vamos a escribir todo esto</h2></div><div><div class="dos"><div class="pila"><p>Todo lo que viene &mdash; <code>CREATE</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>DROP</code> y <code>ALTER</code> &mdash; necesita un PostgreSQL de verdad. El nuestro es <b>Supabase</b>: se abre en el navegador, no se instala nada.</p><ol><li>Entren a <a href="https://supabase.com/dashboard" target="_blank" rel="noopener"><b>supabase.com/dashboard</b></a> y creen la cuenta con su correo.</li><li>Van a caer en la pantalla de <b>proyectos</b>.</li><li>Arriba a la derecha, <b>New project</b>.</li></ol><div class="caja"><h3>Por hoy es solo un motor</h3>Supabase trae autenticaci&oacute;n, almacenamiento y APIs. Nada de eso hoy: hoy es un PostgreSQL con una ventana para escribir SQL.</div></div><div class="pila"><img class="toma" src="../../assets/Supabase/0110bbc5-e54a-4854-a0aa-c640411dbe71.png" alt="Panel de Supabase con la organización y el botón New project" loading="lazy"></div></div></div><div class="pie"><span>Supabase &middot; entrar</span><span>PostgreSQL en el navegador</span></div></section>
+<section class="lam propia" data-title="Supabase · crear"><div><div class="cinta">Supabase &middot; 2 de 5</div><h2>Crea el proyecto, y guarda la contrase&ntilde;a</h2></div><div><div class="dos"><div class="pila"><ol><li><b>Project name</b>: algo que reconozcan, por ejemplo <code>andesdb-s9</code>.</li><li><b>Database password</b>: una contrase&ntilde;a larga. <b>Gu&aacute;rdenla</b> antes de seguir.</li><li><b>Region</b>: la m&aacute;s cercana.</li><li><b>Create new project</b>, y esperen a que termine de aprovisionar.</li></ol><div class="caja ojo"><h3>Ojo con la palabra &laquo;clave&raquo;</h3>La <i>database password</i> <b>no</b> es una clave primaria ni una clave for&aacute;nea. Es la contrase&ntilde;a del servidor: se guarda, no se comparte y no se pega en el chat.</div></div><div class="pila"><img class="toma" src="../../assets/Supabase/981b4798-7a80-471e-bebf-a89924fb6462.png" alt="Formulario de proyecto nuevo: nombre, contraseña y región" loading="lazy"></div></div></div><div class="pie"><span>Supabase &middot; crear</span><span>La contrase&ntilde;a no se comparte</span></div></section>
+<section class="lam propia" data-title="Supabase · SQL Editor"><div><div class="cinta">Supabase &middot; 3 de 5</div><h2>El SQL Editor: aqu&iacute; ocurre la clase entera</h2></div><div><div class="dos"><div class="pila"><ol><li>Men&uacute; izquierdo &rarr; <b>SQL Editor</b>.</li><li><b>New query</b>, o el <b>+</b>.</li><li>Escriban ah&iacute; el SQL de las l&aacute;minas que siguen.</li><li><b>Run</b>, o <code>Ctrl</code>+<code>Enter</code>.</li></ol><div class="caja"><h3>Se ejecuta lo que est&eacute; seleccionado</h3>Si hay varias instrucciones y no seleccionan ninguna, se ejecutan <b>todas</b>. Para correr una sola, s&eacute;lecciona esa y pulsa Run.</div><div class="caja ojo"><h3><code>Success. No rows returned</code> est&aacute; bien</h3><code>CREATE</code>, <code>UPDATE</code>, <code>DELETE</code> y <code>ALTER</code> cambian la estructura o los datos: no tienen por qu&eacute; devolver filas. Para verlas, a&ntilde;adan <code>RETURNING *</code> o consulten con <code>SELECT</code>.</div></div><div class="pila"><img class="toma" src="../../assets/Supabase/2afb3b48-7307-4190-ab92-3f7a52f6b32d.png" alt="El SQL Editor de Supabase, con dónde pegar y dónde pulsar Run" loading="lazy"></div></div></div><div class="pie"><span>Supabase &middot; SQL Editor</span><span>Se ejecuta lo seleccionado</span></div></section>
+<section class="lam propia" data-title="Supabase · Table Editor"><div><div class="cinta">Supabase &middot; 4 de 5</div><h2>Table Editor: comprobar que qued&oacute;</h2></div><div><div class="dos"><div class="pila"><p>Despu&eacute;s de cada <code>CREATE</code> o <code>INSERT</code>, vayan a verlo. Es la forma de saber que el SQL hizo lo que cre&iacute;an que hac&iacute;a.</p><ol><li>Men&uacute; izquierdo &rarr; <b>Table Editor</b>.</li><li>Arriba, el <b>selector de schema</b>: dejen <code>public</code>.</li><li>La tabla nueva aparece en la lista de la izquierda.</li><li>Al abrirla se ven las columnas, sus tipos y las filas insertadas.</li></ol><div class="caja"><h3>Y si no aparece</h3>Recarguen la p&aacute;gina. Si sigue sin estar, el <code>CREATE</code> dio error: vuelvan al SQL Editor y lean el mensaje rojo, que dice exactamente qu&eacute; l&iacute;nea no le gust&oacute;.</div></div><div class="pila"><img class="toma" src="../../assets/Supabase/f87b6182-b76e-41bf-b683-f62e45ea9ac1.png" alt="Table Editor de Supabase mostrando las tablas creadas" loading="lazy"></div></div></div><div class="pie"><span>Supabase &middot; Table Editor</span><span>Comprobar siempre</span></div></section>
+<section class="lam propia" data-title="Supabase · claves"><div><div class="cinta">Supabase &middot; 5 de 5</div><h2>Dos cosas se llaman &laquo;clave&raquo;, y no se parecen</h2></div><div><div class="dos"><div class="pila"><div class="caja"><h3>Claves de la base &mdash; las de esta clase</h3><p><b>PRIMARY KEY</b> identifica una fila. <b>FOREIGN KEY</b> apunta a la clave primaria de otra tabla. Son <b>dise&ntilde;o</b>: se escriben en el <code>CREATE TABLE</code>, viven dentro de la tabla y cualquiera puede verlas.</p></div><div class="caja ojo"><h3>Claves de acceso &mdash; las de la plataforma</h3><p>La <b>publishable</b> (antes <i>anon</i>) puede viajar en un navegador. La <b>secret</b> (antes <i>service_role</i>) se salta todas las reglas de seguridad, y la <b>database password</b> abre el servidor entero.</p></div></div><div class="pila"><div class="caja"><h3>Regla para hoy</h3><p>Lo que se comparte en el chat de la clase: la <b>Project URL</b> y, si hace falta, la clave <b>publishable</b>.</p><p>Lo que <b>no</b> se comparte nunca: la <i>database password</i>, la clave <b>secret</b> y la cadena de conexi&oacute;n directa a Postgres.</p></div><div class="caja"><h3>Y por qu&eacute; importa aqu&iacute;</h3><p>Porque en las l&aacute;minas que siguen la palabra <b>clave</b> aparece todo el rato &mdash;<code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>REFERENCES</code>&mdash; y no tiene nada que ver con entrar a ning&uacute;n sitio. Es el nombre de una columna que sirve para identificar y para enlazar.</p></div></div></div></div><div class="pie"><span>Supabase &middot; claves</span><span>Dise&ntilde;o, no acceso</span></div></section>
+<section class="lam" data-title="Tipos de datos"><img src="Clase4/laminas/03.jpg" alt="Diapositiva 3: Tipos de datos" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Tipos de datos"><img src="Clase4/laminas/04.jpg" alt="Diapositiva 4: Tipos de datos" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Tipos de datos · tabla"><img src="Clase4/laminas/05.jpg" alt="Diapositiva 5: Tipos de datos · tabla" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¿Cómo seleccionar bien el tipo de dato?"><img src="Clase4/laminas/06.png" alt="Diapositiva 6: ¿Cómo seleccionar bien el tipo de dato?" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¿Cómo seleccionar bien el tipo de dato? (2)"><img src="Clase4/laminas/07.png" alt="Diapositiva 7: ¿Cómo seleccionar bien el tipo de dato? (2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Restricciones"><img src="Clase4/laminas/08.jpg" alt="Diapositiva 8: Restricciones" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Restricciones"><img src="Clase4/laminas/09.jpg" alt="Diapositiva 9: Restricciones" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Restricciones comunes · columna"><img src="Clase4/laminas/10.jpg" alt="Diapositiva 10: Restricciones comunes · columna" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Restricciones comunes · tabla"><img src="Clase4/laminas/11.jpg" alt="Diapositiva 11: Restricciones comunes · tabla" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Instrucciones SQL"><img src="Clase4/laminas/12.jpg" alt="Diapositiva 12: Instrucciones SQL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CREATE"><img src="Clase4/laminas/13.jpg" alt="Diapositiva 13: CREATE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CREATE (ejemplo)"><img src="Clase4/laminas/14.jpg" alt="Diapositiva 14: CREATE (ejemplo)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CREATE (ejemplo 2)"><img src="Clase4/laminas/15.jpg" alt="Diapositiva 15: CREATE (ejemplo 2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CREATE (ejercicio)"><img src="Clase4/laminas/16.jpg" alt="Diapositiva 16: CREATE (ejercicio)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="INSERT"><img src="Clase4/laminas/17.png" alt="Diapositiva 17: INSERT" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="INSERT (ejemplo)"><img src="Clase4/laminas/18.png" alt="Diapositiva 18: INSERT (ejemplo)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="INSERT (ejemplo 2)"><img src="Clase4/laminas/19.jpg" alt="Diapositiva 19: INSERT (ejemplo 2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="INSERT (ejercicio)"><img src="Clase4/laminas/20.png" alt="Diapositiva 20: INSERT (ejercicio)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="UPDATE"><img src="Clase4/laminas/21.png" alt="Diapositiva 21: UPDATE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="UPDATE (ejemplo)"><img src="Clase4/laminas/22.jpg" alt="Diapositiva 22: UPDATE (ejemplo)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="UPDATE (ejemplo 2)"><img src="Clase4/laminas/23.jpg" alt="Diapositiva 23: UPDATE (ejemplo 2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="UPDATE (ejercicio)"><img src="Clase4/laminas/24.png" alt="Diapositiva 24: UPDATE (ejercicio)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DELETE"><img src="Clase4/laminas/25.jpg" alt="Diapositiva 25: DELETE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DELETE (ejemplo)"><img src="Clase4/laminas/26.jpg" alt="Diapositiva 26: DELETE (ejemplo)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DELETE (ejemplo 2)"><img src="Clase4/laminas/27.jpg" alt="Diapositiva 27: DELETE (ejemplo 2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DELETE (ejercicio)"><img src="Clase4/laminas/28.jpg" alt="Diapositiva 28: DELETE (ejercicio)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DROP"><img src="Clase4/laminas/29.jpg" alt="Diapositiva 29: DROP" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DROP · CASCADE"><img src="Clase4/laminas/30.jpg" alt="Diapositiva 30: DROP · CASCADE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTER"><img src="Clase4/laminas/31.jpg" alt="Diapositiva 31: ALTER" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTER · acciones"><img src="Clase4/laminas/32.png" alt="Diapositiva 32: ALTER · acciones" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTER (ejercicio)"><img src="Clase4/laminas/33.jpg" alt="Diapositiva 33: ALTER (ejercicio)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTER (ejercicio 2)"><img src="Clase4/laminas/34.jpg" alt="Diapositiva 34: ALTER (ejercicio 2)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTER (ejercicio 3)"><img src="Clase4/laminas/35.jpg" alt="Diapositiva 35: ALTER (ejercicio 3)" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Crucigrama"><img src="Clase4/laminas/36.jpg" alt="Diapositiva 36: Crucigrama" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Ejercicio"><img src="Clase4/laminas/37.jpg" alt="Diapositiva 37: Ejercicio" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¡Gracias!"><img src="Clase4/laminas/38.jpg" alt="Diapositiva 38: ¡Gracias!" loading="lazy" decoding="async"></section>
+</div>
+<div class="barra">
+  <span class="count" id="count">1 / 43</span>
+  <button id="prev" type="button" title="Anterior" aria-label="Diapositiva anterior">&larr;</button>
+  <button id="next" type="button" title="Siguiente" aria-label="Diapositiva siguiente">&rarr;</button>
+  <button id="timeBtn" type="button" title="Cron&oacute;metro (T)" aria-label="Cron&oacute;metro">T</button>
+  <button id="fullBtn" type="button" title="Pantalla completa (F)" aria-label="Pantalla completa">F</button>
+  <a id="dlBtn" href="Clase4/M3C4%20V2%20-%20SQL%20para%20creacio%CC%81n%20de%20tablas.pptx" download
+     title="Descargar el PowerPoint original" aria-label="Descargar el PowerPoint original">&darr;</a>
+</div>
+<div class="clockBox" id="clockBox">00:00</div>
+<div class="nowTitle" id="nowTitle"></div>
+<div class="bar" id="bar"></div>
+<script>
+(function(){
+  var L = Array.prototype.slice.call(document.querySelectorAll('.lam'));
+  var i = 0, t0 = null, tick = null;
+  var cuenta = document.getElementById('count');
+  var avance = document.getElementById('bar');
+  var rotulo = document.getElementById('nowTitle');
+  var reloj  = document.getElementById('clockBox');
+
+  function ir(n){
+    i = Math.max(0, Math.min(L.length - 1, n));
+    L.forEach(function(s, k){ s.classList.toggle('viva', k === i); });
+    cuenta.textContent = (i + 1) + ' / ' + L.length;
+    avance.style.width = ((i + 1) / L.length * 100) + '%';
+    rotulo.textContent = L[i].dataset.title || '';
+    try { localStorage.setItem('s9pptx', i); } catch (e) {}
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function pinta(){
+    var s = Math.floor((Date.now() - t0) / 1000);
+    reloj.textContent = ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2);
+  }
+  function crono(){
+    if (tick) { clearInterval(tick); tick = null; reloj.classList.remove('viva'); return; }
+    t0 = Date.now(); reloj.classList.add('viva'); pinta(); tick = setInterval(pinta, 1000);
+  }
+  document.getElementById('prev').onclick = function(){ ir(i - 1); };
+  document.getElementById('next').onclick = function(){ ir(i + 1); };
+  document.getElementById('timeBtn').onclick = crono;
+  document.getElementById('fullBtn').onclick = function(){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  };
+  document.addEventListener('keydown', function(e){
+    if (/^(INPUT|TEXTAREA)$/.test((e.target.tagName || ''))) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); ir(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); ir(i - 1); }
+    else if (k === 'Home') ir(0);
+    else if (k === 'End') ir(L.length - 1);
+    else if (k === 't' || k === 'T') crono();
+    else if (k === 'f' || k === 'F') document.getElementById('fullBtn').click();
+  });
+  var d = 0;
+  document.addEventListener('touchstart', function(e){ d = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    var x = e.changedTouches[0].clientX - d;
+    if (Math.abs(x) > 55) ir(i + (x < 0 ? 1 : -1));
+  }, {passive:true});
+
+  var n = parseInt((location.hash || '').slice(1), 10);
+  if (!n) { try { n = parseInt(localStorage.getItem('s9pptx'), 10) + 1; } catch (e) {} }
+  ir((n || 1) - 1);
+})();
+</script>
+</body>
+</html>
