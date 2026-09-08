@@ -175,6 +175,10 @@ def validate_published_html() -> None:
         if not m:
             continue
         n = int(m.group(1))
+        # La ruta antigua de S9 conserva solo un redireccionamiento para enlaces
+        # históricos. La experiencia publicada y sus controles viven aquí.
+        if n == 9 and path.name != "sesion-9-ddl-supabase.html":
+            continue
         text = path.read_text(encoding="utf-8", errors="replace")
         if "data-title=" not in text:
             warn(f"S{n}: {path.name} no contiene data-title")
@@ -228,6 +232,8 @@ def validate_runtime_policies() -> None:
             "./Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html",
             "./Presentaciones/M3/sesion-9-ddl-supabase.html",
             "./Scripts/S9.sql",
+            "./Presentaciones/M3/tutorial-supabase.html",
+            "./Scripts/S9-restaurante-abc.sql",
         ):
             if required not in text:
                 err(f"service-worker.js no precarga recurso actual/relevante: {required}")

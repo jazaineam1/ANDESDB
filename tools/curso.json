@@ -262,7 +262,7 @@
           "modo": "guiada_con_servicio_real",
           "titulo": "SQL para creación de tablas",
           "estado": "completado",
-          "desc": "Tipos de datos y cómo elegir el correcto, restricciones de columna y de tabla, y las seis instrucciones que cambian una base: CREATE, INSERT, UPDATE, DELETE, DROP y ALTER, cada una con ejemplo y ejercicio. Supabase es el motor donde se escribe y se comprueba todo.",
+          "desc": "Convertir el modelo del Restaurante ABC en PostgreSQL real: diagnosticar 1FN, 2FN y 3FN, construir PLATO, MESA, PEDIDO y LINEA_PEDIDO, y comprobar que las restricciones hacen cumplir reglas reales.",
           "tags": [
             "tipos de datos",
             "INTEGER",
@@ -271,6 +271,9 @@
             "PRIMARY KEY",
             "FOREIGN KEY",
             "CHECK",
+            "1FN",
+            "2FN",
+            "3FN",
             "CREATE TABLE",
             "INSERT",
             "UPDATE",
@@ -280,30 +283,11 @@
             "Supabase",
             "PostgreSQL"
           ],
-          "href": "Presentaciones/M3/sesion-9-sql-creacion-tablas.html",
+          "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
           "recursos": [
             {
-              "txt": "🧪 Tutorial: tu propia base en Supabase",
+              "txt": "🧪 Cierre S9: crea tu base y prueba reservas",
               "href": "Presentaciones/M3/tutorial-supabase.html"
-            },
-            {
-              "txt": "🗃️ El guión del Restaurante ABC · once tablas",
-              "href": "Scripts/S9-restaurante-abc.sql",
-              "download": true
-            },
-            {
-              "txt": "📝 Formulario de reservas · escribe en la base del profesor",
-              "href": "Presentaciones/M3/formulario-reservas.html"
-            },
-            {
-              "txt": "📐 Ejercicio de creación de tablas",
-              "href": "Presentaciones/M3/Clase4/Ejercicio creación de tablas.pdf",
-              "download": true
-            },
-            {
-              "txt": "📊 La presentación original en PowerPoint",
-              "href": "Presentaciones/M3/Clase4/M3C4 V2 - SQL para creación de tablas.pptx",
-              "download": true
             }
           ]
         }

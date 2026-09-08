@@ -8,9 +8,9 @@
     />
     <meta
       name="description"
-      content="Sesión 10: seis retos de arquitectura de datos. Modelo, producto y papel en el sistema; CAP, costos operativos y decisión híbrida, sobre un caso real."
+      content="Sesión 10: seis decisiones de arquitectura de datos. Selecciones guiadas sobre modelos, fuentes de verdad, evidencia y decisión híbrida, basadas en casos reales y simulados."
     />
-    <title>Sesión 10 · ¿SQL o NoSQL? · ANDESDB</title>
+    <title>Sesión 10 · ¿Qué necesita este dato? · ANDESDB</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23ffd600%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22bold%22%20fill%3D%22%23171717%22%3E10%3C/text%3E%3C/svg%3E"
@@ -1950,12 +1950,14 @@
       }
       .toolbar {
         position: fixed;
-        right: 1rem;
-        top: 1rem;
+        right: 0.65rem;
+        top: 0.65rem;
         z-index: 80;
         display: flex;
         align-items: center;
         gap: 0.4rem;
+        transform: scale(0.86);
+        transform-origin: top right;
       }
       .ctl {
         width: 42px;
@@ -2982,6 +2984,18 @@
       }
 
       /* Ajustes de composición: se conserva la paleta institucional original. */
+      .slide .g2 > *,
+      .slide .g3 > *,
+      .slide .choice-board > * {
+        min-width: 0;
+      }
+      .slide img,
+      .slide svg {
+        max-width: 100%;
+      }
+      .slide .brand span {
+        min-width: 0;
+      }
       .slide[data-title="La decisi&oacute;n h&iacute;brida"] {
         padding-top: 4.2%;
         padding-bottom: 6.4%;
@@ -2990,12 +3004,12 @@
         margin-bottom: 0.35em;
       }
       .slide[data-title="La decisi&oacute;n h&iacute;brida"] .lead {
-        max-width: 49ch;
+        max-width: 62ch;
         margin-bottom: 0.25em;
       }
       .slide[data-title="La decisi&oacute;n h&iacute;brida"] .dib {
-        width: min(78%, 760px);
-        max-height: min(210px, 23vh);
+        width: min(82%, 860px);
+        max-height: min(220px, 24vh);
         margin: 0.15em auto 0.3em;
       }
       .slide[data-title="La decisi&oacute;n h&iacute;brida"] .g2 {
@@ -3016,7 +3030,8 @@
         width: 100%;
       }
       .brand {
-        right: 7.2%;
+        left: 7.8%;
+        right: 8.8%;
       }
       /* Tablero integrado: elegir y contrastar evidencia, sin respuestas guardadas. */
       .choice-board {
@@ -3084,6 +3099,34 @@
         font-size: 0.73em;
         font-weight: 700;
       }
+      .choice-mini {
+        padding: 0.72em 0.82em;
+      }
+      .choice-mini p {
+        margin: 0 0 0.45em;
+        font-size: 0.9em;
+        line-height: 1.3;
+      }
+      .choice-mini .choice-label {
+        margin-top: 0.45em;
+      }
+      .choice-mini .search-case {
+        margin-top: 0.48em;
+      }
+      .format-choice {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5em 0.8em;
+        margin-top: 0.8em;
+        padding: 0.7em 0.85em;
+        border-left: 4px solid var(--g);
+        border-radius: 0.7em;
+        background: #edf8f1;
+      }
+      .format-choice strong {
+        color: #0d5533;
+      }
       .search-case {
         display: inline-flex;
         align-items: center;
@@ -3121,7 +3164,7 @@
           alt="Universidad de los Andes"
         />
         <div class="ey">Sesi&oacute;n 10 &middot; M&oacute;dulo 4</div>
-        <h1>&iquest;Tablas o documentos?</h1>
+        <h1>&iquest;Qu&eacute; necesita este dato?</h1>
         <p class="lead">
           Cuatro sesiones construyendo una base relacional. Hoy aprendemos lo
           otro: <strong>cu&aacute;ndo no es la herramienta</strong> &mdash; y
@@ -3134,13 +3177,9 @@
           ><code>CAP</code><code>costo operativo</code>
         </div>
         <div class="dlrow">
-          <a href="../../Scripts/S9-restaurante-abc.sql" download
-            >&#128220; El modelo del ABC<small
-              >las once tablas, por si hay que mirarlas</small
-            ></a
-          ><a href="sesion-10-sql-o-nosql.html" download
-            >&#128202; Esta presentaci&oacute;n<small
-              >para repasar en casa</small
+          <a href="../M3/tutorial-supabase.html" target="_blank" rel="noopener"
+            >&#128214; Cierre pr&aacute;ctico de S9<small
+              >un solo recurso: base, formulario y guion SQL</small
             ></a
           >
         </div>
@@ -3255,8 +3294,57 @@
           ><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span>
         </div>
       </section>
+      <section class="slide dense" data-title="Puente de la sesi&oacute;n 9">
+        <div class="ey">Antes del taller</div>
+        <h2>Primero cerramos lo que falt&oacute; poner en marcha</h2>
+        <p class="lead">
+          Esto <b>no es un tema nuevo</b>. Es el cierre operativo de la sesi&oacute;n
+          9: tener la base del Restaurante ABC en Supabase y observar c&oacute;mo
+          una reserva llega a una base protegida.
+        </p>
+        <div class="g2 wide">
+          <div class="card blue">
+            <h3>Si a&uacute;n no terminaste S9</h3>
+            <ol>
+              <li>Crea tu proyecto individual en Supabase.</li>
+              <li>Ejecuta el gui&oacute;n de las once tablas.</li>
+              <li>Comprueba las tablas en Table Editor.</li>
+              <li>Registra una reserva de prueba en el formulario compartido.</li>
+            </ol>
+            <p class="small">Tu proyecto y el formulario no son la misma base.</p>
+          </div>
+          <div class="ok">
+            <h3>Si ya lo terminaste</h3>
+            <p>
+              Confirma dos evidencias: puedes ver tus once tablas y puedes
+              explicar que una reserva consulta mesa, crea o reutiliza cliente y
+              escribe una fila en <code>reserva</code>.
+            </p>
+            <p>
+              Luego sigue directamente al taller: no necesitas volver a crear
+              nada ni copiar claves.
+            </p>
+          </div>
+        </div>
+        <div class="dlrow">
+          <a href="../M3/tutorial-supabase.html" target="_blank" rel="noopener"
+            >&#128214; Cierre pr&aacute;ctico de S9<small
+              >un solo recurso: base, formulario y guion SQL</small
+            ></a
+          >
+        </div>
+        <div class="checkpoint mt compacto">
+          <strong>Regla de seguridad:</strong> nunca pegues en el formulario la
+          contrase&ntilde;a de tu base, una cadena de conexi&oacute;n ni una clave
+          <i>secret</i>. Si aparece un panel de configuraci&oacute;n, avisa al
+          docente.
+        </div>
+        <div class="brand">
+          <span>Puente S9 &rarr; S10</span><span>Primero poner en marcha; luego decidir</span>
+        </div>
+      </section>
       <section class="slide dense" data-title="D&oacute;nde estamos">
-        <div class="ey">D&oacute;nde estamos &middot; 0&ndash;3 min</div>
+        <div class="ey">D&oacute;nde estamos</div>
         <h2>Cuatro sesiones para llegar a una bifurcaci&oacute;n</h2>
         <div class="timeline">
           <article>
@@ -3317,7 +3405,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="Briefing">
-        <div class="ey">Briefing &middot; 3&ndash;8 min</div>
+        <div class="ey">El encargo de hoy</div>
         <h2>
           Hoy no hay teor&iacute;a que memorizar: hay seis decisiones que
           defender
@@ -3343,9 +3431,8 @@
           <div class="card">
             <h3>D&oacute;nde se decide</h3>
             <p>
-              En el <b>tablero integrado</b>, despu&eacute;s de los retos. Para
-              cada caso solo elijan una ruta y marquen qu&eacute; hizo la
-              evidencia encontrada.
+              En cada reto, primero elijan una ruta. Despu&eacute;s contrasten
+              la evidencia encontrada en los tableros de tres casos.
             </p>
             <p class="small">
               No se escribe ni se entrega nada: las decisiones no se guardan.
@@ -3356,22 +3443,22 @@
         <div class="g2">
           <div class="ok">
             <p>
-              <b>1 &middot; La decisi&oacute;n, expl&iacute;cita.</b> Y si es
-              h&iacute;brida, <b>qu&eacute; parte va en cada sitio</b>.
+              <b>1 &middot; Una ruta seleccionada.</b> Y si es h&iacute;brida,
+              <b>qu&eacute; parte va en cada sitio</b>.
             </p>
             <p>
-              <b>2 &middot; Dos argumentos t&eacute;cnicos.</b> Patr&oacute;n de
-              acceso, relaciones, consistencia o evoluci&oacute;n del esquema.
+              <b>2 &middot; Un criterio que pesa.</b> Patr&oacute;n de acceso,
+              relaciones, consistencia o evoluci&oacute;n del esquema.
             </p>
           </div>
           <div class="ok">
             <p>
-              <b>3 &middot; Un riesgo.</b> Qu&eacute; se complica
-              <b>por haber elegido eso</b>.
+              <b>3 &middot; Un riesgo visible.</b> Qu&eacute; se complica
+              <b>por haber elegido esa ruta</b>.
             </p>
             <p>
-              <b>4 &middot; La consulta que m&aacute;s duele.</b> La pregunta
-              que su elecci&oacute;n contesta peor.
+              <b>4 &middot; La evidencia cambia o no.</b> Solo marquen
+              reafirma, matiza o cambia; la defensa es oral.
             </p>
           </div>
         </div>
@@ -3380,9 +3467,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="La frase prohibida">
-        <div class="ey">
-          La regla que ahorra media clase &middot; 8&ndash;10 min
-        </div>
+        <div class="ey">La regla que ahorra media clase</div>
         <h2>&laquo;NoSQL porque escala&raquo; no cuenta como argumento</h2>
         <p class="lead">
           Es la respuesta que va a aparecer, y por eso conviene desactivarla
@@ -3429,7 +3514,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="Las cuatro preguntas">
-        <div class="ey">La herramienta &middot; 10&ndash;15 min</div>
+        <div class="ey">La herramienta</div>
         <h2>Cuatro preguntas, y salen casi todas las decisiones</h2>
         <p class="lead">
           No hay que saberse el cat&aacute;logo de bases de datos del mundo. Hay
@@ -3526,8 +3611,8 @@
           ><span>Interrogar el problema, no el cat&aacute;logo</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Clave-valor">
-        <div class="ey">Formato 1 de 4 &middot; 24&ndash;29 min</div>
+      <section class="slide dense" data-title="Clave-valor">
+        <div class="ey">Formato 1 de 4</div>
         <h2>Clave-valor: una caja con etiqueta</h2>
         <p class="lead">
           Le pides la etiqueta y te devuelve la caja <b>entera</b>. En el modelo
@@ -3600,12 +3685,20 @@
           simplificaci&oacute;n sirve para <b>decidir</b>, pero en la ficha
           conviene escribir &laquo;en el modelo b&aacute;sico&raquo;.
         </div>
+        <div class="format-choice" aria-label="Selecci&oacute;n r&aacute;pida sobre clave-valor">
+          <strong>Selecci&oacute;n r&aacute;pida:</strong>
+          <span>&iquest;Este dato puede caducar sin afectar el negocio?</span>
+          <div class="choice-group" data-choice="formato-clave-valor">
+            <button type="button">S&iacute;, es estado ef&iacute;mero</button><button type="button">No, es una venta</button><button type="button">Falta evidencia</button>
+          </div>
+          <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+        </div>
         <div class="brand">
           <span>Clave-valor</span><span>Una etiqueta, y la caja entera</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Documentos">
-        <div class="ey">Formato 2 de 4 &middot; 29&ndash;34 min</div>
+      <section class="slide dense" data-title="Documentos">
+        <div class="ey">Formato 2 de 4</div>
         <h2>Documentos: dos vecinos que no tienen los mismos campos</h2>
         <p class="lead">
           Un documento es un JSON con nombre. Y esto es lo que
@@ -3676,12 +3769,20 @@
           del JSON. Muchas veces «necesito documentos» <b>no</b> significa
           «necesito otra base».
         </div>
+        <div class="format-choice" aria-label="Selecci&oacute;n r&aacute;pida sobre documentos">
+          <strong>Selecci&oacute;n r&aacute;pida:</strong>
+          <span>&iquest;La pantalla siempre lee la ficha entera y los campos cambian?</span>
+          <div class="choice-group" data-choice="formato-documentos">
+            <button type="button">Documento</button><button type="button">Tabla con JSONB</button><button type="button">Falta evidencia</button>
+          </div>
+          <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+        </div>
         <div class="brand">
           <span>Documentos</span><span>Dos vecinos con formas distintas</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Grafos">
-        <div class="ey">Formato 3 de 4 &middot; 34&ndash;38 min</div>
+      <section class="slide dense" data-title="Grafos">
+        <div class="ey">Formato 3 de 4</div>
         <h2>Grafos: cuando lo que importa es la flecha, no la caja</h2>
         <p class="lead">
           En los otros formatos la relaci&oacute;n se deduce. Aqu&iacute; la
@@ -3748,12 +3849,20 @@
             </p>
           </div>
         </div>
+        <div class="format-choice" aria-label="Selecci&oacute;n r&aacute;pida sobre grafos">
+          <strong>Selecci&oacute;n r&aacute;pida:</strong>
+          <span>&iquest;La relaci&oacute;n y varios saltos son la pregunta principal?</span>
+          <div class="choice-group" data-choice="formato-grafos">
+            <button type="button">Grafo</button><button type="button">Lote o SQL</button><button type="button">Falta evidencia</button>
+          </div>
+          <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+        </div>
         <div class="brand">
           <span>Grafos</span><span>La flecha es el dato</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Series de tiempo">
-        <div class="ey">Formato 4 de 4 &middot; 38&ndash;41 min</div>
+      <section class="slide dense" data-title="Series de tiempo">
+        <div class="ey">Formato 4 de 4</div>
         <h2>Series de tiempo: el dato que llega y no se corrige nunca</h2>
         <p class="lead">
           Sensores, precios, m&eacute;tricas, latidos de un servidor. Muchas
@@ -3793,15 +3902,21 @@
           <b>3.153.600 al a&ntilde;o por sensor</b>. Multipliquen por
           cu&aacute;ntos sensores haya antes de opinar.
         </div>
+        <div class="format-choice" aria-label="Selecci&oacute;n r&aacute;pida sobre series de tiempo">
+          <strong>Selecci&oacute;n r&aacute;pida:</strong>
+          <span>&iquest;Llega sin corregirse y siempre se lee por rango?</span>
+          <div class="choice-group" data-choice="formato-series">
+            <button type="button">Tabla particionada</button><button type="button">Motor temporal</button><button type="button">Falta evidencia</button>
+          </div>
+          <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+        </div>
         <div class="brand">
           <span>Series de tiempo</span
           ><span>Llega, se queda, se lee por rango</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Junto o repartido">
-        <div class="ey">
-          La idea que lo ordena todo &middot; 41&ndash;46 min
-        </div>
+      <section class="slide dense" data-title="Junto o repartido">
+        <div class="ey">La idea que lo ordena todo</div>
         <h2>Lo que se visualiza junto, se almacena junto</h2>
         <p class="lead">
           Llevan dos sesiones quitando datos repetidos. Aqu&iacute; est&aacute;
@@ -3899,9 +4014,7 @@
         </div>
       </section>
       <section class="slide dense appendix" data-title="CAP">
-        <div class="ey">
-          Lo &uacute;nico de teor&iacute;a &middot; 46&ndash;52 min
-        </div>
+        <div class="ey">Lo &uacute;nico de teor&iacute;a</div>
         <h2>
           CAP no es una etiqueta: es qu&eacute; se sacrifica cuando la red se
           parte
@@ -3993,17 +4106,12 @@
           <span>CAP</span><span>Solo cuando la red se parte</span>
         </div>
       </section>
-      <section
-        class="slide dense appendix"
-        data-title="Modelo, producto y despliegue"
-      >
-        <div class="ey">
-          La confusi&oacute;n m&aacute;s cara &middot; 52&ndash;56 min
-        </div>
-        <h2>Tres decisiones distintas que se dicen con la misma palabra</h2>
+      <section class="slide dense" data-title="Modelo, papel y operaci&oacute;n">
+        <div class="ey">La confusi&oacute;n m&aacute;s cara</div>
+        <h2>Modelo, producto y operaci&oacute;n: tres decisiones, una factura</h2>
         <p class="lead">
-          &laquo;Usemos Redis&raquo; no es una decisi&oacute;n de modelo de
-          datos. Son tres decisiones, y se pueden tomar por separado.
+          &laquo;Usemos Redis&raquo; no es una decisi&oacute;n completa. Antes
+          de sumar un motor separen el modelo, su papel y el costo de operarlo.
         </p>
         <svg
           viewBox="0 0 620 250"
@@ -4064,11 +4172,11 @@
           </text>
         </svg>
         <div class="stop mt compacto">
-          <strong>Lo que se rompe al confundirlas.</strong> Una cach&eacute; se
-          puede vaciar entera un martes sin avisar y no pasa nada; una fuente de
-          verdad, no. Si el carrito vive en Redis <b>y</b> es el &uacute;nico
-          sitio donde existe la venta, la primera ca&iacute;da se lleva pedidos
-          por delante. Ese es el reto 1.
+          <strong>La factura que acompa&ntilde;a toda segunda pieza.</strong>
+          Definan qui&eacute;n responde por <b>respaldo y restauraci&oacute;n</b>,
+          por <b>permisos</b> y por <b>observabilidad</b>. Si no pueden nombrar
+          a esa persona o equipo, todav&iacute;a no han elegido una arquitectura:
+          solo han nombrado un producto. Ese es el reto 1.
         </div>
         <div class="brand">
           <span>Modelo &ne; producto &ne; papel</span
@@ -4076,9 +4184,7 @@
         </div>
       </section>
       <section class="slide dense appendix" data-title="Costos operativos">
-        <div class="ey">
-          Lo que no sale en los tutoriales &middot; 56&ndash;61 min
-        </div>
+        <div class="ey">Lo que no sale en los tutoriales</div>
         <h2>Elegir una base es firmar siete facturas</h2>
         <p class="lead">
           La comparaci&oacute;n honesta no es &laquo;cu&aacute;l lee m&aacute;s
@@ -4145,10 +4251,8 @@
           <span>Costo operativo</span><span>Siete facturas, no una</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="El caso real">
-        <div class="ey">
-          Ejemplo resuelto, todos juntos &middot; 61&ndash;70 min
-        </div>
+      <section class="slide dense" data-title="El caso real">
+        <div class="ey">Ejemplo resuelto, todos juntos</div>
         <h2>Un requerimiento de verdad, de este a&ntilde;o, en Colombia</h2>
         <p class="lead">
           En febrero la <b>SIC</b> pidi&oacute; a m&aacute;s de
@@ -4219,7 +4323,7 @@
         </svg>
         <div class="g2 wide mt">
           <div class="ok compacto">
-            <h3>La ficha, resuelta</h3>
+            <h3>El caso, resuelto</h3>
             <p>
               <b>Decisi&oacute;n:</b> h&iacute;brida. Relacional como fuente de
               verdad, con el
@@ -4271,12 +4375,48 @@
           <span>Ejemplo trabajado</span><span>La SIC, febrero de 2026</span>
         </div>
       </section>
+      <section class="slide yellow mid appendix" data-title="Pausa" data-break="15">
+        <div class="break">
+          <div class="ey">Pausa a mitad de sesi&oacute;n</div>
+          <div class="clock">15:00</div>
+          <h2 style="margin-top: 3%">Pausa. Vuelvan con una pregunta.</h2>
+          <div class="g3 mt">
+            <div class="card">
+              <h3>Antes de salir</h3>
+              <p>
+                Elijan mentalmente el formato que les parece m&aacute;s
+                &uacute;til para un dato que ya conocen.
+              </p>
+            </div>
+            <div class="ok">
+              <h3>La pregunta para volver</h3>
+              <p>
+                &iquest;Qu&eacute; consulta real justificar&iacute;a usar otra
+                forma de guardar ese dato?
+              </p>
+            </div>
+            <div class="card blue">
+              <h3>Al regresar</h3>
+              <p>
+                Seis retos donde la respuesta f&aacute;cil tiene una
+                consecuencia que hay que descubrir.
+              </p>
+            </div>
+          </div>
+          <button class="btn" data-start-break style="margin-top: 1.2em">
+            Iniciar los 15 minutos
+          </button>
+        </div>
+        <div class="brand">
+          <span>Pausa</span><span>La tecnolog&iacute;a sigue al problema</span>
+        </div>
+      </section>
       <section
         class="slide mid"
         data-title="Reto 1 &middot; El carrito que se convirti&oacute; en venta"
       >
         <div class="break">
-          <div class="ey">Reto 1 de 6 &middot; 15&ndash;25 min</div>
+          <div class="ey">Reto 1 de 6</div>
           <h2>
             <span class="fnpill">1</span> El carrito que se convirti&oacute; en
             venta
@@ -4289,8 +4429,8 @@
                 clave-valor, y funciona. Hasta que el cliente paga: ah&iacute;
                 hay que convertirlo en un pedido de verdad, con sus
                 l&iacute;neas y su pago.
-                <b>El martes pasado la cach&eacute; se reinici&oacute;</b> y se
-                perdieron once carritos, dos de ellos ya pagados.
+                <b>En este escenario simulado, la cach&eacute; se reinicia</b>
+                y se pierden once carritos, dos de ellos ya pagados.
               </p>
               <div class="rot mt">lo que hay en cada sitio</div>
               <div class="js">
@@ -4303,10 +4443,13 @@
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan d&oacute;nde vive la venta
-                confirmada y contrasten su elecci&oacute;n con un caso real de
-                carrito, cach&eacute; y pago.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> &iquest;d&oacute;nde debe sobrevivir una venta ya cobrada?</p>
+                <div class="choice-group" data-choice="reto-1">
+                  <button type="button">Todo en cach&eacute;</button><button type="button">Pedido relacional confirmado</button><button type="button">H&iacute;brida con un due&ntilde;o</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=redis+shopping+cart+cache+checkout+idempotency+case+study">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4314,6 +4457,11 @@
                     &iquest;Qu&eacute; pasa si la cach&eacute; se cae
                     <b>despu&eacute;s</b> de cobrar y <b>antes</b> de escribir
                     el pedido?
+                  </li>
+                  <li>
+                    &iquest;Qu&eacute; pasa si el proveedor confirma el mismo
+                    pago dos veces o la aplicaci&oacute;n reintenta por un
+                    <i>timeout</i>?
                   </li>
                   <li>
                     &iquest;El carrito es un dato del negocio o estado de una
@@ -4344,7 +4492,7 @@
         data-title="Reto 2 &middot; El requerimiento que hay que poder demostrar"
       >
         <div class="break">
-          <div class="ey">Reto 2 de 6 &middot; 25&ndash;35 min</div>
+          <div class="ey">Reto 2 de 6</div>
           <h2>
             <span class="fnpill">2</span> El requerimiento que hay que poder
             demostrar
@@ -4373,10 +4521,13 @@
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan la ruta para conservar el
-                historial y busquen un caso real de auditor&iacute;a de precios
-                o datos temporales.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> &iquest;c&oacute;mo demuestran el precio vigente en una fecha?</p>
+                <div class="choice-group" data-choice="reto-2">
+                  <button type="button">Solo precio actual</button><button type="button">Historial con vigencia</button><button type="button">Documento mensual</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=price+history+audit+database+temporal+tables+retail">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4462,7 +4613,7 @@
         data-title="Reto 3 &middot; El precio que vive en dos sitios"
       >
         <div class="break">
-          <div class="ey">Reto 3 de 6 &middot; 35&ndash;45 min</div>
+          <div class="ey">Reto 3 de 6</div>
           <h2>
             <span class="fnpill">3</span> El precio que vive en dos sitios
           </h2>
@@ -4473,9 +4624,8 @@
                 Deciden mover la carta a documentos: fotos, al&eacute;rgenos,
                 variantes por sede y un campo nuevo cada mes. Bien. Pero el
                 <b>precio</b> tambi&eacute;n est&aacute; en esa ficha, y el
-                precio entra en las cuentas. Son las <b>8 de la noche</b>, hay
-                <b>40 cuentas abiertas</b>, y marketing sube el ajiaco de 28.000
-                a 31.000.
+                precio entra en las cuentas. Hay <b>40 cuentas abiertas</b> y
+                marketing sube el ajiaco de 28.000 a 31.000.
               </p>
               <div class="rot mt">el mismo n&uacute;mero, dos sitios</div>
               <div class="js">
@@ -4484,17 +4634,19 @@
                   >relacional</span
                 >
                 linea_pedido.precio_unitario = 28000<br /><span class="nuevo"
-                  >a las 20:00 marketing pone 31000. &#191;y las 40
-                  cuentas?</span
+                  >marketing pone 31000. &#191;y las 40 cuentas?</span
                 >
               </div>
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan qui&eacute;n manda sobre el
-                precio y contrasten con un cat&aacute;logo real que evolucione
-                sin romper una venta ya iniciada.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> distingan precio vigente del cat&aacute;logo y precio pactado en una venta.</p>
+                <div class="choice-group" data-choice="reto-3">
+                  <button type="button">Cat&aacute;logo manda</button><button type="button">Venta pactada manda</button><button type="button">Una fuente y una copia</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=product+catalog+document+database+price+source+of+truth+case+study">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4518,7 +4670,7 @@
                 p&eacute;rdida. Si el precio manda desde el documento, cambian
                 cuentas ya abiertas. Si manda la l&iacute;nea, hay dos
                 n&uacute;meros distintos conviviendo.
-                <b>Elijan y digan qu&eacute; sacrifican.</b>
+                Seleccionen la ruta y revisen el costo que aceptan.
               </div>
             </div>
           </div>
@@ -4527,12 +4679,54 @@
           <span>Reto 3</span><span>El precio que vive en dos sitios</span>
         </div>
       </section>
+      <section class="slide dense" data-title="Contrastar retos 1 a 3">
+        <div class="ey">Evidencia, no respuestas</div>
+        <h2>Lo que encontraron cambia, o no, su primera selecci&oacute;n</h2>
+        <p class="lead">En tres minutos por caso, contrasten la fuente abierta. No escriban: marquen el efecto de la evidencia y prep&aacute;rense para explicar un criterio en voz alta.</p>
+        <div class="choice-board">
+          <article class="choice-case">
+            <h3>1 &middot; Carrito y pago</h3>
+            <p>Carrito, ca&iacute;da despu&eacute;s del cobro y reintentos del proveedor.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-1"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
+          <article class="choice-case">
+            <h3>2 &middot; Historial de precios</h3>
+            <p>Precio vigente, fecha y trazabilidad ante un requerimiento.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-2"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
+          <article class="choice-case">
+            <h3>3 &middot; Carta y venta</h3>
+            <p>Precio vigente de cat&aacute;logo frente a precio pactado.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-3"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
+        </div>
+        <div class="checkpoint mt compacto"><strong>Regla:</strong> una fuente real puede obligarlos a cambiar; eso mejora la decisi&oacute;n, no la invalida.</div>
+        <div class="brand"><span>Contraste 1 de 2</span><span>La evidencia tiene permiso de cambiar la ruta</span></div>
+      </section>
+      <section class="slide yellow mid" data-title="Pausa" data-break="15">
+        <div class="break">
+          <div class="ey">Pausa</div>
+          <div class="clock">15:00</div>
+          <h2 style="margin-top: 3%">Pausa. Ya hay tres decisiones seleccionadas.</h2>
+          <div class="g2 wide">
+            <div class="card"><h3>Antes de salir</h3><p>No hay nada que copiar ni entregar. Al volver comparen una selecci&oacute;n que la evidencia haya matizado.</p></div>
+            <div class="ok"><h3>La pregunta para volver</h3><p>&iquest;Qu&eacute; dato de su arquitectura no podr&iacute;a perderse aunque se reinicie todo lo dem&aacute;s?</p></div>
+          </div>
+        </div>
+        <div class="brand"><span>Pausa</span><span>Un dato, un due&ntilde;o</span></div>
+      </section>
       <section
         class="slide mid"
         data-title="Reto 4 &middot; La recomendaci&oacute;n con presupuesto"
       >
         <div class="break">
-          <div class="ey">Reto 4 de 6 &middot; 45&ndash;55 min</div>
+          <div class="ey">Reto 4 de 6</div>
           <h2>
             <span class="fnpill">4</span> La recomendaci&oacute;n con
             presupuesto
@@ -4559,11 +4753,13 @@
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan entre lote, grafo o pedir
-                evidencia antes de comprar. Busquen un caso real de
-                recomendaciones y contrasten el costo de operar con el valor
-                esperado.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> &iquest;qu&eacute; hacen antes de pagar un grafo?</p>
+                <div class="choice-group" data-choice="reto-4">
+                  <button type="button">Lote primero</button><button type="button">Grafo ahora</button><button type="button">Pedir evidencia</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=recommendation+engine+batch+vs+graph+database+case+study">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4601,7 +4797,7 @@
         data-title="Reto 5 &middot; Las neveras, Sanidad y dos a&ntilde;os de historia"
       >
         <div class="break">
-          <div class="ey">Reto 5 de 6 &middot; 55&ndash;65 min</div>
+          <div class="ey">Reto 5 de 6</div>
           <h2>
             <span class="fnpill">5</span> Las neveras, Sanidad y dos a&ntilde;os
             de historia
@@ -4610,7 +4806,8 @@
             <div>
               <h3>El escenario</h3>
               <p class="lead">
-                Sanidad exige registrar la temperatura de las neveras y
+                En este escenario de taller, la autoridad sanitaria exige
+                registrar la temperatura de las neveras y
                 <b
                   >poder mostrar cualquier ventana de los &uacute;ltimos dos
                   a&ntilde;os</b
@@ -4632,10 +4829,13 @@
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan c&oacute;mo conservar las
-                lecturas y busquen un ejemplo real de telemetr&iacute;a,
-                temperatura o sensores con datos por tiempo.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> &iquest;c&oacute;mo conservan lecturas que llegan y se consultan por tiempo?</p>
+                <div class="choice-group" data-choice="reto-5">
+                  <button type="button">Tabla particionada</button><button type="button">Motor de series</button><button type="button">Solo agregados</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=IoT+temperature+monitoring+time+series+database+case+study">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4645,8 +4845,8 @@
                     hora?
                   </li>
                   <li>
-                    Una tabla particionada por mes, &iquest;les sirve? Digan por
-                    qu&eacute; s&iacute; o por qu&eacute; no.
+                    Una tabla particionada por mes: seleccionen si les parece
+                    suficiente o si hace falta un motor temporal.
                   </li>
                   <li>
                     &iquest;Qu&eacute; consulta hace Sanidad de verdad:
@@ -4672,13 +4872,13 @@
       </section>
       <section
         class="slide mid"
-        data-title="Reto 6 &middot; Convencer al gerente en tres l&iacute;neas"
+        data-title="Reto 6 &middot; La regla que las reservas no pueden perder"
       >
         <div class="break">
-          <div class="ey">Reto 6 de 6 &middot; 65&ndash;75 min</div>
+          <div class="ey">Reto 6 de 6</div>
           <h2>
-            <span class="fnpill">6</span> Convencer al gerente en tres
-            l&iacute;neas
+            <span class="fnpill">6</span> La regla que las reservas no
+            pueden perder
           </h2>
           <div class="g2 wide">
             <div>
@@ -4706,10 +4906,13 @@
             </div>
             <div>
               <h3>Lo que deben decidir</h3>
-              <div class="ok">
-                Sin escribir: en el tablero elijan qu&eacute; le
-                responder&iacute;an al gerente y busquen un caso real de
-                reservas, doble reserva o disponibilidad en tiempo real.
+              <div class="ok choice-mini">
+                <p><b>Seleccionen la ruta:</b> &iquest;qu&eacute; hacen con reservas que no se pueden duplicar?</p>
+                <div class="choice-group" data-choice="reto-6">
+                  <button type="button">Migrar reservas ya</button><button type="button">Conservar lo relacional</button><button type="button">Piloto aislado</button>
+                </div>
+                <a class="search-case" target="_blank" rel="noopener" href="https://www.google.com/search?q=restaurant+reservation+database+double+booking+constraint+case+study">Buscar caso real &#8599;</a>
+                <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
               </div>
               <div class="card mt">
                 <ul>
@@ -4719,13 +4922,13 @@
                     tiene que preguntar qu&eacute; significa, perdieron.
                   </li>
                   <li>
-                    El 14 contra el 11 del viernes se cuenta en una frase, y
+                    Recuerden S9: la regla que impide dos reservas activas para
+                    la misma mesa, fecha y hora. Eso se explica en una frase y
                     convence.
                   </li>
                   <li>
-                    La cuarta l&iacute;nea es obligatoria. Quien no encuentra el
-                    caso en que el otro tiene raz&oacute;n, no ha entendido la
-                    decisi&oacute;n.
+                    En el contraste final marquen si el caso real reafirma,
+                    matiza o cambia su selecci&oacute;n.
                   </li>
                 </ul>
               </div>
@@ -4740,13 +4943,41 @@
         </div>
         <div class="brand">
           <span>Reto 6</span
-          ><span>Convencer al gerente en tres l&iacute;neas</span>
+          ><span>La regla primero, la tecnolog&iacute;a despu&eacute;s</span>
         </div>
       </section>
-      <section class="slide dense" data-title="Tablero de decisiones">
-        <div class="ey">
-          Selecci&oacute;n y evidencia &middot; 75&ndash;82 min
+      <section class="slide dense" data-title="Contrastar retos 4 a 6">
+        <div class="ey">Evidencia, no respuestas</div>
+        <h2>Cierren el contraste: tres decisiones que cuestan operar</h2>
+        <p class="lead">Revisen el caso real que abrieron en cada reto. Marquen su efecto sin inventar certeza: una evidencia tambi&eacute;n puede dejar una pregunta abierta.</p>
+        <div class="choice-board">
+          <article class="choice-case">
+            <h3>4 &middot; Recomendaci&oacute;n</h3>
+            <p>Valor esperado, datos frescos y costo de operar un grafo.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-4"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
+          <article class="choice-case">
+            <h3>5 &middot; Neveras</h3>
+            <p>Detalle, retenci&oacute;n y consultas sobre una ventana de tiempo.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-5"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
+          <article class="choice-case">
+            <h3>6 &middot; Reservas</h3>
+            <p>Doble reserva, regla ejecutable y disponibilidad en tiempo real.</p>
+            <span class="choice-label">La evidencia encontrada</span>
+            <div class="choice-group" data-choice="evidencia-6"><button type="button">Reafirma</button><button type="button">Matiza</button><button type="button">Cambia</button></div>
+            <span class="choice-status" aria-live="polite">Sin seleccionar.</span>
+          </article>
         </div>
+        <div class="checkpoint mt compacto"><strong>Antes de pasar:</strong> si la selecci&oacute;n sigue igual, nombren el riesgo que aceptaron. Si cambi&oacute;, nombren qu&eacute; evidencia lo justific&oacute;.</div>
+        <div class="brand"><span>Contraste 2 de 2</span><span>La evidencia termina la vuelta</span></div>
+      </section>
+      <section class="slide dense appendix" data-title="Tablero de decisiones">
+        <div class="ey">Selecci&oacute;n y evidencia</div>
         <h2>
           El tablero de decisi&oacute;n est&aacute; aqu&iacute;, no en otro
           archivo
@@ -4930,14 +5161,12 @@
         class="slide dense"
         data-title="La decisi&oacute;n h&iacute;brida"
       >
-        <div class="ey">
-          Revisi&oacute;n aut&oacute;noma &middot; 75&ndash;82 min
-        </div>
+        <div class="ey">Revisi&oacute;n aut&oacute;noma</div>
         <h2>Casi nunca es una sola, y por eso hay una regla</h2>
         <p class="lead">
-          Revisen sus seis selecciones. Si eligieron una arquitectura mixta,
-          identifiquen en voz alta el dato que <b>manda</b>. Si no pueden,
-          todav&iacute;a tienen dos fuentes de verdad.
+          Una arquitectura h&iacute;brida solo funciona si cada dato
+          cr&iacute;tico tiene un &uacute;nico <b>due&ntilde;o</b>; las
+          dem&aacute;s piezas se pueden reconstruir desde &eacute;l.
         </p>
         <svg
           viewBox="0 0 620 190"
@@ -4969,19 +5198,19 @@
             }
             .tt {
               font:
-                800 12px "Segoe UI",
+                800 16px "Segoe UI",
                 Arial;
               fill: #124e78;
             }
             .tc {
               font:
-                11px Consolas,
+                13px Consolas,
                 monospace;
               fill: #3d4c59;
             }
             .tl {
               font:
-                700 10.5px "Segoe UI",
+                700 12px "Segoe UI",
                 Arial;
               fill: #5d6b78;
             }
@@ -4997,52 +5226,39 @@
               stroke-dasharray: 5 4;
             }
           </style>
-          <rect x="196" y="64" width="228" height="55" rx="10" class="bx" />
-          <text x="310" y="86" class="tt" text-anchor="middle">
+          <rect x="184" y="66" width="252" height="60" rx="10" class="bx" />
+          <text x="310" y="90" class="tt" text-anchor="middle">
             FUENTE DE VERDAD
           </text>
-          <text x="310" y="102" class="tc" text-anchor="middle">
+          <text x="310" y="108" class="tc" text-anchor="middle">
             PostgreSQL &#183; las once tablas
           </text>
-          <text x="310" y="115" class="tc" text-anchor="middle">
+          <text x="310" y="122" class="tc" text-anchor="middle">
             pedidos, pagos, reservas
           </text>
-          <rect x="8" y="10" width="168" height="43" rx="8" class="bxa" />
-          <text x="92" y="26" class="tt" text-anchor="middle" fill="#8a5a00">
+          <rect x="8" y="8" width="172" height="48" rx="8" class="bxa" />
+          <text x="94" y="29" class="tt" text-anchor="middle" fill="#8a5a00">
             CACH&#201;
           </text>
-          <text x="92" y="39" class="tc" text-anchor="middle">
+          <text x="94" y="44" class="tc" text-anchor="middle">
             carritos, sesiones
           </text>
-          <text x="92" y="49" class="tl" text-anchor="middle">
-            se puede perder
-          </text>
-          <rect x="444" y="10" width="168" height="43" rx="8" class="bxa" />
-          <text x="528" y="26" class="tt" text-anchor="middle" fill="#8a5a00">
+          <rect x="440" y="8" width="172" height="48" rx="8" class="bxa" />
+          <text x="526" y="29" class="tt" text-anchor="middle" fill="#8a5a00">
             DOCUMENTOS
           </text>
-          <text x="528" y="39" class="tc" text-anchor="middle">
+          <text x="526" y="44" class="tc" text-anchor="middle">
             cat&#225;logo, fichas
           </text>
-          <text x="528" y="49" class="tl" text-anchor="middle">
-            sin el precio de venta
-          </text>
-          <rect x="226" y="147" width="168" height="35" rx="8" class="bxa" />
-          <text x="310" y="162" class="tt" text-anchor="middle" fill="#8a5a00">
+          <rect x="218" y="150" width="184" height="34" rx="8" class="bxa" />
+          <text x="310" y="170" class="tt" text-anchor="middle" fill="#8a5a00">
             SERIE TEMPORAL
           </text>
-          <text x="310" y="176" class="tc" text-anchor="middle">
-            sensores, hist&#243;ricos
-          </text>
-          <path d="M140 57 L226 68" class="ln" />
-          <path d="M480 57 L400 68" class="ln" />
-          <path d="M310 123 V144" class="ln" />
-          <text x="118" y="88" class="tl">deriva de</text>
-          <text x="440" y="88" class="tl">deriva de</text>
-          <text x="22" y="137" class="tl">
-            REGLA: UN DATO TIENE UN SOLO DUE&#209;O. LO DEM&#193;S SON COPIAS
-            QUE SE PUEDEN TIRAR Y REHACER.
-          </text>
+          <path d="M144 60 L215 70" class="ln" />
+          <path d="M476 60 L405 70" class="ln" />
+          <path d="M310 130 V146" class="ln" />
+          <text x="125" y="92" class="tl">se deriva</text>
+          <text x="432" y="92" class="tl">se deriva</text>
         </svg>
         <div class="g2 mt">
           <div class="ok">
@@ -5070,9 +5286,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="La comprobaci&oacute;n">
-        <div class="ey">
-          Revisi&oacute;n entre pares &middot; 82&ndash;90 min
-        </div>
+        <div class="ey">Revisi&oacute;n entre pares</div>
         <h2>La consulta que m&aacute;s duele</h2>
         <p class="lead">
           Comparen las selecciones con otra sala. No revisen si eligieron igual:
@@ -5083,15 +5297,15 @@
           <div>
             <h3>Qu&eacute; hace la sala revisora</h3>
             <p>
-              Marquen <b>un argumento vago</b>, pidan <b>un riesgo real</b> y
-              exijan una l&iacute;nea: la pregunta de negocio que esa
-              elecci&oacute;n contesta <b>peor</b>.
+              Marquen <b>un argumento vago</b>, pidan <b>un riesgo real</b> e
+              identifiquen la pregunta de negocio que esa elecci&oacute;n
+              contesta <b>peor</b>.
             </p>
             <div class="ok mt">
               Si no encuentran una consulta dolorosa, casi seguro es que no
               buscaron: elegir es decidir <b>qu&eacute;</b> se contesta mal.
-              Vuelvan al tablero y cambien una selecci&oacute;n solo si la
-              evidencia lo justifica.
+              Vuelvan al reto correspondiente y cambien una selecci&oacute;n
+              solo si la evidencia lo justifica.
             </div>
           </div>
           <div>
@@ -5123,9 +5337,13 @@
           ><span>Elegir es decidir qu&eacute; se contesta mal</span>
         </div>
       </section>
-      <section class="slide yellow mid" data-title="Pausa" data-break="15">
+      <section
+        class="slide yellow mid appendix"
+        data-title="Pausa"
+        data-break="15"
+      >
         <div class="break">
-          <div class="ey">Pausa &middot; 19:30&ndash;19:45</div>
+          <div class="ey">Pausa</div>
           <div class="clock">15:00</div>
           <h2 style="margin-top: 3%">
             Pausa. Sus decisiones ya est&aacute;n seleccionadas.
@@ -5154,15 +5372,15 @@
       </section>
       <section class="slide mid" data-title="Cerrar las decisiones">
         <div class="break">
-          <div class="ey">Finalizar y validar &middot; 19:45&ndash;20:00</div>
+          <div class="ey">Finalizar y validar</div>
           <h2>Una decisi&oacute;n lista para que alguien la implemente</h2>
           <div class="g2 wide">
             <div class="card blue">
               <h3>La prueba final</h3>
               <p>
                 Elijan el reto que m&aacute;s cambi&oacute; su respuesta y, en
-                el tablero, marquen qu&eacute; evidencia provoc&oacute; el
-                cambio.
+                el contraste correspondiente, marquen qu&eacute; evidencia provoc&oacute;
+                el cambio.
               </p>
               <p class="small">
                 Solo selecciones. Sin texto, chat ni nombres de proveedores.
@@ -5172,7 +5390,7 @@
               <h3>Antes de cerrar</h3>
               <ol>
                 <li>Una fuente de verdad por dato cr&iacute;tico.</li>
-                <li>Dos evidencias observables, no adjetivos.</li>
+                <li>Un criterio observable, no un adjetivo.</li>
                 <li>Un riesgo que su propia soluci&oacute;n introduce.</li>
                 <li>
                   Una consulta que les obligar&iacute;a a pagar ese costo.
@@ -5192,7 +5410,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="Debrief">
-        <div class="ey">Debrief &middot; 20:00&ndash;20:25</div>
+        <div class="ey">Debrief</div>
         <h2>
           No comparamos respuestas: comparamos la variable que decidi&oacute;
         </h2>
@@ -5244,7 +5462,7 @@
           <span>Debrief</span><span>La variable, no el veredicto</span>
         </div>
       </section>
-      <section class="slide dense appendix" data-title="Fuentes">
+      <section class="slide dense" data-title="Fuentes">
         <div class="ey">Para el que quiera ir m&aacute;s a fondo</div>
         <h2>De d&oacute;nde sale lo de hoy</h2>
         <p class="lead">
@@ -5333,9 +5551,7 @@
         </div>
       </section>
       <section class="slide dense appendix" data-title="DP-900 (referencia)">
-        <div class="ey">
-          DP-900 &middot; recuperaci&oacute;n activa &middot; 20:25&ndash;20:35
-        </div>
+        <div class="ey">DP-900 &middot; recuperaci&oacute;n activa</div>
         <h2>Del dominio que m&aacute;s pesa hoy</h2>
         <div class="g2 wide">
           <div class="card">
@@ -5387,9 +5603,7 @@
         </div>
       </section>
       <section class="slide dense" data-title="DP-900">
-        <div class="ey">
-          DP-900 &middot; recuperaci&oacute;n activa &middot; 20:25&ndash;20:35
-        </div>
+        <div class="ey">DP-900 &middot; recuperaci&oacute;n activa</div>
         <h2>Primero decide. Despu&eacute;s verifica.</h2>
         <p class="lead">
           Responde antes de ver la retroalimentaci&oacute;n. Una respuesta
@@ -5480,7 +5694,7 @@
       </section>
       <section class="slide yellow mid" data-title="Cierre">
         <div class="break">
-          <div class="ey">Cierre &middot; 20:35&ndash;20:38</div>
+          <div class="ey">Cierre</div>
           <h2>Ya no construyen bases: eligen, calculan y defienden</h2>
           <div class="g3">
             <div class="ok">
@@ -5521,7 +5735,7 @@
       </section>
       <section class="slide mid" data-title="Salida">
         <div class="break">
-          <div class="ey">Ticket de salida &middot; 20:38&ndash;20:40</div>
+          <div class="ey">Ticket de salida</div>
           <h2>Una selecci&oacute;n antes de irse</h2>
           <div class="g2 wide">
             <div class="ok">
@@ -5837,7 +6051,7 @@
               button.classList.add("is-selected");
               button.setAttribute("aria-pressed", "true");
               const status = group
-                .closest(".choice-case, .ok")
+                .closest(".choice-case, .choice-mini, .format-choice, .ok")
                 ?.querySelector(".choice-status");
               if (status) {
                 const prefix = group.dataset.choice?.startsWith("evidencia")

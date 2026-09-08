@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-auto-501be3d956d5';
+const VERSION = 'andesdb-auto-s9-guided-20260908';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -20,8 +20,11 @@ const ESSENTIAL = [
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
   './Presentaciones/M3/sesion-8-modelado-y-normalizacion.html',
   './Presentaciones/M3/sesion-9-ddl-supabase.html',
+  './Presentaciones/M3/tutorial-supabase.html',
+  './Presentaciones/M3/formulario-reservas.html',
   './Presentaciones/M3/constructor-abc.html',
   './Scripts/S9.sql',
+  './Scripts/S9-restaurante-abc.sql',
   './assets/vendor/sqljs/sql-wasm.js',
   './assets/vendor/sqljs/sql-wasm.wasm',
   './Presentaciones/M2/base-datos/dvdrental.db'

@@ -1439,7 +1439,7 @@ ADD COLUMN observacion TEXT;</code></pre></div><div><h3>DROP</h3><pre><code>DROP
 
 
 
-<div class="progress"><div class="bar" id="bar"></div></div></main>
+ <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 36</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-9-ddl-supabase.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">&#8595;</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button></nav>
 <div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close>×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="12">12 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
 <div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">00:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">&#10074;&#10074;</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">&#9203;</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">&times;</button></div>
@@ -1487,11 +1487,8 @@ if(mini){
  miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};
  document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};
  document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
- /* arrastrar a cualquier lado; la posición se recuerda */
+ /* Arrastrar durante esta clase, sin recordar posición ni avance. */
  let ax=0,ay=0,px=0,py=0,mov=false;
- const guardar=()=>{try{localStorage.setItem('miniPos',JSON.stringify({l:mini.style.left,t:mini.style.top}))}catch(e){}};
- try{const p=JSON.parse(localStorage.getItem('miniPos')||'null');
-  if(p&&p.l){mini.style.left=p.l;mini.style.top=p.t;mini.style.right='auto';mini.style.bottom='auto'}}catch(e){}
  mini.addEventListener('pointerdown',e=>{
   if(e.target.tagName==='BUTTON')return;
   const r=mini.getBoundingClientRect();
@@ -1508,7 +1505,7 @@ if(mini){
  mini.addEventListener('pointerup',e=>{
   mini.classList.remove('arrastrando');
   try{mini.releasePointerCapture(e.pointerId)}catch(_){}
-  if(mov)guardar();});
+ });
  addEventListener('resize',()=>{const r=mini.getBoundingClientRect();
   if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}});
 }

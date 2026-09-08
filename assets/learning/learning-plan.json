@@ -165,7 +165,7 @@
       "titulo": "Supabase paso a paso + DDL PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir PK/FK de API keys; explicar 1FN, 2FN y 3FN de forma suave y visual; y construir el modelo final con DDL PostgreSQL.",
+      "objetivo": "Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir PK/FK de API keys; detectar 1FN, 2FN y 3FN con el Restaurante ABC; y construir con DDL el núcleo PLATO, MESA, PEDIDO y LINEA_PEDIDO.",
       "servicio_real": {
         "requerido": true,
         "nombre": "PostgreSQL en Supabase",
@@ -203,13 +203,13 @@
       "actividad": {
         "titulo": "Supabase paso a paso + formas normales suaves + DDL",
         "minutos": 61,
-        "instrucciones": "Trabaja en grupo. Primero ubica SQL Editor y Table Editor. Luego mira tres problemas simples: una celda con lista para 1FN, datos de pedido y plato mezclados para 2FN, y puestos de mesa guardados dentro de pedido para 3FN. Finalmente crea PLATO, MESA, PEDIDO y LINEA_PEDIDO con DDL PostgreSQL.",
+        "instrucciones": "Trabaja en grupo. Primero ubica SQL Editor y Table Editor. Luego predice y comprueba tres problemas del Restaurante ABC: una celda con lista para 1FN, datos de pedido y plato mezclados para 2FN, y puestos de MESA guardados dentro de PEDIDO para 3FN. Finalmente construye y prueba el núcleo DDL: PLATO, PEDIDO y LINEA_PEDIDO; MESA queda identificada como la fuente única de capacidad.",
         "criterios": [
           "detecta el problema de 1FN mediante una consulta de negocio",
           "explica qué atributo depende de una parte de una clave compuesta en 2FN",
           "detecta una dependencia transitiva visible en 3FN",
           "reconstruye información con JOIN después de separar tablas",
-          "crea y prueba PK, FK, NOT NULL, CHECK y DEFAULT en PostgreSQL"
+          "crea y prueba PK, FK, NOT NULL, CHECK y DEFAULT en PLATO, PEDIDO y LINEA_PEDIDO; y justifica por qué los puestos pertenecen a MESA"
         ]
       }
     },
