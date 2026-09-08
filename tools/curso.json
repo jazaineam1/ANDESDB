@@ -13,21 +13,11 @@
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "diferenciacionTecnicaSesiones": [
-      11,
-      12,
-      13,
-      14,
-      15
-    ],
+    "diferenciacionTecnicaSesiones": [11, 12, 13, 14, 15],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
-    "sesionesAutonomas": [
-      7,
-      10,
-      13
-    ],
+    "sesionesAutonomas": [7, 10, 13],
     "trabajoAutonomoMin": 60,
     "publicacionSolucionesAutonomas": "20:00 America/Bogota"
   },
@@ -104,14 +94,7 @@
           "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": [
-            "SELECT",
-            "DISTINCT",
-            "COUNT",
-            "WHERE",
-            "ORDER BY",
-            "LIMIT"
-          ],
+          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -126,13 +109,7 @@
           "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": [
-            "BETWEEN",
-            "IN",
-            "LIKE",
-            "GROUP BY",
-            "HAVING"
-          ],
+          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -347,7 +324,7 @@
           "trabajoAutonomoMin": 75,
           "titulo": "Taller de casos: ¿SQL o NoSQL?",
           "estado": "hoy",
-          "desc": "Seis retos de arquitectura de datos, con un caso real: el requerimiento de la SIC a más de 50 empresas. Cada uno pide una decisión, dos argumentos técnicos, un riesgo y la consulta que la elección contesta peor. La tecnología va detrás del problema, no delante.",
+          "desc": "Seis retos de arquitectura de datos, con un caso real: el requerimiento de la SIC a más de 50 empresas. En el tablero integrado se elige una ruta y se contrasta con evidencia de un caso real. La tecnología va detrás del problema, no delante.",
           "tags": [
             "SQL vs NoSQL",
             "patrón de acceso",
@@ -363,10 +340,6 @@
           ],
           "href": "Presentaciones/M4/sesion-10-sql-o-nosql.html",
           "recursos": [
-            {
-              "txt": "📝 La ficha de decisión · los seis retos",
-              "href": "Presentaciones/M4/ficha-decision.html"
-            },
             {
               "txt": "📊 Material original del módulo (PowerPoint)",
               "href": "Presentaciones/M4/M4C1 V4 Introducción a bases NoSQL.pptx",
@@ -438,13 +411,7 @@
           "titulo": "Laboratorio BigQuery",
           "estado": "pendiente",
           "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
-          "tags": [
-            "BigQuery",
-            "cloud",
-            "warehouse",
-            "SQL",
-            "workshop"
-          ]
+          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"]
         },
         {
           "n": 14,
@@ -497,12 +464,7 @@
           "titulo": "Cierre + preparación DP-900",
           "estado": "pendiente",
           "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.",
-          "tags": [
-            "DP-900",
-            "cierre",
-            "retrieval practice",
-            "plan de estudio"
-          ]
+          "tags": ["DP-900", "cierre", "retrieval practice", "plan de estudio"]
         }
       ]
     }
