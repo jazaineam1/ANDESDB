@@ -52,6 +52,9 @@ __pycache__/
 *.pyc
 .session1_rewrite.ps1
 
+# Cache local del CLI de Supabase (se regenera solo)
+supabase/.temp/
+
 
 # ---------------------------------------------------------------------
 # RESPUESTAS de los concursos · el repo es publico
