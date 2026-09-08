@@ -345,14 +345,38 @@
           "duracionUtil": 145,
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
-          "titulo": "Taller de casos: ¿SQL o NoSQL?",
+          "titulo": "Introducción a bases NoSQL",
           "estado": "hoy",
-          "desc": "Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.",
+          "desc": "Clave-valor, documentos y grafos; sistemas distribuidos y teorema CAP; qué cambia frente a lo relacional. Y de ahí a Firestore: cada uno levanta su base de documentos en Firebase y modela una aplicación de su móvil.",
           "tags": [
-            "SQL vs NoSQL",
-            "casos",
-            "trade-offs",
-            "workshop"
+            "NoSQL",
+            "clave-valor",
+            "documentos",
+            "grafos",
+            "CAP",
+            "consistencia eventual",
+            "desnormalización",
+            "escalabilidad",
+            "Firebase",
+            "Firestore",
+            "colecciones"
+          ],
+          "href": "Presentaciones/M4/sesion-10-nosql.html",
+          "recursos": [
+            {
+              "txt": "🔥 Ejercicio: tu primera base de documentos",
+              "href": "Presentaciones/M4/ejercicio-firebase.html"
+            },
+            {
+              "txt": "📊 La presentación original en PowerPoint",
+              "href": "Presentaciones/M4/M4C1 V4 Introducción a bases NoSQL.pptx",
+              "download": true
+            },
+            {
+              "txt": "📄 El ejercicio original en Word",
+              "href": "Presentaciones/M4/M4C1 Ejercicio Firebase.docx",
+              "download": true
+            }
           ]
         },
         {
@@ -478,5 +502,10 @@
     }
   ],
   "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
-  "materialesHoy": []
+  "materialesHoy": [
+    {
+      "txt": "🔥 Ejercicio de hoy: tu primera base de documentos",
+      "href": "Presentaciones/M4/ejercicio-firebase.html"
+    }
+  ]
 }

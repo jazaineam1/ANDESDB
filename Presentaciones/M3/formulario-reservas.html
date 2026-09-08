@@ -211,6 +211,34 @@ tbody tr.nueva{background:var(--y-sua)}
   // Ni la dirección ni la clave viven en este archivo: llegan por la
   // dirección del enlace, y se recuerdan en este navegador para que
   // recargar la página no obligue a pegarlas otra vez.
+  // ====================================================================
+  //  LA CONEXION, QUEMADA AQUI
+  //
+  //  Rellena estas dos lineas UNA VEZ y la pagina queda lista: quien la
+  //  abra ve el formulario directamente y solo tiene que llenar sus datos.
+  //
+  //    url : Supabase -> Settings -> Data API -> Project URL
+  //    key : Supabase -> Settings -> API Keys -> la publishable (o anon)
+  //
+  //  Se puede escribir aqui sin miedo, y no por descuido: esa clave es
+  //  publica por diseño y ademas no sirve para gran cosa. Las once tablas
+  //  estan cerradas con RLS y sin ninguna politica, y encima solo se abren
+  //  tres funciones: listar mesas, guardar una reserva y leer la lista con
+  //  el telefono tapado. Con esta clave nadie puede borrar una reserva, ni
+  //  leer un telefono entero, ni asomarse a los pedidos.
+  //
+  //  Lo unico que si permite es MANDAR reservas. Si alguien de fuera se
+  //  pone a llenarla de basura, se cambia la clave en Supabase (Settings ->
+  //  API Keys -> Roll) y se pega la nueva aqui.
+  //
+  //  Lo que NUNCA se escribe aqui: la database password del proyecto ni la
+  //  clave secret. Esas si abren la base entera.
+  // ====================================================================
+  var CONEXION = {
+    url: '',   // https://xxxxxxxxxxxx.supabase.co
+    key: ''    // sb_publishable_... (o el eyJ... de anon)
+  };
+
   var LLAVE = 'abc-reservas-conexion';
   var cfg = null;
 
@@ -220,6 +248,10 @@ tbody tr.nueva{background:var(--y-sua)}
     return u;
   }
 
+  // Orden: primero lo que venga en la direccion (sirve para apuntar la
+  // misma pagina a otro proyecto sin tocar el archivo), despues lo que
+  // esta quemado arriba, y en ultimo lugar lo que se escribio a mano en
+  // este navegador. Si CONEXION esta rellena, nadie ve el panel.
   function leerConfig() {
     var p = new URLSearchParams(location.search);
     var url = limpiarUrl(p.get('url') || p.get('proyecto') || '');
@@ -227,6 +259,9 @@ tbody tr.nueva{background:var(--y-sua)}
     if (url && key) {
       try { localStorage.setItem(LLAVE, JSON.stringify({ url: url, key: key })); } catch (e) {}
       return { url: url, key: key };
+    }
+    if (CONEXION.url && CONEXION.key) {
+      return { url: limpiarUrl(CONEXION.url), key: CONEXION.key.trim() };
     }
     try {
       var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');

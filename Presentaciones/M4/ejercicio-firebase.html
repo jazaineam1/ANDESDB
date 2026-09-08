@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu primera base de documentos &middot; Firebase &middot; ANDESDB</title>
+<meta name="description" content="Ejercicio de la sesión 10: crear un proyecto en Firebase, levantar Firestore y modelar como colección de documentos una aplicación del móvil.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#146c43; --verde-sua:#e4f5ec; --ambar:#c47f00;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --tinta-cod:#0d1b26; --texto-cod:#eef6fb;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#ffe97a;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#ffe97a;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.6 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.1rem}
+header.top{background:var(--az);color:#fff;padding:2.1rem 0 2.3rem}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .25em;font-size:clamp(1.75rem,5vw,2.7rem);line-height:1.08;
+  letter-spacing:-.022em;text-wrap:balance;max-width:20ch}
+header.top p{margin:0;color:#cfe2f1;max-width:64ch;font-size:1.05rem}
+section{padding:2.4rem 0}
+section + section{border-top:1px solid var(--linea)}
+h2{font-size:clamp(1.3rem,3.2vw,1.75rem);margin:0 0 .5em;letter-spacing:-.015em;
+  text-wrap:balance}
+h3{font-size:1.02rem;margin:0 0 .3em}
+p{max-width:68ch}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.3rem 1.45rem;box-shadow:var(--sombra)}
+.paso{display:grid;grid-template-columns:2.6rem minmax(0,1fr);gap:1.2rem;align-items:start;
+  margin-bottom:1.3rem}
+.num{width:2.6rem;height:2.6rem;border-radius:50%;background:var(--y);color:#3a2f00;
+  display:grid;place-items:center;font-weight:800;font-size:1.1rem}
+.dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;
+  align-items:start;margin-top:.7rem}
+@media (max-width:860px){.dos{grid-template-columns:1fr}
+  .paso{grid-template-columns:2.1rem minmax(0,1fr);gap:.8rem}
+  .num{width:2.1rem;height:2.1rem;font-size:.95rem}}
+.toma{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--linea);
+  box-shadow:0 3px 14px rgba(16,32,48,.13)}
+.aviso{border-radius:10px;padding:.85em 1.05em;margin-top:.9rem;font-size:.95rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.ojo{border-left-color:var(--ambar);background:var(--y-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+pre{background:var(--tinta-cod);color:var(--texto-cod);border-radius:10px;padding:1rem 1.1rem;
+  overflow-x:auto;margin:.7rem 0 0;font:13.5px/1.55 Consolas,"Cascadia Mono",monospace}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.botones{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.1rem 0}
+.boton{display:inline-block;background:var(--az);color:#fff;text-decoration:none;
+  font-weight:800;border-radius:999px;padding:.72rem 1.5rem;border:2px solid var(--az)}
+.boton:hover{filter:brightness(1.14)}
+.boton.suave{background:transparent;color:var(--az)}
+.boton:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+ol,ul{max-width:66ch}
+li{margin:.28em 0}
+.modelo{width:100%;height:auto;display:block;background:var(--carta);border-radius:var(--r);
+  border:1px solid var(--linea);padding:.7rem;box-shadow:var(--sombra)}
+.modelo .tt{font:800 12.5px "Segoe UI",Arial,sans-serif;letter-spacing:.04em}
+.modelo .tc{font:11.5px Consolas,"Cascadia Mono",monospace;fill:#3d4c59}
+.modelo .tc.fk{fill:#124e78;font-weight:700}
+.modelo .rel{stroke:#7d93a6;stroke-width:1.6}
+.modelo .card{font:700 11px "Segoe UI",Arial,sans-serif;fill:#4a5b6a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modelo{background:#eef3f7}}
+:root[data-theme="dark"] .modelo{background:#eef3f7}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:.6rem}
+th,td{padding:.55em .6em;text-align:left;border-bottom:1px solid var(--linea);vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+td:first-child{font-family:Consolas,monospace;font-size:.85rem;color:var(--az);
+  white-space:nowrap}
+.desliza{overflow-x:auto}
+.leyenda{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.85rem;color:var(--tenue);
+  margin-top:.8rem}
+.leyenda span{display:flex;align-items:center;gap:.45em}
+.mues{width:1.1em;height:1.1em;border-radius:4px;border:1.6px solid}
+.pie{padding:1.6rem 0 3rem;font-size:.82rem;color:var(--tenue)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="cinta">M&oacute;dulo 4 &middot; Sesi&oacute;n 10 &middot; ANDESDB</div>
+  <h1>Tu primera base de documentos</h1>
+  <p>Diez pasos para levantar Firestore en la nube de Google y guardar ah&iacute; el modelo de
+     una aplicaci&oacute;n que usas todos los d&iacute;as.</p>
+</div></header>
+<section id="antes"><div class="wrap"><h2>Antes de empezar</h2><p>Vas a crear una base de datos de <b>documentos</b> en la nube de Google, y a meter dentro el modelo de una aplicaci&oacute;n que ya usas. Son diez pasos y no se instala nada.</p><div class="dos"><div class="tarj"><h3>Lo que necesitas</h3><ul><li>Una cuenta de Gmail.</li><li>Un navegador.</li><li>Una aplicaci&oacute;n del m&oacute;vil en la cabeza: la que abras todos los d&iacute;as.</li></ul><p class="marca" style="font-size:.82rem;color:var(--tenue)">Ni tarjeta, ni instalaci&oacute;n, ni c&oacute;digo.</p></div><div class="tarj"><h3>Las tres palabras nuevas</h3><ul><li><b>Colecci&oacute;n</b> &mdash; el sitio donde viven cosas del mismo tipo. Se parece a una tabla, y no lo es.</li><li><b>Documento</b> &mdash; una de esas cosas. Se parece a una fila, y tampoco lo es: puede tener campos que sus vecinos no tienen.</li><li><b>Campo</b> &mdash; un dato del documento. Puede ser texto, n&uacute;mero, fecha, booleano, una lista o incluso otro objeto dentro.</li></ul></div></div><div class="aviso"><h3>La frase que resume la sesi&oacute;n</h3><b>Lo que se visualiza junto, se almacena junto.</b> En una base relacional repartes el dato entre tablas y lo vuelves a juntar con <code>JOIN</code>. Aqu&iacute; lo guardas ya junto, tal como la pantalla lo va a pedir. Eso es una ventaja para leer y una desventaja para cambiar.</div></div></section>
+<section id="pasos"><div class="wrap"><h2>Los diez pasos</h2><div class="paso"><div class="num">1</div><div class="tarj"><h3>Entra a Firebase</h3><div class="dos"><div><p>Busca <b>Firebase</b> en Google, o ve directo a <a href="https://firebase.google.com" target="_blank" rel="noopener"><b>firebase.google.com</b></a>.</p><p>Es la nube de Google pensada para quien hace aplicaciones m&oacute;viles. Nosotros vamos a usar una sola pieza de todo lo que ofrece: <b>Firestore</b>, que es su base de datos de documentos.</p></div><div><img class="toma" src="firebase/01.jpg" alt="Página de inicio de Firebase con el botón de acceder" loading="lazy"></div></div></div></div><div class="paso"><div class="num">2</div><div class="tarj"><h3>Accede con tu cuenta de Gmail</h3><p><b>Acceder</b> &rarr; escribe tus credenciales de Gmail.</p><p>No hace falta crear nada nuevo: si tienes correo de Google, ya tienes cuenta.</p></div></div><div class="paso"><div class="num">3</div><div class="tarj"><h3>Ve a la consola</h3><p>Arriba a la derecha, <b>Ir a la consola</b>.</p><p>Ah&iacute; es donde viven los proyectos. Si es tu primera vez, estar&aacute; vac&iacute;o.</p></div></div><div class="paso"><div class="num">4</div><div class="tarj"><h3>Crea un proyecto nuevo</h3><div class="dos"><div><p><b>Crear un proyecto</b> &rarr; ponle un nombre y <b>continuar</b>.</p><p>Un nombre que reconozcas: <code>curso-nosql</code>, o el de la aplicaci&oacute;n que vayas a modelar m&aacute;s abajo.</p></div><div><img class="toma" src="firebase/02.jpg" alt="Formulario para asignar el nombre del proyecto de Firebase" loading="lazy"></div></div></div></div><div class="paso"><div class="num">5</div><div class="tarj"><h3>Continuar, y continuar</h3><div class="dos"><div><p>Te ofrece <b>Google Analytics</b>. Es gratis, y para este ejercicio <b>no hace falta</b>: puedes desactivarlo y seguir.</p><p>Luego <b>continuar</b> otra vez.</p></div><div><img class="toma" src="firebase/03.jpg" alt="Pantalla de Google Analytics durante la creación del proyecto" loading="lazy"></div></div></div></div><div class="paso"><div class="num">6</div><div class="tarj"><h3>Espera a que se cree</h3><div class="dos"><div><p>Tarda menos de un minuto. Est&aacute; reservando el espacio de tu proyecto en la infraestructura de Google.</p></div><div><img class="toma" src="firebase/04.jpg" alt="Barra de progreso mientras Firebase crea el proyecto" loading="lazy"></div></div></div></div><div class="paso"><div class="num">7</div><div class="tarj"><h3>Tu proyecto est&aacute; listo</h3><div class="dos"><div><p>Aparece la confirmaci&oacute;n. <b>Continuar</b>, y caes en el panel del proyecto.</p><div class="aviso"><h3>Mira la cantidad de servicios del men&uacute;</h3>Autenticaci&oacute;n, almacenamiento, funciones, hosting, notificaciones… Esta es la vista que tiene alguien que construye una aplicaci&oacute;n entera. Hoy usamos <b>uno</b>.</div></div><div><img class="toma" src="firebase/05.jpg" alt="Confirmación de que el proyecto de Firebase está listo" loading="lazy"></div></div></div></div><div class="paso"><div class="num">8</div><div class="tarj"><h3>Compilaci&oacute;n &rarr; Firestore Database</h3><div class="dos"><div><p>En el men&uacute; de la izquierda, <b>Compilaci&oacute;n</b> (o <i>Build</i>), y ah&iacute; dentro <b>Firestore Database</b>.</p><p>La primera vez te lo ofrece con un bot&oacute;n grande: <b>Crear base de datos</b>.</p></div><div><img class="toma" src="firebase/06.jpg" alt="Menú Compilación con la opción Firestore Database" loading="lazy"></div></div></div></div><div class="paso"><div class="num">9</div><div class="tarj"><h3>Configura la base</h3><div class="dos"><div><ol><li><b>Edici&oacute;n est&aacute;ndar</b>.</li><li><b>Ubicaci&oacute;n</b>: <code>us-east1 (South Carolina)</code>.</li><li><b>Modo de prueba</b>.</li><li><b>Crear</b>, y espera a que se aprovisione.</li></ol><div class="aviso ojo"><h3>El modo de prueba deja la base abierta 30 d&iacute;as</h3><p style="margin:.4em 0 0">Cualquiera con la direcci&oacute;n puede <b>leer y escribir</b> en ella hasta que caduque. Para una clase de dos horas est&aacute; bien y por eso lo usamos; para cualquier otra cosa, no.</p><p style="margin:.4em 0 0">Comp&aacute;ralo con lo del viernes: en Supabase cerramos las once tablas con <i>row level security</i> y abrimos solo tres funciones. Aqu&iacute; el bot&oacute;n f&aacute;cil hace lo contrario. Las dos nubes te dejan elegir, y la elecci&oacute;n es tuya.</p></div></div><div><img class="toma" src="firebase/07.jpg" alt="Configuración de Firestore: edición, ubicación y modo de prueba" loading="lazy"></div></div></div></div><div class="paso"><div class="num">10</div><div class="tarj"><h3>Crea tu colecci&oacute;n</h3><div class="dos"><div><p>Ya tienes la base. Ahora <b>Iniciar colecci&oacute;n</b>.</p><p>Y aqu&iacute; empieza el ejercicio de verdad: la colecci&oacute;n no es inventada. <b>Modela una aplicaci&oacute;n que uses en el m&oacute;vil</b> &mdash;Duolingo, Spotify, Rappi, Strava, la que quieras&mdash; y guarda ah&iacute; lo que esa aplicaci&oacute;n necesitar&iacute;a saber de ti.</p><ul><li>El <b>ID del documento</b> puede ser el autom&aacute;tico o uno tuyo.</li><li>A&ntilde;ade campos de <b>tipos distintos</b>: texto, n&uacute;mero, booleano, fecha, y al menos <b>un mapa o un arreglo</b>.</li><li>Crea <b>tres documentos</b> en la misma colecci&oacute;n, y que <b>no tengan exactamente los mismos campos</b>.</li></ul><div class="aviso bien"><h3>Eso &uacute;ltimo es el ejercicio</h3>En una tabla, tres filas con columnas distintas es imposible. Aqu&iacute; es normal, y no da ning&uacute;n error. Es la diferencia entre esquema fijo y esquema flexible, vista con las manos.</div></div><div><img class="toma" src="firebase/08.jpg" alt="Creación de una colección en Firestore con sus documentos y campos" loading="lazy"></div></div></div></div></div></section>
+<section id="entrega"><div class="wrap"><h2>Y ahora la parte que se entrega</h2><p>Crear la colecci&oacute;n es la mitad. La otra mitad es <b>defender por qu&eacute;</b> esa aplicaci&oacute;n va en documentos y no en tablas &mdash; o al rev&eacute;s, porque a veces la respuesta honesta es que ir&iacute;a mejor en tablas.</p><div class="tarj"><h3>Escribe media p&aacute;gina con estas cuatro cosas</h3><ol><li><b>La decisi&oacute;n, explícita.</b> «Esta aplicaci&oacute;n la modelo con documentos», o «con tablas». Sin rodeos.</li><li><b>Dos argumentos t&eacute;cnicos.</b> Del patr&oacute;n de acceso (&iquest;qu&eacute; pide la pantalla, y junto?), de las relaciones (&iquest;hay varios-a-varios de verdad?), de la consistencia (&iquest;pasa algo si un dato tarda un segundo en cuadrar?) o de c&oacute;mo va a cambiar el esquema.</li><li><b>Un riesgo.</b> Qu&eacute; se te complica con esa elecci&oacute;n. Siempre hay algo.</li><li><b>Una captura</b> de tu colecci&oacute;n con los tres documentos.</li></ol><div class="aviso ojo"><h3>Lo &uacute;nico que no se acepta</h3>&laquo;NoSQL porque escala&raquo; como &uacute;nica justificaci&oacute;n. Una base relacional bien puesta tambi&eacute;n escala, y casi ning&uacute;n proyecto llega al tama&ntilde;o donde eso decide. Si el argumento es la escala, di <b>cu&aacute;nta</b> y <b>de qu&eacute;</b>.</div></div><div class="aviso bien"><h3>La pregunta que ordena todo</h3>La tecnolog&iacute;a va detr&aacute;s del problema, no delante. Antes de elegir: &iquest;qu&eacute; se consulta, junto con qu&eacute;, cu&aacute;ntas veces, y qu&eacute; pasa cuando ma&ntilde;ana cambien los requisitos?</div></div></section>
+<div class="wrap"><p class="pie">Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL
+  &middot; Universidad de los Andes &middot; Colsubsidio</p></div>
+</body>
+</html>

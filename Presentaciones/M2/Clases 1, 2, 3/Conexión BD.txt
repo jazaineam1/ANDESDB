@@ -1,5 +1,11 @@
-Cadena de conexión:
+Cadena de conexión
+==================
 
-postgresql://postgres.spjeywnvsqifqbkjyzmv:123qwe_*@aws-1-us-east-2.pooler.supabase.com:5432/postgres
+Este archivo llevaba la contraseña de la base escrita entera, y el repositorio
+es público. Se retira.
 
-Dataset public
+    postgresql://postgres.<REF-DEL-PROYECTO>:<CONTRASEÑA>@aws-1-us-east-2.pooler.supabase.com:5432/postgres
+
+La cadena completa se reparte por el chat de la clase, nunca por aquí.
+
+Dataset: public
