@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Restaurante ABC · Reservas · ANDESDB</title>
+<meta name="description" content="Formulario de reservas del Restaurante ABC: escribe en una base PostgreSQL real alojada en Supabase, y muestra en vivo lo que envía toda la clase.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#146c43; --verde-sua:#e4f5ec; --rojo:#a52a2a; --rojo-sua:#fdeaea;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:1.6rem 1.1rem 3.5rem}
+header.top{background:var(--az);color:#fff;padding:1.5rem 0 1.7rem}
+header.top .wrap{padding-bottom:0}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .2em;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.1;
+  letter-spacing:-.02em;text-wrap:balance}
+header.top p{margin:0;color:#cfe2f1;max-width:62ch}
+h2{font-size:1.22rem;margin:0 0 .2em;letter-spacing:-.01em}
+.rej{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1.5rem;align-items:start}
+@media (max-width:900px){.rej{grid-template-columns:1fr}}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.25rem 1.35rem;box-shadow:var(--sombra)}
+.tarj + .tarj{margin-top:1.1rem}
+label{display:block;font-weight:700;font-size:.86rem;margin:.9rem 0 .3rem}
+label span{font-weight:400;color:var(--tenue)}
+input,select{width:100%;padding:.62rem .7rem;border:2px solid var(--linea);border-radius:9px;
+  background:var(--papel);color:var(--tinta);font:inherit;font-size:.98rem}
+input:focus,select:focus{outline:none;border-color:var(--az);box-shadow:0 0 0 3px var(--az-sua)}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+button{font:inherit;font-weight:800;cursor:pointer;border-radius:999px;border:2px solid var(--az);
+  background:var(--az);color:#fff;padding:.7rem 1.5rem;margin-top:1.2rem}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:disabled{opacity:.55;cursor:progress}
+button.suave{background:transparent;color:var(--az);padding:.4rem .95rem;margin:0;font-size:.84rem}
+button:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.aviso{border-radius:10px;padding:.8em 1em;margin-top:1rem;font-size:.94rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso.mal{border-left-color:var(--rojo);background:var(--rojo-sua)}
+.aviso.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.46em .55em;text-align:left;border-bottom:1px solid var(--linea)}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+tbody tr.nueva{background:var(--y-sua)}
+.desliza{overflow-x:auto}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.marca{font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
+.pastilla{display:inline-block;background:var(--y);color:#3a2f00;font-weight:800;
+  border-radius:999px;padding:.16em .7em;font-size:.76rem}
+.pie{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--linea);
+  font-size:.8rem;color:var(--tenue)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="cinta">Restaurante ABC · ANDESDB</div>
+  <h1>Reserva una mesa</h1>
+  <p>Lo que escribas aquí entra en una base de datos PostgreSQL de verdad,
+     y aparece abajo junto a lo de toda la clase.</p>
+</div></header>
+
+<div class="wrap">
+
+  <!-- ---------- configuración: solo la ve quien abre sin enlace ---------- -->
+  <section class="tarj" id="panelConfig" hidden>
+    <h2>Falta la conexión</h2>
+    <p>Esta página no lleva dentro la dirección ni la clave de ninguna base: se las
+       tiene que dar quien la abra. El profesor comparte el enlace completo por el
+       chat de la clase.</p>
+    <div class="aviso ojo">
+      <h3>Si tienes el enlace del chat</h3>
+      Ábrelo tal cual, con todo lo que va después del <code>?</code>. Ahí viajan la
+      dirección del proyecto y la clave <i>publishable</i>, que es pública por diseño.
+    </div>
+    <label for="cfgUrl">Project URL <span>— la de Settings → Data API</span></label>
+    <input id="cfgUrl" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+    <label for="cfgKey">Clave publishable <span>— la que empieza por <code>sb_publishable_</code> o <code>eyJ…</code></span></label>
+    <input id="cfgKey" type="text" placeholder="sb_publishable_…" autocomplete="off">
+    <button id="btnConfig" type="button">Conectar</button>
+    <div class="aviso mal" id="cfgError" hidden></div>
+  </section>
+
+  <!-- ---------- la aplicación ---------- -->
+  <div id="app" hidden>
+    <div class="rej">
+
+      <section class="tarj">
+        <h2>Tus datos</h2>
+        <form id="form" novalidate>
+          <label for="nombre">Nombre completo</label>
+          <input id="nombre" name="nombre" type="text" required minlength="3" maxlength="100"
+                 autocomplete="name" placeholder="Camila Restrepo">
+
+          <label for="telefono">Teléfono <span>— solo números</span></label>
+          <input id="telefono" name="telefono" type="tel" required
+                 inputmode="numeric" placeholder="3104458821" autocomplete="tel">
+
+          <div class="par">
+            <div>
+              <label for="fecha">Fecha</label>
+              <input id="fecha" name="fecha" type="date" required>
+            </div>
+            <div>
+              <label for="hora">Hora <span>— de 11:00 a 22:00</span></label>
+              <input id="hora" name="hora" type="time" required value="19:00"
+                     min="11:00" max="22:00" step="900">
+            </div>
+          </div>
+
+          <div class="par">
+            <div>
+              <label for="personas">Personas</label>
+              <input id="personas" name="personas" type="number" required min="1" max="20" value="2">
+            </div>
+            <div>
+              <label for="mesa">Mesa</label>
+              <select id="mesa" name="mesa" required>
+                <option value="">Cargando las mesas…</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="enviar" type="submit">Enviar la reserva</button>
+        </form>
+        <div class="aviso bien" id="ok" hidden></div>
+        <div class="aviso mal"  id="error" hidden></div>
+      </section>
+
+      <section class="tarj">
+        <h2>Qué acaba de pasar</h2>
+        <p>El navegador <b>no toca las tablas</b>. Las once están cerradas con
+           <i>row level security</i> y sin ninguna política, que es la forma de
+           decir «no pasa nadie».</p>
+        <p>Lo único que puede hacer esta página es pedirle a la base que ejecute
+           <b>tres funciones</b>: una para listar las mesas, otra para guardar la
+           reserva y otra para leer la lista. La de guardar comprueba antes que el
+           nombre tenga sentido, que la fecha no haya pasado y que las personas
+           quepan en la mesa.</p>
+        <div class="aviso">
+          <h3>Y por eso la clave puede ser pública</h3>
+          La clave <i>publishable</i> viaja en el navegador de todo el mundo. Con
+          ella no se puede leer un teléfono entero, ni borrar una reserva, ni ver
+          los pedidos: solo se pueden hacer esas tres cosas.
+        </div>
+        <p class="marca" id="dondeEscribe"></p>
+      </section>
+
+      <div>
+        <section class="tarj">
+          <div class="cab">
+            <h2>Reservas de la clase</h2>
+            <button class="suave" id="refrescar" type="button">Actualizar</button>
+          </div>
+          <p class="marca" id="estado">Cargando…</p>
+          <div class="desliza">
+            <table>
+              <thead><tr>
+                <th>#</th><th>Nombre</th><th>Teléfono</th><th>Fecha</th>
+                <th>Hora</th><th>Pers.</th><th>Mesa</th><th>Mesero</th>
+              </tr></thead>
+              <tbody id="filas"></tbody>
+            </table>
+          </div>
+        </section>
+
+
+      </div>
+
+    </div>
+  </div>
+
+  <p class="pie">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes ·
+     Colsubsidio. Esta página es material de clase: los datos que envíes son visibles
+     para el resto del curso.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // --- la conexión ------------------------------------------------------
+  // Ni la dirección ni la clave viven en este archivo: llegan por la
+  // dirección del enlace, y se recuerdan en este navegador para que
+  // recargar la página no obligue a pegarlas otra vez.
+  var LLAVE = 'abc-reservas-conexion';
+  var cfg = null;
+
+  function limpiarUrl(u) {
+    u = (u || '').trim().replace(/\/+$/, '');
+    if (u && !/^https?:\/\//i.test(u)) u = 'https://' + u;
+    return u;
+  }
+
+  function leerConfig() {
+    var p = new URLSearchParams(location.search);
+    var url = limpiarUrl(p.get('url') || p.get('proyecto') || '');
+    var key = (p.get('key') || p.get('clave') || '').trim();
+    if (url && key) {
+      try { localStorage.setItem(LLAVE, JSON.stringify({ url: url, key: key })); } catch (e) {}
+      return { url: url, key: key };
+    }
+    try {
+      var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+      if (g && g.url && g.key) return g;
+    } catch (e) {}
+    return null;
+  }
+
+  // --- hablar con la base ----------------------------------------------
+  // Todo pasa por /rest/v1/rpc/<funcion>. No hay una sola llamada a una
+  // tabla en toda la pagina, porque no serviria de nada: estan cerradas.
+  function rpc(nombre, cuerpo) {
+    return fetch(cfg.url + '/rest/v1/rpc/' + nombre, {
+      method: 'POST',
+      headers: {
+        'apikey': cfg.key,
+        'Authorization': 'Bearer ' + cfg.key,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(cuerpo || {})
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        var d = null;
+        try { d = t ? JSON.parse(t) : null; } catch (e) { d = null; }
+        if (!r.ok) {
+          var m = (d && (d.message || d.hint || d.details)) || ('La base respondió ' + r.status + '.');
+          throw new Error(m);
+        }
+        return d;
+      });
+    });
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function pinta(caja, texto, titulo) {
+    caja.innerHTML = (titulo ? '<h3>' + titulo + '</h3>' : '') + texto;
+    caja.hidden = false;
+  }
+
+  // --- arranque ---------------------------------------------------------
+  function arrancar() {
+    $('panelConfig').hidden = true;
+    $('app').hidden = false;
+    $('dondeEscribe').textContent = 'Escribiendo en ' + cfg.url.replace(/^https?:\/\//, '');
+
+    var hoy = new Date();
+    var iso = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 10);
+    $('fecha').value = iso;
+    $('fecha').min = iso;
+
+    cargarMesas();
+    cargarReservas();
+    setInterval(cargarReservas, 12000);
+  }
+
+  function cargarMesas() {
+    rpc('mesas_disponibles').then(function (ms) {
+      var s = $('mesa');
+      s.innerHTML = '';
+      (ms || []).forEach(function (m) {
+        var o = document.createElement('option');
+        o.value = m.mesa;
+        o.textContent = 'Mesa ' + m.mesa + ' · ' + m.puestos +
+                        (m.puestos === 1 ? ' puesto' : ' puestos') + ' · ' + m.mesero;
+        o.dataset.puestos = m.puestos;
+        s.appendChild(o);
+      });
+      if (!ms || !ms.length) {
+        s.innerHTML = '<option value="">No hay mesas: ¿se ejecutó el guion?</option>';
+      }
+    }).catch(function (e) {
+      $('mesa').innerHTML = '<option value="">No se pudieron cargar</option>';
+      pinta($('error'), e.message, 'No se pudo conectar con la base');
+    });
+  }
+
+  var vistas = {};
+  function cargarReservas(recien) {
+    return rpc('listar_reservas').then(function (rs) {
+      rs = rs || [];
+      var cuerpo = $('filas');
+      cuerpo.innerHTML = '';
+      rs.forEach(function (r) {
+        var tr = document.createElement('tr');
+        if (r.reserva_id === recien || (!vistas.arrancado && false)) tr.className = 'nueva';
+        [r.reserva_id, r.nombre, r.telefono, r.fecha,
+         String(r.hora).slice(0, 5), r.personas, r.mesa, r.mesero
+        ].forEach(function (v) {
+          var td = document.createElement('td');
+          td.textContent = v;
+          tr.appendChild(td);
+        });
+        cuerpo.appendChild(tr);
+      });
+      vistas.arrancado = true;
+      $('estado').textContent = rs.length +
+        (rs.length === 1 ? ' reserva en la base' : ' reservas en la base') +
+        ' · actualizado a las ' + new Date().toLocaleTimeString('es-CO');
+    }).catch(function (e) {
+      $('estado').textContent = 'No se pudo leer la lista: ' + e.message;
+    });
+  }
+
+  // --- enviar -----------------------------------------------------------
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    $('ok').hidden = true;
+    $('error').hidden = true;
+
+    var mesaSel = $('mesa').selectedOptions[0];
+    var datos = {
+      p_nombre:   $('nombre').value.trim(),
+      p_telefono: $('telefono').value.trim(),
+      p_fecha:    $('fecha').value,
+      p_hora:     $('hora').value,
+      p_personas: parseInt($('personas').value, 10),
+      p_mesa:     parseInt($('mesa').value, 10)
+    };
+
+    // Un aviso amable antes de molestar al servidor. La comprobación de
+    // verdad la hace la base: esta es solo para no hacer perder el viaje.
+    if (!datos.p_nombre || datos.p_nombre.length < 3) {
+      return pinta($('error'), 'Escribe tu nombre completo.', 'Falta algo');
+    }
+    if (!datos.p_mesa) {
+      return pinta($('error'), 'Elige una mesa de la lista.', 'Falta algo');
+    }
+    if (mesaSel && datos.p_personas > parseInt(mesaSel.dataset.puestos, 10)) {
+      return pinta($('error'),
+        'La mesa ' + datos.p_mesa + ' tiene ' + mesaSel.dataset.puestos +
+        ' puestos y pides para ' + datos.p_personas + '.', 'No caben');
+    }
+
+    var b = $('enviar');
+    b.disabled = true;
+    b.textContent = 'Enviando…';
+
+    rpc('registrar_reserva', datos).then(function (r) {
+      var fila = (r && r[0]) || {};
+      pinta($('ok'), (fila.mensaje || 'Reserva guardada.') +
+        ' Búscala abajo, resaltada en amarillo.', '✓ Quedó en la base');
+      $('form').reset();
+      $('hora').value = '19:00';
+      $('personas').value = '2';
+      $('fecha').value = $('fecha').min;
+      return cargarReservas(fila.reserva_id);
+    }).catch(function (e) {
+      pinta($('error'), e.message, 'La base la rechazó');
+    }).then(function () {
+      b.disabled = false;
+      b.textContent = 'Enviar la reserva';
+    });
+  });
+
+  $('refrescar').addEventListener('click', function () { cargarReservas(); });
+
+  $('btnConfig').addEventListener('click', function () {
+    var url = limpiarUrl($('cfgUrl').value);
+    var key = $('cfgKey').value.trim();
+    if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) {
+      return pinta($('cfgError'),
+        'La dirección tiene que ser la del proyecto, algo como ' +
+        '<code>https://abcdefghijkl.supabase.co</code>.', 'Esa dirección no sirve');
+    }
+    if (key.length < 20) {
+      return pinta($('cfgError'), 'Esa clave parece incompleta.', 'Falta la clave');
+    }
+    cfg = { url: url, key: key };
+    try { localStorage.setItem(LLAVE, JSON.stringify(cfg)); } catch (e) {}
+    arrancar();
+  });
+
+  cfg = leerConfig();
+  if (cfg) arrancar(); else $('panelConfig').hidden = false;
+})();
+</script>
+</body>
+</html>

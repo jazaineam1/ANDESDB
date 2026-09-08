@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu propia base en Supabase &middot; ANDESDB</title>
+<meta name="description" content="Tutorial paso a paso: de una cuenta vacía en Supabase a las once tablas del Restaurante ABC, con datos y consultas de comprobación.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#146c43; --verde-sua:#e4f5ec; --ambar:#c47f00;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --tinta-cod:#0d1b26; --texto-cod:#eef6fb;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#ffe97a;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#ffe97a;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.6 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.1rem}
+header.top{background:var(--az);color:#fff;padding:2.1rem 0 2.3rem}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .25em;font-size:clamp(1.75rem,5vw,2.7rem);line-height:1.08;
+  letter-spacing:-.022em;text-wrap:balance;max-width:20ch}
+header.top p{margin:0;color:#cfe2f1;max-width:64ch;font-size:1.05rem}
+section{padding:2.4rem 0}
+section + section{border-top:1px solid var(--linea)}
+h2{font-size:clamp(1.3rem,3.2vw,1.75rem);margin:0 0 .5em;letter-spacing:-.015em;
+  text-wrap:balance}
+h3{font-size:1.02rem;margin:0 0 .3em}
+p{max-width:68ch}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.3rem 1.45rem;box-shadow:var(--sombra)}
+.paso{display:grid;grid-template-columns:2.6rem minmax(0,1fr);gap:1.2rem;align-items:start;
+  margin-bottom:1.3rem}
+.num{width:2.6rem;height:2.6rem;border-radius:50%;background:var(--y);color:#3a2f00;
+  display:grid;place-items:center;font-weight:800;font-size:1.1rem}
+.dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;
+  align-items:start;margin-top:.7rem}
+@media (max-width:860px){.dos{grid-template-columns:1fr}
+  .paso{grid-template-columns:2.1rem minmax(0,1fr);gap:.8rem}
+  .num{width:2.1rem;height:2.1rem;font-size:.95rem}}
+.toma{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--linea);
+  box-shadow:0 3px 14px rgba(16,32,48,.13)}
+.aviso{border-radius:10px;padding:.85em 1.05em;margin-top:.9rem;font-size:.95rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.ojo{border-left-color:var(--ambar);background:var(--y-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+pre{background:var(--tinta-cod);color:var(--texto-cod);border-radius:10px;padding:1rem 1.1rem;
+  overflow-x:auto;margin:.7rem 0 0;font:13.5px/1.55 Consolas,"Cascadia Mono",monospace}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.botones{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.1rem 0}
+.boton{display:inline-block;background:var(--az);color:#fff;text-decoration:none;
+  font-weight:800;border-radius:999px;padding:.72rem 1.5rem;border:2px solid var(--az)}
+.boton:hover{filter:brightness(1.14)}
+.boton.suave{background:transparent;color:var(--az)}
+.boton:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+ol,ul{max-width:66ch}
+li{margin:.28em 0}
+.modelo{width:100%;height:auto;display:block;background:var(--carta);border-radius:var(--r);
+  border:1px solid var(--linea);padding:.7rem;box-shadow:var(--sombra)}
+.modelo .tt{font:800 12.5px "Segoe UI",Arial,sans-serif;letter-spacing:.04em}
+.modelo .tc{font:11.5px Consolas,"Cascadia Mono",monospace;fill:#3d4c59}
+.modelo .tc.fk{fill:#124e78;font-weight:700}
+.modelo .rel{stroke:#7d93a6;stroke-width:1.6}
+.modelo .card{font:700 11px "Segoe UI",Arial,sans-serif;fill:#4a5b6a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modelo{background:#eef3f7}}
+:root[data-theme="dark"] .modelo{background:#eef3f7}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:.6rem}
+th,td{padding:.55em .6em;text-align:left;border-bottom:1px solid var(--linea);vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+td:first-child{font-family:Consolas,monospace;font-size:.85rem;color:var(--az);
+  white-space:nowrap}
+.desliza{overflow-x:auto}
+.leyenda{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.85rem;color:var(--tenue);
+  margin-top:.8rem}
+.leyenda span{display:flex;align-items:center;gap:.45em}
+.mues{width:1.1em;height:1.1em;border-radius:4px;border:1.6px solid}
+.pie{padding:1.6rem 0 3rem;font-size:.82rem;color:var(--tenue)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="cinta">Restaurante ABC &middot; ANDESDB</div>
+  <h1>Tu propia base de datos, en diez minutos</h1>
+  <p>Cero instalaciones. Creas una cuenta, pegas un archivo y te quedas con las once tablas
+     del Restaurante ABC funcionando en la nube.</p>
+</div></header>
+<section id="que"><div class="wrap"><h2>Lo que vas a tener dentro de diez minutos</h2><p>Tu propia base de datos en la nube, con las <b>once tablas</b> del Restaurante ABC &mdash;el modelo que construimos entre todos&mdash; y con datos dentro para poder preguntarle cosas.</p><svg viewBox="0 0 950 615" class="modelo" role="img" aria-label="Las once tablas del Restaurante ABC y sus relaciones. Cliente uno a varios reserva; reserva varios a uno mesa; mesa varios a uno mesero. Pago varios a uno pedido; pedido uno a varios pedido_mesa y uno a varios linea_pedido. Linea_pedido varios a uno plato; plato uno a varios receta; receta varios a uno ingrediente. Las tablas puente son pedido_mesa, linea_pedido y receta."><g><line x1="215" y1="70" x2="260" y2="70" class="rel"/><text x="221" y="64" class="card">1</text><text x="254" y="64" class="card" text-anchor="end">N</text></g><g><line x1="450" y1="70" x2="495" y2="70" class="rel"/><text x="456" y="64" class="card">N</text><text x="489" y="64" class="card" text-anchor="end">1</text></g><g><line x1="685" y1="70" x2="730" y2="70" class="rel"/><text x="691" y="64" class="card">N</text><text x="724" y="64" class="card" text-anchor="end">1</text></g><g><line x1="215" y1="240" x2="260" y2="240" class="rel"/><text x="221" y="234" class="card">N</text><text x="254" y="234" class="card" text-anchor="end">1</text></g><g><line x1="450" y1="240" x2="495" y2="240" class="rel"/><text x="456" y="234" class="card">1</text><text x="489" y="234" class="card" text-anchor="end">N</text></g><g><line x1="450" y1="390" x2="495" y2="390" class="rel"/><text x="456" y="384" class="card">N</text><text x="489" y="384" class="card" text-anchor="end">1</text></g><g><line x1="685" y1="540" x2="730" y2="540" class="rel"/><text x="691" y="534" class="card">N</text><text x="724" y="534" class="card" text-anchor="end">1</text></g><g><line x1="590" y1="127" x2="590" y2="200" class="rel"/><text x="597" y="141" class="card">1</text><text x="597" y="194" class="card">N</text></g><g><line x1="355" y1="302" x2="355" y2="345" class="rel"/><text x="362" y="316" class="card">1</text><text x="362" y="339" class="card">N</text></g><g><line x1="590" y1="431" x2="590" y2="505" class="rel"/><text x="597" y="445" class="card">1</text><text x="597" y="499" class="card">N</text></g><g><rect x="25" y="25" width="190" height="86" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="25" y="25" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="37" y="45" class="tt" fill="#124e78">CLIENTE</text><text x="37" y="67" class="tc">cliente_id</text><text x="37" y="83" class="tc">nombre *</text><text x="37" y="99" class="tc">telefono *</text></g><g><rect x="260" y="25" width="190" height="134" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="260" y="25" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="272" y="45" class="tt" fill="#124e78">RESERVA</text><text x="272" y="67" class="tc">reserva_id</text><text x="272" y="83" class="tc">fecha *</text><text x="272" y="99" class="tc">hora *</text><text x="272" y="115" class="tc">personas *</text><text x="272" y="131" class="tc fk">cliente_id</text><text x="272" y="147" class="tc fk">mesa_id</text></g><g><rect x="495" y="25" width="190" height="102" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="495" y="25" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="507" y="45" class="tt" fill="#124e78">MESA</text><text x="507" y="67" class="tc">mesa_id</text><text x="507" y="83" class="tc">numero * u</text><text x="507" y="99" class="tc">puestos *</text><text x="507" y="115" class="tc fk">mesero_id</text></g><g><rect x="730" y="25" width="190" height="86" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="730" y="25" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="742" y="45" class="tt" fill="#124e78">MESERO</text><text x="742" y="67" class="tc">mesero_id</text><text x="742" y="83" class="tc">nombre *</text><text x="742" y="99" class="tc">documento * u</text></g><g><rect x="25" y="200" width="190" height="86" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="25" y="200" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="37" y="220" class="tt" fill="#124e78">PAGO</text><text x="37" y="242" class="tc">pago_id</text><text x="37" y="258" class="tc">monto *</text><text x="37" y="274" class="tc fk">pedido_id</text></g><g><rect x="260" y="200" width="190" height="102" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="260" y="200" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="272" y="220" class="tt" fill="#124e78">PEDIDO</text><text x="272" y="242" class="tc">pedido_id</text><text x="272" y="258" class="tc">creado_en *</text><text x="272" y="274" class="tc">estado *</text><text x="272" y="290" class="tc">total: se reconstruye</text></g><g><rect x="495" y="200" width="190" height="70" rx="7" fill="#fdf0e0" stroke="#c47f00" stroke-width="1.6"/><rect x="495" y="200" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="507" y="220" class="tt" fill="#8a5a00">PEDIDO_MESA</text><text x="507" y="242" class="tc">pedido_id</text><text x="507" y="258" class="tc fk">mesa_id</text></g><g><rect x="260" y="345" width="190" height="118" rx="7" fill="#fdf0e0" stroke="#c47f00" stroke-width="1.6"/><rect x="260" y="345" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="272" y="365" class="tt" fill="#8a5a00">LINEA_PEDIDO</text><text x="272" y="387" class="tc">linea_id</text><text x="272" y="403" class="tc">cantidad *</text><text x="272" y="419" class="tc">precio_unitario *</text><text x="272" y="435" class="tc fk">pedido_id</text><text x="272" y="451" class="tc fk">plato_id</text></g><g><rect x="495" y="345" width="190" height="86" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="495" y="345" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="507" y="365" class="tt" fill="#124e78">PLATO</text><text x="507" y="387" class="tc">plato_id</text><text x="507" y="403" class="tc">nombre *</text><text x="507" y="419" class="tc">precio_actual *</text></g><g><rect x="495" y="505" width="190" height="70" rx="7" fill="#fdf0e0" stroke="#c47f00" stroke-width="1.6"/><rect x="495" y="505" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="507" y="525" class="tt" fill="#8a5a00">RECETA</text><text x="507" y="547" class="tc">plato_id</text><text x="507" y="563" class="tc fk">ingrediente_id</text></g><g><rect x="730" y="505" width="190" height="86" rx="7" fill="#eaf2f8" stroke="#124e78" stroke-width="1.6"/><rect x="730" y="505" width="190" height="30" rx="7" fill="#ffffff" opacity=".55"/><text x="742" y="525" class="tt" fill="#124e78">INGREDIENTE</text><text x="742" y="547" class="tc">ingrediente_id</text><text x="742" y="563" class="tc">nombre *</text><text x="742" y="579" class="tc">vencimiento *</text></g></svg><div class="leyenda"><span><i class="mues" style="background:#eaf2f8;border-color:#124e78"></i>tabla del modelo</span><span><i class="mues" style="background:#fdf0e0;border-color:#c47f00"></i>tabla puente: la obliga un varios-a-varios</span><span><b>*</b> obligatorio</span><span><b>u</b> &uacute;nico</span><span><b>1</b> y <b>N</b> los lados de cada relaci&oacute;n</span></div><div class="aviso"><h3>Fíjate en dos cosas antes de empezar</h3><p style="margin:.4em 0 0">PEDIDO <b>no tiene columna total</b>. No es un olvido: el total se suma desde sus l&iacute;neas, y guardarlo ser&iacute;a copiar un dato que ya est&aacute; en otro sitio.</p><p style="margin:.4em 0 0">LINEA_PEDIDO <b>s&iacute; guarda</b> el <code>precio_unitario</code>, aunque PLATO ya tenga <code>precio_actual</code>. Esa copia s&iacute; es a prop&oacute;sito: si ma&ntilde;ana sube el ajiaco, las cuentas de ayer no pueden cambiar.</p></div></div></section>
+<section id="pasos"><div class="wrap"><h2>Los seis pasos</h2><p>De no tener nada a tener las once tablas. No hace falta instalar nada: todo pasa en el navegador.</p><div class="paso"><div class="num">1</div><div class="tarj"><h3>Crea la cuenta</h3><div class="dos"><div><p>Entra a <a href="https://supabase.com/dashboard" target="_blank" rel="noopener"><b>supabase.com/dashboard</b></a> y reg&iacute;strate con tu correo o con GitHub.</p><p>Es gratis y no pide tarjeta. Al terminar caes en la pantalla de proyectos, que estar&aacute; vac&iacute;a.</p><div class="aviso"><h3>Qu&eacute; es Supabase, para esta clase</h3>Un PostgreSQL de verdad con una ventana en el navegador para escribir SQL. Trae m&aacute;s cosas &mdash;autenticaci&oacute;n, archivos, APIs&mdash; y hoy no usamos ninguna.</div></div><div><img class="toma" src="../../assets/Supabase/0110bbc5-e54a-4854-a0aa-c640411dbe71.png" alt="Panel de Supabase con la organización y el botón New project" loading="lazy"></div></div></div></div><div class="paso"><div class="num">2</div><div class="tarj"><h3>Crea el proyecto</h3><div class="dos"><div><p>Bot&oacute;n <b>New project</b>, arriba a la derecha.</p><ol><li><b>Project name</b>: <code>andesdb-restaurante</code>, o lo que reconozcas.</li><li><b>Database password</b>: una contrase&ntilde;a larga. <b>C&oacute;piala y gu&aacute;rdala ahora</b>, porque despu&eacute;s no se puede volver a ver.</li><li><b>Region</b>: la m&aacute;s cercana.</li><li><b>Create new project</b>.</li></ol><div class="aviso ojo"><h3>Ojo con la palabra &laquo;clave&raquo;</h3>La <i>database password</i> <b>no</b> es una clave primaria ni una clave for&aacute;nea. Aquella abre el servidor; estas identifican y enlazan filas. Se llaman igual y no tienen nada que ver.</div></div><div><img class="toma" src="../../assets/Supabase/981b4798-7a80-471e-bebf-a89924fb6462.png" alt="Formulario de proyecto nuevo: nombre, contraseña y región" loading="lazy"></div></div></div></div><div class="paso"><div class="num">3</div><div class="tarj"><h3>Espera a que se aprovisione</h3><p>Tarda entre uno y tres minutos. Est&aacute; levantando una base de datos entera para ti: servidor, disco y red.</p><p>Cuando termine ver&aacute;s el men&uacute; de la izquierda completo, con <b>Table Editor</b>, <b>SQL Editor</b> y <b>Database</b>.</p><div class="aviso"><h3>Mientras esperas</h3>Mira el diagrama de arriba y cuenta las tablas. Son once, y tres de ellas son puente: nadie las pidi&oacute;, las obliga un varios-a-varios.</div></div></div><div class="paso"><div class="num">4</div><div class="tarj"><h3>Abre el SQL Editor</h3><div class="dos"><div><p>Men&uacute; izquierdo &rarr; <b>SQL Editor</b>. Luego <b>New query</b>, o el <b>+</b>.</p><p>Esa ventana negra es donde vas a escribir. Todo lo que hagas hoy pasa por ah&iacute;.</p><div class="aviso"><h3>Se ejecuta lo que est&eacute; seleccionado</h3>Si hay varias instrucciones y no seleccionas ninguna, se ejecutan <b>todas</b>. Para correr una sola, s&eacute;leccionala con el rat&oacute;n y pulsa Run.</div></div><div><img class="toma" src="../../assets/Supabase/2afb3b48-7307-4190-ab92-3f7a52f6b32d.png" alt="El SQL Editor de Supabase, con dónde pegar y dónde pulsar Run" loading="lazy"></div></div></div></div><div class="paso"><div class="num">5</div><div class="tarj"><h3>Pega el gui&oacute;n y ejec&uacute;talo</h3><p>Este es el paso que hace todo el trabajo. Abre el archivo, c&oacute;pialo <b>entero</b>, p&eacute;galo en el SQL Editor y pulsa <b>Run</b> (o <code>Ctrl</code> + <code>Enter</code>).</p><p class="botones"><a class="boton" href="../../Scripts/S9-restaurante-abc.sql" target="_blank" rel="noopener">Abrir el gui&oacute;n &#8599;</a><a class="boton suave" href="../../Scripts/S9-restaurante-abc.sql" download>Descargarlo</a></p><p>Son unas 380 l&iacute;neas: las once tablas con sus restricciones, y despu&eacute;s los datos. Tarda un par de segundos.</p><div class="aviso bien"><h3>Si te equivocas, vuelve a ejecutarlo entero</h3>El gui&oacute;n empieza borrando lo que hubiera, as&iacute; que repetirlo no rompe nada ni duplica filas. Est&aacute; hecho a prop&oacute;sito para que puedas insistir.</div></div></div><div class="paso"><div class="num">6</div><div class="tarj"><h3>Mira las once tablas</h3><div class="dos"><div><p>Men&uacute; izquierdo &rarr; <b>Table Editor</b>. En el selector de schema deja <code>public</code>.</p><p>A la izquierda deben aparecer las once: <code>cliente</code>, <code>ingrediente</code>, <code>linea_pedido</code>, <code>mesa</code>, <code>mesero</code>, <code>pago</code>, <code>pedido</code>, <code>pedido_mesa</code>, <code>plato</code>, <code>receta</code> y <code>reserva</code>.</p><p>Abre <code>plato</code>. Vas a ver ocho platos, con su precio. Y abre <code>mesa</code>: seis mesas, y una sin mesero asignado.</p><div class="aviso"><h3>Ya tienes tu propia base</h3>Es tuya, est&aacute; en la nube y nadie m&aacute;s la ve. Puedes romperla tranquilamente.</div></div><div><img class="toma" src="../../assets/Supabase/f87b6182-b76e-41bf-b683-f62e45ea9ac1.png" alt="Table Editor de Supabase mostrando las tablas creadas" loading="lazy"></div></div></div></div></div></section>
+<section id="comprobar"><div class="wrap"><h2>Cuatro preguntas para saber que funciona</h2><p>P&eacute;galas en el SQL Editor, una por una, y pulsa Run. No sirven solo para comprobar: cada una ense&ntilde;a por qu&eacute; el modelo est&aacute; hecho as&iacute;.</p><div class="tarj" style="margin-top:1.1rem"><h3>El total que no se guarda</h3><p>PEDIDO no tiene columna <code>total</code>, a prop&oacute;sito. Se reconstruye sumando las l&iacute;neas. Comp&aacute;ralo con la tabla PAGO: el pedido 4 se pag&oacute; en dos veces, 90.000 + 94.000 = 184.000, que es justo lo que da esta consulta.</p><pre><code>SELECT p.pedido_id,
+       SUM(l.cantidad * l.precio_unitario) AS total
+FROM pedido p
+JOIN linea_pedido l ON l.pedido_id = p.pedido_id
+GROUP BY p.pedido_id
+ORDER BY p.pedido_id;</code></pre></div><div class="tarj" style="margin-top:1.1rem"><h3>El precio de ayer no es el de hoy</h3><p>El ajiaco vale hoy 28.000 y en los pedidos viejos aparece a 26.000. Las dos cifras son correctas porque <b>son datos distintos</b>: uno es el precio de la carta y el otro el de aquella cuenta. Es la &uacute;nica copia que el modelo guarda queriendo.</p><pre><code>SELECT l.linea_id,
+       pl.nombre,
+       l.precio_unitario AS precio_de_aquel_dia,
+       pl.precio_actual  AS precio_de_hoy
+FROM linea_pedido l
+JOIN plato pl ON pl.plato_id = l.plato_id
+WHERE pl.nombre = 'Ajiaco santafereño';</code></pre></div><div class="tarj" style="margin-top:1.1rem"><h3>El plato que nadie ha pedido</h3><p>El tamal est&aacute; en la carta y no aparece en ninguna l&iacute;nea de pedido. Existe igual, porque PLATO es su propia tabla y no depende de que alguien lo pida. En una base mal hecha, un plato no existir&iacute;a hasta la primera venta.</p><pre><code>SELECT pl.nombre,
+       COUNT(l.linea_id) AS veces_pedido
+FROM plato pl
+LEFT JOIN linea_pedido l ON l.plato_id = pl.plato_id
+GROUP BY pl.nombre
+ORDER BY veces_pedido;</code></pre></div><div class="tarj" style="margin-top:1.1rem"><h3>La fiesta que ocup&oacute; dos mesas</h3><p>El pedido 4 se sent&oacute; en la mesa 3 y en la mesa 4. Sin la tabla puente <code>pedido_mesa</code> esto no se podr&iacute;a ni escribir: habr&iacute;a que elegir una de las dos mesas y mentir.</p><pre><code>SELECT pm.pedido_id,
+       m.numero AS mesa,
+       m.puestos
+FROM pedido_mesa pm
+JOIN mesa m ON m.mesa_id = pm.mesa_id
+WHERE pm.pedido_id = 4;</code></pre></div></div></section>
+<section id="errores"><div class="wrap"><h2>Si algo sale mal</h2><p>Los mensajes de PostgreSQL dicen exactamente qu&eacute; pas&oacute;, pero en ingl&eacute;s y de golpe. Estos son los seis que vas a ver.</p><div class="tarj desliza"><table><thead><tr><th>Lo que dice</th><th>Lo que significa</th></tr></thead><tbody><tr><td>relation "cliente" does not exist</td><td>El gui&oacute;n no se ejecut&oacute;, o se ejecut&oacute; solo un trozo. Vuelve al SQL Editor, selecciona <b>todo</b> con <code>Ctrl</code> + <code>A</code> y pulsa Run.</td></tr><tr><td>Success. No rows returned</td><td>No es un error. <code>CREATE</code> e <code>INSERT</code> cambian la base pero no devuelven una tabla de resultados. Compru&eacute;balo en Table Editor.</td></tr><tr><td>duplicate key value violates unique constraint</td><td>Est&aacute;s insertando algo que ya existe &mdash;dos mesas con el mismo n&uacute;mero, dos meseros con la misma c&eacute;dula&mdash;. La base te est&aacute; defendiendo.</td></tr><tr><td>violates foreign key constraint</td><td>Est&aacute;s apuntando a una fila que no existe: una reserva del cliente 999 cuando solo hay ocho clientes. Mira primero qu&eacute; identificadores hay de verdad.</td></tr><tr><td>violates check constraint</td><td>El valor no cumple la regla que le pusimos: puestos mayor que cero, personas mayor que cero, estado entre los tres permitidos.</td></tr><tr><td>null value in column ... violates not-null constraint</td><td>Falta un dato obligatorio. Un plato sin nombre no es un plato.</td></tr></tbody></table></div><div class="aviso bien"><h3>Y el remedio universal</h3>Vuelve a ejecutar el gui&oacute;n entero. Empieza borrando lo que hubiera, as&iacute; que siempre te deja en un estado limpio y conocido.</div></div></section>
+<section id="formulario"><div class="wrap"><h2>Y ahora, todos escribiendo en la misma base</h2><p>Ya tienes la tuya. La otra mitad del ejercicio es al rev&eacute;s: un formulario en una p&aacute;gina web que escribe en <b>la base del profesor</b>, y donde vas a ver aparecer en vivo lo que env&iacute;a el resto de la clase.</p><p>El profesor comparte el enlace por el chat. Lleva dentro la direcci&oacute;n del proyecto y una clave <i>publishable</i>, que es p&uacute;blica por dise&ntilde;o.</p><p class="botones"><a class="boton" href="formulario-reservas.html">Abrir el formulario &rarr;</a></p><div class="aviso ojo"><h3>&iquest;Una clave p&uacute;blica en el navegador de todo el mundo?</h3><p style="margin:.4em 0 0">S&iacute;, y no pasa nada, porque las once tablas de esa base est&aacute;n <b>cerradas</b>. Lo &uacute;nico que la p&aacute;gina puede hacer es pedirle a la base que ejecute tres funciones concretas: listar las mesas, guardar una reserva y leer la lista &mdash;con el tel&eacute;fono tapado&mdash;.</p><p style="margin:.4em 0 0">Con esa clave no se puede borrar una reserva, ni leer un tel&eacute;fono entero, ni asomarse a los pedidos. Eso es lo que hace que una clave pueda ser p&uacute;blica: no que est&eacute; escondida, sino que <b>no permita gran cosa</b>.</p></div><div class="aviso"><h3>Lo que no se comparte nunca</h3>La <i>database password</i> de tu proyecto, la clave <b>secret</b> y la cadena de conexi&oacute;n directa. Esas s&iacute; abren la base entera.</div></div></section>
+<div class="wrap"><p class="pie">Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL
+  &middot; Universidad de los Andes &middot; Colsubsidio</p></div>
+</body>
+</html>

@@ -306,6 +306,19 @@
           "href": "Presentaciones/M3/sesion-9-sql-creacion-tablas.html",
           "recursos": [
             {
+              "txt": "🧪 Tutorial: tu propia base en Supabase",
+              "href": "Presentaciones/M3/tutorial-supabase.html"
+            },
+            {
+              "txt": "🗃️ El guión del Restaurante ABC · once tablas",
+              "href": "Scripts/S9-restaurante-abc.sql",
+              "download": true
+            },
+            {
+              "txt": "📝 Formulario de reservas · escribe en la base del profesor",
+              "href": "Presentaciones/M3/formulario-reservas.html"
+            },
+            {
               "txt": "📐 Ejercicio de creación de tablas",
               "href": "Presentaciones/M3/Clase4/Ejercicio creación de tablas.pdf",
               "download": true
