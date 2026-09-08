@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ficha de decisión · Sesión 10 · ANDESDB</title>
+<meta name="description" content="Plantilla de las seis fichas de decisión de la sesión 10: decisión, dos argumentos técnicos, un riesgo y la consulta que más duele.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='17' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3E10%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#146c43; --verde-sua:#e4f5ec; --rojo:#a52a2a; --rojo-sua:#fdeaea;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:0 1.1rem 3.5rem}
+header.top{background:var(--az);color:#fff;padding:1.6rem 0 1.8rem;margin-bottom:1.6rem}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .25em;font-size:clamp(1.5rem,4.4vw,2.2rem);line-height:1.1;
+  letter-spacing:-.02em}
+header.top p{margin:0;color:#cfe2f1;max-width:64ch}
+h2{font-size:1.1rem;margin:0 0 .3em;letter-spacing:-.01em}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.15rem 1.3rem;box-shadow:var(--sombra);margin-bottom:1.1rem}
+.caso{display:flex;align-items:baseline;gap:.6em;margin-bottom:.2em}
+.pas{background:var(--az);color:#fff;font-weight:800;border-radius:999px;
+  padding:.1em .72em;font-size:.85rem}
+.enun{color:var(--tenue);font-size:.92rem;margin:.1em 0 .9em}
+label{display:block;font-weight:700;font-size:.8rem;margin:.75rem 0 .25rem}
+label span{font-weight:400;color:var(--tenue)}
+input,textarea,select{width:100%;padding:.55rem .68rem;border:2px solid var(--linea);
+  border-radius:9px;background:var(--papel);color:var(--tinta);font:inherit;font-size:.95rem}
+textarea{resize:vertical;min-height:2.7em}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--az);
+  box-shadow:0 0 0 3px var(--az-sua)}
+.aviso{border-radius:10px;padding:.8em 1em;margin:1rem 0;font-size:.93rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+button{font:inherit;font-weight:800;cursor:pointer;border-radius:999px;
+  border:2px solid var(--az);background:var(--az);color:#fff;padding:.65rem 1.4rem}
+button.suave{background:transparent;color:var(--az)}
+button:hover{filter:brightness(1.12)}
+button:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.botones{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.4rem 0 0;position:sticky;bottom:0;
+  background:linear-gradient(transparent,var(--papel) 35%);padding:1rem 0 .4rem}
+.pie{font-size:.8rem;color:var(--tenue);margin-top:2rem;padding-top:1rem;
+  border-top:1px solid var(--linea)}
+@media print{
+  header.top{background:#fff;color:#000;padding:0 0 1rem}
+  header.top p{color:#333}.cinta{color:#000}.botones,.aviso.bien{display:none}
+  .tarj{break-inside:avoid;box-shadow:none;page-break-inside:avoid}
+  textarea{min-height:3.4em}
+}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="cinta">Sesión 10 · Módulo 4 · ANDESDB</div>
+  <h1>Ficha de decisión</h1>
+  <p>Seis casos, cuatro líneas cada uno. Se puede llenar aquí y copiar al chat, o
+     imprimir y escribir a mano.</p>
+</div></header>
+
+<div class="wrap">
+
+  <div class="aviso ojo">
+    <h3>Los cuatro criterios, y son los mismos para los seis</h3>
+    <p style="margin:.4em 0 0"><b>1 · La decisión, explícita.</b> Una palabra: relacional,
+       documentos, clave-valor, grafo, serie temporal. Si es híbrida, dilo y di qué parte
+       va en cada sitio.</p>
+    <p style="margin:.4em 0 0"><b>2 · Dos argumentos técnicos.</b> Del patrón de acceso, de
+       las relaciones, de la consistencia o de la evolución del esquema.</p>
+    <p style="margin:.4em 0 0"><b>3 · Un riesgo.</b> Qué se complica <i>por haber elegido
+       eso</i>. Siempre hay algo.</p>
+    <p style="margin:.4em 0 0"><b>4 · La consulta que más duele.</b> La pregunta de negocio
+       que tu elección contesta peor.</p>
+    <p style="margin:.6em 0 0"><b>No se acepta:</b> «NoSQL porque escala» sin decir cuánta
+       ni de qué · «relacional porque es lo que sabemos» · «documentos porque el esquema
+       cambia» sin decir cada cuánto.</p>
+  </div>
+
+  <form id="f"></form>
+
+  <div class="botones">
+    <button type="button" id="copiar">Copiar las seis fichas</button>
+    <button type="button" class="suave" id="descargar">Descargar como texto</button>
+    <button type="button" class="suave" onclick="window.print()">Imprimir</button>
+  </div>
+  <div class="aviso bien" id="ok" hidden></div>
+
+  <div class="aviso">
+    <h3>Dónde se entrega</h3>
+    Pega las seis fichas <b>en el chat de la clase</b> antes del debrief. Si prefieres
+    escribirlas a mano, imprime esta página y muéstrala en cámara.
+  </div>
+
+  <p class="pie">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes ·
+     Colsubsidio. Lo que escribas aquí se queda en tu navegador: esta página no envía
+     nada a ningún servidor.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var CASOS = [
+    ['El carrito abierto',
+     'La app de domicilios guarda el carrito mientras el cliente lo arma. Se escribe en cada toque, se lee por su identificador y se tira solo a los 30 minutos.'],
+    ['El cierre de caja',
+     'Sumar líneas, aplicar propina, registrar dos pagos parciales y que el arqueo del día cuadre al peso. Se cruza por mesero, mesa, franja y medio de pago.'],
+    ['La carta que no para de cambiar',
+     'Fotos, alérgenos, etiquetas y variantes por sede. Marketing añade un campo nuevo casi cada mes, y no todos los platos tienen los mismos.'],
+    ['Los que pidieron esto también pidieron',
+     'Recomendar por caminos entre cliente, pedido y plato. A veces dos saltos, a veces cinco.'],
+    ['La nevera que habla cada diez segundos',
+     'Seis neveras, una lectura cada diez segundos, dos años de historia. Se consulta por rango de tiempo y nunca se corrige.'],
+    ['Las reservas que ya construyeron',
+     'Cliente, mesa, fecha, hora y personas. Funcionan en relacional, y alguien propone moverlas a documentos.']
+  ];
+  var OPC = ['', 'Relacional', 'Documentos', 'Clave-valor', 'Grafo', 'Serie temporal',
+             'Híbrida'];
+  var f = document.getElementById('f');
+
+  CASOS.forEach(function (c, i) {
+    var n = i + 1;
+    var d = document.createElement('section');
+    d.className = 'tarj';
+    d.innerHTML =
+      '<div class="caso"><span class="pas">' + n + '</span><h2>' + c[0] + '</h2></div>' +
+      '<p class="enun">' + c[1] + '</p>' +
+      '<label for="d' + n + '">1 · La decisión</label>' +
+      '<select id="d' + n + '">' + OPC.map(function (o) {
+        return '<option value="' + o + '">' + (o || '— elige —') + '</option>';
+      }).join('') + '</select>' +
+      '<label for="a' + n + '">2 · Argumento técnico <span>— uno</span></label>' +
+      '<textarea id="a' + n + '" rows="2" placeholder="Del patrón de acceso, las relaciones, la consistencia o la evolución"></textarea>' +
+      '<label for="b' + n + '">2 · Argumento técnico <span>— y otro, distinto del anterior</span></label>' +
+      '<textarea id="b' + n + '" rows="2"></textarea>' +
+      '<label for="r' + n + '">3 · El riesgo <span>— qué se complica por haber elegido eso</span></label>' +
+      '<textarea id="r' + n + '" rows="2"></textarea>' +
+      '<label for="q' + n + '">4 · La consulta que más duele</label>' +
+      '<input id="q' + n + '" type="text" placeholder="«¿En qué platos de todas las sedes aparece el maní?»">';
+    f.appendChild(d);
+  });
+
+  var LLAVE = 's10-fichas';
+  function leerTodo() {
+    var o = {};
+    CASOS.forEach(function (c, i) {
+      var n = i + 1;
+      ['d', 'a', 'b', 'r', 'q'].forEach(function (k) {
+        o[k + n] = (document.getElementById(k + n) || {}).value || '';
+      });
+    });
+    return o;
+  }
+  function guardar() {
+    try { localStorage.setItem(LLAVE, JSON.stringify(leerTodo())); } catch (e) {}
+  }
+  try {
+    var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+    if (g) Object.keys(g).forEach(function (k) {
+      var el = document.getElementById(k);
+      if (el) el.value = g[k];
+    });
+  } catch (e) {}
+  f.addEventListener('input', guardar);
+  f.addEventListener('change', guardar);
+
+  function texto() {
+    var o = leerTodo(), l = ['FICHAS DE DECISION · Sesion 10 · SQL o NoSQL', ''];
+    CASOS.forEach(function (c, i) {
+      var n = i + 1;
+      l.push(n + ' · ' + c[0]);
+      l.push('   Decision : ' + (o['d' + n] || '(sin decidir)'));
+      l.push('   Argumento: ' + (o['a' + n] || '(falta)'));
+      l.push('   Argumento: ' + (o['b' + n] || '(falta)'));
+      l.push('   Riesgo   : ' + (o['r' + n] || '(falta)'));
+      l.push('   Duele    : ' + (o['q' + n] || '(falta)'));
+      l.push('');
+    });
+    return l.join('\n');
+  }
+  function avisar(m) {
+    var k = document.getElementById('ok');
+    k.textContent = m; k.hidden = false;
+    setTimeout(function () { k.hidden = true; }, 4000);
+  }
+  document.getElementById('copiar').onclick = function () {
+    var t = texto();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(t).then(function () {
+        avisar('Copiado. Pégalo en el chat de la clase.');
+      }, function () { avisar('No se pudo copiar: usa Descargar.'); });
+    } else { avisar('Tu navegador no deja copiar: usa Descargar.'); }
+  };
+  document.getElementById('descargar').onclick = function () {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([texto()], { type: 'text/plain;charset=utf-8' }));
+    a.download = 'fichas-sesion-10.txt';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  };
+})();
+</script>
+</body>
+</html>

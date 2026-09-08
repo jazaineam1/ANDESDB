@@ -347,20 +347,26 @@
           "trabajoAutonomoMin": 75,
           "titulo": "Taller de casos: ¿SQL o NoSQL?",
           "estado": "hoy",
-          "desc": "Seis casos de negocio y una decisión por cada uno: relacional, documentos, clave-valor o grafo. Con dos argumentos técnicos, un riesgo y la consulta que la elección contesta peor. La tecnología va detrás del problema, no delante.",
+          "desc": "Seis retos de arquitectura de datos, con un caso real: el requerimiento de la SIC a más de 50 empresas. Cada uno pide una decisión, dos argumentos técnicos, un riesgo y la consulta que la elección contesta peor. La tecnología va detrás del problema, no delante.",
           "tags": [
             "SQL vs NoSQL",
             "patrón de acceso",
             "consistencia",
             "CAP",
-            "desnormalización",
             "clave-valor",
             "documentos",
             "grafos",
-            "decisión técnica"
+            "series de tiempo",
+            "costo operativo",
+            "arquitectura híbrida",
+            "fuente de verdad"
           ],
           "href": "Presentaciones/M4/sesion-10-sql-o-nosql.html",
           "recursos": [
+            {
+              "txt": "📝 La ficha de decisión · los seis retos",
+              "href": "Presentaciones/M4/ficha-decision.html"
+            },
             {
               "txt": "📊 Material original del módulo (PowerPoint)",
               "href": "Presentaciones/M4/M4C1 V4 Introducción a bases NoSQL.pptx",

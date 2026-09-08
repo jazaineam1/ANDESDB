@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Restaurante ABC · Reservas · ANDESDB</title>
 <meta name="description" content="Formulario de reservas del Restaurante ABC: escribe en una base PostgreSQL real alojada en Supabase, y muestra en vivo lo que envía toda la clase.">
@@ -26,9 +27,10 @@
   --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box}
+html{overflow-x:hidden}
 body{margin:0;background:var(--papel);color:var(--tinta);
-  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
-.wrap{max-width:1120px;margin:0 auto;padding:1.6rem 1.1rem 3.5rem}
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow-x:hidden}
+.wrap{width:min(1120px,100%);margin:0 auto;padding:1.6rem 1.1rem 3.5rem}
 header.top{background:var(--az);color:#fff;padding:1.5rem 0 1.7rem}
 header.top .wrap{padding-bottom:0}
 .cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
@@ -39,10 +41,12 @@ h1{margin:.35em 0 .2em;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.1;
 header.top p{margin:0;color:#cfe2f1;max-width:62ch}
 h2{font-size:1.22rem;margin:0 0 .2em;letter-spacing:-.01em}
 .rej{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1.5rem;align-items:start}
+.rej > *{min-width:0}
 @media (max-width:900px){.rej{grid-template-columns:1fr}}
 .tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
-  padding:1.25rem 1.35rem;box-shadow:var(--sombra)}
+  padding:1.25rem 1.35rem;box-shadow:var(--sombra);min-width:0}
 .tarj + .tarj{margin-top:1.1rem}
+.tarj p,.tarj li,.tarj td{overflow-wrap:anywhere}
 label{display:block;font-weight:700;font-size:.86rem;margin:.9rem 0 .3rem}
 label span{font-weight:400;color:var(--tenue)}
 input,select{width:100%;padding:.62rem .7rem;border:2px solid var(--linea);border-radius:9px;
@@ -68,7 +72,15 @@ th,td{padding:.46em .55em;text-align:left;border-bottom:1px solid var(--linea)}
 th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
   border-bottom:2px solid var(--linea)}
 tbody tr.nueva{background:var(--y-sua)}
-.desliza{overflow-x:auto}
+.desliza{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabla-ancha{min-width:42rem}
+pre{max-width:100%;margin:1rem 0;padding:.9rem 1rem;overflow-x:auto;border:1px solid var(--linea);
+  border-radius:10px;background:var(--papel);font-size:.82rem;line-height:1.5}
+pre code{display:block;padding:0;background:transparent;white-space:pre;color:var(--tinta)}
+.pasos{counter-reset:paso;list-style:none;margin:1rem 0 0;padding:0}
+.pasos li{position:relative;min-height:2.3rem;margin:.7rem 0;padding:.12rem 0 .12rem 3rem}
+.pasos li::before{counter-increment:paso;content:counter(paso);position:absolute;left:0;top:0;
+  width:2rem;height:2rem;display:grid;place-items:center;border-radius:50%;background:var(--az);color:#fff;font-weight:800}
 .cab{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .marca{font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
 .pastilla{display:inline-block;background:var(--y);color:#3a2f00;font-weight:800;
@@ -76,6 +88,16 @@ tbody tr.nueva{background:var(--y-sua)}
 .pie{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--linea);
   font-size:.8rem;color:var(--tenue)}
 [hidden]{display:none!important}
+@media (max-width:560px){
+  .wrap{padding:1rem .75rem 2.5rem}
+  header.top{padding:1.2rem 0 1.35rem}
+  .tarj{padding:1rem}
+  .par{grid-template-columns:1fr;gap:0}
+  table{font-size:.82rem}
+  th,td{padding:.42rem}
+  .tabla-ancha{min-width:38rem}
+  pre{margin:.8rem 0;padding:.75rem;font-size:.76rem}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -219,15 +241,17 @@ tbody tr.nueva{background:var(--y-sua)}
           <code>registrar_reserva()</code> que valide y guarde. La función vive
           dentro de PostgreSQL, de modo que las mismas reglas se aplican aunque
           la llamada no venga de este formulario.</p>
-        <table>
-          <thead><tr><th>Regla</th><th>Qué comprueba la función</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Datos razonables</th><td>Nombre de 3 a 100 caracteres, teléfono válido y al menos una persona.</td></tr>
-            <tr><th scope="row">Fecha y hora</th><td>Fecha de hoy a 90 días y horario de 11:00 a 22:00.</td></tr>
-            <tr><th scope="row">Mesa posible</th><td>La mesa existe y tiene puestos suficientes.</td></tr>
-            <tr><th scope="row">Sin choque</th><td>No hay otra reserva para esa misma mesa, fecha y hora.</td></tr>
-          </tbody>
-        </table>
+        <div class="desliza">
+          <table class="tabla-ancha">
+            <thead><tr><th>Regla</th><th>Qué comprueba la función</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Datos razonables</th><td>Nombre de 3 a 100 caracteres, teléfono válido y al menos una persona.</td></tr>
+              <tr><th scope="row">Fecha y hora</th><td>Fecha de hoy a 90 días y horario de 11:00 a 22:00.</td></tr>
+              <tr><th scope="row">Mesa posible</th><td>La mesa existe y tiene puestos suficientes.</td></tr>
+              <tr><th scope="row">Sin choque</th><td>No hay otra reserva para esa misma mesa, fecha y hora.</td></tr>
+            </tbody>
+          </table>
+        </div>
         <p>Si alguna condición falla, la función lanza un error y PostgreSQL
           revierte la operación: <b>no queda una reserva a medias ni un cliente
           de prueba</b>.</p>
@@ -236,15 +260,17 @@ tbody tr.nueva{background:var(--y-sua)}
         <p>Una <b>restricción de base de datos</b> está declarada en la propia
           tabla. No depende de esta página ni de una persona que recuerde validar.
           El motor la aplica a cada <code>INSERT</code> o <code>UPDATE</code>.</p>
-        <table>
-          <thead><tr><th>Restricción</th><th>Ejemplo en Restaurante ABC</th><th>Qué evita</th></tr></thead>
-          <tbody>
-            <tr><th scope="row"><code>NOT NULL</code></th><td>Una reserva necesita fecha, hora, cliente y mesa.</td><td>Reservas incompletas.</td></tr>
-            <tr><th scope="row"><code>CHECK</code></th><td><code>personas &gt; 0</code> y <code>puestos &gt; 0</code>.</td><td>Reservar para cero personas o crear una mesa sin capacidad.</td></tr>
-            <tr><th scope="row">Clave foránea</th><td><code>reserva.cliente_id</code> y <code>reserva.mesa_id</code>.</td><td>Una reserva que apunte a un cliente o mesa inexistente.</td></tr>
-            <tr><th scope="row"><code>UNIQUE</code></th><td>La combinación mesa, fecha y hora.</td><td>Dos reservas idénticas incluso si dos navegadores envían al mismo tiempo.</td></tr>
-          </tbody>
-        </table>
+        <div class="desliza">
+          <table class="tabla-ancha">
+            <thead><tr><th>Restricción</th><th>Ejemplo en Restaurante ABC</th><th>Qué evita</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>NOT NULL</code></th><td>Una reserva necesita fecha, hora, cliente y mesa.</td><td>Reservas incompletas.</td></tr>
+              <tr><th scope="row"><code>CHECK</code></th><td><code>personas &gt; 0</code> y <code>puestos &gt; 0</code>.</td><td>Reservar para cero personas o crear una mesa sin capacidad.</td></tr>
+              <tr><th scope="row">Clave foránea</th><td><code>reserva.cliente_id</code> y <code>reserva.mesa_id</code>.</td><td>Una reserva que apunte a un cliente o mesa inexistente.</td></tr>
+              <tr><th scope="row"><code>UNIQUE</code></th><td>La combinación mesa, fecha y hora.</td><td>Dos reservas idénticas incluso si dos navegadores envían al mismo tiempo.</td></tr>
+            </tbody>
+          </table>
+        </div>
         <p class="marca">En esta demostración la función ya rechaza nuevos choques.
           La restricción <code>UNIQUE</code> es la segunda barrera estructural que
           se activa cuando no existan reservas duplicadas heredadas.</p>
@@ -312,6 +338,23 @@ GRANT EXECUTE ON FUNCTION public.registrar_reserva(
           es válido, crea la reserva. Si no, devuelve el mensaje de rechazo. El
           rol no puede ejecutar <code>DELETE</code>, <code>UPDATE</code> ni
           <code>SELECT * FROM reserva</code>.</p>
+
+        <h3>Guía del estudiante, paso a paso</h3>
+        <ol class="pasos">
+          <li><b>Usa solo la conexión entregada por el docente.</b> No copies
+            contraseñas, cadenas de conexión ni pantallazos al chat.</li>
+          <li><b>Comprueba tu rol:</b> ejecuta <code>SELECT current_user;</code>.
+            Si no aparece <code>reserva_escritura</code>, detente y avisa al docente.</li>
+          <li><b>Escribe tus propios datos</b> en la llamada a
+            <code>registrar_reserva()</code>: nombre, teléfono, fecha, hora,
+            personas y número de mesa.</li>
+          <li><b>Ejecuta una sola vez</b> y lee el mensaje devuelto. Si la base
+            rechaza la reserva, corrige el dato indicado; no pruebes un
+            <code>INSERT</code> directo.</li>
+          <li><b>Comprueba el efecto</b> en el formulario de reservas: una nueva
+            fila en <code>reserva</code> y, solo si era necesario, una fila en
+            <code>cliente</code>.</li>
+        </ol>
 
         <div class="aviso">
           <h3>Por qué no dar INSERT directo</h3>
