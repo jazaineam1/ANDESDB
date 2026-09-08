@@ -188,6 +188,144 @@ tbody tr.nueva{background:var(--y-sua)}
         <p class="marca" id="dondeEscribe"></p>
       </section>
 
+      <section class="tarj">
+        <h2>Una regla de negocio, tres capas de defensa</h2>
+        <p>Una <b>regla de negocio</b> expresa cómo debe funcionar el restaurante.
+          Por ejemplo: <i>«una mesa no puede tener dos reservas para la misma
+          fecha y hora»</i>. Esa frase no es todavía código. Para que se cumpla,
+          la aplicamos en más de un lugar, y cada capa tiene un trabajo distinto.</p>
+
+        <h3>1. El frontend guía, pero no decide la verdad</h3>
+        <p>El <b>frontend</b> es esta página: los campos, los botones y los
+          mensajes que ves antes de enviar. Aquí se revisa lo obvio para no hacer
+          perder un viaje al servidor:</p>
+        <ul>
+          <li>los campos obligatorios no se pueden dejar vacíos;</li>
+          <li>la hora se propone entre 11:00 y 22:00;</li>
+          <li>el número de personas empieza en 1;</li>
+          <li>si eliges una mesa de 2 puestos y pides para 4, la página te avisa
+            antes de enviar.</li>
+        </ul>
+        <div class="aviso">
+          <h3>¿Por qué no basta?</h3>
+          Alguien puede modificar el navegador, construir otra página o llamar a
+          la API sin pasar por estos campos. Por eso una comprobación de frontend
+          mejora la experiencia, pero <b>no protege la base</b>.
+        </div>
+
+        <h3>2. La función de la base aplica la regla al recibir la solicitud</h3>
+        <p>Cuando pulsas <b>Enviar la reserva</b>, el navegador no ejecuta un
+          <code>INSERT</code> directo. Pide a la función
+          <code>registrar_reserva()</code> que valide y guarde. La función vive
+          dentro de PostgreSQL, de modo que las mismas reglas se aplican aunque
+          la llamada no venga de este formulario.</p>
+        <table>
+          <thead><tr><th>Regla</th><th>Qué comprueba la función</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Datos razonables</th><td>Nombre de 3 a 100 caracteres, teléfono válido y al menos una persona.</td></tr>
+            <tr><th scope="row">Fecha y hora</th><td>Fecha de hoy a 90 días y horario de 11:00 a 22:00.</td></tr>
+            <tr><th scope="row">Mesa posible</th><td>La mesa existe y tiene puestos suficientes.</td></tr>
+            <tr><th scope="row">Sin choque</th><td>No hay otra reserva para esa misma mesa, fecha y hora.</td></tr>
+          </tbody>
+        </table>
+        <p>Si alguna condición falla, la función lanza un error y PostgreSQL
+          revierte la operación: <b>no queda una reserva a medias ni un cliente
+          de prueba</b>.</p>
+
+        <h3>3. Las restricciones de tabla defienden la estructura</h3>
+        <p>Una <b>restricción de base de datos</b> está declarada en la propia
+          tabla. No depende de esta página ni de una persona que recuerde validar.
+          El motor la aplica a cada <code>INSERT</code> o <code>UPDATE</code>.</p>
+        <table>
+          <thead><tr><th>Restricción</th><th>Ejemplo en Restaurante ABC</th><th>Qué evita</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code>NOT NULL</code></th><td>Una reserva necesita fecha, hora, cliente y mesa.</td><td>Reservas incompletas.</td></tr>
+            <tr><th scope="row"><code>CHECK</code></th><td><code>personas &gt; 0</code> y <code>puestos &gt; 0</code>.</td><td>Reservar para cero personas o crear una mesa sin capacidad.</td></tr>
+            <tr><th scope="row">Clave foránea</th><td><code>reserva.cliente_id</code> y <code>reserva.mesa_id</code>.</td><td>Una reserva que apunte a un cliente o mesa inexistente.</td></tr>
+            <tr><th scope="row"><code>UNIQUE</code></th><td>La combinación mesa, fecha y hora.</td><td>Dos reservas idénticas incluso si dos navegadores envían al mismo tiempo.</td></tr>
+          </tbody>
+        </table>
+        <p class="marca">En esta demostración la función ya rechaza nuevos choques.
+          La restricción <code>UNIQUE</code> es la segunda barrera estructural que
+          se activa cuando no existan reservas duplicadas heredadas.</p>
+
+        <h3>La secuencia completa</h3>
+        <ol>
+          <li>El formulario orienta y detecta errores sencillos.</li>
+          <li>La función vuelve a comprobar las reglas de negocio y decide si guarda.</li>
+          <li>Las restricciones de la tabla impiden que los datos imposibles entren,
+            incluso ante llamadas simultáneas.</li>
+        </ol>
+        <div class="aviso bien">
+          <h3>Idea clave</h3>
+          <p><b>Frontend:</b> «esto parece incorrecto; corrígelo antes de enviar».<br>
+             <b>Base de datos:</b> «aunque intentes enviarlo por otro camino, no se guarda».</p>
+        </div>
+      </section>
+
+      <section class="tarj">
+        <h2>¿Y si usáramos Beekeeper Studio?</h2>
+        <p>Beekeeper es un cliente de PostgreSQL: permite conectarse y escribir
+          SQL. <b>No vuelve una conexión segura por sí solo.</b> La seguridad la
+          decide el <em>rol</em> de PostgreSQL con el que se abre la conexión.
+          Por eso no se entrega la contraseña de <code>postgres</code> a quien
+          solo necesita registrar una reserva.</p>
+
+        <h3>El patrón recomendado: permiso para una sola puerta</h3>
+        <p>En vez de conceder <code>INSERT</code> libre sobre las tablas, el
+          docente podría crear un rol de uso limitado, por ejemplo
+          <code>reserva_escritura</code>. Ese rol no tendría permiso para
+          consultar ni modificar directamente <code>cliente</code>,
+          <code>reserva</code> ni las otras tablas. Solo podría ejecutar la
+          función controlada <code>registrar_reserva()</code>.</p>
+        <pre><code>-- Esto lo prepara el docente en el SQL Editor, una sola vez.
+CREATE ROLE reserva_escritura LOGIN NOINHERIT PASSWORD 'una-clave-secreta';
+GRANT USAGE ON SCHEMA public TO reserva_escritura;
+GRANT EXECUTE ON FUNCTION public.registrar_reserva(
+  TEXT, TEXT, DATE, TIME, INTEGER, INTEGER
+) TO reserva_escritura;
+
+-- Sin GRANT sobre tablas ni secuencias: no puede hacer INSERT directo.
+-- La contraseña no va en el HTML, Git ni el chat de la clase.</code></pre>
+        <p>Así, la palabra <code>SELECT</code> puede aparecer en Beekeeper, pero
+          no para leer una tabla: es la forma de <b>llamar una función</b> que
+          escribe de manera controlada y devuelve la confirmación.</p>
+
+        <h3>Cómo sería la conexión</h3>
+        <ol>
+          <li>El docente obtiene en Supabase → <b>Connect</b> una cadena de
+            conexión de <b>Session pooler</b>, adecuada para una aplicación de
+            escritorio en una red IPv4.</li>
+          <li>En Beekeeper se crea una conexión PostgreSQL usando ese host,
+            puerto, base de datos, el usuario <code>reserva_escritura</code>,
+            su contraseña y SSL activado. La clave <i>publishable</i> del
+            formulario <b>no sirve</b> aquí: no es una contraseña de PostgreSQL.</li>
+          <li>Se comprueba la identidad con <code>SELECT current_user;</code>.
+            Debe devolver <code>reserva_escritura</code>, no
+            <code>postgres</code>.</li>
+          <li>Para registrar, se usa únicamente la puerta permitida:</li>
+        </ol>
+        <pre><code>SELECT * FROM public.registrar_reserva(
+  'Ana Pérez', '3001234567', DATE '2026-09-15', TIME '19:00', 2, 3
+);</code></pre>
+        <p>La función aplica las mismas validaciones del formulario y, si todo
+          es válido, crea la reserva. Si no, devuelve el mensaje de rechazo. El
+          rol no puede ejecutar <code>DELETE</code>, <code>UPDATE</code> ni
+          <code>SELECT * FROM reserva</code>.</p>
+
+        <div class="aviso">
+          <h3>Por qué no dar INSERT directo</h3>
+          Registrar una reserva puede necesitar crear o reutilizar un cliente,
+          encontrar la mesa por su número y respetar las validaciones. Dar
+          <code>INSERT</code> sobre las tablas obligaría a conceder más permisos
+          y permitiría saltarse esas reglas. La función mantiene el proceso
+          completo, atómico y limitado a una sola acción de negocio.</div>
+        <p class="marca">Este es un patrón de diseño para una herramienta de
+          escritorio confiable. Para los estudiantes y el formulario público,
+          la vía correcta sigue siendo la API con clave <i>publishable</i>, RLS y
+          las tres funciones permitidas.</p>
+      </section>
+
       <div>
         <section class="tarj">
           <div class="cab">
