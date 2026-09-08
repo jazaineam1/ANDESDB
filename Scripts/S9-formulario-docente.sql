@@ -165,6 +165,31 @@ BEGIN
               p_mesa, v_puestos, p_personas;
     END IF;
 
+    -- Una mesa no puede tener dos reservas para el mismo momento.
+    -- Esta comprobación da un mensaje claro; la restricción UNIQUE de
+    -- reserva protege también si dos navegadores llegan a la vez.
+    IF EXISTS (
+        SELECT 1
+          FROM reserva r
+         WHERE r.mesa_id = v_mesa_id
+           AND r.fecha = p_fecha
+           AND r.hora = p_hora
+    ) THEN
+        RAISE EXCEPTION 'La mesa % ya está reservada para esa fecha y hora. Elige otra mesa u otro horario.', p_mesa;
+    END IF;
+
+    -- --- ¿esa mesa ya está reservada a esa hora? --------------
+    -- La tabla lo impide con UNIQUE (mesa_id, fecha, hora). Si se
+    -- deja llegar hasta el INSERT, el estudiante ve el volcado de
+    -- PostgreSQL. Mejor comprobarlo aquí y contestar en su idioma.
+    IF EXISTS (SELECT 1 FROM reserva r
+                WHERE r.mesa_id = v_mesa_id
+                  AND r.fecha   = p_fecha
+                  AND r.hora    = p_hora) THEN
+        RAISE EXCEPTION 'La mesa % ya está reservada el % a las %. Elige otra hora u otra mesa.',
+              p_mesa, to_char(p_fecha, 'DD/MM'), to_char(p_hora, 'HH24:MI');
+    END IF;
+
     -- --- el cliente: si ya está, se reutiliza -----------------
     -- Esto es lo que enseña la 2FN: el cliente vive en su tabla y
     -- no se copia dentro de cada reserva.
@@ -193,6 +218,9 @@ BEGIN
            v_cliente_accion,
            format('Reserva %s confirmada para %s personas en la mesa %s.',
                   v_reserva, p_personas, p_mesa);
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'La mesa % ya está reservada para esa fecha y hora. Elige otra mesa u otro horario.', p_mesa;
 END;
 $$;
 

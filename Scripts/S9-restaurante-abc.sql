@@ -116,7 +116,8 @@ CREATE TABLE reserva (
     hora       TIME    NOT NULL,
     personas   INTEGER NOT NULL CHECK (personas > 0),
     cliente_id INTEGER NOT NULL REFERENCES cliente (cliente_id),
-    mesa_id    INTEGER NOT NULL REFERENCES mesa (mesa_id)
+    mesa_id    INTEGER NOT NULL REFERENCES mesa (mesa_id),
+    CONSTRAINT reserva_mesa_fecha_hora_unica UNIQUE (mesa_id, fecha, hora)
 );
 
 
