@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 8,
+  "sesionActual": 10,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -190,7 +190,7 @@
     {
       "n": 3,
       "titulo": "Modelos de datos útiles",
-      "estado": "curso",
+      "estado": "completado",
       "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
       "recursos": [
         {
@@ -259,7 +259,7 @@
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Modelado y normalización",
-          "estado": "hoy",
+          "estado": "completado",
           "href": "Presentaciones/M3/sesion-8-modelado-y-normalizacion.html",
           "desc": "Continuar desde el avance real de S7: completar atributos y relaciones con guía paso a paso, fijar un modelo-base común y normalizar ese recorte con dependencias, 1FN, 2FN, 3FN y reconstrucción sin pérdida.",
           "tags": [
@@ -284,7 +284,7 @@
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
           "titulo": "SQL para creación de tablas",
-          "estado": "pendiente",
+          "estado": "completado",
           "desc": "Tipos de datos y cómo elegir el correcto, restricciones de columna y de tabla, y las seis instrucciones que cambian una base: CREATE, INSERT, UPDATE, DELETE, DROP y ALTER, cada una con ejemplo y ejercicio. Supabase es el motor donde se escribe y se comprueba todo.",
           "tags": [
             "tipos de datos",
@@ -322,7 +322,7 @@
     {
       "n": 4,
       "titulo": "Más allá de las tablas: NoSQL",
-      "estado": "pendiente",
+      "estado": "curso",
       "desc": "Elegir NoSQL por requisitos y practicar documentos en servicios reales.",
       "recursos": [],
       "sesiones": [
@@ -333,7 +333,7 @@
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
           "titulo": "Taller de casos: ¿SQL o NoSQL?",
-          "estado": "pendiente",
+          "estado": "hoy",
           "desc": "Briefing corto y trabajo autónomo de arquitectura: decidir tecnología según relaciones, consistencia y patrones de acceso.",
           "tags": [
             "SQL vs NoSQL",
@@ -465,10 +465,5 @@
     }
   ],
   "glosario": "El curso avanza como una cadena: entender el negocio → consultar → modelar → implementar → elegir SQL/NoSQL → analizar en cloud → integrar. Desde S6 se incorpora recuperación DP-900; la práctica base + extensión se usa solo cuando la heterogeneidad técnica de codificación lo justifica.",
-  "materialesHoy": [
-    {
-      "txt": "🧱 El constructor: terminar el modelo y normalizar",
-      "href": "Presentaciones/M3/constructor-abc.html?sesion=8"
-    }
-  ]
+  "materialesHoy": []
 }

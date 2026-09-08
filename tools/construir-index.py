@@ -145,6 +145,8 @@ def construir():
         cta = '<a class="btn-main" href="#sesiones">Ver las sesiones</a>'
         cta_nav = '<a class="cta" href="#sesiones">Sesiones</a>' 
 
+    nota_hoy = (' Los archivos de la clase de hoy están arriba, junto al botón.'
+                if c.get('materialesHoy') else '')
     herr = ''.join(
         '<a class="mat" href="%s"%s%s><span class="ico">%s</span>'
         '<strong>%s</strong><span>%s</span></a>'
@@ -220,7 +222,7 @@ def construir():
   <div class="sec-head">
     <div class="kicker">Para todo el curso</div>
     <h2>Herramientas</h2>
-    <p>Esto se instala una vez y sirve para las 16 sesiones. Los archivos de la clase de hoy están arriba, junto al botón.</p>
+    <p>Esto se instala una vez y sirve para las 16 sesiones.{nota_hoy}</p>
   </div>
   <div class="mats">{herr}</div>
   <h3 class="grp">Instalación paso a paso</h3>
