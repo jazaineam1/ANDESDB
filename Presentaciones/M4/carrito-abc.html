@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Restaurante ABC · El carrito que se convirtió en venta · ANDESDB</title>
+<meta name="description" content="El carrito vive como un documento en tu propio navegador. Al pagar, se convierte en un pedido real en PostgreSQL (Supabase). Sesión 11.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23146c43'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#146c43; --verde-sua:#e4f5ec; --rojo:#a52a2a; --rojo-sua:#fdeaea;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#123528; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{overflow-x:hidden}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow-x:hidden}
+.wrap{width:min(1120px,100%);margin:0 auto;padding:1.6rem 1.1rem 3.5rem}
+header.top{background:var(--verde);color:#fff;padding:1.5rem 0 1.7rem}
+header.top .wrap{padding-bottom:0}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .2em;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.1;
+  letter-spacing:-.02em;text-wrap:balance}
+header.top p{margin:0;color:#dcf3e6;max-width:64ch}
+h2{font-size:1.22rem;margin:0 0 .2em;letter-spacing:-.01em}
+.rej{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.rej > *{min-width:0}
+@media (max-width:900px){.rej{grid-template-columns:1fr}}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.25rem 1.35rem;box-shadow:var(--sombra);min-width:0}
+.tarj + .tarj{margin-top:1.1rem}
+.tarj p,.tarj li,.tarj td{overflow-wrap:anywhere}
+label{display:block;font-weight:700;font-size:.86rem;margin:.9rem 0 .3rem}
+label span{font-weight:400;color:var(--tenue)}
+input,select{width:100%;padding:.62rem .7rem;border:2px solid var(--linea);border-radius:9px;
+  background:var(--papel);color:var(--tinta);font:inherit;font-size:.98rem}
+input:focus,select:focus{outline:none;border-color:var(--az);box-shadow:0 0 0 3px var(--az-sua)}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+button{font:inherit;font-weight:800;cursor:pointer;border-radius:999px;border:2px solid var(--verde);
+  background:var(--verde);color:#fff;padding:.7rem 1.5rem;margin-top:1.2rem}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:disabled{opacity:.55;cursor:progress}
+button.suave{background:transparent;color:var(--az);border-color:var(--linea);padding:.4rem .95rem;margin:0;font-size:.84rem}
+button.mini{padding:.28rem .6rem;margin:0;font-size:.82rem;border-radius:8px}
+button.peligro{background:transparent;color:var(--rojo);border-color:var(--rojo)}
+button:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.aviso{border-radius:10px;padding:.8em 1em;margin-top:1rem;font-size:.94rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso.mal{border-left-color:var(--rojo);background:var(--rojo-sua)}
+.aviso.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.46em .55em;text-align:left;border-bottom:1px solid var(--linea)}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+tbody tr.nueva{background:var(--y-sua)}
+.desliza{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.marca{font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
+.pastilla{display:inline-block;background:var(--y);color:#3a2f00;font-weight:800;
+  border-radius:999px;padding:.16em .7em;font-size:.76rem}
+.pie{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--linea);
+  font-size:.8rem;color:var(--tenue)}
+[hidden]{display:none!important}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem;margin-top:1rem}
+.plato{border:1px solid var(--linea);border-radius:16px;background:var(--carta);
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 8px rgba(16,32,48,.06);
+  transition:transform .16s ease,box-shadow .16s ease}
+.plato:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(16,32,48,.14)}
+.plato .banner{height:5.2rem;display:flex;align-items:center;justify-content:center;
+  font-size:2.3rem;position:relative;background:
+    radial-gradient(120% 160% at 20% 0%,rgba(255,255,255,.35),transparent 60%),
+    linear-gradient(135deg,var(--bg1,#3fa66f),var(--bg2,#146c43))}
+.plato .banner .precio-flot{position:absolute;right:.6rem;bottom:.5rem;background:#fff;
+  color:#0d5533;font-weight:800;font-size:.82rem;padding:.22em .6em;border-radius:999px;
+  box-shadow:0 3px 8px rgba(0,0,0,.18);font-variant-numeric:tabular-nums}
+.plato .cuerpo{padding:.85rem .95rem 1rem;display:flex;flex-direction:column;gap:.4rem;flex:1}
+.plato h3{margin:0;font-size:1.02rem;line-height:1.25}
+.plato .tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.plato .tag{font-size:.66rem;background:var(--az-sua);color:var(--az);border-radius:999px;
+  padding:.15em .55em;font-weight:700;text-transform:capitalize}
+.plato .tag.alerta{background:var(--rojo-sua);color:var(--rojo)}
+.plato .desc{font-size:.81rem;color:var(--tenue);flex:1;line-height:1.4;margin:0}
+.plato button{margin-top:.3rem;width:100%;display:flex;align-items:center;justify-content:center;gap:.4em}
+/* --- paneles de pregunta: se expanden al hacer clic, cerrados por defecto ------- */
+.pregunta{border:1px solid var(--linea);border-radius:12px;margin-top:.8rem;overflow:hidden;
+  background:var(--papel)}
+.pregunta summary{list-style:none;cursor:pointer;padding:.85rem 1rem;font-weight:800;
+  font-size:.95rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  color:var(--tinta)}
+.pregunta summary::-webkit-details-marker{display:none}
+.pregunta summary::after{content:"+";font-size:1.3rem;font-weight:400;color:var(--tenue);
+  transition:transform .18s ease;flex:0 0 auto;line-height:1}
+.pregunta[open] summary::after{transform:rotate(45deg)}
+.pregunta summary:hover{background:var(--az-sua)}
+.pregunta summary:focus-visible{outline:3px solid var(--y);outline-offset:-3px}
+.pregunta .respuesta{padding:0 1.1rem 1.05rem;font-size:.92rem;line-height:1.5}
+.pregunta .respuesta p:first-child{margin-top:0}
+.carrito-linea{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.5rem 0;border-bottom:1px solid var(--linea)}
+.carrito-linea:last-child{border-bottom:0}
+.carrito-linea .nombre{font-weight:700;font-size:.92rem}
+.carrito-linea .sub{font-size:.78rem;color:var(--tenue)}
+.carrito-total{display:flex;justify-content:space-between;align-items:center;
+  font-weight:800;font-size:1.1rem;margin-top:.7rem;padding-top:.7rem;border-top:2px solid var(--linea)}
+.vacio{color:var(--tenue);font-size:.9rem;padding:.6rem 0}
+@media (max-width:560px){
+  .wrap{padding:1rem .75rem 2.5rem}
+  header.top{padding:1.2rem 0 1.35rem}
+  .tarj{padding:1rem}
+  .par{grid-template-columns:1fr;gap:0}
+  table{font-size:.82rem}
+  th,td{padding:.42rem}
+  .menu{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="cinta">Restaurante ABC · ANDESDB · Sesión 11</div>
+  <h1>El carrito que se convirtió en venta</h1>
+  <p>Tu carrito vive como un <b>documento en tu navegador</b>. Cuando pagas, se convierte
+     en un <b>pedido real en PostgreSQL</b> (el mismo esquema de la sesión 9). Cierra el
+     Reto 1 de la sesión 10. <a href="carrito-abc-firebase.html">La versión con Firestore
+     en la nube (en vez de local) está aquí →</a></p>
+</div></header>
+
+<div class="wrap">
+
+  <section class="tarj aviso ojo" style="margin-top:0">
+    <h3>Por qué el carrito es local en esta versión, y no está en MongoDB Atlas</h3>
+    <p style="margin:0">Cuando se diseñó esta sesión, el plan era que el carrito viviera como
+       documento en <b>MongoDB Atlas</b>, leído y escrito directamente desde el navegador.
+       Al construirla, Atlas respondió: <code>Atlas App Services and Device Sync have
+       reached EOL</code> — MongoDB retiró en 2025 la única vía que permitía eso sin un
+       servidor propio. <b>No es un problema de configuración: la función ya no existe.</b>
+       Esta versión guarda el carrito como un documento JSON en tu propio navegador
+       (<code>localStorage</code>) — sigue siendo un documento, sigue siendo efímero, y la
+       lección de fondo no cambia. La versión con <a href="carrito-abc-firebase.html">Firebase
+       Firestore</a> sí guarda el carrito en la nube, en tiempo real, porque esa plataforma
+       <b>no</b> discontinuó su vía sin servidor — es la comparación real de la diapositiva
+       de cierre, no una anécdota.</p>
+  </section>
+
+  <!-- ---------- configuración: solo la ve quien abre sin enlace ---------- -->
+  <section class="tarj" id="panelConfig" hidden>
+    <h2>Falta la conexión</h2>
+    <p>Esta página no lleva dentro la dirección ni la clave de Supabase: se las tiene que
+       dar quien la abra. El profesor comparte el enlace completo por el chat de la clase.</p>
+    <div class="aviso ojo">
+      <h3>Si tienes el enlace del chat</h3>
+      Ábrelo tal cual, con todo lo que va después del <code>?</code>.
+    </div>
+    <label for="cfgUrl">Project URL <span>— la de Settings → Data API</span></label>
+    <input id="cfgUrl" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+    <label for="cfgKey">Clave publishable</label>
+    <input id="cfgKey" type="text" placeholder="sb_publishable_…" autocomplete="off">
+    <button id="btnConfig" type="button">Conectar</button>
+    <div class="aviso mal" id="cfgError" hidden></div>
+  </section>
+
+  <!-- ---------- la aplicación ---------- -->
+  <div id="app" hidden>
+    <div class="rej">
+
+      <section class="tarj">
+        <div class="cab">
+          <h2>La carta</h2>
+        </div>
+        <p class="marca" id="estadoCarta">Cargando…</p>
+        <div class="menu" id="menu"></div>
+      </section>
+
+      <div>
+        <section class="tarj">
+          <h2>Tu carrito <span class="pastilla" id="pastillaCarrito">0</span></h2>
+          <div id="lineasCarrito"><p class="vacio">Todavía no agregaste nada.</p></div>
+          <div class="carrito-total" id="totalCarrito" hidden>
+            <span>Total</span><span id="totalValor">$ 0</span>
+          </div>
+        </section>
+
+        <section class="tarj">
+          <h2>Confirmar y pagar</h2>
+          <form id="form" novalidate>
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" name="nombre" type="text" required minlength="3" maxlength="100"
+                   autocomplete="name" placeholder="Camila Restrepo">
+            <label for="telefono">Teléfono <span>— solo números</span></label>
+            <input id="telefono" name="telefono" type="tel" required
+                   inputmode="numeric" placeholder="3104458821" autocomplete="tel">
+            <label for="mesa">Mesa</label>
+            <select id="mesa" name="mesa" required>
+              <option value="">Cargando las mesas…</option>
+            </select>
+            <button id="pagar" type="submit">Confirmar y pagar</button>
+          </form>
+          <div class="aviso bien" id="ok" hidden></div>
+          <div class="aviso mal"  id="error" hidden></div>
+        </section>
+      </div>
+
+      <section class="tarj" id="verificacion" hidden aria-live="polite">
+        <h2>Verifica: tu compra ya es una fila</h2>
+        <p id="resumenVerificacion"></p>
+        <div class="desliza">
+          <table>
+            <thead><tr><th>Dónde</th><th>Qué pasó</th></tr></thead>
+            <tbody id="filasVerificacion"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="tarj">
+        <h2>Antes de seguir: contesta esto tú mismo</h2>
+        <p class="marca" style="margin-top:0">Clic en cada pregunta para revelar la respuesta — intenta contestarla primero en tu cabeza.</p>
+
+        <details class="pregunta">
+          <summary>¿Quién más puede leer o escribir tu carrito?</summary>
+          <div class="respuesta">
+            <p>Nadie. Tu carrito es un documento JSON que vive únicamente en este
+               navegador (<code>localStorage</code>) — nunca sale de tu equipo. Del lado de
+               Supabase, las once tablas del esquema de la sesión 9 siguen cerradas con
+               <i>row level security</i>: la única puerta es la función
+               <code>registrar_pedido()</code>.</p>
+            <p class="marca" id="dondeEscribe"></p>
+          </div>
+        </details>
+
+        <details class="pregunta">
+          <summary>Tu carrito solo guarda plato_id y cantidad. ¿De dónde sale el precio que de verdad se cobra?</summary>
+          <div class="respuesta">
+            <p>Sale de <code>plato.precio_actual</code>, <b>dentro de
+               <code>registrar_pedido()</code></b>, en el instante de pagar — nunca de lo
+               que este navegador envía. Si el precio viniera del navegador, cualquiera
+               podría editarlo antes de enviarlo.</p>
+          </div>
+        </details>
+
+        <details class="pregunta">
+          <summary>¿Por qué el carrito es un documento y la venta confirmada es una fila de una tabla?</summary>
+          <div class="respuesta">
+            <p>El Reto 1 de la sesión 10 dejó la pregunta sin resolver con las manos:
+               <i>"¿el carrito es un dato del negocio o estado de una pantalla?"</i></p>
+            <ul>
+              <li><b>El carrito es documento</b> porque es estado que se puede abandonar,
+                vaciar o perder sin ningún costo real de negocio.</li>
+              <li><b>La compra confirmada es relacional</b> porque en ese instante sí
+                necesita atomicidad, las claves foráneas del esquema de la sesión 9
+                (<code>mesa</code>), y un total que se pueda reconstruir y auditar, igual
+                que ya hace la Comprobación 2 del guion de S9.</li>
+              <li><b>Nunca hay dos fuentes de verdad al mismo tiempo:</b> en el instante en
+                que nace el pedido en Supabase, el documento del carrito se borra. Míralo
+                pasar en la sección de verificación de arriba.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <div>
+        <section class="tarj">
+          <div class="cab">
+            <h2>Pedidos de la clase</h2>
+            <button class="suave" id="refrescarPedidos" type="button">Actualizar</button>
+          </div>
+          <p class="marca" id="estadoPedidos">Cargando…</p>
+          <div class="desliza">
+            <table>
+              <thead><tr><th>#</th><th>Nombre</th><th>Mesa</th><th>Total</th><th>Hora</th></tr></thead>
+              <tbody id="filasPedidos"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="pie">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes ·
+     Colsubsidio. Esta página es material de clase: los datos que envíes son visibles
+     para el resto del curso.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // =====================================================================
+  //  LA CONEXIÓN, QUEMADA AQUÍ
+  //
+  //  Solo Supabase: el carrito ya no depende de ningún servicio en la
+  //  nube (ver el aviso de arriba sobre el EOL de Atlas App Services).
+  //
+  //    Supabase -> Settings -> Data API -> Project URL / API Keys -> publishable
+  //
+  //  El MISMO proyecto de S9-restaurante-abc.sql y de formulario-reservas.html
+  //  — no crear uno nuevo.
+  // =====================================================================
+  var CONEXION = {
+    url: '',   // Supabase Project URL
+    key: ''    // Supabase publishable key
+  };
+
+  var LLAVE = 'abc-carrito-conexion';
+  var cfg = null;
+  var carrito = { lineas: [] };   // { plato_id, cantidad, nombre, precio }[]
+  var carta = [];
+
+  function limpiarUrl(u) {
+    u = (u || '').trim().replace(/\/+$/, '');
+    if (u && !/^https?:\/\//i.test(u)) u = 'https://' + u;
+    return u;
+  }
+
+  function leerConfig() {
+    var p = new URLSearchParams(location.search);
+    var url = limpiarUrl(p.get('url') || '');
+    var key = (p.get('key') || '').trim();
+    if (url && key) {
+      try { localStorage.setItem(LLAVE, JSON.stringify({ url: url, key: key })); } catch (e) {}
+      return { url: url, key: key };
+    }
+    if (CONEXION.url && CONEXION.key) {
+      return { url: limpiarUrl(CONEXION.url), key: CONEXION.key.trim() };
+    }
+    try {
+      var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+      if (g && g.url && g.key) return g;
+    } catch (e) {}
+    return null;
+  }
+
+  // --- el carrito: documento JSON en localStorage -------------------------
+  var LLAVE_CARRITO = 'abc-carrito-documento';
+  function cargarCarritoLocal() {
+    try {
+      var g = JSON.parse(localStorage.getItem(LLAVE_CARRITO) || 'null');
+      if (g && Array.isArray(g.lineas)) carrito.lineas = g.lineas;
+    } catch (e) {}
+  }
+  function guardarCarritoLocal() {
+    try {
+      localStorage.setItem(LLAVE_CARRITO, JSON.stringify({
+        lineas: carrito.lineas, actualizado_en: new Date().toISOString()
+      }));
+    } catch (e) {}
+  }
+  function borrarCarritoLocal() {
+    try { localStorage.removeItem(LLAVE_CARRITO); } catch (e) {}
+  }
+
+  // --- hablar con Supabase (RPC) -------------------------------------------
+  function rpc(nombre, cuerpo) {
+    return fetch(cfg.url + '/rest/v1/rpc/' + nombre, {
+      method: 'POST',
+      headers: {
+        'apikey': cfg.key, 'Authorization': 'Bearer ' + cfg.key,
+        'Content-Type': 'application/json', 'Accept': 'application/json'
+      },
+      body: JSON.stringify(cuerpo || {})
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        var d = null;
+        try { d = t ? JSON.parse(t) : null; } catch (e) {}
+        if (!r.ok) {
+          var m = (d && (d.message || d.hint || d.details)) || ('La base respondió ' + r.status + '.');
+          throw new Error(m);
+        }
+        return d;
+      });
+    });
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function pinta(caja, texto, titulo) {
+    caja.innerHTML = (titulo ? '<h3>' + titulo + '</h3>' : '') + texto;
+    caja.hidden = false;
+  }
+  function moneda(n) { return '$ ' + Number(n || 0).toLocaleString('es-CO'); }
+
+  // --- arranque -------------------------------------------------------------
+  function arrancar() {
+    $('panelConfig').hidden = true;
+    $('app').hidden = false;
+    $('dondeEscribe').textContent = 'Carrito local en este navegador · Pedido en ' +
+      cfg.url.replace(/^https?:\/\//, '');
+    cargarCarta();
+    cargarCarritoLocal();
+    pintarCarrito();
+    cargarMesas();
+    cargarPedidos();
+    setInterval(cargarPedidos, 15000);
+  }
+
+  // --- catálogo: archivo JSON estático del propio sitio, no requiere base --
+  function cargarCarta() {
+    fetch('../../assets/Supabase/carta-abc.json')
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (r) {
+        carta = (r || []).sort(function (a, b) { return a.plato_id - b.plato_id; });
+        pintarMenu();
+        $('estadoCarta').textContent = carta.length + ' platos cargados.';
+      })
+      .catch(function (e) {
+        $('estadoCarta').textContent = 'No se pudo leer la carta: ' + e.message;
+      });
+  }
+
+  var VITRINA = {
+    fuerte:   { icono: '🍲', c1: '#3fa66f', c2: '#146c43' },
+    bebida:   { icono: '🥤', c1: '#3fa6c9', c2: '#1f6f8f' },
+    entrada:  { icono: '🌽', c1: '#7bb661', c2: '#4a7f36' },
+    postre:   { icono: '🍮', c1: '#d9a441', c2: '#a5701f' }
+  };
+  function vitrinaDe(p) {
+    return VITRINA[p.categoria] || { icono: '🍽️', c1: '#3fa66f', c2: '#146c43' };
+  }
+
+  function pintarMenu() {
+    $('menu').innerHTML = carta.map(function (p) {
+      var v = vitrinaDe(p);
+      var tags = (p.alergenos || []).map(function (a) {
+        return '<span class="tag alerta">⚠ ' + a + '</span>';
+      }).join('') + (p.vegetariano ? '<span class="tag">🌱 vegetariano</span>' : '') +
+        (p.categoria ? '<span class="tag">' + p.categoria + '</span>' : '') +
+        (p.nota_disponibilidad ? '<span class="tag alerta">⏰ ' + p.disponible_desde + '–' + p.disponible_hasta + '</span>' : '');
+      return '<article class="plato">' +
+        '<div class="banner" style="--bg1:' + v.c1 + ';--bg2:' + v.c2 + '">' + v.icono +
+          '<span class="precio-flot">' + moneda(p.precio_actual) + '</span>' +
+        '</div>' +
+        '<div class="cuerpo">' +
+          '<h3>' + p.nombre + '</h3>' +
+          '<div class="tags">' + tags + '</div>' +
+          '<p class="desc">' + (p.descripcion || '') + '</p>' +
+          '<button type="button" data-agregar="' + p.plato_id + '">🛒 Agregar al carrito</button>' +
+        '</div>' +
+        '</article>';
+    }).join('') || '<p class="vacio">La carta está vacía.</p>';
+
+    $('menu').querySelectorAll('[data-agregar]').forEach(function (b) {
+      b.addEventListener('click', function () { agregarAlCarrito(Number(b.dataset.agregar)); });
+    });
+  }
+
+  function agregarAlCarrito(platoId) {
+    var plato = carta.filter(function (p) { return p.plato_id === platoId; })[0];
+    if (!plato) return;
+    var linea = carrito.lineas.filter(function (l) { return l.plato_id === platoId; })[0];
+    if (linea) { linea.cantidad += 1; }
+    else { carrito.lineas.push({ plato_id: platoId, cantidad: 1, nombre: plato.nombre, precio: plato.precio_actual }); }
+    guardarCarritoLocal();
+    pintarCarrito();
+  }
+
+  function quitarDelCarrito(platoId) {
+    carrito.lineas = carrito.lineas.filter(function (l) { return l.plato_id !== platoId; });
+    guardarCarritoLocal();
+    pintarCarrito();
+  }
+
+  function pintarCarrito() {
+    var cont = $('lineasCarrito');
+    $('pastillaCarrito').textContent = carrito.lineas.reduce(function (n, l) { return n + l.cantidad; }, 0);
+    if (!carrito.lineas.length) {
+      cont.innerHTML = '<p class="vacio">Todavía no agregaste nada.</p>';
+      $('totalCarrito').hidden = true;
+      return;
+    }
+    var total = 0;
+    cont.innerHTML = carrito.lineas.map(function (l) {
+      total += l.cantidad * l.precio;
+      return '<div class="carrito-linea">' +
+        '<div><div class="nombre">' + l.nombre + '</div>' +
+        '<div class="sub">' + l.cantidad + ' × ' + moneda(l.precio) + '</div></div>' +
+        '<button class="mini peligro" type="button" data-quitar="' + l.plato_id + '">Quitar</button>' +
+        '</div>';
+    }).join('');
+    cont.querySelectorAll('[data-quitar]').forEach(function (b) {
+      b.addEventListener('click', function () { quitarDelCarrito(Number(b.dataset.quitar)); });
+    });
+    $('totalCarrito').hidden = false;
+    $('totalValor').textContent = moneda(total);
+  }
+
+  // --- mesas (Supabase, reutiliza mesas_disponibles) -----------------------
+  function cargarMesas() {
+    rpc('mesas_disponibles').then(function (ms) {
+      var s = $('mesa');
+      s.innerHTML = '';
+      (ms || []).forEach(function (m) {
+        var o = document.createElement('option');
+        o.value = m.mesa;
+        o.textContent = 'Mesa ' + m.mesa + ' · ' + m.puestos +
+                        (m.puestos === 1 ? ' puesto' : ' puestos') + ' · ' + m.mesero;
+        s.appendChild(o);
+      });
+      if (!ms || !ms.length) s.innerHTML = '<option value="">No hay mesas</option>';
+    }).catch(function () {
+      $('mesa').innerHTML = '<option value="">No se pudieron cargar</option>';
+    });
+  }
+
+  // --- pedidos de la clase (Supabase, listar_pedidos) ----------------------
+  function cargarPedidos(recien) {
+    return rpc('listar_pedidos').then(function (ps) {
+      ps = ps || [];
+      $('filasPedidos').innerHTML = ps.map(function (p) {
+        var cls = p.pedido_id === recien ? ' class="nueva"' : '';
+        return '<tr' + cls + '><td>' + p.pedido_id + '</td><td>' + p.nombre + '</td><td>' +
+          p.mesa + '</td><td>' + moneda(p.total) + '</td><td>' +
+          new Date(p.creado_en).toLocaleTimeString('es-CO') + '</td></tr>';
+      }).join('');
+      $('estadoPedidos').textContent = ps.length +
+        (ps.length === 1 ? ' pedido en la base' : ' pedidos en la base') +
+        ' · actualizado a las ' + new Date().toLocaleTimeString('es-CO');
+    }).catch(function (e) {
+      $('estadoPedidos').textContent = 'No se pudo leer la lista: ' + e.message;
+    });
+  }
+
+  function mostrarVerificacion(pedidoId, total) {
+    $('resumenVerificacion').textContent =
+      'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
+      '. Tu carrito local ya no existe.';
+    $('filasVerificacion').innerHTML =
+      '<tr><td>Este navegador · carrito</td><td>Se borró el documento local.</td></tr>' +
+      '<tr><td>PostgreSQL · pedido</td><td>INSERT: nació el pedido ' + pedidoId + '.</td></tr>' +
+      '<tr><td>PostgreSQL · pedido_mesa</td><td>INSERT: se asoció la mesa elegida.</td></tr>' +
+      '<tr><td>PostgreSQL · linea_pedido</td><td>INSERT: una fila por cada plato, con el precio de HOY copiado.</td></tr>' +
+      '<tr><td>PostgreSQL · pago</td><td>INSERT: ' + moneda(total) + ', reconstruido sumando líneas.</td></tr>';
+    $('verificacion').hidden = false;
+  }
+
+  // --- confirmar y pagar ------------------------------------------------------
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    $('ok').hidden = true; $('error').hidden = true;
+
+    if (!carrito.lineas.length) {
+      return pinta($('error'), 'Agrega al menos un plato antes de pagar.', 'El carrito está vacío');
+    }
+    var datos = {
+      p_nombre: $('nombre').value.trim(),
+      p_telefono: $('telefono').value.trim(),
+      p_mesa: parseInt($('mesa').value, 10),
+      p_lineas: carrito.lineas.map(function (l) { return { plato_id: l.plato_id, cantidad: l.cantidad }; })
+    };
+    if (!datos.p_nombre || datos.p_nombre.length < 3) {
+      return pinta($('error'), 'Escribe tu nombre completo.', 'Falta algo');
+    }
+    if (!datos.p_mesa) {
+      return pinta($('error'), 'Elige una mesa de la lista.', 'Falta algo');
+    }
+
+    var b = $('pagar'); b.disabled = true; b.textContent = 'Confirmando…';
+
+    rpc('registrar_pedido', datos).then(function (r) {
+      var fila = (r && r[0]) || {};
+      pinta($('ok'), (fila.mensaje || 'Pedido guardado.'), '✓ Se convirtió en venta');
+      mostrarVerificacion(fila.pedido_id, fila.total);
+      carrito.lineas = [];
+      borrarCarritoLocal();
+      pintarCarrito();
+      $('form').reset();
+      return cargarPedidos(fila.pedido_id);
+    }).catch(function (e) {
+      pinta($('error'), e.message, 'La base la rechazó');
+    }).then(function () {
+      b.disabled = false; b.textContent = 'Confirmar y pagar';
+    });
+  });
+
+  $('refrescarPedidos').addEventListener('click', function () { cargarPedidos(); });
+
+  $('btnConfig').addEventListener('click', function () {
+    var url = limpiarUrl($('cfgUrl').value);
+    var key = $('cfgKey').value.trim();
+    if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) {
+      return pinta($('cfgError'), 'La dirección tiene que ser la del proyecto.', 'Esa dirección no sirve');
+    }
+    if (key.length < 20) {
+      return pinta($('cfgError'), 'Esa clave parece incompleta.', 'Falta la clave');
+    }
+    cfg = { url: url, key: key };
+    try { localStorage.setItem(LLAVE, JSON.stringify(cfg)); } catch (e) {}
+    arrancar();
+  });
+
+  cfg = leerConfig();
+  if (cfg) arrancar(); else $('panelConfig').hidden = false;
+})();
+</script>
+</body>
+</html>

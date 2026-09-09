@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sembrar la carta en Firestore · herramienta del docente</title>
+<meta name="robots" content="noindex">
+<style>
+body{font:16px/1.5 "Segoe UI",Arial,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;color:#16202a}
+h1{font-size:1.4rem}
+label{display:block;font-weight:700;margin:1rem 0 .3rem;font-size:.9rem}
+input{width:100%;padding:.6rem;border:2px solid #dbe3ea;border-radius:8px;font:inherit}
+button{margin-top:1.2rem;padding:.7rem 1.4rem;border-radius:999px;border:0;background:#c47f00;color:#fff;font-weight:800;cursor:pointer;font-size:1rem}
+button:disabled{opacity:.5;cursor:progress}
+pre{background:#0d151c;color:#eaf1f7;padding:1rem;border-radius:8px;white-space:pre-wrap;font-size:.85rem;margin-top:1rem;max-height:300px;overflow:auto}
+.aviso{background:#fff3e0;border-left:5px solid #c47f00;padding:.9rem 1rem;border-radius:8px;margin:1rem 0;font-size:.92rem}
+</style>
+</head>
+<body>
+<h1>Sembrar la carta del ABC en Firestore</h1>
+<div class="aviso">
+  <b>Herramienta de un solo uso, para el docente.</b> Antes de usarla: en Firestore →
+  <b>Reglas</b>, pega temporalmente <code>allow read, write: if true;</code> dentro de
+  <code>match /{document=**}</code>, publica, siembra aquí, y luego vuelve a pegar las
+  reglas finales del manual (<code>PLAN-manual-carrito-firebase-supabase.md</code>) antes
+  de la clase. Esta página no se enlaza desde ningún otro lugar del sitio.
+</div>
+<label for="apiKey">apiKey</label>
+<input id="apiKey" placeholder="AIzaSy...">
+<label for="projectId">projectId</label>
+<input id="projectId" placeholder="restauranteabc-xxxxx">
+<button id="ir" type="button">Sembrar los 8 platos</button>
+<pre id="log">Esperando…</pre>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+var CARTA = [
+  {"plato_id":1,"nombre":"Ajiaco santafereño","precio_actual":28000,"categoria":"fuerte","alergenos":["gluten","lácteos"],"descripcion":"Sopa bogotana de pollo con tres papas y guascas, servida con crema de leche y alcaparras aparte.","foto":"ajiaco.jpg"},
+  {"plato_id":2,"nombre":"Bandeja paisa","precio_actual":34000,"categoria":"fuerte","alergenos":["huevo"],"descripcion":"Fríjoles, arroz, carne molida, chicharrón, huevo frito, arepa y aguacate.","extras_disponibles":["arepa adicional","aguacate adicional","chorizo"]},
+  {"plato_id":3,"nombre":"Sancocho de gallina","precio_actual":30000,"categoria":"fuerte","descripcion":"Sancocho trifásico con gallina, papa criolla, mazorca y yuca."},
+  {"plato_id":4,"nombre":"Limonada de coco","precio_actual":9000,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Limonada natural batida con leche de coco."},
+  {"plato_id":5,"nombre":"Arepa de choclo","precio_actual":7500,"categoria":"entrada","vegetariano":true,"descripcion":"Arepa dulce de choclo con queso campesino."},
+  {"plato_id":6,"nombre":"Sobrebarriga al horno","precio_actual":36000,"categoria":"fuerte","descripcion":"Sobrebarriga horneada en salsa criolla, con papa salada y ensalada."},
+  {"plato_id":7,"nombre":"Postre de natas","precio_actual":11000,"categoria":"postre","alergenos":["lácteos","huevo"],"descripcion":"Postre tradicional de natas de leche."},
+  {"plato_id":8,"nombre":"Tamal tolimense","precio_actual":22000,"categoria":"fuerte","alergenos":["gluten"],"disponible_desde":"06:00","disponible_hasta":"11:00","nota_disponibilidad":"Solo se sirve en el horario de desayuno."}
+];
+
+var log = document.getElementById('log');
+function escribir(t) { log.textContent += '\n' + t; }
+
+document.getElementById('ir').addEventListener('click', function () {
+  var apiKey = document.getElementById('apiKey').value.trim();
+  var projectId = document.getElementById('projectId').value.trim();
+  if (!apiKey || !projectId) { alert('Faltan apiKey o projectId'); return; }
+
+  var btn = this; btn.disabled = true;
+  log.textContent = 'Conectando...';
+
+  firebase.initializeApp({ apiKey: apiKey, projectId: projectId });
+  var db = firebase.firestore();
+
+  db.collection('carta').get().then(function (existentes) {
+    if (!existentes.empty) {
+      escribir('Ya hay ' + existentes.size + ' documento(s) en "carta". Bórralos a mano en la consola si quieres empezar de cero, o continúa para agregar de todas formas.');
+    }
+    var pendientes = CARTA.map(function (plato) {
+      return db.collection('carta').add(plato).then(function () {
+        escribir('✓ ' + plato.plato_id + ' · ' + plato.nombre);
+      }).catch(function (e) {
+        escribir('✗ ' + plato.nombre + ': ' + e.message);
+      });
+    });
+    return Promise.all(pendientes);
+  }).then(function () {
+    escribir('\nListo. Verifica en Firestore → carta que haya 8 documentos.');
+    btn.disabled = false;
+  }).catch(function (e) {
+    escribir('ERROR general: ' + e.message);
+    btn.disabled = false;
+  });
+});
+</script>
+</body>
+</html>

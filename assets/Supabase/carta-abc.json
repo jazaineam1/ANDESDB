@@ -1,0 +1,68 @@
+[
+  {
+    "plato_id": 1,
+    "nombre": "Ajiaco santafereño",
+    "precio_actual": 28000,
+    "categoria": "fuerte",
+    "alergenos": ["gluten", "lácteos"],
+    "descripcion": "Sopa bogotana de pollo con tres papas y guascas, servida con crema de leche y alcaparras aparte.",
+    "foto": "ajiaco.jpg"
+  },
+  {
+    "plato_id": 2,
+    "nombre": "Bandeja paisa",
+    "precio_actual": 34000,
+    "categoria": "fuerte",
+    "alergenos": ["huevo"],
+    "descripcion": "Fríjoles, arroz, carne molida, chicharrón, huevo frito, arepa y aguacate.",
+    "extras_disponibles": ["arepa adicional", "aguacate adicional", "chorizo"]
+  },
+  {
+    "plato_id": 3,
+    "nombre": "Sancocho de gallina",
+    "precio_actual": 30000,
+    "categoria": "fuerte",
+    "descripcion": "Sancocho trifásico con gallina, papa criolla, mazorca y yuca."
+  },
+  {
+    "plato_id": 4,
+    "nombre": "Limonada de coco",
+    "precio_actual": 9000,
+    "categoria": "bebida",
+    "alergenos": ["lácteos"],
+    "descripcion": "Limonada natural batida con leche de coco."
+  },
+  {
+    "plato_id": 5,
+    "nombre": "Arepa de choclo",
+    "precio_actual": 7500,
+    "categoria": "entrada",
+    "vegetariano": true,
+    "descripcion": "Arepa dulce de choclo con queso campesino."
+  },
+  {
+    "plato_id": 6,
+    "nombre": "Sobrebarriga al horno",
+    "precio_actual": 36000,
+    "categoria": "fuerte",
+    "descripcion": "Sobrebarriga horneada en salsa criolla, con papa salada y ensalada."
+  },
+  {
+    "plato_id": 7,
+    "nombre": "Postre de natas",
+    "precio_actual": 11000,
+    "categoria": "postre",
+    "alergenos": ["lácteos", "huevo"],
+    "descripcion": "Postre tradicional de natas de leche."
+  },
+  {
+    "plato_id": 8,
+    "nombre": "Tamal tolimense",
+    "precio_actual": 22000,
+    "categoria": "fuerte",
+    "alergenos": ["gluten"],
+    "disponible_desde": "06:00",
+    "disponible_hasta": "11:00",
+    "nota_disponibilidad": "Solo se sirve en el horario de desayuno."
+  }
+]
