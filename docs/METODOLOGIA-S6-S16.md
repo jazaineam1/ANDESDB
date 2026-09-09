@@ -43,7 +43,7 @@ No se usa `localStorage` para construir una narrativa de “avance del estudiant
 Cuando el aprendizaje depende de un servicio cloud, se usa el **servicio real**:
 
 - S9: Supabase + PostgreSQL;
-- S11: Firebase Firestore + Azure Cosmos DB;
+- S11: Firebase Firestore + MongoDB Atlas (Azure Cosmos DB entra solo como puente conceptual para el DP-900, sin práctica de laboratorio: la vía sin backend que Atlas ofrecía se retiró en 2025);
 - S13: Google BigQuery;
 - S14: Google BigQuery.
 

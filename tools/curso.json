@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 10,
+  "sesionActual": 11,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -307,7 +307,7 @@
           "modo": "autonomo_guiado",
           "trabajoAutonomoMin": 75,
           "titulo": "Taller de casos: ¿SQL o NoSQL?",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Seis retos de arquitectura de datos, con un caso real: el requerimiento de la SIC a más de 50 empresas. En el tablero integrado se elige una ruta y se contrasta con evidencia de un caso real. La tecnología va detrás del problema, no delante.",
           "tags": [
             "SQL vs NoSQL",
@@ -336,17 +336,27 @@
           "fecha": "2026-09-09",
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
-          "titulo": "Firestore + Azure Cosmos DB",
-          "estado": "pendiente",
-          "desc": "Documentos y partición en servicios reales. Mapa DP-900 de Cosmos DB, Blob Storage, Files y Table Storage.",
+          "titulo": "Documentos de verdad: Firebase y MongoDB Atlas",
+          "estado": "hoy",
+          "desc": "El carrito que se convirtió en venta: un documento real en Firestore (o en MongoDB Atlas) que al pagar se convierte en una fila relacional real en Supabase. Embeber contra referenciar, y el puente hacia Cosmos DB para el DP-900.",
           "tags": [
+            "Firebase",
             "Firestore",
-            "Cosmos DB",
+            "MongoDB Atlas",
             "documentos",
-            "partition key",
-            "Azure Storage"
+            "embeber vs referenciar",
+            "Cosmos DB"
           ],
+          "href": "Presentaciones/M4/sesion-11-documentos-de-verdad.html",
           "recursos": [
+            {
+              "txt": "🛒 El carrito que se convirtió en venta (Firestore, en vivo)",
+              "href": "Presentaciones/M4/carrito-abc-firebase.html"
+            },
+            {
+              "txt": "🛒 La misma herramienta, con el carrito guardado localmente",
+              "href": "Presentaciones/M4/carrito-abc.html"
+            },
             {
               "txt": "🔥 Ejercicio: tu primera base de documentos en Firestore",
               "href": "Presentaciones/M4/ejercicio-firebase.html"

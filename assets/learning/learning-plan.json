@@ -265,30 +265,30 @@
     },
     "11": {
       "fecha": "2026-09-09",
-      "titulo": "Firestore + Azure Cosmos DB",
+      "titulo": "Documentos de verdad: Firebase y MongoDB Atlas",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Modelar documentos y operar servicios NoSQL reales, conectando la práctica con Azure Storage y Cosmos DB.",
+      "objetivo": "Modelar documentos reales en Firestore (o MongoDB Atlas), usar el carrito que se convierte en venta para ver un documento efímero convertirse en una fila relacional real, y decidir entre embeber y referenciar.",
       "nucleo": {
-        "titulo": "Un caso, dos servicios reales",
+        "titulo": "El carrito que se convirtió en venta",
         "minutos": 45,
-        "instrucciones": "Modela una parte del caso como documento, realiza operaciones reales en Firestore y Azure Cosmos DB y compara qué decisiones de diseño cambian frente al modelo relacional.",
+        "instrucciones": "Carga la carta del Restaurante ABC como documentos (Firestore o Atlas), usa carrito-abc-firebase.html hasta completar una compra real en Supabase, y explica por qué el carrito vive como documento y la venta como fila relacional.",
         "criterios": [
-          "documento coherente",
-          "operación real ejecutada",
-          "explica partición o clave de acceso",
-          "compara con relacional"
+          "documento coherente, con campos que no todos comparten",
+          "operación real ejecutada: una compra confirmada de verdad",
+          "explica embeber o referenciar",
+          "compara con el modelo relacional de la sesión 9"
         ]
       },
       "reto": {
-        "titulo": "Costo de una mala partición",
+        "titulo": "Embeber o referenciar",
         "minutos": 15,
-        "instrucciones": "Propón dos posibles partition keys para Cosmos DB y argumenta cuál distribuye y consulta mejor el caso."
+        "instrucciones": "Para la receta de un plato (varios ingredientes): decide y justifica embeber o referenciar según el patrón de acceso. Extensión: implementa las dos formas y compara cuántas consultas hace falta para responder 'qué platos usan pollo'."
       },
       "servicio_real": {
         "requerido": true,
-        "nombre": "Firebase Firestore + Azure Cosmos DB",
-        "fallback": "Simulador/documentos locales solo si un estudiante queda bloqueado; el docente muestra ambos servicios reales."
+        "nombre": "Firebase Firestore + Supabase (Restaurante ABC)",
+        "fallback": "El carrito local (carrito-abc.html) solo si un estudiante queda bloqueado con Firestore; el checkout contra Supabase sigue siendo real en ambos casos."
       },
       "dp900": [
         {

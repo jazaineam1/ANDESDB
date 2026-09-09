@@ -32,11 +32,11 @@ El bloque grande de certificación va en la **sesión 7**.
 | 3 · Filtrar mejor y resumir | dictada · 23 diapositivas |
 | 4 · Uniones de tablas | dictada · 28 diapositivas |
 | 5 · Algorítmica de tablas + HackerRank | dictada · 28 diapositivas |
-| **6 · Reglas de negocio · OLTP vs OLAP** | **la próxima** · 32 diapositivas · abre el módulo 3 |
-| **7 · Certificaciones + taller de modelado** | 🔒 martes corto |
-| 8 · Normalización · 9 · DDL + Azure SQL | |
-| **10 · Taller de casos: ¿SQL o NoSQL?** | 🔒 martes corto |
-| 11 · Firestore + Cosmos DB | |
+| 6 · Reglas de negocio · OLTP vs OLAP | dictada · abre el módulo 3 |
+| **7 · Certificaciones + taller de modelado** | dictada · 🔒 martes corto |
+| 8 · Normalización · 9 · DDL + Azure SQL | dictada |
+| **10 · Taller de casos: ¿SQL o NoSQL?** | dictada · 🔒 martes corto |
+| **11 · El carrito que se convirtió en venta (Firebase + Atlas)** | **la próxima** · 20 diapositivas |
 | 12 · Fundamentos de data warehouse | por crear |
 | **13 · Lab BigQuery** | 🔒 martes corto |
 | 14 · BigQuery anidados · 15 · Desafío final · 16 · Cierre | |
