@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu primera base de documentos &middot; MongoDB Atlas &middot; ANDESDB</title>
+<meta name="description" content="Extensión de la sesión 11: desplegar un clúster M0 gratuito en MongoDB Atlas, y replicar en su Data Explorer la misma carta que ya creaste en Firestore.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23146c43'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#146c43; --az-sua:#e4f5ec;
+  --verde:#146c43; --verde-sua:#e4f5ec; --ambar:#c47f00;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#0d3d24;
+  --tinta-cod:#0d1b26; --texto-cod:#eef6fb;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#123528; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#8be6b8;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#123528; --y-sua:#3a3410; --verde-sua:#123528; --codigo:#8be6b8;
+  --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.6 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.1rem}
+header.top{background:var(--az);color:#fff;padding:2.1rem 0 2.3rem}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .25em;font-size:clamp(1.75rem,5vw,2.7rem);line-height:1.08;
+  letter-spacing:-.022em;text-wrap:balance;max-width:22ch}
+header.top p{margin:0;color:#d9f0e4;max-width:64ch;font-size:1.05rem}
+section{padding:2.4rem 0}
+section + section{border-top:1px solid var(--linea)}
+h2{font-size:clamp(1.3rem,3.2vw,1.75rem);margin:0 0 .5em;letter-spacing:-.015em;
+  text-wrap:balance}
+h3{font-size:1.02rem;margin:0 0 .3em}
+p{max-width:68ch}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.3rem 1.45rem;box-shadow:var(--sombra)}
+.dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;
+  align-items:start;margin-top:.7rem}
+@media (max-width:860px){.dos{grid-template-columns:1fr}}
+.aviso{border-radius:10px;padding:.85em 1.05em;margin-top:.9rem;font-size:.95rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.ojo{border-left-color:var(--ambar);background:var(--y-sua)}
+.aviso.bien{border-left-color:var(--verde);background:var(--verde-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+pre{background:var(--tinta-cod);color:var(--texto-cod);border-radius:10px;padding:1rem 1.1rem;
+  overflow-x:auto;margin:.7rem 0 0;font:13.5px/1.55 Consolas,"Cascadia Mono",monospace}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+ol,ul{max-width:66ch}
+li{margin:.28em 0}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:.6rem}
+th,td{padding:.55em .6em;text-align:left;border-bottom:1px solid var(--linea);vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+td:first-child{font-family:Consolas,monospace;font-size:.85rem;color:var(--az);white-space:nowrap}
+.desliza{overflow-x:auto}
+.pie{padding:1.6rem 0 3rem;font-size:.82rem;color:var(--tenue)}
+.ruta{background:linear-gradient(135deg,var(--az-sua),var(--carta));border-left:6px solid var(--az)}
+.ruta .paso-guia{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:1rem 1.1rem;margin:.8rem 0;box-shadow:0 3px 12px rgba(16,32,48,.07)}
+.paso-guia h3{display:flex;gap:.6rem;align-items:center;margin:.05rem 0 .45rem}
+.etapa{display:inline-grid;place-items:center;min-width:1.8rem;height:1.8rem;border-radius:50%;background:var(--y);color:#3a2f00;font-size:.82rem;font-weight:900}
+.espera{margin-top:.7rem;padding:.6rem .8rem;border-radius:8px;background:var(--verde-sua);border-left:4px solid var(--verde);font-size:.9rem}
+.error-comun{margin-top:.7rem;padding:.6rem .8rem;border-radius:8px;background:var(--y-sua);border-left:4px solid var(--ambar);font-size:.9rem}
+.fuente{margin-top:.6rem;font-size:.78rem;color:var(--tenue)}
+.fuente a{color:var(--tenue)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="cinta">M&oacute;dulo 4 &middot; Sesi&oacute;n 11 &middot; extensi&oacute;n &middot; ANDESDB</div>
+  <h1>Tu primera base de documentos en MongoDB Atlas</h1>
+  <p>No reemplaza Firestore: es la comparación del mismo caso en el otro motor de documentos. Extensión opcional, después de terminar tu práctica en Firebase.</p>
+</div></header>
+
+<section id="alcance"><div class="wrap">
+  <div class="aviso ojo">
+    <h3>Qué es esto, y qué no es</h3>
+    <p style="margin:.4em 0 0">Atlas <b>App Services y su Data API llegaron a su fin de soporte (EOL) en 2025</b>: hoy no existe una forma soportada de que una página estática hable con Atlas sin backend propio. Por eso el carrito en vivo de la clase usa Firebase, y Atlas conserva un solo rol en esta sesión: la práctica del <b>Data Explorer</b>, igual que cuando escribes documentos a mano en Firestore.</p>
+  </div>
+  <div class="aviso bien" style="margin-top:.9rem">
+    <h3>Por qué esta guía no tiene capturas de pantalla</h3>
+    <p style="margin:.4em 0 0">La guía de Firebase sí las tiene porque se verificaron en vivo, clic a clic, contra la consola real. Esta guía en cambio se redactó verificando cada etiqueta contra la <a href="https://www.mongodb.com/docs/atlas/atlas-ui/collections/" target="_blank" rel="noopener">documentación oficial vigente de MongoDB Atlas</a> el <b>2026&#8209;09&#8209;09</b> &mdash; sin capturas que queden desactualizadas la próxima vez que Atlas rediseñe un formulario. Si un botón no dice exactamente esto, la interfaz cambió después de esa fecha: sigue el propósito del paso, no el texto literal.</p>
+  </div>
+</div></section>
+
+<section id="ruta-estudiante" class="ruta"><div class="wrap">
+  <h2>Hazlo conmigo: ruta completa de estudiante</h2>
+  <p>Tu meta es tener, dentro de un clúster gratuito M0 propio, una colección <code>platos</code> con <b>al menos dos documentos</b> que no compartan exactamente los mismos campos &mdash; la misma comparación que ya hiciste en Firestore.</p>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">1</span> Crea tu cuenta y tu proyecto</h3>
+    <ol>
+      <li>Ve a <a href="https://cloud.mongodb.com/" target="_blank" rel="noopener"><b>cloud.mongodb.com</b></a> y crea una cuenta (o inicia sesión) con tu correo.</li>
+      <li>Si es tu primera vez, Atlas te ubica dentro de una organización y un proyecto por defecto; si no, en el menú <b>Projects</b> pulsa <b>New Project</b>, dale un nombre reconocible (por ejemplo <code>restaurante-abc-tu-nombre</code>) y continúa.</li>
+    </ol>
+    <div class="espera"><b>Debes ver:</b> el panel <b>Project Overview</b> de tu proyecto, vacío, con un botón para crear un clúster.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">2</span> Despliega el clúster gratuito M0</h3>
+    <ol>
+      <li>En <b>Project Overview</b>, pulsa <b>Create</b>.</li>
+      <li>Elige la opción <b>M0</b> (gratis, para aprender — no la confundas con un tier pago).</li>
+      <li>Elige un proveedor (<b>AWS</b>, <b>GCP</b> o <b>Azure</b>) y una región cercana; solo aparecen las que ofrecen M0.</li>
+      <li>En <b>Name</b> escribe un nombre corto; no podrás cambiarlo después de crear el clúster.</li>
+      <li>Pulsa <b>Create</b>.</li>
+    </ol>
+    <div class="espera"><b>Debes ver:</b> se abre el asistente <b>Security Quickstart</b> — el clúster queda listo en menos de un minuto, pero primero completa el paso 3.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">3</span> Security Quickstart: usuario y acceso de red</h3>
+    <ol>
+      <li>En <b>How would you like to authenticate your connection?</b> deja <b>Username and Password</b>, escribe un usuario y una contraseña (o usa la que Atlas sugiere) y pulsa <b>Create Database User</b>.</li>
+      <li>En <b>Where would you like to connect from?</b> pulsa <b>Add My Current IP Address</b>.</li>
+      <li>Pulsa <b>Finish and Close</b> y luego <b>Go to Overview</b>.</li>
+    </ol>
+    <div class="espera"><b>Debes ver:</b> tu clúster en estado activo (ya no <i>Creating</i>) en el Project Overview.</div>
+    <div class="error-comun"><b>Nota:</b> esta contraseña es solo para tu clúster de práctica; no la reutilices en nada real, y no la pegues en el chat de clase.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">4</span> Entra al Data Explorer</h3>
+    <ol>
+      <li>En el menú lateral, dentro de la sección <b>Database</b>, pulsa <b>Data Explorer</b>.</li>
+      <li>Si Atlas te lo pide, confirma la conexión con el usuario que creaste en el paso 3.</li>
+    </ol>
+    <div class="espera"><b>Debes ver:</b> un panel vacío (todavía no hay bases de datos) con una opción para crear la primera.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">5</span> Crea la base de datos y la colección</h3>
+    <ol>
+      <li>Pulsa el botón para crear tu primera base de datos.</li>
+      <li>En <b>Database name</b> escribe <code>restaurante_abc</code>.</li>
+      <li>En <b>Collection name</b> escribe <code>platos</code>.</li>
+      <li>Confirma con <b>Create Database</b> (para colecciones adicionales más tarde, el botón equivalente es <b>Create Collection</b>, junto al nombre de la base al pasar el cursor sobre ella).</li>
+    </ol>
+    <div class="espera"><b>Debes ver:</b> la ruta <code>restaurante_abc &rarr; platos</code>, vacía, en el panel izquierdo del Data Explorer.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">6</span> Inserta dos documentos que no compartan todos los campos</h3>
+    <ol>
+      <li>Con <code>platos</code> seleccionada, pulsa el menú desplegable <b>Add Data</b> y elige <b>Insert Document</b>.</li>
+      <li>Verás tres modos, con íconos para alternar entre ellos: <b>Shell Syntax</b> (por defecto), <b>Field-by-Field</b> y <b>JSON Mode</b>. Usa <b>JSON Mode</b>: es el más parecido a lo que ya escribiste en Firestore.</li>
+      <li>Pega el primer documento de la tabla de abajo y pulsa <b>Insert</b>.</li>
+      <li>Repite <b>Add Data → Insert Document</b> con el segundo documento.</li>
+    </ol>
+    <div class="datos-doc" style="margin-top:.7rem">
+      <pre><code>{ "plato_id": 1, "nombre": "Ajiaco santafereño", "precio_actual": 28000,
+  "categoria": "fuerte", "alergenos": ["gluten", "lácteos"], "foto": "ajiaco.jpg" }</code></pre>
+      <pre><code>{ "plato_id": 8, "nombre": "Tamal tolimense", "precio_actual": 22000,
+  "categoria": "fuerte", "alergenos": ["gluten"],
+  "disponible_desde": "06:00", "disponible_hasta": "11:00" }</code></pre>
+    </div>
+    <div class="espera"><b>Debes ver:</b> 2 documentos en <code>platos</code>; Atlas les asigna un <code>_id</code> propio (un <code>ObjectId</code>) además de tu <code>plato_id</code> &mdash; igual que Firestore con su ID automático.</div>
+    <div class="error-comun"><b>Si el botón Insert no responde:</b> revisa que el JSON tenga comillas dobles en todas las claves y que no falte ni sobre una coma; el modo JSON no acepta la sintaxis relajada del modo Shell.</div>
+  </div>
+
+  <div class="paso-guia">
+    <h3><span class="etapa">7</span> Compara con Firestore</h3>
+    <ol>
+      <li>Abre el mismo par de platos en tu colección <code>carta</code> de Firestore.</li>
+      <li>Anota: mismos campos, mismos valores, dos motores distintos, dos consolas distintas.</li>
+    </ol>
+    <div class="aviso bien"><h3>La conclusión que debes poder explicar</h3><p style="margin:.4em 0 0">Firestore y Atlas resuelven el mismo problema &mdash; documentos con campos variables, sin <code>JOIN</code> &mdash; con consolas y límites distintos. La diferencia que sí importa para esta clase no es cuál base de documentos es &laquo;mejor&raquo;: es que Atlas ya no ofrece una ruta soportada para que el navegador le hable directo, y Firestore sí.</p></div>
+  </div>
+</div></section>
+
+<section id="evidencia"><div class="wrap">
+  <h2>Evidencia de cierre</h2>
+  <div class="tarj">
+    <h3>Muestra estas dos capturas propias</h3>
+    <ol>
+      <li>Tu clúster M0 activo, con el nombre que le pusiste.</li>
+      <li><code>restaurante_abc &rarr; platos</code> con los 2 documentos, mostrando el campo que Tamal tiene y Ajiaco no.</li>
+    </ol>
+  </div>
+  <div class="aviso ojo" style="margin-top:.9rem">
+    <h3>Cuando termines</h3>
+    <p style="margin:.4em 0 0">Este clúster es tuyo, no el de la clase: bórralo cuando quieras (<b>Project Overview → ⋯ → Terminate</b>) sin afectar nada del carrito compartido ni de la sesión.</p>
+  </div>
+</div></section>
+
+<div class="wrap"><p class="pie">Diseño y Gestión de Bases de Datos con SQL
+  &middot; Universidad de los Andes &middot; Colsubsidio
+  &middot; Pasos verificados contra <a href="https://www.mongodb.com/docs/atlas/atlas-ui/collections/" target="_blank" rel="noopener">docs.mongodb.com/atlas</a> el 2026-09-09.</p></div>
+</body>
+</html>

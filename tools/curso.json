@@ -360,6 +360,10 @@
             {
               "txt": "🔥 Ejercicio: tu primera base de documentos en Firestore",
               "href": "Presentaciones/M4/ejercicio-firebase.html"
+            },
+            {
+              "txt": "🍃 Extensión: tu primera base de documentos en MongoDB Atlas",
+              "href": "Presentaciones/M4/ejercicio-atlas.html"
             }
           ]
         }

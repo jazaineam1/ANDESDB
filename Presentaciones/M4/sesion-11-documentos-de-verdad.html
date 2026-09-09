@@ -3283,7 +3283,7 @@
           <article class="tool-card">
             <span class="when">Extensión, no reemplazo</span>
             <h3><a href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a></h3>
-            <p>Replica dos documentos en <code>restaurante_abc.platos</code> y compara el motor; no sustituye la práctica de Firestore.</p>
+            <p>Replica dos documentos en <code>restaurante_abc.platos</code> y compara el motor; no sustituye la práctica de Firestore. Pasos verificados en <a href="ejercicio-atlas.html" target="_blank" rel="noopener">la guía de Atlas</a>.</p>
           </article>
           <article class="tool-card">
             <span class="when">Extensión guiada</span>
@@ -3370,7 +3370,7 @@
             <h3>Detente y comprueba</h3>
             <p>La evidencia correcta no es una captura del asistente de creación. Debes ver el panel de <b>Firestore Database</b> de tu proyecto y el botón <b>Iniciar colección</b>.</p>
             <div class="ok compacto mt"><b>Si lo ves:</b> tu base ya existe y puedes continuar. <b>Si no:</b> vuelve al paso 8 de la guía; no intentes cargar platos todavía.</div>
-            <p class="small mt"><b>Extensión:</b> quien termine puede abrir <a class="intext-link" href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a>, crear <code>restaurante_abc.platos</code> y repetir solo dos documentos.</p>
+            <p class="small mt"><b>Extensión:</b> quien termine puede abrir <a class="intext-link" href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a>, crear <code>restaurante_abc.platos</code> y repetir solo dos documentos &mdash; pasos exactos en <a class="intext-link" href="ejercicio-atlas.html" target="_blank" rel="noopener">la guía de Atlas</a>.</p>
           </div>
         </div>
         <div class="brand"><span>Práctica individual</span><span>Firebase primero, Atlas si sobra tiempo</span></div>
@@ -3580,7 +3580,17 @@
             style="display:block;width:100%;height:55cqh;border:0"
           ></iframe>
         </div>
-        <p class="small mt compacto">Diagrama interactivo (no una imagen): cambia de vista, pulsa <b>&#9654; Play story</b> o busca un componente &mdash; cada caja cita la línea real del código. Las dos nubes <b>nunca se conectan entre sí</b>: el navegador es el único puente. Revisa qué protege la función en el <a class="intext-link" href="../M3/tutorial-supabase.html" target="_blank" rel="noopener">tutorial de Supabase de la sesión 9</a> (no cambies tablas ni permisos ahora).</p>
+        <p class="small mt compacto">Diagrama interactivo (no una imagen): las dos nubes <b>nunca se conectan entre sí</b>, el navegador es el único puente. Revisa qué protege la función en el <a class="intext-link" href="../M3/tutorial-supabase.html" target="_blank" rel="noopener">tutorial de Supabase de la sesión 9</a> (no cambies tablas ni permisos ahora).</p>
+        <details class="mt compacto" style="position:relative">
+          <summary class="small" style="cursor:pointer;font-weight:800">Cómo usar este diagrama, paso a paso</summary>
+          <ol class="small" style="position:absolute;z-index:6;top:100%;left:0;margin:.35em 0 0;padding:.6em .9em .6em 1.9em;max-height:6em;overflow-y:auto;width:min(52ch,92%);background:var(--paper,#fff);border:1px solid #d7dee5;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18)">
+            <li>Pulsa <b>?</b> dentro del diagrama: abre la Guía con todos los atajos disponibles.</li>
+            <li>Arriba, cambia entre las tres vistas guiadas (&laquo;Dos puertas&raquo; / &laquo;El carrito de Firestore&raquo; / &laquo;La venta en PostgreSQL&raquo;) o pulsa <b>&#9654; Play story</b> para recorrerlas solo.</li>
+            <li>Haz clic en cualquier caja: se abre su ficha con lo que recibe, entrega y protege, y la línea exacta del código que la sustenta.</li>
+            <li>Escribe en el buscador el nombre de un componente (por ejemplo &laquo;Firestore&raquo;) para ubicarlo sin recorrer todo el diagrama.</li>
+            <li><b>Present</b> lo pone a pantalla completa dentro del propio diagrama; el botón &laquo;Pantalla completa&raquo; de arriba lo abre en una pestaña aparte con el mismo efecto.</li>
+          </ol>
+        </details>
         <div class="brand"><span>Arquitectura</span><span>Documento efímero &rarr; venta relacional</span></div>
       </section>
 
