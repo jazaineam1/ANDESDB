@@ -3343,7 +3343,7 @@
         </p>
         <div class="agenda-grid">
           <article><b>1</b><h3>Construye</h3><p>Proyecto y colección Firestore.</p></article>
-          <article><b>2</b><h3>Modela</h3><p>Ocho documentos manuales; catálogo de clase con 24.</p></article>
+          <article><b>2</b><h3>Modela</h3><p>Dos documentos manuales; catálogo de clase con 24.</p></article>
           <article><b>3</b><h3>Consulta</h3><p>Filtra y detecta un documento mal cargado.</p></article>
           <article><b>4</b><h3>Decide</h3><p>Reto: embeber o referenciar.</p></article>
           <article><b>5</b><h3>Confirma</h3><p>Carrito Firestore → venta PostgreSQL.</p></article>
@@ -3398,12 +3398,12 @@
 
       <section class="slide dense" data-title="Carga la carta, documento por documento">
         <div class="ey">Práctica guiada · carga de datos</div>
-        <h2>Ocho documentos manuales; 24 productos para probar el catálogo</h2>
+        <h2>Dos documentos manuales bastan; 24 productos para probar el catálogo</h2>
         <p class="lead">
           <b>Insert Document</b> en Firestore, uno por uno &mdash; sin código.
-          El Tamal tiene horario de disponibilidad, la Bandeja paisa tiene
-          extras, la Arepa es vegetariana. Ningún otro plato comparte esos
-          campos, y eso no da ningún error.
+          Dos platos, a propósito muy distintos: el Ajiaco tiene alérgenos y
+          foto; el Tamal tiene horario de disponibilidad. Ninguno comparte
+          esos campos con el otro, y eso no da ningún error.
         </p>
         <div class="g2 wide mt">
           <div class="card">
@@ -3412,11 +3412,11 @@
           </div>
           <div class="card blue">
             <h3>Lo que cambia a propósito</h3>
-            <p>Usa arreglos para <code>alergenos</code> y <code>extras_disponibles</code>; booleano para <code>vegetariano</code>; texto para horarios. La lista exacta de los ocho platos está <a class="intext-link" href="ejercicio-firebase.html#carta-abc" target="_blank" rel="noopener">en la guía</a>.</p>
+            <p>Usa arreglos para <code>alergenos</code>; texto para <code>disponible_desde</code>/<code>disponible_hasta</code>. Los dos documentos exactos están <a class="intext-link" href="ejercicio-firebase.html#carta-abc" target="_blank" rel="noopener">en la guía</a>.</p>
           </div>
         </div>
         <div class="stop mt">
-          En una tabla, tres filas con columnas distintas es imposible. Aquí
+          En una tabla, dos filas con columnas distintas es imposible. Aquí
           es normal &mdash; es la diferencia entre esquema fijo y esquema
           flexible, vista con las manos.
         </div>
@@ -3743,7 +3743,7 @@ END LOOP;</code></pre>
         <div class="g2 wide">
           <div class="card">
             <h3>Práctica base</h3>
-            <p>Comprueba, en este orden: <b>8 documentos</b> en tu colección individual y <b>24 productos</b> en el carrito de clase; un
+            <p>Comprueba, en este orden: <b>2 documentos</b> en tu colección individual y <b>24 productos</b> en el carrito de clase; un
               filtro que devuelve exactamente los documentos esperados; y un
               carrito que se actualiza en una segunda pestaña.</p>
             <div class="ok compacto">Si falta una marca, vuelve al paso exacto que la produce. No avances solo porque la pantalla “parece” lista.</div>
