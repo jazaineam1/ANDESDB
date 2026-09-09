@@ -96,6 +96,9 @@ def check_high_confidence_secrets() -> None:
         "Presentaciones/M4/carrito-abc-firebase.html": {
             "a7446d4348c8ce63ddb163751abf2dda349c7bbf7bcb15783c63d78834e2159f",
         },
+        "Presentaciones/M4/sembrar-carta-firebase.html": {
+            "a7446d4348c8ce63ddb163751abf2dda349c7bbf7bcb15783c63d78834e2159f",
+        },
     }
     patterns = {
         "AWS access key": re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"),

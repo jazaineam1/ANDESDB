@@ -22,13 +22,14 @@ pre{background:#0d151c;color:#eaf1f7;padding:1rem;border-radius:8px;white-space:
   <b>Herramienta de un solo uso, para el docente.</b> Antes de usarla: en Firestore →
   <b>Reglas</b>, pega temporalmente <code>allow read, write: if true;</code> dentro de
   <code>match /{document=**}</code>, publica, siembra aquí, y luego vuelve a pegar las
-  reglas finales del manual (<code>PLAN-manual-carrito-firebase-supabase.md</code>) antes
+  reglas finales del manual (<code>ejercicio-firebase.html#rules</code>) antes
   de la clase. Esta página no se enlaza desde ningún otro lugar del sitio.
 </div>
-<label for="apiKey">apiKey</label>
-<input id="apiKey" placeholder="AIzaSy...">
-<label for="projectId">projectId</label>
-<input id="projectId" placeholder="restauranteabc-xxxxx">
+<div class="aviso" style="border-left-color:#146c43;background:#e4f5ec">
+  <b>apiKey y projectId ya están incorporados</b>, igual que en <code>carrito-abc-firebase.html</code>:
+  es una clave web pública (identifica el proyecto, no lo administra) y no hace falta pegarla a mano
+  cada vez que se resiembra la carta.
+</div>
 <button id="ir" type="button">Sembrar los 24 productos</button>
 <pre id="log">Esperando…</pre>
 
@@ -66,9 +67,8 @@ var log = document.getElementById('log');
 function escribir(t) { log.textContent += '\n' + t; }
 
 document.getElementById('ir').addEventListener('click', function () {
-  var apiKey = document.getElementById('apiKey').value.trim();
-  var projectId = document.getElementById('projectId').value.trim();
-  if (!apiKey || !projectId) { alert('Faltan apiKey o projectId'); return; }
+  var apiKey = "AIzaSyCRlrphuLxRbyzj98WaUjAxGIFoUUrWCsU";
+  var projectId = "restauranteabc-451f1";
 
   var btn = this; btn.disabled = true;
   log.textContent = 'Conectando...';

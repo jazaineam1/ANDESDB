@@ -277,7 +277,8 @@
           "documento coherente, con campos que no todos comparten",
           "operación real ejecutada: una compra confirmada de verdad",
           "explica embeber o referenciar",
-          "compara con el modelo relacional de la sesión 9"
+          "compara con el modelo relacional de la sesión 9",
+          "ejecuta un filtro, un ordenamiento y una agregación; distingue precios del catálogo de ventas"
         ]
       },
       "reto": {

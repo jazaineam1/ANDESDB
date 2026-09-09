@@ -197,5 +197,14 @@ td:first-child{font-family:Consolas,monospace;font-size:.85rem;color:var(--az);w
 <div class="wrap"><p class="pie">Diseño y Gestión de Bases de Datos con SQL
   &middot; Universidad de los Andes &middot; Colsubsidio
   &middot; Pasos verificados contra <a href="https://www.mongodb.com/docs/atlas/atlas-ui/collections/" target="_blank" rel="noopener">docs.mongodb.com/atlas</a> el 2026-09-09.</p></div>
+<section id="consultas-agregaciones"><div class="wrap"><h2>Extensión: la misma pregunta en MongoDB Atlas</h2><p>Usa únicamente los dos documentos que acabas de insertar en restaurante_abc.platos. No necesitas otra aplicación. En Data Explorer, el filtro recibe JSON; la pestaña Aggregations recibe etapas de pipeline.</p><h3>Consulta simple · pestaña Documents, filtro</h3><pre><code>{ "categoria": "fuerte" }</code></pre><p>Ejecuta Find: deben aparecer Ajiaco y Tamal. Cambia el filtro a <code>{ "disponible_desde": "06:00" }</code>: debe quedar Tamal.</p><h3>Agregación · pestaña Aggregations</h3><p>Añade una etapa $match con el primer objeto; después una etapa $group con el segundo. Si usas el editor de pipeline completo, la representación equivalente es:</p><pre><code>[
+  { "$match": { "categoria": "fuerte" } },
+  { "$group": {
+      "_id": "$categoria",
+      "cantidad": { "$sum": 1 },
+      "suma_precios": { "$sum": "$precio_actual" },
+      "precio_medio": { "$avg": "$precio_actual" }
+  } }
+]</code></pre><p><b>Lee el resultado:</b> un grupo fuerte, cantidad 2, suma_precios 50000, precio_medio 25000. $match filtra documentos; $group los agrupa por categoría; $sum: 1 cuenta uno por documento; $sum de un campo suma sus valores numéricos; $avg calcula su media. El prefijo $ en "$categoria" indica que se lee un campo.</p><div class="aviso"><h3>Comprueba antes de concluir</h3><p>Filtra primero solo plato_id 1. ¿Qué esperas? Cantidad 1 y ambos precios 28000. Si insertaste documentos duplicados o añadiste más platos, cambia el resultado. Estos números describen precios de catálogo, no ventas. A diferencia de este pipeline, las agregaciones Core mostradas en Firestore devuelven un resumen del conjunto; no implementan aquí GROUP BY por categoría.</p></div><p><a href="https://www.mongodb.com/docs/manual/aggregation/" target="_blank" rel="noopener">Referencia de agregación MongoDB</a></p></div></section>
 </body>
 </html>

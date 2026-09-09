@@ -3231,6 +3231,55 @@
           transform: none;
         }
       }
+    /* Keep the full architecture explanation reachable on short screens. */
+      .slide[data-title="El carrito que se convirtió en venta · la arquitectura"] { overflow-y:auto; }
+      .cover-slide { overflow-x:clip; }
+      .cover-slide h1 { overflow-wrap:anywhere; }
+
+      .guide-button { display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:.25em; margin:.45em .4em .25em 0; padding:.65em 1.15em; border-radius:1.1em; background:#191919; color:#fff !important; text-decoration:none !important; box-shadow:0 5px 15px #0002; line-height:1.25; max-width:100%; vertical-align:middle; }
+      .guide-button strong { color:#fff; font-size:1em; }
+      .guide-button span { color:#ffd600; font-size:.84em; font-weight:750; }
+      .guide-button:hover { background:#303030; }
+      .guide-button:focus-visible { outline:3px solid #167bb7; outline-offset:4px; }
+      .lesson-slide { overflow-y:auto; }
+      .lesson-slide h2 { font-size:2.35em; margin-bottom:.55em; }
+      .lesson-intro { font-size:1.08em; line-height:1.4; margin:0 0 .8em; max-width:none; }
+      .lesson-panel { min-width:0; background:#f2f6f8; border:1px solid #d7e2e9; border-radius:12px; padding:.9em 1em; }
+      .lesson-panel h3 { margin:0 0 .6em; color:#174864; font-size:1.13em; }
+      .lesson-panel p, .lesson-panel li { font-size:1em; line-height:1.4; }
+      .lesson-panel ol { padding-left:1.3em; }
+      .lesson-slide pre { font-size:.98em; line-height:1.45; padding:1em; white-space:pre-wrap; overflow-wrap:anywhere; max-height:none; margin:.4em 0 .65em; }
+      .lesson-slide pre code { font:inherit; color:inherit; background:none; }
+      .document-pair pre { font-size:.9em; }
+      .lesson-note { font-size:.95em; line-height:1.4; margin:.7em 0 0; max-width:none; }
+      .lesson-reveal { margin:.75em 0; padding:.7em 1em; background:#e9f3f9; border:1px solid #bdd3e2; border-radius:10px; }
+      .lesson-reveal summary { cursor:pointer; font-weight:800; color:#124e78; }
+      .lesson-reveal[open] { padding-bottom:1em; }
+      .slide:has(details[open]) { overflow-y:auto; }
+      .lesson-slide .brand { position:static; padding:0; margin:1.2em 0 0; }
+      .console-sample { background:white; border:1px solid #ccd7df; border-radius:8px; padding:1em; }
+      .console-bar { background:#e8eef2; margin:-1em -1em 1em; padding:.65em; font-weight:700; }
+      .console-action { display:inline-block; background:#124e78; color:#fff; padding:.5em .8em; border-radius:5px; }
+      .archify-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1em; }
+      .archify-toolbar p { flex:1; }
+      .archify-toolbar .guide-button { flex-shrink:0; }
+      .archify-frame { width:100%; height:49cqh; display:block; border:1px solid #9db2c1; border-radius:12px; background:#0b1520; }
+      @media (max-width:700px), (max-aspect-ratio:1/1) {
+        .lesson-slide { font-size:16px !important; padding:70px 20px 90px !important; }
+        .lesson-slide h2 { font-size:1.75em; }
+        .lesson-slide .g2,.lesson-slide .g3 { grid-template-columns:1fr; }
+        .lesson-slide pre { font-size:14px; }
+        .guide-button { width:100%; box-sizing:border-box; }
+        .archify-toolbar { display:block; }
+        .archify-frame { height:460px; }
+      }
+      .archify-slide { padding:4.5% 4% 3%; }
+      .archify-slide h2 { font-size:2em; margin-bottom:.2em; }
+      .archify-slide .archify-frame { height:58cqh; }
+      .archify-slide .lesson-note { font-size:.85em; }
+      .slide:has(details[open]) .brand { position:static; margin-top:1em; }
+      .slide:has(.fb.show) { overflow-y:auto; }
+      .slide:has(.fb.show) .brand { position:static; margin-top:1em; }
     </style>
   </head>
   <body>
@@ -3259,45 +3308,10 @@
           <span>Universidad de los Andes · Colsubsidio</span>
         </div>
       </section>
+<section class="slide dense" data-title="Una selección todavía no es un pedido"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>Una selección todavía no es un pedido</h2><p class="lead">El cliente cambia de opinión. Al confirmar, el negocio debe conservar lo acordado.</p><div class="g3"><div class="card"><h3>Carta</h3><p>Una ficha por plato, con atributos propios.</p></div><div class="card"><h3>Carrito</h3><p>Una selección editable. Temporal por su ciclo de vida; Firestore sí la persiste.</p></div><div class="card"><h3>Pedido</h3><p>Cantidades y precios registrados con las reglas de S9.</p></div></div><div class="checkpoint mt">Antes de abrir consolas: si cambia la carta, ¿debe cambiar un pedido ya confirmado?</div><div class="ok mt" data-r>Hoy probamos una arquitectura posible, no una obligación de usar dos bases. El navegador lee documentos y solicita a PostgreSQL confirmar el pedido. <a class="guide-button" href="#arquitectura-archify"><strong>Explorar Archify</strong><span>El mapa interactivo de esta aplicación</span></a></div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
 
-      <section class="slide dense" data-title="Herramientas y acceso">
-        <div class="ey">Antes de empezar · abre solo lo que toca</div>
-        <h2>Una ruta clara para cada herramienta</h2>
-        <p class="lead">No descargues ni configures todo a la vez. Abre ahora la consola y la guía; el carrito se abre después de la pausa con el enlace de clase ya conectado.</p>
-        <div class="tool-grid">
-          <article class="tool-card">
-            <span class="when">Ahora · práctica base</span>
-            <h3><a href="https://console.firebase.google.com/" target="_blank" rel="noopener">Firebase Console</a></h3>
-            <p>Crea <code>carta</code> en tu proyecto Firestore. Evidencia: ves la colección y sus documentos en Data Explorer.</p>
-          </article>
-          <article class="tool-card">
-            <span class="when">Ahora · paso a paso</span>
-            <h3><a href="ejercicio-firebase.html" target="_blank" rel="noopener">Guía de Firestore</a></h3>
-            <p>Sigue los pasos, el modelo de la carta ABC, reglas y la extensión con Gemini. Es el único instructivo de la sesión.</p>
-          </article>
-          <article class="tool-card">
-            <span class="when">Después de la pausa · servicio real</span>
-            <h3><a href="carrito-abc-firebase.html" target="_blank" rel="noopener">Carrito Firebase</a></h3>
-            <p>La configuración de clase ya está incorporada. Ábrelo cuando el docente lo indique; si aparece el panel de configuración, repórtalo, no pegues datos propios. La preparación y prueba docente están <a href="ejercicio-firebase.html#docente-app" target="_blank" rel="noopener">en la guía</a>.</p>
-          </article>
-          <article class="tool-card">
-            <span class="when">Extensión, no reemplazo</span>
-            <h3><a href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a></h3>
-            <p>Replica dos documentos en <code>restaurante_abc.platos</code> y compara el motor; no sustituye la práctica de Firestore. Pasos verificados en <a href="ejercicio-atlas.html" target="_blank" rel="noopener">la guía de Atlas</a>.</p>
-          </article>
-          <article class="tool-card">
-            <span class="when">Extensión guiada</span>
-            <h3><a href="https://firebase.studio/" target="_blank" rel="noopener">Firebase Studio + Gemini</a></h3>
-            <p>Genera un primer esqueleto; después verifica modelo, Rules y llamada RPC con la guía. Código generado no equivale a aplicación segura.</p>
-          </article>
-          <article class="tool-card">
-            <span class="when">Solo si Firestore está bloqueado</span>
-            <h3><a href="carrito-abc.html" target="_blank" rel="noopener">Carrito local</a></h3>
-            <p>Sirve para entender el flujo, no para reemplazar la evidencia cloud ni la venta real en PostgreSQL.</p>
-          </article>
-        </div>
-        <div class="brand"><span>Herramientas</span><span>Propósito · momento · evidencia</span></div>
-      </section>
+
+
 
       <section class="slide dense" data-title="Dónde estamos">
         <div class="ey">Dónde estamos · retomamos el hilo</div>
@@ -3317,12 +3331,12 @@
 
       <section class="slide dense" data-title="Briefing">
         <div class="ey">Briefing · el producto de hoy</div>
-        <h2>Qué se entrega hoy</h2>
+        <h2>Qué debes poder mostrar hoy</h2>
         <div class="g2 wide">
           <div class="card">
             <h3>El producto</h3>
             <p>Tu propia colección de documentos, real, en la nube &mdash; y
-              haber usado el carrito hasta completar una compra de verdad.</p>
+              haber usado el carrito hasta registrar un pedido de práctica en la base real.</p>
           </div>
           <div class="card blue">
             <h3>Los 4 criterios</h3>
@@ -3334,107 +3348,134 @@
         <div class="brand"><span>Briefing</span><span>Cuatro criterios, un producto</span></div>
       </section>
 
-      <section class="slide dense" data-title="Agenda">
-        <div class="ey">Hoy con las manos</div>
-        <h2>Agenda: no repetimos la teoría, la ponemos a prueba</h2>
-        <p class="lead">
-          La pregunta que guía todo el recorrido es esta: <b>&iquest;qué dato
-          puede ser temporal y cuál debe convertirse en verdad auditable?</b>
-        </p>
-        <div class="agenda-grid">
-          <article><b>1</b><h3>Construye</h3><p>Proyecto y colección Firestore.</p></article>
-          <article><b>2</b><h3>Modela</h3><p>Dos documentos manuales; catálogo de clase con 24.</p></article>
-          <article><b>3</b><h3>Consulta</h3><p>Filtra y detecta un documento mal cargado.</p></article>
-          <article><b>4</b><h3>Decide</h3><p>Reto: embeber o referenciar.</p></article>
-          <article><b>5</b><h3>Confirma</h3><p>Carrito Firestore → venta PostgreSQL.</p></article>
-          <article><b>6</b><h3>Contrasta</h3><p>Atlas, Cosmos DB y DP-900.</p></article>
-        </div>
-        <div class="brand"><span>Agenda</span><span>De la teoría a la herramienta</span></div>
+      <section class="slide dense lesson-slide" data-title="Una clase, tres momentos">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Una clase, tres momentos</h2>
+        <div class="g3"><div class="lesson-panel"><h3>1 · Modelar y consultar</h3><p>En tu proyecto: crear Ajiaco y Tamal, filtrar y explicar sus campos.</p><p><b>Luego:</b> leer el código y anticipar conteos y precios.</p></div><div class="lesson-panel"><h3>2 · Seguir una compra</h3><p>Después de la pausa: abrir Archify y el carrito compartido; ejecutar consultas y confirmar un pedido.</p></div><div class="lesson-panel"><h3>3 · Defender el diseño</h3><p>Embeber o referenciar; contrastar Atlas y reconocer Cosmos DB para DP-900.</p></div></div><p class="lesson-note">165 min útiles: apertura 15 · documentos y filtros 30 · consultas 20 · diseño 20 · aplicación 45 · contraste 15 · cierre 20. Pausa: 15 min. Atlas es una extensión.</p>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
-      <section class="slide dense" data-title="Crea tu proyecto y tu base">
-        <div class="ey">Práctica guiada</div>
-        <h2>Firebase: tu propio proyecto, tu propia base</h2>
-        <div class="g2 wide">
-          <div class="card">
-            <h3>Haz esto, en este orden</h3>
-            <ol class="biglist">
-              <li>Abre <a class="intext-link" href="https://console.firebase.google.com/" target="_blank" rel="noopener">Firebase Console</a> e inicia sesión.</li>
-              <li>Crea un proyecto; Analytics es opcional y no se usa hoy.</li>
-              <li>En <b>Compilación → Firestore Database</b>, crea la base <b>Standard</b>.</li>
-              <li>Elige <b>modo de producción</b>; no cambies las Rules a acceso total.</li>
-            </ol>
-            <p class="small mt">Sigue las capturas y cada clic en la <a class="intext-link" href="ejercicio-firebase.html#pasos" target="_blank" rel="noopener">guía paso a paso</a>.</p>
-          </div>
-          <div class="card">
-            <h3>Detente y comprueba</h3>
-            <p>La evidencia correcta no es una captura del asistente de creación. Debes ver el panel de <b>Firestore Database</b> de tu proyecto y el botón <b>Iniciar colección</b>.</p>
-            <div class="ok compacto mt"><b>Si lo ves:</b> tu base ya existe y puedes continuar. <b>Si no:</b> vuelve al paso 8 de la guía; no intentes cargar platos todavía.</div>
-            <p class="small mt"><b>Extensión:</b> quien termine puede abrir <a class="intext-link" href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a>, crear <code>restaurante_abc.platos</code> y repetir solo dos documentos &mdash; pasos exactos en <a class="intext-link" href="ejercicio-atlas.html" target="_blank" rel="noopener">la guía de Atlas</a>.</p>
-          </div>
-        </div>
-        <div class="brand"><span>Práctica individual</span><span>Firebase primero, Atlas si sobra tiempo</span></div>
+
+
+<section class="slide dense lesson-slide" data-title="Abre tu proyecto; el carrito vendrá después">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Abre tu proyecto; el carrito vendrá después</h2>
+        <div class="g2"><div class="lesson-panel"><h3>Ahora · tu laboratorio</h3><p>Abre la guía: desde allí entrarás a Firebase Console y crearás <b>2 documentos</b> en tu colección <code>carta</code>. Mantén esa misma guía durante la práctica.</p><a class="guide-button" href="ejercicio-firebase.html#ruta-estudiante" target="guia-firestore"><strong>📖 Guía paso a paso</strong><span>Capturas y pasos de esta práctica</span></a></div><div class="lesson-panel"><h3>Después de la pausa · aplicación de clase</h3><p>El docente ya preparó <b>24 productos</b>. Allí observarás las consultas y la venta en PostgreSQL.</p><pre data-nocopy><code>TU PROYECTO → 2 documentos propios
+APP DE CLASE → 24 productos compartidos</code></pre><p>Tus documentos no pasan automáticamente a la app. No necesitas copiar claves ni configurar el carrito.</p></div></div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
-      <section class="slide dense" data-title="Firestore: crea tu colección">
-        <div class="ey">Práctica guiada · conceptos mínimos</div>
-        <h2>Colección, documento, campo</h2>
-        <p class="lead">
-          <b>Colección</b> &mdash; el sitio donde viven cosas del mismo tipo.
-          <b>Documento</b> &mdash; una de esas cosas, y puede tener campos que
-          sus vecinos no tienen. <b>Campo</b> &mdash; un dato del documento:
-          texto, número, fecha, booleano, arreglo u objeto.
-        </p>
-        <div class="ok mt">
-          <b>Lo que se consulta junto y cambia junto puede vivir junto.</b>
-          En una base relacional repartes el dato entre tablas y lo vuelves a
-          juntar con <code>JOIN</code>. Aquí puedes guardarlo como una unidad,
-          tal como una pantalla lo pide. El patrón de acceso, no la forma de la
-          pantalla por sí sola, decide.
-        </div>
-        <p class="small mt">Acción inmediata: en <a class="intext-link" href="ejercicio-firebase.html#carta-abc" target="_blank" rel="noopener">la ruta ABC de la guía</a>, crea <code>carta</code> y conserva el <code>plato_id</code> dentro de cada documento aunque Firestore asigne su propio ID.</p>
-        <div class="brand"><span>Firestore</span><span>Tres palabras nuevas</span></div>
+
+      <section class="slide dense lesson-slide" data-title="Crea Firestore y comprueba dónde estás">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Crea Firestore y comprueba dónde estás</h2>
+        <div class="g2"><div class="lesson-panel"><h3>Haz estos cuatro pasos</h3><ol><li>Desde la guía abierta, entra a tu proyecto en Firebase Console.</li><li>En <b>Compilación → Firestore Database</b>, crea la base.</li><li>Selecciona edición <b>Standard</b> y modo <b>producción</b>.</li><li>Espera a ver <b>Iniciar colección</b>.</li></ol><a class="guide-button" href="ejercicio-firebase.html#firestore-paso-1" target="guia-firestore"><strong>📖 Guía paso a paso</strong><span>Crear el proyecto y la base · pasos 1–2</span></a></div><div class="lesson-panel"><h3>Qué debes ver</h3><div class="console-sample"><div class="console-bar">Vista orientativa · Firestore Database</div><p><b>Datos</b> &nbsp; Reglas &nbsp; Índices</p><p>Base de datos creada</p><span class="console-action">＋ Iniciar colección</span></div><p>La consola es la herramienta de administración. Puedes crear tus documentos allí sin abrir el acceso público de la aplicación.</p></div></div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
-      <section class="slide dense" data-title="Carga la carta, documento por documento">
-        <div class="ey">Práctica guiada · carga de datos</div>
-        <h2>Dos documentos manuales bastan; 24 productos para probar el catálogo</h2>
-        <p class="lead">
-          <b>Insert Document</b> en Firestore, uno por uno &mdash; sin código.
-          Dos platos, a propósito muy distintos: el Ajiaco tiene alérgenos y
-          foto; el Tamal tiene horario de disponibilidad. Ninguno comparte
-          esos campos con el otro, y eso no da ningún error.
-        </p>
-        <div class="g2 wide mt">
-          <div class="card">
-            <h3>El mínimo que se repite</h3>
-            <p><code>plato_id</code> (número), <code>nombre</code> (texto), <code>precio_actual</code> (número), <code>categoria</code> (texto) y <code>descripcion</code> (texto).</p>
-          </div>
-          <div class="card blue">
-            <h3>Lo que cambia a propósito</h3>
-            <p>Usa arreglos para <code>alergenos</code>; texto para <code>disponible_desde</code>/<code>disponible_hasta</code>. Los dos documentos exactos están <a class="intext-link" href="ejercicio-firebase.html#carta-abc" target="_blank" rel="noopener">en la guía</a>.</p>
-          </div>
-        </div>
-        <div class="stop mt">
-          En una tabla, dos filas con columnas distintas es imposible. Aquí
-          es normal &mdash; es la diferencia entre esquema fijo y esquema
-          flexible, vista con las manos.
-        </div>
-        <div class="brand"><span>Carga la carta</span><span>Esquema flexible, con las manos</span></div>
+      <section class="slide dense lesson-slide" data-title="Colección, documento y campo: mira la diferencia">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Colección, documento y campo: mira la diferencia</h2>
+        <div class="g2"><div class="lesson-panel"><h3>Así se organiza tu carta</h3><pre data-nocopy><code>carta                         ← colección
+├── [ID automático de Ajiaco]  ← documento
+│   ├── plato_id: 1           ← campo numérico
+│   └── nombre: &quot;Ajiaco…&quot;      ← campo de texto
+└── [ID automático de Tamal]   ← otro documento
+    ├── plato_id: 8
+    └── disponible_desde: &quot;06:00&quot;</code></pre></div><div class="lesson-panel"><h3>Ahora hazlo tú</h3><ol><li>Pulsa <b>Iniciar colección</b> y escribe <code>carta</code>.</li><li>Deja el ID de documento en <b>Automático</b>.</li><li>Añade los campos del JSON de la siguiente diapositiva.</li></ol><div class="checkpoint"><b>Dos IDs distintos:</b> Firestore identifica el documento; <code>plato_id</code> identifica el plato del negocio.</div><a class="guide-button" href="ejercicio-firebase.html#firestore-paso-3" target="guia-firestore"><strong>📖 Guía paso a paso</strong><span>Colección y campos · pasos 3–6</span></a></div></div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
-      <section class="slide dense" data-title="Consulta y filtra">
-        <div class="ey">Práctica guiada · consulta</div>
-        <h2>El Data Explorer, sin una línea de código</h2>
-        <p class="lead">
-          Filtra por campo, por alérgeno y por disponibilidad &mdash; directo en
-          la interfaz. Para esta primera exploración usaremos el Data Explorer:
-          permite inspeccionar el resultado y detectar un documento mal cargado
-          antes de automatizar nada con código.
-        </p>
-        <div class="checkpoint mt"><b>Prueba y evidencia:</b> filtra <code>vegetariano == true</code> (debe quedar Arepa) y <code>categoria == fuerte</code>. Si el resultado no coincide, corrige tipo y nombre del campo antes de continuar; no lo “arregles” desde el carrito.</div>
-        <div class="brand"><span>Consulta y filtra</span><span>La interfaz, no el código</span></div>
+      <section class="slide dense lesson-slide" data-title="Estos son los dos documentos que vas a crear" id="documentos-reales">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Estos son los dos documentos que vas a crear</h2>
+        <p class="lesson-intro">JSON del catálogo de clase: copia los valores a los campos de la consola. <b>precio_actual es número; alergenos es un arreglo.</b></p><div class="g2 document-pair"><div class="lesson-panel"><h3>Ajiaco · plato_id 1</h3><pre><code>{
+  &quot;plato_id&quot;: 1,
+  &quot;nombre&quot;: &quot;Ajiaco santafereño&quot;,
+  &quot;precio_actual&quot;: 28000,
+  &quot;categoria&quot;: &quot;fuerte&quot;,
+  &quot;alergenos&quot;: [
+    &quot;gluten&quot;,
+    &quot;lácteos&quot;
+  ],
+  &quot;descripcion&quot;: &quot;Sopa bogotana de pollo con tres papas y guascas, servida con crema de leche y alcaparras aparte.&quot;,
+  &quot;foto&quot;: &quot;ajiaco.jpg&quot;
+}</code></pre></div><div class="lesson-panel"><h3>Tamal · plato_id 8</h3><pre><code>{
+  &quot;plato_id&quot;: 8,
+  &quot;nombre&quot;: &quot;Tamal tolimense&quot;,
+  &quot;precio_actual&quot;: 22000,
+  &quot;categoria&quot;: &quot;fuerte&quot;,
+  &quot;descripcion&quot;: &quot;Tamal de cerdo y pollo envuelto en hoja de plátano, servido en el desayuno.&quot;,
+  &quot;alergenos&quot;: [
+    &quot;gluten&quot;
+  ],
+  &quot;disponible_desde&quot;: &quot;06:00&quot;,
+  &quot;disponible_hasta&quot;: &quot;11:00&quot;,
+  &quot;nota_disponibilidad&quot;: &quot;Solo se sirve en el horario de desayuno.&quot;
+}</code></pre></div></div><p class="lesson-note"><b>Observa:</b> ambos tienen alérgenos; solo Ajiaco tiene foto y solo Tamal tiene horario. Son los valores del archivo de clase, no una captura de tu base.</p>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
+
+      <section class="slide dense lesson-slide" data-title="Tu primera consulta: ¿qué platos son fuertes?" id="consultas-en-clase">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Tu primera consulta: ¿qué platos son fuertes?</h2>
+        <p class="lesson-intro">En tu colección individual hay únicamente Ajiaco y Tamal. Antes de filtrar, anticipa cuántos documentos deben aparecer.</p><div class="g2"><div class="lesson-panel"><h3>1 · Configura el filtro en la consola</h3><pre data-nocopy><code>Colección: carta
+Campo:     categoria
+Operador:  es igual a (==)
+Valor:     fuerte  [texto]</code></pre><p>Abre el constructor de consultas, añade el filtro y ejecútalo. Aquí se introducen campos y valores, no JavaScript.</p><a class="guide-button" href="ejercicio-firebase.html#firestore-paso-7" target="guia-firestore"><strong>📖 Guía paso a paso</strong><span>Ejecutar filtros · paso 7</span></a></div><div class="lesson-panel"><h3>2 · Resultado esperado</h3><pre data-nocopy><code>[
+  { &quot;plato_id&quot;: 1, &quot;nombre&quot;: &quot;Ajiaco santafereño&quot; },
+  { &quot;plato_id&quot;: 8, &quot;nombre&quot;: &quot;Tamal tolimense&quot; }
+]</code></pre><p><b>Lectura del resultado:</b> 2 documentos coinciden. Se muestran solo ID y nombre para compararlos; la consulta recupera los documentos completos.</p><div class="checkpoint">Cambia el campo a <code>disponible_desde</code> y el valor a <code>06:00</code>. Debe quedar solo Tamal: Ajiaco no tiene ese campo.</div></div></div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
+      </section>
+<section class="slide dense lesson-slide" data-title="La misma consulta, ahora en JavaScript">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>La misma consulta, ahora en JavaScript</h2>
+        <p class="lesson-intro">La consola nos ayudó a inspeccionar. La app usa un <b>SDK</b>: funciones de JavaScript que solicitan datos a Firestore.</p><div class="g2"><div class="lesson-panel"><h3>Código que lee los dos platos base</h3><pre><code>const carta = collection(db, &quot;carta&quot;);
+const base = query(
+  carta,
+  where(&quot;plato_id&quot;, &quot;in&quot;, [1, 8])
+);
+const r = await getDocsFromServer(base);
+console.table(r.docs.map(d =&gt; d.data()));</code></pre></div><div class="lesson-panel"><h3>Lee cada línea</h3><ol><li><code>db</code>: conexión de la app al proyecto de clase.</li><li><code>collection</code>: apunta a <code>carta</code>.</li><li><code>where</code>: deja los IDs 1 y 8.</li><li><code>query</code>: construye la consulta.</li><li><code>getDocsFromServer</code>: la ejecuta.</li><li><code>data()</code>: lee los campos devueltos.</li></ol><div class="ok">Resultado: Ajiaco y Tamal, aunque la app tenga 24 productos. No hay un orden garantizado.</div></div></div><p class="lesson-note">Este es el código del panel <b>Consultas de carta</b> de la app; ya tiene el SDK y la conexión. Se ejecutará después de la pausa con su botón. No se pega en Firebase Console.</p>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
+      </section>
+<section class="slide dense lesson-slide" data-title="Filtrar y ordenar responden preguntas distintas">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Filtrar y ordenar responden preguntas distintas</h2>
+        <div class="g2"><div class="lesson-panel"><h3>¿Qué plato tiene horario de desayuno?</h3><pre><code>const horario = query(
+  carta,
+  where(&quot;disponible_desde&quot;, &quot;==&quot;, &quot;06:00&quot;)
+);
+const r = await getDocsFromServer(horario);</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Tamal tolimense&quot;,
+  &quot;disponible_desde&quot;: &quot;06:00&quot; }</code></pre><p><b>where</b> selecciona documentos que cumplen una condición.</p></div><div class="lesson-panel"><h3>¿Cuál es el más barato de los 24?</h3><pre><code>const barato = query(
+  carta,
+  orderBy(&quot;precio_actual&quot;, &quot;asc&quot;),
+  limit(1)
+);
+const r = await getDocsFromServer(barato);</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Pan de bono recién horneado&quot;,
+  &quot;precio_actual&quot;: 5000 }</code></pre><p><b>orderBy</b> ordena de menor a mayor; <b>limit(1)</b> deja un documento.</p></div></div><div class="checkpoint mt">Ambas consultas usan la carta compartida de 24 productos. Con solo tus dos documentos, el más barato sería Tamal ($22.000). El conjunto consultado cambia la respuesta.</div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
+      </section>
+<section class="slide dense lesson-slide" data-title="Contar, sumar y promediar: calcula antes de ejecutar" id="agregaciones-en-clase">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Contar, sumar y promediar: calcula antes de ejecutar</h2>
+        <p class="lesson-intro">Volvemos al conjunto <code>base</code>: únicamente Ajiaco (28.000) y Tamal (22.000).</p><div class="g2"><div class="lesson-panel"><h3>Consulta al servidor</h3><pre><code>const resumen = await getAggregateFromServer(
+  base,
+  {
+    cantidad: count(),
+    suma: sum(&quot;precio_actual&quot;),
+    promedio: average(&quot;precio_actual&quot;)
+  }
+);
+console.log(resumen.data());</code></pre><p>count cuenta; sum suma un campo; average calcula su media. El servidor devuelve el resumen.</p></div><div class="lesson-panel"><h3>Resultado esperado</h3><pre data-nocopy><code>{
+  &quot;cantidad&quot;: 2,
+  &quot;suma&quot;: 50000,
+  &quot;promedio&quot;: 25000
+}</code></pre><p><b>Haz la cuenta:</b><br>28.000 + 22.000 = 50.000<br>50.000 ÷ 2 = 25.000</p><div class="checkpoint">Son precios de catálogo. No son ventas, utilidad ni gasto medio por cliente.</div></div></div><p class="lesson-note">Precios numéricos y campos presentes. Un precio como texto no participa como número; un promedio sin valores puede ser null. La agregación requiere red y no es un listener.</p>
+        <details class="lesson-reveal"><summary>Comprueba: ¿qué significa el promedio 25.000?</summary><div class="q" data-answer="b"><div class="qt">El conjunto contiene Ajiaco y Tamal. ¿Qué calculamos?</div><div class="opts"><button class="opt" data-o="a" data-f="No hay clientes ni ventas en esta consulta: son documentos de carta.">Ingreso medio por cliente</button><button class="opt" data-o="b" data-f="Correcto: (28000 + 22000) / 2. Es el precio medio de los dos platos consultados.">Precio medio de los dos platos</button><button class="opt" data-o="c" data-f="No conocemos costos ni cantidades vendidas; no calculamos ganancias.">Ganancia por venta</button><button class="opt" data-o="d" data-f="La colección carta describe productos, no pedidos.">Valor medio de los pedidos</button></div><button class="verify" type="button">Verificar respuesta</button><div class="fb" aria-live="polite"></div></div></details><div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
+      </section>
+
 
       <section class="slide dense" data-title="Compara con la tabla de la sesión 9">
         <div class="ey">Comparación con la sesión 9</div>
@@ -3472,12 +3513,12 @@
             <p>La tarjeta de carta pide nombre, precio, alérgenos, disponibilidad y opciones juntos. En 24 documentos, cada producto puede tener sus propios campos sin rellenar columnas que no aplican.</p>
           </article>
           <article class="card">
-            <h3>La parte que no se negocia</h3>
-            <p>Al confirmar una compra, precio vigente, mesa, líneas y pago deben quedar consistentes. Por eso la venta no se vuelve documento: sigue en PostgreSQL.</p>
+            <h3>La regla de nuestra implementación</h3>
+            <p>Al confirmar una compra, precio vigente, mesa, líneas y pago deben quedar consistentes. En esta implementación conservamos esas reglas en PostgreSQL; Firestore también admite transacciones.</p>
           </article>
         </div>
         <div class="checkpoint mt"><b>Prueba de realidad:</b> si la carta recibe muchas lecturas completas y pocos cambios por producto, un documento reduce el trabajo de armar cada tarjeta. Si se requiere cruzar, actualizar o auditar muchos datos compartidos, SQL gana terreno.</div>
-        <p class="small mt">El catálogo ampliado, el criterio de diseño y la sincronización de los IDs 9–24 con PostgreSQL están en <a class="intext-link" href="ejercicio-firebase.html#catalogo-24" target="_blank" rel="noopener">la guía de catálogo de clase</a>.</p>
+        <p class="lesson-note">Los 24 productos comparten plato_id con PostgreSQL. El docente prepara esa correspondencia antes de clase.</p>
         <div class="brand"><span>Tamaño y patrón</span><span>Escala no es la primera pregunta</span></div>
       </section>
 
@@ -3512,37 +3553,19 @@
         <div class="brand"><span>Documento o SQL</span><span>El acceso y la consistencia deciden</span></div>
       </section>
 
-      <section class="slide mid" data-title="RETO &middot; Embeber o referenciar">
-        <div class="break">
-          <div class="ey">Reto &middot; diferenciación técnica</div>
-          <h2><span class="fnpill">R</span> La receta de un plato</h2>
-          <div class="g2 wide">
-            <div>
-              <h3>El escenario</h3>
-              <p class="lead">Un plato lleva varios ingredientes. &iquest;Los
-                embebes dentro del documento del plato, o los referencias en
-                una colección aparte?</p>
-            </div>
-            <div>
-              <h3>Lo que hay que entregar</h3>
-              <div class="ok"><b>Núcleo:</b> decide una opción y justifícala
-                con el patrón de acceso.</div>
-              <div class="stop mt"><b>Extensión:</b> implementa las dos
-                formas en tu base y compara cuántos clics o consultas hace
-                falta para responder &laquo;&iquest;qué platos usan
-                pollo?&raquo; en cada una.</div>
-            </div>
-          </div>
-          <table class="tbl mt" style="font-size:.68em">
-            <thead><tr><th>Criterio</th><th>Embeber</th><th>Referenciar</th></tr></thead>
-            <tbody>
-              <tr><td><b>Cardinalidad</b></td><td>1 a pocos, acotado (3&ndash;5 ingredientes)</td><td>1 a N sin techo claro</td></tr>
-              <tr><td><b>Mutabilidad</b></td><td>el ingrediente casi no cambia solo</td><td>cambia solo, y afecta a muchos platos a la vez</td></tr>
-              <tr><td><b>Patrón de consulta</b></td><td>siempre se lee junto al plato</td><td>a veces se consulta el ingrediente solo</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="brand"><span>Reto</span><span>Embeber o referenciar</span></div>
+      <section class="slide dense lesson-slide" data-title="La receta: ¿embebida o referenciada?">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>La receta: ¿embebida o referenciada?</h2>
+        <p class="lesson-intro">¿Qué platos usan pollo? Mira las dos representaciones antes de elegir.</p><div class="g2"><div class="lesson-panel"><h3>Embeber · ingredientes dentro del plato</h3><pre><code>{
+  &quot;plato_id&quot;: 1,
+  &quot;nombre&quot;: &quot;Ajiaco&quot;,
+  &quot;ingredientes&quot;: [&quot;pollo&quot;, &quot;papa&quot;, &quot;guascas&quot;]
+}</code></pre><pre><code>where(&quot;ingredientes&quot;, &quot;array-contains&quot;, &quot;pollo&quot;)</code></pre><p>Lees la receta junto al plato. Si repites propiedades del ingrediente, tendrás que mantener esas copias.</p></div><div class="lesson-panel"><h3>Referenciar · ingredientes con vida propia</h3><pre><code>// Documento del plato
+{ &quot;plato_id&quot;: 1, &quot;ingrediente_ids&quot;: [&quot;pollo&quot;] }
+
+// Documento ingredientes/pollo
+{ &quot;nombre&quot;: &quot;Pollo&quot;, &quot;unidad&quot;: &quot;gramos&quot; }</code></pre><p>El ingrediente puede cambiar en un sitio. Para mostrar sus propiedades debes resolver la referencia: Firestore no hace un JOIN automático.</p></div></div><div class="checkpoint mt"><b>Práctica base:</b> elige y justifica según lectura y cambios. <b>Extensión:</b> implementa ambas formas y comprueba qué lecturas necesita la misma pregunta.</div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
       <section class="slide yellow mid" data-title="Pausa" data-break="15">
@@ -3560,38 +3583,11 @@
         <div class="brand"><span>Pausa</span><span>ANDESDB &middot; Sesión 11</span></div>
       </section>
 
-      <section class="slide dense" data-title="El carrito que se convirtió en venta &middot; la arquitectura">
-        <div class="ey">Antes de usarlo</div>
-        <h2>Un documento efímero, una venta que no lo es</h2>
-        <p class="lead compacto" style="font-size:1.05em;max-width:none;margin-bottom:.35em">
-          El Reto 1 de ayer quedó abierto en &laquo;pues lo guardo en las dos&raquo;: esta es la respuesta con infraestructura real.
-        </p>
-        <div style="text-align:right;margin-bottom:.3em">
-          <a href="../../assets/architecture/firebase-supabase-runtime.archify.html" target="_blank" rel="noopener"
-             style="display:inline-flex;align-items:center;gap:.35em;padding:.28em .85em;border-radius:999px;background:#124e78;color:#fff;font-weight:800;font-size:.72em;white-space:nowrap;text-decoration:none">
-            &#10530; Pantalla completa
-          </a>
-        </div>
-        <div style="border:1px solid #d7dee5;border-radius:12px;overflow:hidden;background:#0b1520;box-shadow:0 2px 10px rgba(0,0,0,.12)">
-          <iframe
-            src="../../assets/architecture/firebase-supabase-runtime.archify.html"
-            title="Arquitectura interactiva: el navegador del estudiante habla con dos puertas separadas, Firebase (identidad y estado temporal) y Supabase (API limitada y venta durable). Usa las vistas guiadas, la búsqueda y el zoom para explorarla. Si no cabe completa, ábrela a pantalla completa con el botón de arriba."
-            loading="lazy"
-            style="display:block;width:100%;height:55cqh;border:0"
-          ></iframe>
-        </div>
-        <p class="small mt compacto">Diagrama interactivo (no una imagen): las dos nubes <b>nunca se conectan entre sí</b>, el navegador es el único puente. Revisa qué protege la función en el <a class="intext-link" href="../M3/tutorial-supabase.html" target="_blank" rel="noopener">tutorial de Supabase de la sesión 9</a> (no cambies tablas ni permisos ahora).</p>
-        <details class="mt compacto" style="position:relative">
-          <summary class="small" style="cursor:pointer;font-weight:800">Cómo usar este diagrama, paso a paso</summary>
-          <ol class="small" style="position:absolute;z-index:6;top:100%;left:0;margin:.35em 0 0;padding:.6em .9em .6em 1.9em;max-height:6em;overflow-y:auto;width:min(52ch,92%);background:var(--paper,#fff);border:1px solid #d7dee5;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18)">
-            <li>Pulsa <b>?</b> dentro del diagrama: abre la Guía con todos los atajos disponibles.</li>
-            <li>Arriba, cambia entre las tres vistas guiadas (&laquo;Dos puertas&raquo; / &laquo;El carrito de Firestore&raquo; / &laquo;La venta en PostgreSQL&raquo;) o pulsa <b>&#9654; Play story</b> para recorrerlas solo.</li>
-            <li>Haz clic en cualquier caja: se abre su ficha con lo que recibe, entrega y protege, y la línea exacta del código que la sustenta.</li>
-            <li>Escribe en el buscador el nombre de un componente (por ejemplo &laquo;Firestore&raquo;) para ubicarlo sin recorrer todo el diagrama.</li>
-            <li><b>Present</b> lo pone a pantalla completa dentro del propio diagrama; el botón &laquo;Pantalla completa&raquo; de arriba lo abre en una pestaña aparte con el mismo efecto.</li>
-          </ol>
-        </details>
-        <div class="brand"><span>Arquitectura</span><span>Documento efímero &rarr; venta relacional</span></div>
+      <section class="slide dense lesson-slide archify-slide" data-title="Archify: sigue el recorrido de una compra" id="arquitectura-archify">
+        <div class="ey">Arquitectura interactiva · antes de usar el carrito</div>
+        <h2>Archify: sigue el recorrido de una compra</h2>
+        <div class="archify-toolbar"><p><b>1.</b> Dos puertas · <b>2.</b> Carrito en Firestore · <b>3.</b> Pedido en PostgreSQL. Pulsa una caja para ver qué recibe y qué protege.</p><a class="guide-button" href="../../assets/architecture/firebase-supabase-runtime.archify.html?present=1" target="_blank" rel="noopener"><strong>⛶ Abrir Archify</strong><span>Diagrama interactivo en una pestaña amplia</span></a></div><iframe class="archify-frame" src="../../assets/architecture/firebase-supabase-runtime.archify.html?present=1" title="Archify: arquitectura real del carrito Firebase y la confirmación en Supabase" loading="eager" allow="fullscreen"></iframe><p class="lesson-note">En esta aplicación el navegador llama a ambos servicios: Firestore guarda la selección; la función PostgreSQL valida el pedido. Confirmar y limpiar son pasos separados. Dentro de Archify: <b>?</b> abre la ayuda; <b>Play story</b> recorre las vistas.</p>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
       <section class="slide mid" data-title="Usa el carrito: agrega platos">
@@ -3613,6 +3609,18 @@
         </div>
         <div class="brand"><span>El carrito</span><span>Agregar platos</span></div>
       </section>
+<section class="slide dense lesson-slide" data-title="Ejecuta el código y contrasta la respuesta">
+        <div class="ey">Práctica guiada · Restaurante ABC</div>
+        <h2>Ejecuta el código y contrasta la respuesta</h2>
+        <div class="g2"><div class="lesson-panel"><h3>Ahora · panel Consultas de carta</h3><ol><li>Abre el carrito compartido y localiza el panel.</li><li>Ejecuta <b>Ajiaco y Tamal</b>: 2 documentos.</li><li>Ejecuta <b>resumen</b>: 2, 50.000 y 25.000.</li><li>Selecciona <b>Solo Ajiaco</b>. Predice antes de ejecutar.</li></ol><a class="guide-button" href="carrito-abc-firebase.html#consultas-carta" target="_blank" rel="noopener"><strong>▶ Ejecutar las consultas</strong><span>Panel de solo lectura · catálogo de clase</span></a></div><div class="lesson-panel"><h3>Tu comprobación</h3><pre data-nocopy><code>Solo Ajiaco:
+  cantidad = ?
+  suma     = ?
+  promedio = ?</code></pre><details class="lesson-reveal"><summary>Ver resultado esperado después de intentarlo</summary><pre data-nocopy><code>{ &quot;cantidad&quot;: 1,
+  &quot;suma&quot;: 28000,
+  &quot;promedio&quot;: 28000 }</code></pre><p>Un único precio: suma y promedio coinciden. Cambió el conjunto, no la fórmula.</p></details><p>Si aparece un error de red, permiso o índice, no significa cero resultados. El docente revisa la conexión o el índice.</p></div></div>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
+      </section>
+
 
       <section class="slide mid" data-title="Usa el carrito: confirma la compra">
         <div class="break">
@@ -3629,7 +3637,7 @@
             <code>plato.precio_actual</code>, dentro de la función, en el
             instante de pagar.
           </div>
-          <p class="small mt">La explicación y el ejemplo de llamada RPC están en <a class="intext-link" href="ejercicio-firebase.html#supabase-directo" target="_blank" rel="noopener">la guía: “Supabase directo”</a>.</p>
+          <p class="lesson-note">Debajo puedes desplegar el fragmento real de la función que consulta el precio. Usa datos de prueba para registrar el pedido.</p>
           <details class="mt">
             <summary class="small" style="cursor:pointer;font-weight:800">Ver el fragmento real de <code>registrar_pedido()</code> &mdash; no es magia</summary>
             <pre style="font-size:.62em;margin-top:.5em;text-align:left"><code>FOR v_linea IN SELECT * FROM jsonb_array_elements(p_lineas) LOOP
@@ -3658,16 +3666,12 @@ END LOOP;</code></pre>
           guardada y la interfaz muestra &laquo;Limpieza pendiente&raquo;.
         </p>
         <div class="checkpoint mt">
-          Antes de seguir, selecciona: ¿por qué tu carrito vivía en un
-          documento y tu compra vive en tablas? Esa es tu evidencia &mdash; no
-          hay una página aparte que escribir. Tres palabras deberían aparecer
-          en tu respuesta: <b>atomicidad</b> (todo o nada, el <code>BEGIN…END</code>
-          de la función), <b>concurrencia</b> (dos clientes, una sola fuente de
-          verdad) y <b>volatilidad</b> (el documento se pierde sin costo; la
-          fila, no).
+          Antes de seguir, explica: ¿qué se confirma en PostgreSQL y qué se limpia después en Firestore? La transacción de la función protege las escrituras del pedido; no abarca ambas nubes. Temporal no significa que Firestore pierda documentos sin costo.
         </div>
         <div class="brand"><span>Verificación</span><span>El producto es la prueba</span></div>
       </section>
+<section class="slide dense" data-title="¿Y si el carrito no se puede borrar?"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>¿Y si el carrito no se puede borrar?</h2><div class="q" data-answer="2"><div class="qt">PostgreSQL confirmó el pedido; falla la limpieza en Firestore. ¿Qué concluyes?</div><div class="opts"><button class="opt" data-o="0" data-f="El fallo posterior de limpieza no elimina el pedido confirmado.">Se perdió el pedido</button><button class="opt" data-o="1" data-f="No hay una transacción distribuida entre estas dos operaciones.">Se revierte automáticamente todo en ambas nubes</button><button class="opt" data-o="2" data-f="Correcto: conservar el pedido y atender la limpieza son responsabilidades distintas.">El pedido existe y queda limpieza pendiente</button><button class="opt" data-o="3" data-f="Repetir una confirmación sin comprobarla puede duplicar operaciones.">Hay que cobrar otra vez</button></div><button class="verify" type="button">Verificar respuesta</button><div class="fb" aria-live="polite"></div></div><div class="ok mt" data-r><b>Cierre docente:</b> documentos para fichas y selección; PostgreSQL para las reglas del pedido ya implementadas. Firestore también tiene transacciones. El cliente envía IDs y cantidades, el servidor consulta precios. Aquí se registra un pago de práctica: no hay pasarela bancaria ni descuento de inventario demostrado.</div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
+
 
       <section class="slide dense" data-title="MongoDB Atlas: qué lo diferencia de Firebase">
         <div class="ey">Contraste de herramientas</div>
@@ -3687,24 +3691,31 @@ END LOOP;</code></pre>
           Services/Data API para el carrito web sin backend. Por eso el carrito
           real de hoy usa Firestore.
         </div>
-        <p class="small mt">Abre <a class="intext-link" href="https://cloud.mongodb.com/" target="_blank" rel="noopener">MongoDB Atlas</a> solo para la extensión: crea <code>restaurante_abc</code>, <code>platos</code> y replica Ajiaco + Tamal; conserva Firestore como recorrido obligatorio.</p>
-        <div class="brand"><span>Firebase vs. Atlas</span><span>Un hecho, no una opinión</span></div>
+        <p class="small mt">Abre MongoDB Atlas solo para la extensión: crea <code>restaurante_abc</code>, <code>platos</code> y replica Ajiaco + Tamal; conserva Firestore como recorrido obligatorio.</p><a class="guide-button" href="ejercicio-atlas.html" target="guia-atlas"><strong>📖 Guía paso a paso</strong><span>Extensión Atlas · acceso y práctica en un lugar</span></a>
+        <details class="lesson-reveal"><summary>Ver consulta y agregación sobre Ajiaco y Tamal</summary><div class="g2"><div class="lesson-panel"><h3>Documents · filtro JSON</h3><pre><code>{ &quot;categoria&quot;: &quot;fuerte&quot; }</code></pre><p>Devuelve los dos platos de tu colección de práctica.</p></div><div class="lesson-panel"><h3>Aggregations · pipeline</h3><pre><code>[
+  { &quot;$match&quot;: { &quot;categoria&quot;: &quot;fuerte&quot; } },
+  { &quot;$group&quot;: {
+      &quot;_id&quot;: &quot;$categoria&quot;,
+      &quot;cantidad&quot;: { &quot;$sum&quot;: 1 },
+      &quot;precio_medio&quot;: { &quot;$avg&quot;: &quot;$precio_actual&quot; }
+  } }
+]</code></pre><p>Un grupo fuerte: cantidad 2, precio_medio 25000. $match filtra; $group agrupa; $sum: 1 cuenta documentos.</p></div></div></details><div class="brand"><span>Firebase vs. Atlas</span><span>Un hecho, no una opinión</span></div>
       </section>
 
-      <section class="slide dense" data-title="De Atlas a Cosmos DB">
-        <div class="ey">Puente DP-900</div>
-        <h2>Un mapa útil, no una traducción uno a uno</h2>
-        <table class="tbl">
-          <thead><tr><th>Lo que hiciste en Atlas</th><th>Se llama así en Cosmos DB</th></tr></thead>
-          <tbody>
-            <tr><td>Proyecto / clúster</td><td>Cuenta de Cosmos DB</td></tr>
-            <tr><td>Base de datos</td><td>Base de datos</td></tr>
-            <tr><td>Colección</td><td>Contenedor</td></tr>
-            <tr><td>Documento</td><td>Ítem: <code>id</code> + clave de partición</td></tr>
-          </tbody>
-        </table>
-        <p class="small mt">La cuenta contiene bases; una base contiene contenedores. Cada contenedor escala mediante la <b>clave de partición</b> que elijas en el documento, y su capacidad se mide en <b>RU/s (Request Units)</b>. DP-900 pregunta por el servicio de Azure, no por la herramienta usada en clase.</p>
-        <div class="brand"><span>Puente DP-900</span><span>No relacional en Azure</span></div>
+      <section class="slide dense lesson-slide" data-title="Cosmos DB: el mismo plato, en el servicio de Azure" id="cosmos-explicado">
+        <div class="ey">Puente DP-900 · reconocer el servicio</div>
+        <h2>Cosmos DB: el mismo plato, en el servicio de Azure</h2>
+        <p class="lesson-intro"><b>¿Por qué aparece aquí?</b> DP-900 evalúa servicios de Azure. Reconoceremos cómo se guarda un documento en Cosmos DB for NoSQL; no estamos migrando el carrito.</p><div class="g2"><div class="lesson-panel"><h3>Dónde vive el plato</h3><pre data-nocopy><code>Cuenta:     abc-cosmos
+└── Base:   restaurante_abc
+    └── Contenedor: carta
+        └── Ítem: &quot;plato-1&quot;</code></pre><p>La cuenta agrupa recursos; la base agrupa contenedores; el contenedor guarda ítems JSON. Se parece a la organización que ya viste, pero son recursos de otro servicio.</p></div><div class="lesson-panel"><h3>Cómo se vería el ítem · ejemplo didáctico</h3><pre><code>{
+  &quot;id&quot;: &quot;plato-1&quot;,
+  &quot;plato_id&quot;: 1,
+  &quot;nombre&quot;: &quot;Ajiaco santafereño&quot;,
+  &quot;precio_actual&quot;: 28000,
+  &quot;categoria&quot;: &quot;fuerte&quot;
+}</code></pre><p>El <code>id</code> de Cosmos es texto. <code>plato_id</code> sigue siendo nuestro ID de negocio.</p></div></div><details class="lesson-reveal"><summary>¿Qué son la clave de partición y las RU?</summary><p>La clave de partición es un campo elegido para distribuir datos y dirigir consultas. Por ejemplo, /categoria permite ilustrar la idea, pero sus pocos valores pueden concentrar carga: no es una recomendación para producción. Una RU mide trabajo de una operación; RU/s expresa capacidad por segundo en throughput aprovisionado. No significa filas por segundo.</p></details><p class="lesson-note"><a href="https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model" target="_blank" rel="noopener">Referencia Microsoft: cuenta, base, contenedor e ítem</a> · <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/request-units" target="_blank" rel="noopener">Qué mide una RU</a></p>
+        <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
       <section class="slide dense" data-title="DP-900">
@@ -3801,7 +3812,7 @@ END LOOP;</code></pre>
       <div class="progress"><div class="bar" id="bar"></div></div>
     </main>
     <nav class="toolbar" aria-label="Controles">
-      <span class="count" id="count">1 / 25</span
+      <span class="count" id="count">1 / 31</span
       ><button
         class="ctl"
         id="prev"
@@ -4289,19 +4300,32 @@ END LOOP;</code></pre>
           },
           { passive: true },
         );
+        function openHash() {
+          const id = decodeURIComponent(location.hash.slice(1));
+          const n = ss.findIndex(slide => slide.id === id);
+          if (id && n >= 0) go(n);
+        }
+        window.addEventListener("hashchange", openHash);
+        document.addEventListener("click", event => {
+          const link = event.target.closest('a[href^="#"]');
+          if (!link) return;
+          const id = link.getAttribute("href").slice(1);
+          const n = ss.findIndex(slide => slide.id === id);
+          if (n < 0) return;
+          event.preventDefault();
+          history.replaceState(null, "", "#" + id);
+          go(n);
+          ss[n].scrollTop = 0;
+        });
         upd();
+        openHash();
         render();
       })();
       /* --- copiar el código de un bloque, para que nadie lo transcriba a mano --- */
       document.querySelectorAll(".slide pre").forEach(function (pre) {
         // solo los bloques que son código: las etiquetas y los esquemas no se copian
         if (pre.hasAttribute("data-nocopy")) return;
-        if (
-          !/\b(SELECT|WITH|FROM|JOIN|WHERE|GROUP BY|ORDER BY|COUNT|SUM|AVG|CASE|CREATE|INSERT|UPDATE|DELETE)\b/i.test(
-            pre.textContent,
-          )
-        )
-          return;
+        if (!pre.querySelector("code")) return;
         var b = document.createElement("button");
         b.type = "button";
         b.className = "copybtn";

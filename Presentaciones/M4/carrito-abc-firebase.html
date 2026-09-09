@@ -291,9 +291,7 @@ tbody tr.nueva{background:var(--y-sua)}
               <li><b>La compra confirmada es relacional</b> porque en ese instante sí
                 necesita atomicidad, las claves foráneas del esquema de la sesión 9, y un
                 total que se pueda reconstruir y auditar.</li>
-              <li><b>Nunca hay dos fuentes de verdad al mismo tiempo:</b> en el instante en
-                que nace el pedido en Supabase, el documento del carrito se borra de
-                Firestore.</li>
+              <li><b>Nunca hay dos fuentes de verdad al mismo tiempo:</b> después de confirmar el pedido en Supabase, se intenta borrar el carrito en Firestore. Si falla, queda limpieza pendiente.</li>
             </ul>
           </div>
         </details>
@@ -318,6 +316,24 @@ tbody tr.nueva{background:var(--y-sua)}
     </div>
   </div>
 
+<section class="tarj" id="consultas-carta" style="margin:1rem 0">
+<h2>Consultas de carta · solo lectura</h2>
+<p>Trabajas con el catálogo compartido de 24 productos, no con tu proyecto individual. Predice, ejecuta y compara. Ningún botón de este panel modifica datos.</p>
+<label for="consulta-carta">Pregunta de negocio</label>
+<select id="consulta-carta">
+<option value="base">¿Qué datos tienen Ajiaco y Tamal?</option>
+<option value="horario">¿Qué plato está disponible desde las 06:00?</option>
+<option value="barato">¿Cuál es el plato más barato de los 24?</option>
+<option value="resumen">¿Cuántos platos base hay y cuál es su precio medio?</option>
+<option value="ajiaco">Solo Ajiaco: ¿qué pasa con el resumen?</option>
+</select>
+<p id="consulta-prediccion">Antes de ejecutar, di cuántos documentos o qué valores esperas.</p>
+<pre id="consulta-codigo" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+<button id="ejecutar-consulta" type="button">Ejecutar consulta en Firestore</button>
+<p id="consulta-estado" role="status" aria-live="polite">Elige una consulta. Requiere conexión al servicio real.</p>
+<pre id="consulta-resultado" style="white-space:pre-wrap;overflow-wrap:anywhere" aria-label="Resultado de la consulta"></pre>
+<p><a href="ejercicio-firebase.html#consultas-s11">Cómo se lee el código y cómo interpretar los resultados</a></p>
+</section>
   <p class="pie">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes ·
      Colsubsidio. Esta página es material de clase: los datos que envíes son visibles
      para el resto del curso. Esta es la versión en vivo, con Firestore en la nube — hay
@@ -732,5 +748,6 @@ tbody tr.nueva{background:var(--y-sua)}
   }
 })();
 </script>
+<script src="consultas-s11.js"></script>
 </body>
 </html>
