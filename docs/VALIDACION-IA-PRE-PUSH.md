@@ -91,6 +91,12 @@ ANDESDB es público. Antes del push se debe comprobar que no se incluya:
 - el valor de `SOLUTIONS_PASSPHRASE`;
 - soluciones de S7, S10 o S13 en texto plano antes de la hora de publicación.
 
+La única excepción revisada es la configuración web pública de Firebase en
+`Presentaciones/M4/carrito-abc-firebase.html`. Su `apiKey` queda permitida por
+hash en el control previo porque identifica la app web, no concede permisos de
+administración. Esa excepción no autoriza claves de servicio, contraseñas ni
+otras claves Google; requiere Authentication anónima y Firestore Rules activas.
+
 La IA debe respetar `.gitignore`, especialmente las reglas para encuestas, material docente, respuestas de concursos y `soluciones_privadas/`.
 
 **Si un secreto ya llegó a un diff, no basta con borrarlo del último archivo: se considera potencialmente expuesto y se debe avisar.**
@@ -201,7 +207,7 @@ git diff
 
 Comprobar especialmente:
 
-- marcadores de conflicto `<<<<<<<`, `=======`, `>>>>>>>`;
+- marcadores de conflicto de Git sin resolver;
 - espacios/errores detectados por `git diff --check`;
 - archivos enormes inesperados;
 - binarios modificados sin razón;

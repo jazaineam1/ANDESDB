@@ -29,7 +29,7 @@ pre{background:#0d151c;color:#eaf1f7;padding:1rem;border-radius:8px;white-space:
 <input id="apiKey" placeholder="AIzaSy...">
 <label for="projectId">projectId</label>
 <input id="projectId" placeholder="restauranteabc-xxxxx">
-<button id="ir" type="button">Sembrar los 8 platos</button>
+<button id="ir" type="button">Sembrar los 24 productos</button>
 <pre id="log">Esperando…</pre>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -43,7 +43,23 @@ var CARTA = [
   {"plato_id":5,"nombre":"Arepa de choclo","precio_actual":7500,"categoria":"entrada","vegetariano":true,"descripcion":"Arepa dulce de choclo con queso campesino."},
   {"plato_id":6,"nombre":"Sobrebarriga al horno","precio_actual":36000,"categoria":"fuerte","descripcion":"Sobrebarriga horneada en salsa criolla, con papa salada y ensalada."},
   {"plato_id":7,"nombre":"Postre de natas","precio_actual":11000,"categoria":"postre","alergenos":["lácteos","huevo"],"descripcion":"Postre tradicional de natas de leche."},
-  {"plato_id":8,"nombre":"Tamal tolimense","precio_actual":22000,"categoria":"fuerte","alergenos":["gluten"],"disponible_desde":"06:00","disponible_hasta":"11:00","nota_disponibilidad":"Solo se sirve en el horario de desayuno."}
+  {"plato_id":8,"nombre":"Tamal tolimense","precio_actual":22000,"categoria":"fuerte","descripcion":"Tamal de cerdo y pollo envuelto en hoja de plátano, servido en el desayuno.","alergenos":["gluten"],"disponible_desde":"06:00","disponible_hasta":"11:00","nota_disponibilidad":"Solo se sirve en el horario de desayuno."},
+  {"plato_id":9,"nombre":"Empanadas de pipián","precio_actual":8500,"categoria":"entrada","vegetariano":true,"alergenos":["gluten"],"descripcion":"Tres empanadas crujientes de papa criolla y maní, con ají de la casa.","salsas_incluidas":["ají de maní","hogao"]},
+  {"plato_id":10,"nombre":"Patacones con hogao","precio_actual":10000,"categoria":"entrada","vegetariano":true,"vegano":true,"descripcion":"Patacones de plátano verde con hogao fresco y cilantro.","nivel_picante":["suave","medio"]},
+  {"plato_id":11,"nombre":"Cazuela de mariscos","precio_actual":42000,"categoria":"fuerte","alergenos":["mariscos","lácteos"],"descripcion":"Cazuela cremosa de camarón, calamar y pescado con arroz de coco.","disponible_porcion":["individual","para compartir"]},
+  {"plato_id":12,"nombre":"Trucha al ajillo","precio_actual":39000,"categoria":"fuerte","alergenos":["pescado"],"descripcion":"Trucha fresca al ajillo con papa criolla y ensalada de la huerta.","acompanamientos_elegibles":["papa criolla","ensalada","arroz"]},
+  {"plato_id":13,"nombre":"Lomo al trapo","precio_actual":48000,"categoria":"fuerte","descripcion":"Lomo de res cocido al trapo, servido con papas rústicas.","terminos_disponibles":["medio","tres cuartos"]},
+  {"plato_id":14,"nombre":"Pollo sudado","precio_actual":27000,"categoria":"fuerte","descripcion":"Pollo campesino en salsa criolla, arroz blanco y yuca cocida.","incluye_sopa":true},
+  {"plato_id":15,"nombre":"Ensalada campesina","precio_actual":18000,"categoria":"entrada","vegetariano":true,"descripcion":"Hojas frescas, aguacate, tomate, maíz y queso campesino.","aderezos":["miel mostaza","limón","balsámico"]},
+  {"plato_id":16,"nombre":"Sopa de guineo","precio_actual":16000,"categoria":"sopa","vegetariano":true,"descripcion":"Sopa tradicional de guineo verde, cilantro y queso opcional.","queso_opcional":true},
+  {"plato_id":17,"nombre":"Jugo de lulo","precio_actual":7000,"categoria":"bebida","vegano":true,"descripcion":"Jugo natural de lulo preparado al momento.","sin_azucar_disponible":true},
+  {"plato_id":18,"nombre":"Chocolate santafereño","precio_actual":8500,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Chocolate caliente con queso campesino y pan para acompañar.","incluye_queso":true},
+  {"plato_id":19,"nombre":"Café colombiano","precio_actual":6000,"categoria":"bebida","vegano":true,"descripcion":"Café de origen preparado al momento.","metodos_preparacion":["espresso","filtrado","prensa francesa"]},
+  {"plato_id":20,"nombre":"Avena casera","precio_actual":7500,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Avena fría con canela y toque de vainilla.","servida_fria":true},
+  {"plato_id":21,"nombre":"Brevas con arequipe","precio_actual":12000,"categoria":"postre","alergenos":["lácteos"],"descripcion":"Brevas en almíbar rellenas de arequipe y queso.","para_compartir":true},
+  {"plato_id":22,"nombre":"Oblea bogotana","precio_actual":9000,"categoria":"postre","alergenos":["gluten","lácteos"],"descripcion":"Oblea crujiente con rellenos a elección.","rellenos_disponibles":["arequipe","mora","queso","coco"]},
+  {"plato_id":23,"nombre":"Helado de curuba","precio_actual":10000,"categoria":"postre","alergenos":["lácteos"],"descripcion":"Helado artesanal de curuba.","tamanos":["una bola","dos bolas"]},
+  {"plato_id":24,"nombre":"Pan de bono recién horneado","precio_actual":5000,"categoria":"panadería","alergenos":["lácteos","huevo"],"descripcion":"Pan de bono caliente horneado en tandas durante el día.","horneado_cada_minutos":45}
 ];
 
 var log = document.getElementById('log');
@@ -73,7 +89,7 @@ document.getElementById('ir').addEventListener('click', function () {
     });
     return Promise.all(pendientes);
   }).then(function () {
-    escribir('\nListo. Verifica en Firestore → carta que haya 8 documentos.');
+  escribir('\nListo. Verifica en Firestore → carta que haya 24 documentos.');
     btn.disabled = false;
   }).catch(function (e) {
     escribir('ERROR general: ' + e.message);

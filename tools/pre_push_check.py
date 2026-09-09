@@ -9,6 +9,7 @@ Course QA y los workflows de publicación detectarían después.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import subprocess
@@ -88,6 +89,14 @@ def check_git_hygiene() -> None:
 
 
 def check_high_confidence_secrets() -> None:
+    # Firebase web apiKeys identify a public web application; they do not grant
+    # admin access to Firestore. This single reviewed value is deliberately
+    # allowlisted by hash, so the scanner still blocks every other Google key.
+    public_firebase_web_keys = {
+        "Presentaciones/M4/carrito-abc-firebase.html": {
+            "a7446d4348c8ce63ddb163751abf2dda349c7bbf7bcb15783c63d78834e2159f",
+        },
+    }
     patterns = {
         "AWS access key": re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"),
         "GitHub token": re.compile(r"\b(?:ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})\b"),
@@ -103,7 +112,13 @@ def check_high_confidence_secrets() -> None:
             continue
         rel = path.relative_to(ROOT)
         for label, rx in patterns.items():
-            if rx.search(text):
+            for match in rx.finditer(text):
+                key_hash = hashlib.sha256(match.group(0).encode("utf-8")).hexdigest()
+                if (
+                    label == "Google API key"
+                    and key_hash in public_firebase_web_keys.get(rel.as_posix(), set())
+                ):
+                    continue
                 err(f"Posible secreto ({label}) en {rel}")
 
 

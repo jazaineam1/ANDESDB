@@ -278,7 +278,23 @@ INSERT INTO plato (nombre, precio_actual) VALUES
     ('Arepa de choclo',       7500.00),
     ('Sobrebarriga al horno', 36000.00),
     ('Postre de natas',      11000.00),
-    ('Tamal tolimense',      22000.00);    -- en la carta, y nadie lo ha pedido
+    ('Tamal tolimense',      22000.00),    -- en la carta, y nadie lo ha pedido
+    ('Empanadas de pipián',   8500.00),
+    ('Patacones con hogao',  10000.00),
+    ('Cazuela de mariscos',  42000.00),
+    ('Trucha al ajillo',     39000.00),
+    ('Lomo al trapo',        48000.00),
+    ('Pollo sudado',         27000.00),
+    ('Ensalada campesina',   18000.00),
+    ('Sopa de guineo',       16000.00),
+    ('Jugo de lulo',          7000.00),
+    ('Chocolate santafereño', 8500.00),
+    ('Café colombiano',       6000.00),
+    ('Avena casera',          7500.00),
+    ('Brevas con arequipe',  12000.00),
+    ('Oblea bogotana',        9000.00),
+    ('Helado de curuba',     10000.00),
+    ('Pan de bono recién horneado', 5000.00);
 
 INSERT INTO ingrediente (nombre, vencimiento) VALUES
     ('Papa criolla',    DATE '2026-09-20'),

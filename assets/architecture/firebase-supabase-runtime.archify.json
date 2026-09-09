@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Carrito ABC: Firebase y Supabase sin claves secretas",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/jazaineam1/ANDESDB",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "5c4a015c6128d08b7475854f298c3f939bbe108b"
+    },
+    "views": [
+      {
+        "id": "dos-puertas",
+        "label": "Dos puertas desde el navegador",
+        "focus": ["estudiante", "navegador", "firebaseConfig", "supabaseConfig"],
+        "note": "Las claves publicables identifican el proyecto y habilitan la llamada; no conectan una base directamente con la otra."
+      },
+      {
+        "id": "carrito-privado",
+        "label": "El carrito de Firestore",
+        "focus": ["navegador", "firebaseAuth", "firestore"],
+        "note": "Anonymous Auth entrega un uid y las Firestore Rules aíslan cada carrito por owner_uid."
+      },
+      {
+        "id": "venta-durable",
+        "label": "La venta en PostgreSQL",
+        "focus": ["navegador", "supabaseConfig", "dataApi", "postgres"],
+        "note": "La aplicación llama a registrar_pedido(); PostgreSQL valida y escribe la venta. El navegador no inserta libremente en las tablas."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "estudiante",
+      "type": "external",
+      "label": "Estudiante",
+      "sublabel": "navegador web",
+      "pos": [36, 285],
+      "size": [128, 62]
+    },
+    {
+      "id": "navegador",
+      "type": "frontend",
+      "label": "Carrito ABC",
+      "sublabel": "HTML + Firebase SDK + fetch",
+      "tag": "cliente público",
+      "pos": [210, 285],
+      "size": [168, 70],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 352, "end_line": 456, "label": "Configuración y SDK" },
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 678, "end_line": 691, "label": "Confirmar compra" }
+      ]
+    },
+    {
+      "id": "firebaseConfig",
+      "type": "security",
+      "label": "Configuración web Firebase",
+      "sublabel": "apiKey + projectId + appId",
+      "tag": "identifica; no administra",
+      "pos": [410, 55],
+      "size": [182, 68],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 352, "end_line": 360, "label": "CONEXION Firebase" }
+      ]
+    },
+    {
+      "id": "firebaseAuth",
+      "type": "security",
+      "label": "Firebase Authentication",
+      "sublabel": "inicio de sesión anónimo → uid",
+      "tag": "identidad temporal",
+      "pos": [625, 55],
+      "size": [182, 68],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 445, "end_line": 466, "label": "Auth anónimo" }
+      ]
+    },
+    {
+      "id": "firestore",
+      "type": "database",
+      "label": "Cloud Firestore",
+      "sublabel": "carta + carritos / owner_uid",
+      "tag": "estado temporal",
+      "pos": [840, 55],
+      "size": [182, 68],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 530, "end_line": 590, "label": "Lectura y escritura" }
+      ]
+    },
+    {
+      "id": "supabaseConfig",
+      "type": "security",
+      "label": "Configuración Supabase",
+      "sublabel": "Project URL + publishable key",
+      "tag": "rol público limitado",
+      "pos": [410, 450],
+      "size": [190, 68],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 360, "end_line": 360, "label": "CONEXION Supabase" }
+      ]
+    },
+    {
+      "id": "dataApi",
+      "type": "backend",
+      "label": "Supabase Data API / RPC",
+      "sublabel": "POST /rest/v1/rpc/registrar_pedido",
+      "tag": "solo funciones concedidas",
+      "pos": [625, 450],
+      "size": [190, 72],
+      "sources": [
+        { "path": "Presentaciones/M4/carrito-abc-firebase.html", "line": 404, "end_line": 425, "label": "Llamada RPC" }
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL en Supabase",
+      "sublabel": "pedido, linea_pedido, pago y demás tablas",
+      "tag": "venta durable",
+      "pos": [840, 450],
+      "size": [190, 72],
+      "sources": [
+        { "path": "Scripts/S9-restaurante-abc.sql", "line": 131, "end_line": 261, "label": "Modelo Restaurante ABC" },
+        { "path": "Scripts/S9-formulario-docente.sql", "line": 302, "end_line": 316, "label": "Tablas cerradas" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Firebase: identidad y estado temporal",
+      "wraps": ["firebaseConfig", "firebaseAuth", "firestore"],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "Supabase: API limitada y venta durable",
+      "wraps": ["supabaseConfig", "dataApi", "postgres"],
+      "pad": 24
+    }
+  ],
+  "connections": [
+    {
+      "id": "abreCarrito",
+      "from": "estudiante",
+      "to": "navegador",
+      "variant": "emphasis"
+    },
+    {
+      "id": "usaFirebaseConfig",
+      "from": "navegador",
+      "to": "firebaseConfig",
+      "variant": "dashed"
+    },
+    {
+      "id": "obtieneUid",
+      "from": "navegador",
+      "to": "firebaseAuth",
+      "label": "signInAnonymously() → uid",
+      "variant": "security",
+      "labelAt": [569, 255]
+    },
+    {
+      "id": "carritoFirestore",
+      "from": "navegador",
+      "to": "firestore",
+      "label": "SDK: carta y carrito",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [[480, 320], [480, 180], [820, 180], [820, 89]]
+    },
+    {
+      "id": "rulesFirestore",
+      "from": "firebaseAuth",
+      "to": "firestore",
+      "label": "Rules: request.auth.uid",
+      "variant": "security",
+      "labelAt": [824, 210]
+    },
+    {
+      "id": "usaSupabaseConfig",
+      "from": "navegador",
+      "to": "supabaseConfig",
+      "variant": "dashed"
+    },
+    {
+      "id": "llamaRpc",
+      "from": "navegador",
+      "to": "dataApi",
+      "label": "HTTPS POST /rpc",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [[610, 320], [610, 486]]
+    },
+    {
+      "id": "validaVenta",
+      "from": "dataApi",
+      "to": "postgres",
+      "label": "registrar_pedido()",
+      "variant": "security",
+      "labelAt": [808, 536]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Lo que una clave pública sí hace",
+      "items": [
+        "Indica a qué proyecto se dirige una llamada.",
+        "Permite que el SDK o la Data API reconozcan el cliente público.",
+        "No equivale a contraseña ni a permiso de administrador."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Las dos bases no se conectan entre sí",
+      "items": [
+        "El navegador lee el carrito desde Firestore.",
+        "El mismo navegador pide a Supabase confirmar la compra.",
+        "Solo la venta confirmada vive en PostgreSQL."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Límites obligatorios",
+      "items": [
+        "Firebase Auth + Firestore Rules protegen cada carrito.",
+        "RLS, revocaciones y GRANT EXECUTE limitan Supabase.",
+        "Nunca se expone service role, secret key ni contraseña de la base."
+      ]
+    }
+  ]
+}

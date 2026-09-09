@@ -159,8 +159,8 @@ tbody tr.nueva{background:var(--y-sua)}
   <!-- ---------- configuración: solo la ve quien abre sin enlace ---------- -->
   <section class="tarj" id="panelConfig" hidden>
     <h2>Falta la conexión</h2>
-    <p>Esta página no lleva dentro las claves de ninguna base: se las tiene que dar
-       quien la abra. El profesor comparte el enlace completo por el chat de la clase.</p>
+    <p>Supabase ya está preparado para esta clase. Solo falta la configuración web del
+       proyecto Firebase del docente para que el carrito pueda vivir en Firestore.</p>
     <div class="aviso ojo">
       <h3>Dos bases, dos conexiones</h3>
       El carrito habla con <b>Firebase Firestore</b> y la compra confirmada habla con
@@ -248,10 +248,11 @@ tbody tr.nueva{background:var(--y-sua)}
         <details class="pregunta">
           <summary>¿Con qué usuario o contraseña se conecta esta página a la base de datos?</summary>
           <div class="respuesta">
-            <p>Con <b>ninguno</b>. El navegador no tiene un usuario ni una contraseña de
-               base de datos: habla con Firestore directamente, y son las
-               <b>Security Rules</b> —no una clave secreta— las que deciden qué puede leer
-               o escribir. Del lado de Supabase, las once tablas del esquema de la sesión 9
+            <p>Con <b>ninguna contraseña de base de datos</b>. Firebase crea una
+               <b>sesión anónima</b>: no pregunta correo al estudiante, pero identifica el
+               navegador con un <code>uid</code>. Firestore usa ese <code>uid</code> y las
+               <b>Security Rules</b> —no una clave secreta— para decidir qué carrito puede
+               leer o escribir. Del lado de Supabase, las once tablas del esquema de la sesión 9
                siguen cerradas con <i>row level security</i>: la única puerta es la función
                <code>registrar_pedido()</code> (la misma que usa la pista de Atlas).</p>
             <p class="marca" id="dondeEscribe"></p>
@@ -326,8 +327,9 @@ tbody tr.nueva{background:var(--y-sua)}
 
 <!-- Firebase, compat build: globales sin necesitar un bundler, igual de estático que
      el resto del sitio. Versión fijada a propósito, como pide el resto del repo. -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 (function () {
   'use strict';
@@ -343,18 +345,17 @@ tbody tr.nueva{background:var(--y-sua)}
   //  Supabase: el MISMO proyecto de S9-restaurante-abc.sql — no crear uno
   //  nuevo. Es la misma clave que ya usa carrito-abc.html.
   // =====================================================================
-  // El contrato de este repo bloquea cualquier push que contenga una cadena con
-  // forma de clave de Google (AIza...), sin excepciones — aunque una apiKey web
-  // de Firebase esté diseñada para ser pública. En vez de debilitar ese control,
-  // esta clave NO se guarda en el archivo: se pega una sola vez en el panel de
-  // configuración (abajo, "Falta la conexión") y queda en el localStorage de
-  // ESE navegador, o se pasa por la URL que se comparte con la clase:
-  //   carrito-abc-firebase.html?fbApiKey=...&fbProjectId=...&fbAuthDomain=...&fbAppId=...&url=...&key=...
+  // Esta es configuración web pública de Firebase, autorizada solo para este
+  // recurso. No equivale a una service key: Authentication y Firestore Rules
+  // siguen siendo obligatorios. Nunca agregues una clave privada aquí.
   var CONEXION = {
-    fbApiKey: '',
-    fbProjectId: '',
-    fbAuthDomain: '',
-    fbAppId: '',
+    fbApiKey: 'AIzaSyCRlrphuLxRbyzj98WaUjAxGIFoUUrWCsU',
+    fbProjectId: 'restauranteabc-451f1',
+    fbAuthDomain: 'restauranteabc-451f1.firebaseapp.com',
+    fbStorageBucket: 'restauranteabc-451f1.firebasestorage.app',
+    fbMessagingSenderId: '502761637252',
+    fbAppId: '1:502761637252:web:cead5cc7383067c78049d1',
+    fbMeasurementId: 'G-DXNEY0XBXF',
     url: 'https://gnpouhsvsisqoxketlfr.supabase.co',   // el mismo proyecto de S9-restaurante-abc.sql
     key: 'sb_publishable_9l_od2Dg78hu1mPrmxAabA_erL2Tlge'
   };
@@ -363,6 +364,8 @@ tbody tr.nueva{background:var(--y-sua)}
   var LLAVE_CARRITO_ID = 'abc-carrito-firebase-id';
   var cfg = null;
   var db = null;
+  var auth = null;
+  var uid = null;
   var carrito = { lineas: [] };
   var carta = [];
   var dejarDeEscuchar = null;
@@ -374,8 +377,8 @@ tbody tr.nueva{background:var(--y-sua)}
       fbProjectId: (p.get('fbProjectId') || '').trim(),
       fbAuthDomain: (p.get('fbAuthDomain') || '').trim(),
       fbAppId: (p.get('fbAppId') || '').trim(),
-      url: (p.get('url') || '').trim().replace(/\/+$/, ''),
-      key: (p.get('key') || '').trim()
+      url: (p.get('url') || CONEXION.url || '').trim().replace(/\/+$/, ''),
+      key: (p.get('key') || CONEXION.key || '').trim()
     };
     if (deUrl.fbApiKey && deUrl.fbProjectId && deUrl.url && deUrl.key) {
       try { localStorage.setItem(LLAVE, JSON.stringify(deUrl)); } catch (e) {}
@@ -442,18 +445,38 @@ tbody tr.nueva{background:var(--y-sua)}
       apiKey: cfg.fbApiKey,
       authDomain: cfg.fbAuthDomain || (cfg.fbProjectId + '.firebaseapp.com'),
       projectId: cfg.fbProjectId,
-      appId: cfg.fbAppId
+      storageBucket: cfg.fbStorageBucket,
+      messagingSenderId: cfg.fbMessagingSenderId,
+      appId: cfg.fbAppId,
+      measurementId: cfg.fbMeasurementId
     });
     db = firebase.firestore();
+    auth = firebase.auth();
 
     $('dondeEscribe').textContent = 'Carrito en Firestore (' + cfg.fbProjectId +
       ') · Pedido en ' + cfg.url.replace(/^https?:\/\//, '');
 
     cargarCarta();
-    escucharCarrito();
+    iniciarSesionAnonima();
     cargarMesas();
     cargarPedidos();
     setInterval(cargarPedidos, 15000);
+  }
+
+  // El usuario anónimo no pide correo ni contraseña. Sí entrega un uid real
+  // para que las Security Rules puedan separar el carrito de cada navegador.
+  function iniciarSesionAnonima() {
+    auth.onAuthStateChanged(function (usuario) {
+      if (usuario) {
+        uid = usuario.uid;
+        escucharCarrito();
+        return;
+      }
+      auth.signInAnonymously().catch(function (e) {
+        pinta($('error'), 'No se pudo iniciar la sesión anónima: ' + e.message,
+          'Activa Authentication → Anonymous en Firebase');
+      });
+    });
   }
 
   // --- catálogo (Firestore, colección "carta") -------------------------
@@ -474,7 +497,9 @@ tbody tr.nueva{background:var(--y-sua)}
     fuerte:   { icono: '🍲', c1: '#e07a2c', c2: '#a5501a' },
     bebida:   { icono: '🥤', c1: '#3fa6c9', c2: '#1f6f8f' },
     entrada:  { icono: '🌽', c1: '#7bb661', c2: '#4a7f36' },
-    postre:   { icono: '🍮', c1: '#d9a441', c2: '#a5701f' }
+    postre:   { icono: '🍮', c1: '#d9a441', c2: '#a5701f' },
+    sopa:     { icono: '🥣', c1: '#bf7b45', c2: '#87502e' },
+    'panadería': { icono: '🥖', c1: '#b7833d', c2: '#795426' }
   };
   function vitrinaDe(p) {
     return VITRINA[p.categoria] || { icono: '🍽️', c1: '#c9903f', c2: '#8a5a00' };
@@ -511,6 +536,7 @@ tbody tr.nueva{background:var(--y-sua)}
   // otra pestaña/dispositivo con el mismo _carritoId. Esto es justo la
   // diferencia de "tiempo real" que la pista de Atlas no tiene de fábrica.
   function escucharCarrito() {
+    if (!uid) return;
     $('etiquetaVivo').hidden = false;
     if (dejarDeEscuchar) dejarDeEscuchar();
     dejarDeEscuchar = db.collection('carritos').doc(idCarrito())
@@ -523,8 +549,10 @@ tbody tr.nueva{background:var(--y-sua)}
   }
 
   function guardarCarritoEnFirestore() {
+    if (!uid) return Promise.reject(new Error('La sesión anónima todavía no está lista. Intenta de nuevo en un momento.'));
     return db.collection('carritos').doc(idCarrito()).set({
       lineas: carrito.lineas,
+      owner_uid: uid,
       actualizado_en: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
@@ -607,12 +635,16 @@ tbody tr.nueva{background:var(--y-sua)}
     });
   }
 
-  function mostrarVerificacion(pedidoId, total) {
-    $('resumenVerificacion').textContent =
-      'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
-      '. Tu carrito en Firestore ya no existe.';
+  function mostrarVerificacion(pedidoId, total, carritoBorrado) {
+    $('resumenVerificacion').textContent = carritoBorrado
+      ? 'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
+        '. El carrito temporal de Firestore se eliminó.'
+      : 'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
+        '. El carrito temporal no se pudo eliminar y requiere limpieza.';
     $('filasVerificacion').innerHTML =
-      '<tr><td>Firestore · carritos</td><td>DELETE: el documento de tu carrito se borró.</td></tr>' +
+      '<tr><td>Firestore · carritos</td><td>' + (carritoBorrado
+        ? 'DELETE: el documento de tu carrito se borró.'
+        : 'PENDIENTE: la venta ya existe; el documento residual se debe limpiar.') + '</td></tr>' +
       '<tr><td>PostgreSQL · pedido</td><td>INSERT: nació el pedido ' + pedidoId + '.</td></tr>' +
       '<tr><td>PostgreSQL · pedido_mesa</td><td>INSERT: se asoció la mesa elegida.</td></tr>' +
       '<tr><td>PostgreSQL · linea_pedido</td><td>INSERT: una fila por cada plato, con el precio de HOY copiado.</td></tr>' +
@@ -646,13 +678,20 @@ tbody tr.nueva{background:var(--y-sua)}
     rpc('registrar_pedido', datos).then(function (r) {
       var fila = (r && r[0]) || {};
       pinta($('ok'), (fila.mensaje || 'Pedido guardado.'), '✓ Se convirtió en venta');
-      mostrarVerificacion(fila.pedido_id, fila.total);
       carrito.lineas = [];
       pintarCarrito();
       $('form').reset();
       return db.collection('carritos').doc(idCarrito()).delete()
-        .catch(function () {})
-        .then(function () { return cargarPedidos(fila.pedido_id); });
+        .then(function () {
+          mostrarVerificacion(fila.pedido_id, fila.total, true);
+          return cargarPedidos(fila.pedido_id);
+        })
+        .catch(function (e) {
+          mostrarVerificacion(fila.pedido_id, fila.total, false);
+          pinta($('error'), 'La venta sí quedó guardada, pero el carrito no se pudo borrar: ' + e.message,
+            'Limpieza pendiente');
+          return cargarPedidos(fila.pedido_id);
+        });
     }).catch(function (e) {
       pinta($('error'), e.message, 'La base la rechazó');
     }).then(function () {
@@ -684,7 +723,13 @@ tbody tr.nueva{background:var(--y-sua)}
   });
 
   cfg = leerConfig();
-  if (cfg) arrancar(); else $('panelConfig').hidden = false;
+  if (cfg) {
+    arrancar();
+  } else {
+    $('cfgUrl').value = CONEXION.url || '';
+    $('cfgKey').value = CONEXION.key || '';
+    $('panelConfig').hidden = false;
+  }
 })();
 </script>
 </body>
