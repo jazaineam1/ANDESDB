@@ -36,7 +36,7 @@ El bloque grande de certificación va en la **sesión 7**.
 | **7 · Certificaciones + taller de modelado** | dictada · 🔒 martes corto |
 | 8 · Normalización · 9 · DDL + Azure SQL | dictada |
 | **10 · Taller de casos: ¿SQL o NoSQL?** | dictada · 🔒 martes corto |
-| **11 · El carrito que se convirtió en venta (Firebase + Atlas)** | **la próxima** · 20 diapositivas |
+| **11 · El carrito que se convirtió en venta (Firebase + Supabase; Atlas solo puente DP-900)** | **hoy** · 25 diapositivas |
 | 12 · Fundamentos de data warehouse | por crear |
 | **13 · Lab BigQuery** | 🔒 martes corto |
 | 14 · BigQuery anidados · 15 · Desafío final · 16 · Cierre | |
