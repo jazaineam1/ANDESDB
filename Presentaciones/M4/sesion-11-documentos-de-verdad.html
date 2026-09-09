@@ -3308,7 +3308,7 @@
           <span>Universidad de los Andes · Colsubsidio</span>
         </div>
       </section>
-<section class="slide dense" data-title="Una selección todavía no es un pedido"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>Una selección todavía no es un pedido</h2><p class="lead">El cliente cambia de opinión. Al confirmar, el negocio debe conservar lo acordado.</p><div class="g3"><div class="card"><h3>Carta</h3><p>Una ficha por plato, con atributos propios.</p></div><div class="card"><h3>Carrito</h3><p>Una selección editable. Temporal por su ciclo de vida; Firestore sí la persiste.</p></div><div class="card"><h3>Pedido</h3><p>Cantidades y precios registrados con las reglas de S9.</p></div></div><div class="checkpoint mt">Antes de abrir consolas: si cambia la carta, ¿debe cambiar un pedido ya confirmado?</div><div class="ok mt" data-r>Hoy probamos una arquitectura posible, no una obligación de usar dos bases. El navegador lee documentos y solicita a PostgreSQL confirmar el pedido. <a class="guide-button" href="#arquitectura-archify"><strong>Explorar Archify</strong><span>El mapa interactivo de esta aplicación</span></a></div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
+<section class="slide dense" data-title="Una selección todavía no es un pedido"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>Una selección todavía no es un pedido</h2><p class="lead">El cliente cambia de opinión. Al confirmar, el negocio debe conservar lo acordado.</p><div class="g3"><div class="card"><h3>Carta</h3><p>Una ficha por plato, con atributos propios.</p></div><div class="card"><h3>Carrito</h3><p>Una selección editable. Temporal por su ciclo de vida; Firestore sí la persiste.</p></div><div class="card"><h3>Pedido</h3><p>Cantidades y precios registrados con las reglas de S9.</p></div></div><div class="checkpoint mt">Antes de abrir consolas: si cambia la carta, ¿debe cambiar un pedido ya confirmado?</div><div class="ok mt" data-r><b>No.</b> El precio queda congelado en el instante de pagar: <code>linea_pedido.precio_unitario</code> es una copia, no una referencia a <code>plato.precio_actual</code> — la misma regla de la sesión 9. Si el Ajiaco sube de precio mañana, el pedido de hoy no cambia. Esa es la razón técnica por la que el navegador lee documentos y solicita a PostgreSQL confirmar el pedido, en vez de guardar todo en un solo lugar. <a class="guide-button" href="#arquitectura-archify"><strong>Explorar Archify</strong><span>El mapa interactivo de esta aplicación</span></a></div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
 
 
 
@@ -3360,6 +3360,7 @@
 <section class="slide dense lesson-slide" data-title="Abre tu proyecto; el carrito vendrá después">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
         <h2>Abre tu proyecto; el carrito vendrá después</h2>
+        <p class="lesson-intro">Vas a construir, con tus propias manos, tu primera base de documentos real — no una simulación, Firestore de verdad, en la nube de Google. Todavía no es el carrito de la clase: es tu propio espacio, para practicar sin afectar a nadie más.</p>
         <div class="g2"><div class="lesson-panel"><h3>Ahora · tu laboratorio</h3><p>Abre la guía: desde allí entrarás a Firebase Console y crearás <b>2 documentos</b> en tu colección <code>carta</code>. Mantén esa misma guía durante la práctica.</p><a class="guide-button" href="ejercicio-firebase.html#ruta-estudiante" target="guia-firestore"><strong>📖 Guía paso a paso</strong><span>Capturas y pasos de esta práctica</span></a></div><div class="lesson-panel"><h3>Después de la pausa · aplicación de clase</h3><p>El docente ya preparó <b>24 productos</b>. Allí observarás las consultas y la venta en PostgreSQL.</p><pre data-nocopy><code>TU PROYECTO → 2 documentos propios
 APP DE CLASE → 24 productos compartidos</code></pre><p>Tus documentos no pasan automáticamente a la app. No necesitas copiar claves ni configurar el carrito.</p></div></div>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
@@ -3431,6 +3432,7 @@ Valor:     fuerte  [texto]</code></pre><p>Abre el constructor de consultas, aña
 <section class="slide dense lesson-slide" data-title="La misma consulta, ahora en JavaScript">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
         <h2>La misma consulta, ahora en JavaScript</h2>
+        <p class="lesson-intro"><b>No vas a escribir ni una línea de esto en todo el curso.</b> Se muestra solo como prueba: no hay magia detrás del filtro que armaste con clics — hay exactamente este código. JavaScript es el lenguaje que hace que una página web responda a un clic; aquí solo lo leemos, para confirmar que lo que hiciste a mano es justo lo que una aplicación real haría sola.</p>
         <p class="lesson-intro">La consola nos ayudó a inspeccionar. La app usa un <b>SDK</b>: funciones de JavaScript que solicitan datos a Firestore.</p><div class="g2"><div class="lesson-panel"><h3>Código que lee los dos platos base</h3><pre><code>const carta = collection(db, &quot;carta&quot;);
 const base = query(
   carta,
@@ -3587,6 +3589,22 @@ console.log(resumen.data());</code></pre><p>count cuenta; sum suma un campo; ave
         <div class="ey">Arquitectura interactiva · antes de usar el carrito</div>
         <h2>Archify: sigue el recorrido de una compra</h2>
         <div class="archify-toolbar"><p><b>1.</b> Dos puertas · <b>2.</b> Carrito en Firestore · <b>3.</b> Pedido en PostgreSQL. Pulsa una caja para ver qué recibe y qué protege.</p><a class="guide-button" href="../../assets/architecture/firebase-supabase-runtime.archify.html?present=1" target="_blank" rel="noopener"><strong>⛶ Abrir Archify</strong><span>Diagrama interactivo en una pestaña amplia</span></a></div><iframe class="archify-frame" src="../../assets/architecture/firebase-supabase-runtime.archify.html?present=1" title="Archify: arquitectura real del carrito Firebase y la confirmación en Supabase" loading="eager" allow="fullscreen"></iframe><p class="lesson-note">En esta aplicación el navegador llama a ambos servicios: Firestore guarda la selección; la función PostgreSQL valida el pedido. Confirmar y limpiar son pasos separados. Dentro de Archify: <b>?</b> abre la ayuda; <b>Play story</b> recorre las vistas.</p>
+        <details class="lesson-reveal">
+          <summary>Qué es cada caja, en una frase</summary>
+          <table class="tbl" style="font-size:.68em;margin-top:.5em">
+            <thead><tr><th>Caja</th><th>Qué es</th><th>Qué protege o entrega</th></tr></thead>
+            <tbody>
+              <tr><td>Estudiante</td><td>El navegador de quien usa el carrito</td><td>Abre la app</td></tr>
+              <tr><td>Carrito ABC</td><td>El HTML+JS que ves en pantalla</td><td>Pide datos a las demás cajas</td></tr>
+              <tr><td>Config. web Firebase</td><td>Llave pública que identifica el proyecto</td><td>Identifica; no autoriza</td></tr>
+              <tr><td>Firebase Authentication</td><td>Da una identidad anónima temporal (<code>uid</code>)</td><td>El <code>uid</code> que aísla tu carrito del de los demás</td></tr>
+              <tr><td>Cloud Firestore</td><td>Donde vive la carta y los carritos, en tiempo real</td><td>El listener que actualiza la pantalla sola</td></tr>
+              <tr><td>Config. Supabase</td><td>Llave pública del proyecto relacional</td><td>Identifica; no autoriza</td></tr>
+              <tr><td>Supabase Data API / RPC</td><td>La única puerta hacia la venta — una función, no toda la base</td><td>Acepta o rechaza según reglas del negocio</td></tr>
+              <tr><td>PostgreSQL en Supabase</td><td>Donde vive la venta ya confirmada, para siempre</td><td>El pedido, sus líneas y el pago</td></tr>
+            </tbody>
+          </table>
+        </details>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
@@ -3788,6 +3806,7 @@ END LOOP;</code></pre>
         <div class="break">
           <div class="ey">Cierre</div>
           <h2>El carrito ya no es un dibujo</h2>
+          <p class="lead">La pregunta de la diapositiva 3 tiene ya una respuesta con las manos: <b>las dos cosas, según el momento.</b> Mientras se arma, el carrito es estado de pantalla — se pierde sin costo. En el instante en que se confirma, deja de serlo y se vuelve un hecho del negocio, con precio congelado y una fila que no se borra.</p>
           <div class="g3">
             <div class="ok"><h3>Lo que se llevan</h3><p>Documentos con las manos, embeber contra referenciar, y un carrito que de verdad se convirtió en venta.</p></div>
             <div class="card"><h3>Lo que viene</h3><p>En la sesión 12 empieza el otro camino: hechos, dimensiones y el grano analítico &mdash; el que la sesión 6 dejó aparcado.</p></div>
