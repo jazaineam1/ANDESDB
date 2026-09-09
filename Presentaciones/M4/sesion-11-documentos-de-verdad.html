@@ -3450,9 +3450,11 @@
           </div>
         </div>
         <div class="checkpoint mt">
-          Una tabla <i>podría</i> añadir columnas nulas. La decisión cambia
-          cuando esos campos variables se consultan y evolucionan como parte
-          natural del plato, sin forzar columnas vacías para los demás.
+          Una tabla <i>podría</i> añadir columnas nulas &mdash; o incluso una
+          columna <code>JSONB</code>, que PostgreSQL sí soporta e indexa. La
+          decisión real no es &laquo;SQL rígido contra NoSQL flexible&raquo;:
+          cambia cuando esos campos variables se consultan y evolucionan como
+          parte natural del plato, sin forzar columnas vacías para los demás.
         </div>
         <div class="brand"><span>Comparar</span><span>La misma decisión, dos motores</span></div>
       </section>
@@ -3531,6 +3533,14 @@
                 pollo?&raquo; en cada una.</div>
             </div>
           </div>
+          <table class="tbl mt" style="font-size:.68em">
+            <thead><tr><th>Criterio</th><th>Embeber</th><th>Referenciar</th></tr></thead>
+            <tbody>
+              <tr><td><b>Cardinalidad</b></td><td>1 a pocos, acotado (3&ndash;5 ingredientes)</td><td>1 a N sin techo claro</td></tr>
+              <tr><td><b>Mutabilidad</b></td><td>el ingrediente casi no cambia solo</td><td>cambia solo, y afecta a muchos platos a la vez</td></tr>
+              <tr><td><b>Patrón de consulta</b></td><td>siempre se lee junto al plato</td><td>a veces se consulta el ingrediente solo</td></tr>
+            </tbody>
+          </table>
         </div>
         <div class="brand"><span>Reto</span><span>Embeber o referenciar</span></div>
       </section>
@@ -3610,6 +3620,20 @@
             instante de pagar.
           </div>
           <p class="small mt">La explicación y el ejemplo de llamada RPC están en <a class="intext-link" href="ejercicio-firebase.html#supabase-directo" target="_blank" rel="noopener">la guía: “Supabase directo”</a>.</p>
+          <details class="mt">
+            <summary class="small" style="cursor:pointer;font-weight:800">Ver el fragmento real de <code>registrar_pedido()</code> &mdash; no es magia</summary>
+            <pre style="font-size:.62em;margin-top:.5em;text-align:left"><code>FOR v_linea IN SELECT * FROM jsonb_array_elements(p_lineas) LOOP
+  v_plato_id := (v_linea-&gt;&gt;'plato_id')::INTEGER;
+  v_cantidad := (v_linea-&gt;&gt;'cantidad')::INTEGER;
+
+  SELECT p.precio_actual INTO v_precio      -- el precio SIEMPRE sale de la tabla
+    FROM plato p WHERE p.plato_id = v_plato_id;    -- nunca de lo que mandó el navegador
+
+  INSERT INTO linea_pedido (cantidad, precio_unitario, pedido_id, plato_id)
+  VALUES (v_cantidad, v_precio, v_pedido, v_plato_id);
+  v_total := v_total + (v_cantidad * v_precio);
+END LOOP;</code></pre>
+          </details>
         </div>
         <div class="brand"><span>El carrito</span><span>Confirmar y pagar</span></div>
       </section>
@@ -3626,7 +3650,11 @@
         <div class="checkpoint mt">
           Antes de seguir, selecciona: ¿por qué tu carrito vivía en un
           documento y tu compra vive en tablas? Esa es tu evidencia &mdash; no
-          hay una página aparte que escribir.
+          hay una página aparte que escribir. Tres palabras deberían aparecer
+          en tu respuesta: <b>atomicidad</b> (todo o nada, el <code>BEGIN…END</code>
+          de la función), <b>concurrencia</b> (dos clientes, una sola fuente de
+          verdad) y <b>volatilidad</b> (el documento se pierde sin costo; la
+          fila, no).
         </div>
         <div class="brand"><span>Verificación</span><span>El producto es la prueba</span></div>
       </section>
@@ -3665,7 +3693,7 @@
             <tr><td>Documento</td><td>Ítem: <code>id</code> + clave de partición</td></tr>
           </tbody>
         </table>
-        <p class="small mt">La cuenta contiene bases; una base contiene contenedores. DP-900 pregunta por el servicio de Azure, no por la herramienta usada en clase.</p>
+        <p class="small mt">La cuenta contiene bases; una base contiene contenedores. Cada contenedor escala mediante la <b>clave de partición</b> que elijas en el documento, y su capacidad se mide en <b>RU/s (Request Units)</b>. DP-900 pregunta por el servicio de Azure, no por la herramienta usada en clase.</p>
         <div class="brand"><span>Puente DP-900</span><span>No relacional en Azure</span></div>
       </section>
 
