@@ -3332,17 +3332,27 @@
       <section class="slide dense" data-title="Briefing">
         <div class="ey">Briefing · el producto de hoy</div>
         <h2>Qué debes poder mostrar hoy</h2>
-        <div class="g2 wide">
+        <p class="lead compacto">Cuatro cosas concretas que debes poder <b>mostrar en pantalla</b>, no solo decir que hiciste.</p>
+        <div class="g2 wide mt">
           <div class="card">
-            <h3>El producto</h3>
-            <p>Tu propia colección de documentos, real, en la nube &mdash; y
-              haber usado el carrito hasta registrar un pedido de práctica en la base real.</p>
+            <h3>1 · Documento coherente</h3>
+            <p>Tus 2 documentos (Ajiaco y Tamal) en <code>carta</code>, con los tipos correctos &mdash; <code>precio_actual</code> número, <code>alergenos</code> arreglo &mdash; y al menos un campo que solo uno de los dos tiene.</p>
+            <p class="small mt"><b>Lo muestras:</b> abres el documento en la consola y señalas ese campo distinto.</p>
           </div>
           <div class="card blue">
-            <h3>Los 4 criterios</h3>
-            <p>Documento coherente · operación real ejecutada · explicas
-              embeber o referenciar · comparas con el modelo relacional de la
-              sesión 9.</p>
+            <h3>2 · Operación real ejecutada</h3>
+            <p>No basta con mirar el carrito: debes haberlo usado hasta que PostgreSQL confirme un pedido de práctica con tu nombre.</p>
+            <p class="small mt"><b>Lo muestras:</b> el mensaje &laquo;Pedido confirmado&raquo; en pantalla, con su número.</p>
+          </div>
+          <div class="card">
+            <h3>3 · Embeber o referenciar, explicado</h3>
+            <p>En el reto de la receta (diapositiva 17), eliges una opción y la justificas con el patrón de acceso &mdash; nunca &laquo;porque sí&raquo; ni &laquo;porque es más moderno&raquo;.</p>
+            <p class="small mt"><b>Lo muestras:</b> una frase que puedas defender ante un compañero en 30 segundos.</p>
+          </div>
+          <div class="card blue">
+            <h3>4 · Comparado con la sesión 9</h3>
+            <p>Señalas, con tus palabras, qué cambia entre <code>plato(plato_id, nombre, precio_actual)</code> de S9 y tu documento de hoy &mdash; y si esa diferencia importa para este caso.</p>
+            <p class="small mt"><b>Lo muestras:</b> los dos, lado a lado, y una razón concreta.</p>
           </div>
         </div>
         <div class="brand"><span>Briefing</span><span>Cuatro criterios, un producto</span></div>
@@ -3429,48 +3439,31 @@ Valor:     fuerte  [texto]</code></pre><p>Abre el constructor de consultas, aña
 ]</code></pre><p><b>Lectura del resultado:</b> 2 documentos coinciden. Se muestran solo ID y nombre para compararlos; la consulta recupera los documentos completos.</p><div class="checkpoint">Cambia el campo a <code>disponible_desde</code> y el valor a <code>06:00</code>. Debe quedar solo Tamal: Ajiaco no tiene ese campo.</div></div></div>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
-<section class="slide dense lesson-slide" data-title="La misma consulta, ahora en JavaScript">
+<section class="slide dense lesson-slide" data-title="Detrás de cada botón, alguien ya escribió los pasos">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
-        <h2>La misma consulta, ahora en JavaScript</h2>
-        <p class="lesson-intro"><b>No vas a escribir ni una línea de esto en todo el curso.</b> Se muestra solo como prueba: no hay magia detrás del filtro que armaste con clics — hay exactamente este código. JavaScript es el lenguaje que hace que una página web responda a un clic; aquí solo lo leemos, para confirmar que lo que hiciste a mano es justo lo que una aplicación real haría sola.</p>
-        <p class="lesson-intro">La consola nos ayudó a inspeccionar. La app usa un <b>SDK</b>: funciones de JavaScript que solicitan datos a Firestore.</p><div class="g2"><div class="lesson-panel"><h3>Código que lee los dos platos base</h3><pre><code>const carta = collection(db, &quot;carta&quot;);
-const base = query(
-  carta,
-  where(&quot;plato_id&quot;, &quot;in&quot;, [1, 8])
-);
-const r = await getDocsFromServer(base);
-console.table(r.docs.map(d =&gt; d.data()));</code></pre></div><div class="lesson-panel"><h3>Lee cada línea</h3><ol><li><code>db</code>: conexión de la app al proyecto de clase.</li><li><code>collection</code>: apunta a <code>carta</code>.</li><li><code>where</code>: deja los IDs 1 y 8.</li><li><code>query</code>: construye la consulta.</li><li><code>getDocsFromServer</code>: la ejecuta.</li><li><code>data()</code>: lee los campos devueltos.</li></ol><div class="ok">Resultado: Ajiaco y Tamal, aunque la app tenga 24 productos. No hay un orden garantizado.</div></div></div><p class="lesson-note">Este es el código del panel <b>Consultas de carta</b> de la app; ya tiene el SDK y la conexión. Se ejecutará después de la pausa con su botón. No se pega en Firebase Console.</p>
+        <h2>Detrás de cada botón, alguien ya escribió los pasos</h2>
+        <p class="lesson-intro">La consola te dejó armar el filtro con clics. El carrito de clase (lo usarás después de la pausa) hace exactamente lo mismo, pero solo con un botón: alguien ya dejó esos pasos listos <b>una vez</b>. Tú nunca los escribes &mdash; los aprietas.</p>
+        <div class="g2"><div class="lesson-panel"><h3>Los mismos pasos que diste en la consola, en orden</h3><ol><li>Se conecta al proyecto de la clase.</li><li>Busca en la colección <code>carta</code>.</li><li>Filtra por los platos 1 y 8 &mdash; el mismo filtro que armaste tú.</li><li>Pide los documentos al servidor.</li><li>Muestra el resultado en pantalla.</li></ol></div><div class="lesson-panel"><h3>Resultado</h3><pre data-nocopy><code>[
+  { &quot;plato_id&quot;: 1, &quot;nombre&quot;: &quot;Ajiaco santafereño&quot; },
+  { &quot;plato_id&quot;: 8, &quot;nombre&quot;: &quot;Tamal tolimense&quot; }
+]</code></pre><div class="ok">Ajiaco y Tamal, aunque la app tenga 24 productos. No hay un orden garantizado.</div></div></div><p class="lesson-note">Este es el panel <b>Consultas de carta</b> de la app: ya tiene todo listo. Se usa después de la pausa con su propio botón &mdash; nada de esto se escribe en Firebase Console.</p>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 <section class="slide dense lesson-slide" data-title="Filtrar y ordenar responden preguntas distintas">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
         <h2>Filtrar y ordenar responden preguntas distintas</h2>
-        <div class="g2"><div class="lesson-panel"><h3>¿Qué plato tiene horario de desayuno?</h3><pre><code>const horario = query(
-  carta,
-  where(&quot;disponible_desde&quot;, &quot;==&quot;, &quot;06:00&quot;)
-);
-const r = await getDocsFromServer(horario);</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Tamal tolimense&quot;,
-  &quot;disponible_desde&quot;: &quot;06:00&quot; }</code></pre><p><b>where</b> selecciona documentos que cumplen una condición.</p></div><div class="lesson-panel"><h3>¿Cuál es el más barato de los 24?</h3><pre><code>const barato = query(
-  carta,
-  orderBy(&quot;precio_actual&quot;, &quot;asc&quot;),
-  limit(1)
-);
-const r = await getDocsFromServer(barato);</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Pan de bono recién horneado&quot;,
-  &quot;precio_actual&quot;: 5000 }</code></pre><p><b>orderBy</b> ordena de menor a mayor; <b>limit(1)</b> deja un documento.</p></div></div><div class="checkpoint mt">Ambas consultas usan la carta compartida de 24 productos. Con solo tus dos documentos, el más barato sería Tamal ($22.000). El conjunto consultado cambia la respuesta.</div>
+        <div class="g2"><div class="lesson-panel"><h3>¿Qué plato tiene horario de desayuno?</h3><pre data-nocopy><code>Campo:     disponible_desde
+Operador:  es igual a (==)
+Valor:     06:00  [texto]</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Tamal tolimense&quot;,
+  &quot;disponible_desde&quot;: &quot;06:00&quot; }</code></pre><p>Un <b>filtro</b> selecciona documentos que cumplen una condición &mdash; el mismo constructor de consultas de la diapositiva 10.</p></div><div class="lesson-panel"><h3>¿Cuál es el más barato de los 24?</h3><pre data-nocopy><code>Ordenar por: precio_actual (menor a mayor)
+Límite:      1 resultado</code></pre><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Pan de bono recién horneado&quot;,
+  &quot;precio_actual&quot;: 5000 }</code></pre><p><b>Ordenar</b> cambia la secuencia; <b>limitar</b> corta cuántos documentos ves &mdash; dos controles distintos del mismo panel.</p></div></div><div class="checkpoint mt">Ambas consultas usan la carta compartida de 24 productos. Con solo tus dos documentos, el más barato sería Tamal ($22.000). El conjunto consultado cambia la respuesta.</div>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 <section class="slide dense lesson-slide" data-title="Contar, sumar y promediar: calcula antes de ejecutar" id="agregaciones-en-clase">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
         <h2>Contar, sumar y promediar: calcula antes de ejecutar</h2>
-        <p class="lesson-intro">Volvemos al conjunto <code>base</code>: únicamente Ajiaco (28.000) y Tamal (22.000).</p><div class="g2"><div class="lesson-panel"><h3>Consulta al servidor</h3><pre><code>const resumen = await getAggregateFromServer(
-  base,
-  {
-    cantidad: count(),
-    suma: sum(&quot;precio_actual&quot;),
-    promedio: average(&quot;precio_actual&quot;)
-  }
-);
-console.log(resumen.data());</code></pre><p>count cuenta; sum suma un campo; average calcula su media. El servidor devuelve el resumen.</p></div><div class="lesson-panel"><h3>Resultado esperado</h3><pre data-nocopy><code>{
+        <p class="lesson-intro">Volvemos al conjunto de tus dos platos: Ajiaco (28.000) y Tamal (22.000). <b>El Data Explorer no tiene un botón para esto</b> &mdash; contar, sumar y promediar no son operaciones de consola. Por eso el carrito de clase trae su propio panel &laquo;Consultas de carta&raquo;, que lo hace por ti después de la pausa.</p><div class="g2"><div class="lesson-panel"><h3>Lo que te va a devolver</h3><p>Un resumen con tres números: cuántos documentos, la suma de <code>precio_actual</code>, y su promedio. Antes de apretar el botón, calcula tú mismo.</p></div><div class="lesson-panel"><h3>Resultado esperado</h3><pre data-nocopy><code>{
   &quot;cantidad&quot;: 2,
   &quot;suma&quot;: 50000,
   &quot;promedio&quot;: 25000
@@ -3558,15 +3551,13 @@ console.log(resumen.data());</code></pre><p>count cuenta; sum suma un campo; ave
       <section class="slide dense lesson-slide" data-title="La receta: ¿embebida o referenciada?">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
         <h2>La receta: ¿embebida o referenciada?</h2>
-        <p class="lesson-intro">¿Qué platos usan pollo? Mira las dos representaciones antes de elegir.</p><div class="g2"><div class="lesson-panel"><h3>Embeber · ingredientes dentro del plato</h3><pre><code>{
+        <p class="lesson-intro">¿Qué platos usan pollo? Mira las dos representaciones antes de elegir.</p><div class="g2"><div class="lesson-panel"><h3>Embeber · ingredientes dentro del plato</h3><pre data-nocopy><code>{
   &quot;plato_id&quot;: 1,
   &quot;nombre&quot;: &quot;Ajiaco&quot;,
   &quot;ingredientes&quot;: [&quot;pollo&quot;, &quot;papa&quot;, &quot;guascas&quot;]
-}</code></pre><pre><code>where(&quot;ingredientes&quot;, &quot;array-contains&quot;, &quot;pollo&quot;)</code></pre><p>Lees la receta junto al plato. Si repites propiedades del ingrediente, tendrás que mantener esas copias.</p></div><div class="lesson-panel"><h3>Referenciar · ingredientes con vida propia</h3><pre><code>// Documento del plato
-{ &quot;plato_id&quot;: 1, &quot;ingrediente_ids&quot;: [&quot;pollo&quot;] }
-
-// Documento ingredientes/pollo
-{ &quot;nombre&quot;: &quot;Pollo&quot;, &quot;unidad&quot;: &quot;gramos&quot; }</code></pre><p>El ingrediente puede cambiar en un sitio. Para mostrar sus propiedades debes resolver la referencia: Firestore no hace un JOIN automático.</p></div></div><div class="checkpoint mt"><b>Práctica base:</b> elige y justifica según lectura y cambios. <b>Extensión:</b> implementa ambas formas y comprueba qué lecturas necesita la misma pregunta.</div>
+}</code></pre><pre data-nocopy><code>Campo:     ingredientes
+Operador:  la lista contiene
+Valor:     pollo</code></pre><p>Lees la receta junto al plato. Si repites propiedades del ingrediente, tendrás que mantener esas copias.</p></div><div class="lesson-panel"><h3>Referenciar · ingredientes con vida propia</h3><p class="small" style="margin:0 0 .3em">Documento del plato:</p><pre data-nocopy><code>{ &quot;plato_id&quot;: 1, &quot;ingrediente_ids&quot;: [&quot;pollo&quot;] }</code></pre><p class="small" style="margin:.5em 0 .3em">Documento aparte, <code>ingredientes/pollo</code>:</p><pre data-nocopy><code>{ &quot;nombre&quot;: &quot;Pollo&quot;, &quot;unidad&quot;: &quot;gramos&quot; }</code></pre><p>El ingrediente puede cambiar en un sitio. Para mostrar sus propiedades debes resolver la referencia: Firestore no hace un JOIN automático.</p></div></div><div class="checkpoint mt"><b>Práctica base:</b> elige y justifica según lectura y cambios. <b>Extensión:</b> implementa ambas formas y comprueba qué lecturas necesita la misma pregunta.</div>
         <div class="brand"><span>Sesión 11 · Documentos de verdad</span><span>Observar · consultar · decidir</span></div>
       </section>
 
@@ -3627,9 +3618,9 @@ console.log(resumen.data());</code></pre><p>count cuenta; sum suma un campo; ave
         </div>
         <div class="brand"><span>El carrito</span><span>Agregar platos</span></div>
       </section>
-<section class="slide dense lesson-slide" data-title="Ejecuta el código y contrasta la respuesta">
+<section class="slide dense lesson-slide" data-title="Ejecuta la consulta y contrasta la respuesta">
         <div class="ey">Práctica guiada · Restaurante ABC</div>
-        <h2>Ejecuta el código y contrasta la respuesta</h2>
+        <h2>Ejecuta la consulta y contrasta la respuesta</h2>
         <div class="g2"><div class="lesson-panel"><h3>Ahora · panel Consultas de carta</h3><ol><li>Abre el carrito compartido y localiza el panel.</li><li>Ejecuta <b>Ajiaco y Tamal</b>: 2 documentos.</li><li>Ejecuta <b>resumen</b>: 2, 50.000 y 25.000.</li><li>Selecciona <b>Solo Ajiaco</b>. Predice antes de ejecutar.</li></ol><a class="guide-button" href="carrito-abc-firebase.html#consultas-carta" target="_blank" rel="noopener"><strong>▶ Ejecutar las consultas</strong><span>Panel de solo lectura · catálogo de clase</span></a></div><div class="lesson-panel"><h3>Tu comprobación</h3><pre data-nocopy><code>Solo Ajiaco:
   cantidad = ?
   suma     = ?
