@@ -47,6 +47,33 @@ Cuando el aprendizaje depende de un servicio cloud, se usa el **servicio real**:
 - S13: Google BigQuery;
 - S14: Google BigQuery.
 
+**Por qué Cosmos DB no es laboratorio obligatorio en S11.** La cohorte viene de
+Colsubsidio/Tec Alianza, sin cuenta institucional universitaria garantizada:
+Azure for Students no es una base confiable para 40 estudiantes. La
+alternativa —que el docente comparta su propia suscripción y agregue a cada
+estudiante como invitado— traslada la responsabilidad de facturación a esa
+cuenta personal, incluso si el consumo esperado cabe en el nivel gratuito. Se
+descarta no por debilidad técnica sino porque es financieramente innecesaria
+para el objetivo académico: Firestore en el plan Spark cumple la misma
+necesidad —cuenta personal, sin tarjeta, servicio real— sin ese riesgo. Por
+eso Cosmos DB entra solo como puente conceptual para el DP-900, nunca como
+práctica de laboratorio.
+
+Esta misma restricción gobierna cualquier elección de plataforma en S11–S15:
+
+| Requisito | Consecuencia |
+|---|---|
+| 40 estudiantes | cada uno trabaja con cuenta propia, nunca dependiendo de una cuenta docente compartida |
+| Sin tarjeta | ningún laboratorio obligatorio puede exigirla |
+| Sin riesgo de factura | agotar la cuota debe bloquear o limitar, nunca empezar a cobrar |
+| Servicio real | cuando el concepto lo amerita, se toca una plataforma real, no solo se describe |
+
+Por eso BigQuery Sandbox (S13, S14) y Firebase Spark (S11) se eligieron sobre
+las alternativas de pago o de cuenta institucional: la pregunta de diseño no
+es «¿cómo hago todo en Azure?», sino «¿cómo se enseñan las capacidades que el
+DP-900 espera con servicios reales y gratuitos, para transferir después esos
+conceptos a Azure?».
+
 Los laboratorios WebAssembly son fallback de continuidad, nunca sustituto del servicio real.
 
 ### 6. Productive failure
@@ -149,10 +176,40 @@ grande. Si hacen falta dos, son dos sesiones.
 
 ## S13–S16: transferencia
 
-- S13: warehouse cloud real en BigQuery;
-- S14: datos anidados/semiestructurados + mapa Azure;
-- S15: datos imperfectos sin herramienta prescrita;
-- S16: escenarios acumulativos y preparación DP-900.
+El caso de negocio sigue siendo el Restaurante ABC: sus ventas alimentan el
+warehouse de la S13 y sus pedidos en JSON alimentan la carga semiestructurada
+de la S14. El estudiante no cambia de negocio a mitad de módulo — cambia de
+pregunta sobre el mismo negocio.
+
+- **S13 · warehouse cloud real en BigQuery.** No enseña sintaxis SQL nueva
+  —eso ya se resolvió en S2–S5—: usa el SQL que el grupo ya conoce para
+  descubrir una plataforma nueva. BigQuery muestra cuántos datos va a procesar
+  una consulta antes de ejecutarla, así que el costo de leer columnas de más
+  aparece como una consecuencia observable, no como una definición de
+  almacenamiento columnar dicha de entrada. La transferencia a Microsoft es
+  explícita y sin atajos: BigQuery no se presenta como «el Fabric de
+  Google» —no son equivalentes—; el patrón de carga se reconoce después en
+  Fabric Warehouse, Azure Databricks y Power BI.
+- **S14 · datos anidados/semiestructurados, sobre la misma plataforma de
+  S13.** No se abre una cuenta nueva ni se cambia de interfaz a mitad de
+  transferencia. El hilo recupera el documento JSON ya visto en S11 —antes
+  como modelo operacional, ahora como dato semiestructurado de una carga
+  analítica—, usa `UNNEST` para reconectar con el grano (S12) y el nivel de
+  agregación (S5) cuando un arreglo se expande en filas, e introduce Parquet
+  solo después de que ya existan varios formatos de archivo distintos sobre
+  la mesa, nunca como una palabra suelta del examen. **Databricks Free
+  Edition queda como extensión, no como núcleo**: quien termine temprano
+  resuelve en Databricks la misma pregunta ya resuelta en BigQuery, en vez de
+  gastar tiempo de clase completa creando cuenta, workspace y notebook.
+- **S15:** datos imperfectos sin herramienta prescrita.
+- **S16:** escenarios acumulativos y preparación DP-900.
+
+**Lo que esto descarta a propósito:** un producto nuevo por sesión solo por
+variedad, repetir SQL básico bajo otro nombre, cambiar de caso de negocio a
+mitad de módulo, enseñar Fabric solo con diapositivas sin haberlo operado,
+convertir el DP-900 en memorizar nombres de servicios, o introducir
+Spark/streaming antes de que exista un problema real de eventos que lo
+justifique.
 
 ---
 
