@@ -26,8 +26,8 @@ pedido_id,fecha,mesa_numero,mesero_nombre,linea_id,plato_nombre,cantidad,precio_
 13,2026-08-31,1,Marta Quintero,24,Sopa de guineo,2,16000
 14,2026-08-31,3,Andrés Poveda,25,Trucha al ajillo,1,39000
 14,2026-08-31,3,Andrés Poveda,26,Arepa de choclo,2,7500
-15,2026-08-31,6,(sin asignar),27,Pan de bono recién horneado,4,5000
-15,2026-08-31,6,(sin asignar),28,Café colombiano,4,6000
+15,2026-08-31,2,Marta Quintero,27,Pan de bono recién horneado,4,5000
+15,2026-08-31,2,Marta Quintero,28,Café colombiano,4,6000
 16,2026-09-01,2,Marta Quintero,29,Ajiaco santafereño,3,28000
 16,2026-09-01,2,Marta Quintero,30,Empanadas de pipián,3,8500
 17,2026-09-01,4,Andrés Poveda,31,Sobrebarriga al horno,1,36000
@@ -38,8 +38,8 @@ pedido_id,fecha,mesa_numero,mesero_nombre,linea_id,plato_nombre,cantidad,precio_
 19,2026-09-02,1,Marta Quintero,36,Avena casera,2,7500
 20,2026-09-02,3,Andrés Poveda,37,Sancocho de gallina,1,30000
 20,2026-09-02,3,Andrés Poveda,38,Brevas con arequipe,1,12000
-21,2026-09-02,6,(sin asignar),39,Oblea bogotana,2,9000
-21,2026-09-02,6,(sin asignar),40,Chocolate santafereño,2,8500
+21,2026-09-02,4,Andrés Poveda,39,Oblea bogotana,2,9000
+21,2026-09-02,4,Andrés Poveda,40,Chocolate santafereño,2,8500
 22,2026-09-03,2,Marta Quintero,41,Ajiaco santafereño,1,28000
 22,2026-09-03,2,Marta Quintero,42,Limonada de coco,1,9000
 23,2026-09-03,4,Andrés Poveda,43,Cazuela de mariscos,1,42000
