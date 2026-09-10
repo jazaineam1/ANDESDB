@@ -393,6 +393,13 @@
             "streaming",
             "Fabric",
             "Databricks"
+          ],
+          "href": "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html",
+          "recursos": [
+            {
+              "txt": "🧮 Laboratorio del grano (DuckDB-Wasm, en tu navegador, 0 créditos)",
+              "href": "labs/grano-estrella.html"
+            }
           ]
         },
         {

@@ -12,7 +12,7 @@
   const inject = () => {
     const overlay = document.getElementById('andes-learning-overlay');
     if (!overlay || overlay.querySelector('[data-analytics-fallback-link]')) return false;
-    const targets = [...overlay.querySelectorAll('.al-real')];
+    const targets = [...overlay.querySelectorAll('.ap-real')];
     const target = targets.find(x => /DuckDB|fallback|respaldo|laboratorio analítico/i.test(x.textContent)) || targets[targets.length - 1];
     if (!target) return false;
     const a = document.createElement('a');

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratorio del grano · Sesión 12 · ANDESDB</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#171717">
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#171717;background:#f5f5f5}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1150px;margin:auto;padding:24px}.head{background:#171717;color:white;padding:22px 0}.head h1{margin:0;font-size:clamp(24px,4vw,40px)}.head p{color:#ccc;margin:8px 0 0}.notice{background:#e9f6ee;border:1px solid #8fd4ab;border-radius:14px;padding:14px 16px;margin:20px 0;line-height:1.45}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:white;border:1px solid #ddd;border-radius:14px;padding:14px}.card h3{margin:0 0 6px;font-size:14px}.card p{margin:0;font-size:12.5px;color:#555;line-height:1.4}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.btn{border:0;border-radius:10px;background:#171717;color:white;padding:10px 13px;font-weight:800;cursor:pointer;font-size:13px}.btn.alt{background:#eee;color:#171717}.status{font-size:13px;color:#555;margin:10px 0}textarea{width:100%;min-height:140px;resize:vertical;border:1px solid #bbb;border-radius:12px;padding:14px;font:14px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;background:#111;color:#f6f6f6}.tablebox{overflow:auto;max-height:380px;border:1px solid #ddd;border-radius:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#171717;color:white}.meta{font-size:12px;color:#666;margin-top:8px}.section{background:white;border:1px solid #ddd;border-radius:16px;padding:18px;margin-top:18px}.section h2{margin-top:0;font-size:19px}.warn{background:#fff6bf;border:1px solid #d6b900;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:13.5px;line-height:1.45}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.wrap{padding:14px}textarea{min-height:150px}}
+</style>
+<script type="importmap">{"imports":{"apache-arrow":"../assets/vendor/apache-arrow/apache-arrow.mjs"}}</script>
+</head>
+<body>
+<header class="head"><div class="wrap"><h1>Laboratorio del grano</h1><p>DuckDB-Wasm, en tu navegador · el mismo SQL que ya conoces, sobre datos reales del Restaurante ABC · 0 créditos, sin cuenta</p></div></header>
+<main class="wrap">
+  <div class="notice"><b>Esto corre entero en tu computador.</b> No hay proyecto que crear, ni cuenta, ni tarjeta: las cinco tablas se cargan solas al abrir esta página. Es el mismo SQL de las sesiones 2 a 9 &mdash; lo nuevo es la forma de las tablas, no el lenguaje.</p></div>
+
+  <div class="grid">
+    <div class="card"><h3>dim_plato</h3><p>Los 24 platos de la carta, con su precio de hoy. Igual que <code>plato</code> en la sesión 9.</p></div>
+    <div class="card"><h3>dim_mesero</h3><p>Los 4 meseros. Igual que <code>mesero</code> en la sesión 9.</p></div>
+    <div class="card"><h3>dim_fecha</h3><p>Un día por fila: año, mes, día de la semana. No existía en la sesión 9 &mdash; una fecha suelta no necesitaba tabla propia allá.</p></div>
+    <div class="card"><h3>fact_venta</h3><p><b>El hecho.</b> Una fila = un plato vendido dentro de un pedido ya confirmado. Nace de <code>linea_pedido</code>, filtrando <code>estado = 'cerrado'</code>.</p></div>
+    <div class="card"><h3>operacion_pedido_mesa_flat</h3><p>A propósito defectuosa: el mismo dato, exportado uniendo <code>pedido_mesa</code> sin cuidado. Se usa una sola vez, para ver el error.</p></div>
+  </div>
+
+  <section class="section">
+    <h2>Consulta</h2>
+    <div id="status" class="status">Preparando DuckDB-Wasm…</div>
+    <textarea id="sql" spellcheck="false">SHOW TABLES;</textarea>
+    <div class="actions">
+      <button class="btn" id="run">▶ Ejecutar</button>
+    </div>
+    <div class="actions">
+      <button class="btn alt" data-preset="SHOW TABLES;">1 · Ver las cinco tablas</button>
+      <button class="btn alt" data-preset="SELECT pedido_id, COUNT(*) AS filas, SUM(cantidad * precio_unitario) AS ingreso_calculado&#10;FROM operacion_pedido_mesa_flat&#10;WHERE pedido_id = 4&#10;GROUP BY pedido_id;">2 · Pedido 4, el JOIN ingenuo</button>
+      <button class="btn alt" data-preset="SELECT pedido_id, COUNT(*) AS filas, SUM(cantidad * precio_unitario) AS ingreso_real&#10;FROM fact_venta&#10;WHERE pedido_id = 4&#10;GROUP BY pedido_id;">3 · Pedido 4, por el grano correcto</button>
+      <button class="btn alt" data-preset="SELECT p.nombre, SUM(f.cantidad) AS unidades, SUM(f.ingreso) AS ingreso_total&#10;FROM fact_venta f&#10;JOIN dim_plato p ON p.plato_id = f.plato_id&#10;GROUP BY p.nombre&#10;ORDER BY ingreso_total DESC;">4 · Ingreso por plato</button>
+      <button class="btn alt" data-preset="SELECT d.fecha, d.dia_semana, SUM(f.ingreso) AS ingreso_total&#10;FROM fact_venta f&#10;JOIN dim_fecha d ON d.fecha = f.fecha&#10;GROUP BY d.fecha, d.dia_semana&#10;ORDER BY d.fecha;">5 · Ingreso por día</button>
+      <button class="btn alt" data-preset="SELECT m.nombre, SUM(f.ingreso) AS ingreso_total&#10;FROM fact_venta f&#10;JOIN dim_mesero m ON m.mesero_id = f.mesero_id&#10;GROUP BY m.nombre&#10;ORDER BY ingreso_total DESC;">6 · Ingreso por mesero</button>
+    </div>
+    <div class="warn"><b>La comprobación:</b> el pedido 4 es la fiesta que ocupó dos mesas (sesión 9, comprobación 2). Su total real, sumando pagos, es <b>184.000</b>. El botón 2 une por <code>pedido_mesa</code> sin agrupar antes las líneas: cada línea aparece una vez por mesa, así que el pedido se cuenta dos veces y el total sale en 368.000 &mdash; el doble, y nada en la pantalla avisa que está mal. El botón 3 parte del grano correcto y da 184.000. Esa diferencia, no una definición de memoria, es la razón por la que declarar el grano antes de escribir la consulta.</div>
+  </section>
+
+  <section class="section">
+    <h2>Resultado</h2>
+    <div id="result" class="tablebox"><div class="status" style="padding:14px">Todavía no hay resultado.</div></div>
+    <div id="meta" class="meta"></div>
+  </section>
+</main>
+<script type="module" src="grano-estrella.mjs"></script>
+<script src="../assets/learning/learning-core.js"></script>
+</body></html>

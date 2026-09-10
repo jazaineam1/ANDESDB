@@ -155,6 +155,10 @@
   }
 
   async function init() {
+    // Una página incrustada en un iframe (el laboratorio dentro de una
+    // diapositiva) no necesita su propio botón flotante: la página que la
+    // contiene ya trae el suyo.
+    if (window.self !== window.top) return;
     addManifest();
     const n = sessionNumber();
     if (!n) {
