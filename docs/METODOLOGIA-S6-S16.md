@@ -44,8 +44,8 @@ Cuando el aprendizaje depende de un servicio cloud, se usa el **servicio real**:
 
 - S9: Supabase + PostgreSQL;
 - S11: Firebase Firestore + MongoDB Atlas (Azure Cosmos DB entra solo como puente conceptual para el DP-900, sin práctica de laboratorio: la vía sin backend que Atlas ofrecía se retiró en 2025);
-- S13: Google BigQuery;
-- S14: Google BigQuery.
+- S13: Google BigQuery, en un laboratorio real de Google Cloud Skills Boost;
+- S14: Google BigQuery, mismo mecanismo.
 
 **Por qué Cosmos DB no es laboratorio obligatorio en S11.** La cohorte viene de
 Colsubsidio/Tec Alianza, sin cuenta institucional universitaria garantizada:
@@ -63,16 +63,33 @@ Esta misma restricción gobierna cualquier elección de plataforma en S11–S15:
 
 | Requisito | Consecuencia |
 |---|---|
-| 40 estudiantes | cada uno trabaja con cuenta propia, nunca dependiendo de una cuenta docente compartida |
-| Sin tarjeta | ningún laboratorio obligatorio puede exigirla |
-| Sin riesgo de factura | agotar la cuota debe bloquear o limitar, nunca empezar a cobrar |
+| 40 estudiantes | cada uno trabaja en su propio entorno aislado, nunca dentro de la suscripción real de otra persona |
+| Sin tarjeta | ningún laboratorio obligatorio puede exigirla, ni al estudiante ni al docente |
+| Sin riesgo de factura | agotar la cuota debe bloquear o limitar el inicio de un nuevo laboratorio, nunca generar un cobro real |
 | Servicio real | cuando el concepto lo amerita, se toca una plataforma real, no solo se describe |
 
-Por eso BigQuery Sandbox (S13, S14) y Firebase Spark (S11) se eligieron sobre
-las alternativas de pago o de cuenta institucional: la pregunta de diseño no
-es «¿cómo hago todo en Azure?», sino «¿cómo se enseñan las capacidades que el
-DP-900 espera con servicios reales y gratuitos, para transferir después esos
-conceptos a Azure?».
+Por eso BigQuery Sandbox (individual, sin coordinar nada) y Firebase Spark
+(S11) se eligieron sobre las alternativas de pago o de cuenta institucional:
+la pregunta de diseño no es «¿cómo hago todo en Azure?», sino «¿cómo se
+enseñan las capacidades que el DP-900 espera con servicios reales y
+gratuitos, para transferir después esos conceptos a Azure?».
+
+**Crédito docente compartido no es lo mismo que suscripción docente
+compartida.** S13 y S14 usan créditos de Google Cloud Skills Boost que el
+docente distribuye entre la cohorte (hasta 5.000 créditos por educador
+elegible, agrupables en *share groups*). Esto **no** es el mismo riesgo que
+descartó Cosmos DB: cada laboratorio corre en un proyecto y con credenciales
+temporales que Google aprovisiona y destruye por estudiante, nadie —ni
+estudiante ni docente— pone tarjeta en ningún momento, y los créditos son una
+bolsa prepagada con techo: agotarla bloquea el inicio de un laboratorio
+nuevo, no genera un cobro. El único riesgo real que introduce es de
+**disponibilidad, no de dinero**: el cupo es personal del docente, tiene
+fecha de vencimiento, y no hay garantía de renovación alineada al
+calendario. Antes de adoptarlo como ruta principal de una cohorte, se
+verifica que el vencimiento del crédito cubra sin ajustes todas las sesiones
+que dependen de él; si no cubre, o si una futura cohorte no cuenta con este
+tipo de crédito, BigQuery Sandbox (cuenta individual, sin coordinar nada
+entre docente y estudiantes) es el equivalente sin fecha de vencimiento.
 
 Los laboratorios WebAssembly son fallback de continuidad, nunca sustituto del servicio real.
 
@@ -181,6 +198,14 @@ warehouse de la S13 y sus pedidos en JSON alimentan la carga semiestructurada
 de la S14. El estudiante no cambia de negocio a mitad de módulo — cambia de
 pregunta sobre el mismo negocio.
 
+**Cómo se llega a BigQuery real.** Ruta principal cuando el docente cuenta con
+créditos de Google Cloud Skills Boost vigentes para toda la ventana S13–S15:
+laboratorio real en un proyecto y credenciales temporales por estudiante,
+repartidos por *share group* (ver principio 5). Sin ese crédito, o si su
+vencimiento no cubre el calendario real de la cohorte, la ruta equivalente es
+BigQuery Sandbox con cuenta individual del estudiante — mismo servicio real,
+sin coordinación docente ni fecha límite. Ninguna de las dos exige tarjeta.
+
 - **S13 · warehouse cloud real en BigQuery.** No enseña sintaxis SQL nueva
   —eso ya se resolvió en S2–S5—: usa el SQL que el grupo ya conoce para
   descubrir una plataforma nueva. BigQuery muestra cuántos datos va a procesar
@@ -192,15 +217,17 @@ pregunta sobre el mismo negocio.
   Fabric Warehouse, Azure Databricks y Power BI.
 - **S14 · datos anidados/semiestructurados, sobre la misma plataforma de
   S13.** No se abre una cuenta nueva ni se cambia de interfaz a mitad de
-  transferencia. El hilo recupera el documento JSON ya visto en S11 —antes
-  como modelo operacional, ahora como dato semiestructurado de una carga
-  analítica—, usa `UNNEST` para reconectar con el grano (S12) y el nivel de
-  agregación (S5) cuando un arreglo se expande en filas, e introduce Parquet
-  solo después de que ya existan varios formatos de archivo distintos sobre
-  la mesa, nunca como una palabra suelta del examen. **Databricks Free
-  Edition queda como extensión, no como núcleo**: quien termine temprano
-  resuelve en Databricks la misma pregunta ya resuelta en BigQuery, en vez de
-  gastar tiempo de clase completa creando cuenta, workspace y notebook.
+  transferencia — el grupo usa la misma plataforma dos sesiones seguidas para
+  no gastar carga cognitiva en un entorno distinto. El hilo recupera el
+  documento JSON ya visto en S11 —antes como modelo operacional, ahora como
+  dato semiestructurado de una carga analítica—, usa `UNNEST` para reconectar
+  con el grano (S12) y el nivel de agregación (S5) cuando un arreglo se
+  expande en filas, e introduce Parquet solo después de que ya existan varios
+  formatos de archivo distintos sobre la mesa, nunca como una palabra suelta
+  del examen. **Databricks no se opera en esta sesión**: aparece únicamente
+  como el nombre que reconocen dentro del ecosistema analítico de Azure para
+  el DP-900, igual que Fabric — se nombra, no se instala una cuenta nueva
+  para practicarlo.
 - **S15:** datos imperfectos sin herramienta prescrita.
 - **S16:** escenarios acumulativos y preparación DP-900.
 
