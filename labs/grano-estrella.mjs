@@ -81,9 +81,12 @@ async function run() {
   }
 }
 
+const presetBtns = document.querySelectorAll('[data-preset]');
 document.getElementById('run').addEventListener('click', run);
-document.querySelectorAll('[data-preset]').forEach(btn => {
+presetBtns.forEach(btn => {
   btn.addEventListener('click', () => {
+    presetBtns.forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
     sqlEl.value = btn.dataset.preset;
     run();
   });
