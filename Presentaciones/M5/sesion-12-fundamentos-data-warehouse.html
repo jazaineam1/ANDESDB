@@ -3381,40 +3381,32 @@ GROUP BY p.pedido_id;</code></pre><p class="small">Es casi la comprobación 2 de
 
       <section class="slide dense lesson-slide" data-title="Tres formas de llegar el dato"><div class="ey">Recuperado de la sesión 6</div><h2>Estructurado, semiestructurado, no estructurado</h2><p class="lesson-intro">Clasifícalo con dos pestañas abiertas de verdad, no de memoria: tu <b>Supabase</b> (Table Editor → <code>plato</code>) y tu <b>Firestore</b> de la sesión 11 (colección <code>carta</code>).</p><div class="g3"><div class="card blue"><h3>🗂️ Estructurado</h3><p>Mira <code>plato</code> en Table Editor: filas y columnas fijas, con tipo definido. <code>precio_actual</code> siempre es un número; ninguna fila lo salta.</p></div><div class="card"><h3>📄 Semiestructurado</h3><p>Abre un documento tuyo en Firestore: tiene forma, pero no es tabular &mdash; campos que no todos los documentos comparten.</p></div><div class="card"><h3>🖼️ No estructurado</h3><p>Sin esquema previo: la foto del plato, el comentario libre de una reseña, el audio de una llamada al restaurante &mdash; nada de esto vive en ninguna de tus dos bases.</p></div></div><div class="checkpoint mt">La tabla de hechos que vas a construir hoy &mdash; ¿de cuál de los tres tipos es?</div><div class="ok mt" data-r><b>Estructurado, siempre.</b> Un data warehouse clásico &mdash;el que construyes hoy&mdash; exige columnas y tipos fijos porque de ahí depende que sumar y agrupar sea rápido y confiable, igual que <code>plato</code> en tu Table Editor. Un lago de datos sí puede guardar los tres tipos juntos; esa es justo la diferencia de la próxima diapositiva.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
-      <section class="slide dense" data-title="Lago o bodega: no es lo mismo"><div class="ey">Recuperado de la sesión 6</div><h2>Imagina 40 Restaurantes ABC, no uno</h2><p class="lead">Cada sede tiene su propia base OLTP. Alguien en la central quiere entender el negocio completo.</p><div class="arch-diagram"><svg viewBox="0 0 1000 160" role="img" aria-labelledby="lagoTitle lagoDesc" xmlns="http://www.w3.org/2000/svg">
-<title id="lagoTitle">Un embudo con dos salidas: lago y bodega</title>
-<desc id="lagoDesc">Tres fuentes crudas de las 40 sedes — CSV de ventas, reseñas en texto libre, fotos del menú — entran a un embudo. Una salida amplia sin filtrar lleva al data lake, que recibe los tres tipos de dato tal cual. Una salida angosta, con una compuerta de esquema fijo, lleva al data warehouse.</desc>
+      <section class="slide dense" data-title="Lago o bodega: no es lo mismo"><div class="ey">Recuperado de la sesión 6</div><h2>Imagina 40 Restaurantes ABC, no uno</h2><p class="lead">Cada sede tiene su propia base OLTP. Alguien en la central quiere entender el negocio completo.</p><div class="arch-diagram"><svg viewBox="0 0 1000 220" role="img" aria-labelledby="lagoTitle lagoDesc" xmlns="http://www.w3.org/2000/svg">
+<title id="lagoTitle">Data lake contra data warehouse, lado a lado</title>
+<desc id="lagoDesc">A la izquierda, el data lake recibe los tres tipos de dato crudo de las 40 sedes tal como llegan: CSV de ventas, rese&#241;as en texto libre, fotos del men&#250;. A la derecha, el data warehouse solo recibe datos ya filtrados y transformados, con esquema fijo.</desc>
 <defs>
-  <g id="lagoIconCsv"><rect x="1" y="1" width="20" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1,8 h20 M8,8 v13 M15,8 v13" stroke="currentColor" stroke-width="1.4"/></g>
-  <g id="lagoIconTexto"><path d="M1,2 h20 v13 h-13 l-4,4 v-4 h-3 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5,7 h12 M5,11 h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></g>
-  <g id="lagoIconFoto"><rect x="1" y="2" width="20" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2,17 l6,-6 l4,4 l5,-6 l4,5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="lagoIconLake2"><rect x="1" y="1" width="22" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1,15 q2.75,-4 5.5,0 q2.75,4 5.5,0 q2.75,-4 5.5,0 q2.75,4 5.5,0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+  <g id="lagoIconDw2"><rect x="1" y="11" width="22" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="1" y="5" width="22" height="6.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12,1 l11,4.5 h-22 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
 </defs>
-<g style="color:#124e78">
-  <rect class="cell" x="20" y="2" width="150" height="34" rx="8"/>
-  <use href="#lagoIconCsv" x="30" y="9" width="18" height="18"/>
-  <text x="54" y="23" class="box-s" style="font-weight:700">CSV de ventas</text>
-  <rect class="cell" x="20" y="50" width="150" height="34" rx="8"/>
-  <use href="#lagoIconTexto" x="30" y="57" width="18" height="18"/>
-  <text x="54" y="71" class="box-s" style="font-weight:700">Reseñas libres</text>
-  <rect class="cell" x="20" y="98" width="150" height="34" rx="8"/>
-  <use href="#lagoIconFoto" x="30" y="105" width="18" height="18"/>
-  <text x="54" y="119" class="box-s" style="font-weight:700">Fotos del menú</text>
-</g>
-<path class="funnel" d="M195,-5 L195,140 L430,67 Z"/>
-<path d="M430,67 L610,30" fill="none" stroke="#9aa8b3" stroke-width="2"/>
-<path d="M430,67 L610,110" fill="none" stroke="#9aa8b3" stroke-width="2"/>
-<rect x="460" y="80" width="152" height="20" rx="5" fill="#f2f6f8"/><text x="470" y="94" class="box-s" style="font-style:italic">compuerta: esquema fijo</text>
-<rect class="box box-b" x="620" y="2" width="280" height="62" rx="10"/>
-<text x="638" y="26" class="box-t">Data lake</text>
-<text x="638" y="46" class="box-s">Todo entra, sin filtrar</text>
-<rect class="box box-hero" x="620" y="88" width="280" height="62" rx="10"/>
-<text x="638" y="112" class="box-t box-t-hero">Data warehouse</text>
-<text x="638" y="132" class="box-s box-s-hero">Solo lo ya decidido, hoy</text>
-</svg></div><div class="g2 wide"><div class="card"><h3>Data lake</h3><p>Todo lo crudo, sin estructura obligatoria &mdash; barato y flexible, pero hay que saber qué hay adentro.</p></div><div class="card blue"><h3>Data warehouse</h3><p>Solo lo ya decidido, con esquema fijo &mdash; listo para sumar y agrupar rápido, menos flexible.</p></div></div><div class="checkpoint mt">El laboratorio de hoy trabaja con cinco tablas ya definidas de antemano. ¿Eso lo convierte en lago o en bodega?</div><div class="ok mt" data-r><b>Bodega.</b> <code>fact_venta</code> y sus tres dimensiones tienen esquema fijo desde antes de cargar el primer dato &mdash; exactamente el patrón de un data warehouse, aunque hoy corra local en tu navegador y no en una nube.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
+<rect class="box box-b" x="20" y="8" width="460" height="204" rx="14"/>
+<g style="color:#124e78"><use href="#lagoIconLake2" x="40" y="26" width="26" height="26"/></g>
+<text x="76" y="48" class="box-t">Data lake</text>
+<text x="40" y="80" class="box-s" style="font-size:14px">Todo entra, sin filtrar</text>
+<rect x="40" y="100" width="220" height="28" rx="8" fill="#fff" stroke="#9cc7ff"/><text x="52" y="119" class="box-s">&#10003; CSV de ventas</text>
+<rect x="40" y="134" width="220" height="28" rx="8" fill="#fff" stroke="#9cc7ff"/><text x="52" y="153" class="box-s">&#10003; Rese&#241;as libres</text>
+<rect x="40" y="168" width="220" height="28" rx="8" fill="#fff" stroke="#9cc7ff"/><text x="52" y="187" class="box-s">&#10003; Fotos del men&#250;</text>
+<rect class="box box-hero" x="520" y="8" width="460" height="204" rx="14"/>
+<g style="color:#171717"><use href="#lagoIconDw2" x="540" y="26" width="26" height="26"/></g>
+<text x="576" y="48" class="box-t box-t-hero">Data warehouse</text>
+<text x="540" y="80" class="box-s box-s-hero" style="font-size:14px">Solo lo ya decidido</text>
+<rect x="540" y="100" width="400" height="28" rx="8" fill="#fffdf2" stroke="#c99a00"/><text x="552" y="119" class="box-s box-s-hero">&#10003; Datos ya filtrados y transformados</text>
+<rect x="540" y="134" width="400" height="28" rx="8" fill="#fffdf2" stroke="#c99a00"/><text x="552" y="153" class="box-s box-s-hero">&#10003; Esquema fijo, listo para sumar</text>
+<text x="540" y="196" class="box-s box-s-hero" style="font-style:italic">las mismas fuentes, ya curadas</text>
+</svg></div><div class="checkpoint mt">El laboratorio de hoy trabaja con cinco tablas ya definidas de antemano. ¿Eso lo convierte en lago o en bodega?</div><div class="ok mt" data-r><b>Bodega.</b> <code>fact_venta</code> y sus tres dimensiones tienen esquema fijo desde antes de cargar el primer dato &mdash; exactamente el patrón de un data warehouse, aunque hoy corra local en tu navegador y no en una nube.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
-      <section class="slide dense lesson-slide" data-title="De once tablas a cinco: ETL o ELT"><div class="ey">Recuperado de la sesión 6</div><h2>¿Cómo llegan los datos del OLTP a la bodega?</h2><div class="arch-diagram"><svg viewBox="0 0 1000 260" role="img" aria-labelledby="etlTitle etlDesc" xmlns="http://www.w3.org/2000/svg">
-<title id="etlTitle">ETL contra ELT: la misma secuencia, la T en otra posición</title>
-<desc id="etlDesc">ETL extrae, transforma y luego carga. ELT extrae, carga y transforma al final, dentro del motor analítico. El paso que cambia de lugar es Transformar, resaltado en ambas filas.</desc>
+      <section class="slide dense lesson-slide" data-title="De once tablas a cinco: ETL o ELT"><div class="ey">Recuperado de la sesión 6</div><h2>¿Cómo llegan los datos del OLTP a la bodega?</h2><div class="arch-diagram"><svg viewBox="0 0 1000 350" role="img" aria-labelledby="etlTitle etlDesc" xmlns="http://www.w3.org/2000/svg">
+<title id="etlTitle">ETL contra ELT: la misma secuencia, la T en otra posición, con la misma línea real</title>
+<desc id="etlDesc">Usando la línea 1 real de linea_pedido —cantidad 2, precio_unitario 26.000— ETL calcula el ingreso de 52.000 antes de cargarlo a fact_venta; ELT carga esa misma línea cruda, sin ingreso, y lo calcula después, ya dentro de la bodega.</desc>
 <defs><marker id="etlArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a97a1"/></marker></defs>
 <text x="20" y="24" class="lane-label" fill="#124e78">ETL · transforma antes de cargar</text>
 <rect class="box box-b" x="20" y="36" width="260" height="76" rx="10"/><text x="40" y="80" class="step-t">Extraer</text>
@@ -3422,14 +3414,18 @@ GROUP BY p.pedido_id;</code></pre><p class="small">Es casi la comprobación 2 de
 <rect class="box box-hero" x="350" y="36" width="260" height="76" rx="10"/><text x="370" y="80" class="step-t">Transformar</text>
 <path d="M622,74 L668,74" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
 <rect class="box box-g" x="680" y="36" width="260" height="76" rx="10"/><text x="700" y="80" class="step-t">Cargar</text>
+<rect x="20" y="122" width="920" height="34" rx="8" fill="#f2f6f8"/>
+<text x="36" y="144" style="font:600 13px 'IBM Plex Mono',monospace;fill:#5a6b76">linea_pedido: cantidad=2, precio_unitario=26.000 → <tspan style="fill:#8a6a00;font-weight:700">se calcula ingreso=52.000 aquí</tspan> → fact_venta ya trae ingreso=52.000</text>
 
-<text x="20" y="150" class="lane-label" fill="#146c43">ELT · carga crudo, transforma después</text>
-<rect class="box box-b" x="20" y="162" width="260" height="76" rx="10"/><text x="40" y="206" class="step-t">Extraer</text>
-<path d="M292,200 L338,200" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-g" x="350" y="162" width="260" height="76" rx="10"/><text x="370" y="206" class="step-t">Cargar</text>
-<path d="M622,200 L668,200" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-hero" x="680" y="162" width="260" height="76" rx="10"/><text x="700" y="206" class="step-t">Transformar</text>
-</svg></div><p class="lesson-note">La T se mueve; el resto de la secuencia queda igual. <code>fact_venta.csv</code>, el archivo de la próxima tarjeta, ya te dice cuál de las dos caminó primero.</p><div class="g2 wide"><div class="card"><h3>ETL · Extract, Transform, Load</h3><p>Se extrae de Supabase, se transforma <b>antes</b> de guardar (se calcula <code>ingreso</code>, se filtra <code>estado='cerrado'</code>, se une con <code>mesa</code>) y solo entonces se carga la tabla de hechos ya lista.</p></div><div class="card blue"><h3>ELT · Extract, Load, Transform</h3><p>Se extrae y se carga crudo, tal cual, en la bodega &mdash; y la transformación ocurre <b>después</b>, dentro del motor analítico, que suele tener más potencia para eso.</p></div></div><div class="lesson-panel mt"><h3>No lo adivines: ábrelo</h3><p>Busca la columna <code>ingreso</code> y fíjate en qué <code>pedido_id</code> aparecen &mdash; ¿ves algún pedido marcado <code>abierto</code> o <code>anulado</code> en la sesión 9?</p><a class="guide-button" href="Datos/fact_venta.csv" target="_blank" rel="noopener"><strong>Abrir fact_venta.csv</strong><span>El archivo real que vas a cargar hoy</span></a></div><div class="checkpoint mt"><code>fact_venta.csv</code> ya trae <code>ingreso</code> calculado y solo las líneas de pedidos <code>'cerrado'</code> &mdash; lo acabas de comprobar tú mismo. ¿Corresponde eso a ETL o a ELT?</div><div class="ok mt" data-r><b>ETL.</b> La transformación &mdash;calcular, filtrar, unir&mdash; ya ocurrió antes de que el archivo llegara a tu laboratorio; por eso no encontraste ningún pedido abierto o anulado en la columna. En la sesión 13, con BigQuery real, vas a ver el otro camino: cargar más crudo y transformar adentro.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
+<text x="20" y="196" class="lane-label" fill="#146c43">ELT · carga crudo, transforma después</text>
+<rect class="box box-b" x="20" y="208" width="260" height="76" rx="10"/><text x="40" y="252" class="step-t">Extraer</text>
+<path d="M292,246 L338,246" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-g" x="350" y="208" width="260" height="76" rx="10"/><text x="370" y="252" class="step-t">Cargar</text>
+<path d="M622,246 L668,246" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-hero" x="680" y="208" width="260" height="76" rx="10"/><text x="700" y="252" class="step-t">Transformar</text>
+<rect x="20" y="294" width="920" height="34" rx="8" fill="#f2f6f8"/>
+<text x="36" y="316" style="font:600 13px 'IBM Plex Mono',monospace;fill:#5a6b76">fact_venta ya tiene cantidad=2, precio_unitario=26.000, <tspan style="fill:#8a6a00;font-weight:700">sin ingreso todavía</tspan> → el motor lo calcula adentro: ingreso=52.000</text>
+</svg></div><p class="lesson-note">La T se mueve; el resto de la secuencia queda igual. <code>fact_venta.csv</code>, el archivo de la próxima tarjeta, ya te dice cuál de las dos caminó primero &mdash; búscalo tú mismo por la línea 1.</p><div class="g2 wide"><div class="card"><h3>ETL · Extract, Transform, Load</h3><p>Se extrae de Supabase, se transforma <b>antes</b> de guardar (se calcula <code>ingreso</code>, se filtra <code>estado='cerrado'</code>, se une con <code>mesa</code>) y solo entonces se carga la tabla de hechos ya lista.</p></div><div class="card blue"><h3>ELT · Extract, Load, Transform</h3><p>Se extrae y se carga crudo, tal cual, en la bodega &mdash; y la transformación ocurre <b>después</b>, dentro del motor analítico, que suele tener más potencia para eso.</p></div></div><div class="lesson-panel mt"><h3>No lo adivines: ábrelo</h3><p>Busca la columna <code>ingreso</code> y fíjate en qué <code>pedido_id</code> aparecen &mdash; ¿ves algún pedido marcado <code>abierto</code> o <code>anulado</code> en la sesión 9?</p><a class="guide-button" href="Datos/fact_venta.csv" target="_blank" rel="noopener"><strong>Abrir fact_venta.csv</strong><span>El archivo real que vas a cargar hoy</span></a></div><div class="checkpoint mt"><code>fact_venta.csv</code> ya trae <code>ingreso</code> calculado y solo las líneas de pedidos <code>'cerrado'</code> &mdash; lo acabas de comprobar tú mismo. ¿Corresponde eso a ETL o a ELT?</div><div class="ok mt" data-r><b>ETL.</b> La transformación &mdash;calcular, filtrar, unir&mdash; ya ocurrió antes de que el archivo llegara a tu laboratorio; por eso no encontraste ningún pedido abierto o anulado en la columna. En la sesión 13, con BigQuery real, vas a ver el otro camino: cargar más crudo y transformar adentro.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
       <section class="slide dense" data-title="El mapa completo, de las fuentes a la decisión"><div class="ey">Une lo que acabas de ver</div><h2>De once tablas operacionales a una decisión de gerencia</h2><div class="arch-diagram"><svg viewBox="0 0 1200 400" role="img" aria-labelledby="archTitle archDesc" xmlns="http://www.w3.org/2000/svg">
 <title id="archTitle">Mapa de arquitectura analítica del Restaurante ABC</title>
