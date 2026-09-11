@@ -34,6 +34,13 @@ GROUP BY p.pedido_id;`
       id: 'count-lineas',
       marker: 'COUNT(*) FROM linea_pedido',
       sql: `SELECT COUNT(*) FROM linea_pedido;`
+    },
+    {
+      id: 'ajiaco-fila',
+      marker: 'WHERE plato_id = 1',
+      sql: `SELECT plato_id, nombre, precio_actual
+FROM plato
+WHERE plato_id = 1;`
     }
   ];
 

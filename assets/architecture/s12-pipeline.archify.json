@@ -20,12 +20,12 @@
     { "label": "Presentacion" }
   ],
   "nodes": [
-    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },
-    { "id": "firestore", "type": "database", "label": "Firestore", "sublabel": "Sesion 11", "stage": 0, "row": 2, "tag": "documentos" },
-    { "id": "etl", "type": "backend", "label": "ETL", "sublabel": "hoy", "stage": 1, "row": 1, "tag": "transforma" },
-    { "id": "warehouse", "type": "database", "label": "fact_venta", "sublabel": "y 3 dims", "stage": 2, "row": 1, "tag": "warehouse, OLAP" },
-    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "hoy, local", "stage": 3, "row": 0, "tag": "consulta OLAP" },
-    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "manana", "stage": 3, "row": 2, "tag": "OLAP futuro" }
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "OLTP, Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },
+    { "id": "firestore", "type": "database", "label": "Firestore", "sublabel": "documentos, S11", "stage": 0, "row": 2, "tag": "documentos" },
+    { "id": "etl", "type": "backend", "label": "ETL", "sublabel": "transforma aqui", "stage": 1, "row": 1, "tag": "transforma" },
+    { "id": "warehouse", "type": "database", "label": "fact_venta", "sublabel": "OLAP, warehouse", "stage": 2, "row": 1, "tag": "warehouse, OLAP" },
+    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "consulta OLAP", "stage": 3, "row": 0, "tag": "consulta OLAP" },
+    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "OLAP, manana", "stage": 3, "row": 2, "tag": "OLAP futuro" }
   ],
   "flows": [
     { "from": "postgres", "to": "etl", "label": "tablas", "classification": "SQL", "variant": "emphasis", "route": "vertical-channel" },
