@@ -141,6 +141,7 @@ def check_javascript() -> None:
         "assets/pwa-install.js",
         "service-worker.js",
         "Presentaciones/M3/sql-lab-s6.js",
+        "Presentaciones/M5/sql-lab-s12.js",
         "assets/learning/analytics-fallback-link.js",
     ]
     for rel in candidates:
