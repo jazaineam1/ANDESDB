@@ -3404,27 +3404,42 @@ GROUP BY p.pedido_id;</code></pre><p class="small">Es casi la comprobación 2 de
 <text x="540" y="196" class="box-s box-s-hero" style="font-style:italic">las mismas fuentes, ya curadas</text>
 </svg></div><div class="checkpoint mt">El laboratorio de hoy trabaja con cinco tablas ya definidas de antemano. ¿Eso lo convierte en lago o en bodega?</div><div class="ok mt" data-r><b>Bodega.</b> <code>fact_venta</code> y sus tres dimensiones tienen esquema fijo desde antes de cargar el primer dato &mdash; exactamente el patrón de un data warehouse, aunque hoy corra local en tu navegador y no en una nube.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
-      <section class="slide dense lesson-slide" data-title="De once tablas a cinco: ETL o ELT"><div class="ey">Recuperado de la sesión 6</div><h2>¿Cómo llegan los datos del OLTP a la bodega?</h2><div class="arch-diagram"><svg viewBox="0 0 1000 350" role="img" aria-labelledby="etlTitle etlDesc" xmlns="http://www.w3.org/2000/svg">
+      <section class="slide dense lesson-slide" data-title="De once tablas a cinco: ETL o ELT"><div class="ey">Recuperado de la sesión 6</div><h2>¿Cómo llegan los datos del OLTP a la bodega?</h2><div class="arch-diagram"><svg viewBox="0 0 1000 404" role="img" aria-labelledby="etlTitle etlDesc" xmlns="http://www.w3.org/2000/svg">
 <title id="etlTitle">ETL contra ELT: la misma secuencia, la T en otra posición, con la misma línea real</title>
-<desc id="etlDesc">Usando la línea 1 real de linea_pedido —cantidad 2, precio_unitario 26.000— ETL calcula el ingreso de 52.000 antes de cargarlo a fact_venta; ELT carga esa misma línea cruda, sin ingreso, y lo calcula después, ya dentro de la bodega.</desc>
+<desc id="etlDesc">Usando la línea 1 real de linea_pedido, cantidad 2, precio_unitario 26.000: en ETL el ingreso de 52.000 se calcula antes de cargar, y la fila ya llega completa a fact_venta. En ELT esa misma línea se carga tal cual, sin ingreso, y el ingreso se calcula después, ya dentro de la bodega.</desc>
 <defs><marker id="etlArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a97a1"/></marker></defs>
-<text x="20" y="24" class="lane-label" fill="#124e78">ETL · transforma antes de cargar</text>
-<rect class="box box-b" x="20" y="36" width="260" height="76" rx="10"/><text x="40" y="80" class="step-t">Extraer</text>
-<path d="M292,74 L338,74" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-hero" x="350" y="36" width="260" height="76" rx="10"/><text x="370" y="80" class="step-t">Transformar</text>
-<path d="M622,74 L668,74" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-g" x="680" y="36" width="260" height="76" rx="10"/><text x="700" y="80" class="step-t">Cargar</text>
-<rect x="20" y="122" width="920" height="34" rx="8" fill="#f2f6f8"/>
-<text x="36" y="144" style="font:600 13px 'IBM Plex Mono',monospace;fill:#5a6b76">linea_pedido: cantidad=2, precio_unitario=26.000 → <tspan style="fill:#8a6a00;font-weight:700">se calcula ingreso=52.000 aquí</tspan> → fact_venta ya trae ingreso=52.000</text>
 
-<text x="20" y="196" class="lane-label" fill="#146c43">ELT · carga crudo, transforma después</text>
-<rect class="box box-b" x="20" y="208" width="260" height="76" rx="10"/><text x="40" y="252" class="step-t">Extraer</text>
-<path d="M292,246 L338,246" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-g" x="350" y="208" width="260" height="76" rx="10"/><text x="370" y="252" class="step-t">Cargar</text>
-<path d="M622,246 L668,246" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
-<rect class="box box-hero" x="680" y="208" width="260" height="76" rx="10"/><text x="700" y="252" class="step-t">Transformar</text>
-<rect x="20" y="294" width="920" height="34" rx="8" fill="#f2f6f8"/>
-<text x="36" y="316" style="font:600 13px 'IBM Plex Mono',monospace;fill:#5a6b76">fact_venta ya tiene cantidad=2, precio_unitario=26.000, <tspan style="fill:#8a6a00;font-weight:700">sin ingreso todavía</tspan> → el motor lo calcula adentro: ingreso=52.000</text>
+<text x="20" y="20" class="lane-label" fill="#124e78">ETL &middot; transforma antes de cargar</text>
+<rect class="box box-b" x="20" y="32" width="260" height="76" rx="10"/><text x="40" y="76" class="step-t">Extraer</text>
+<path d="M292,70 L338,70" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-hero" x="350" y="32" width="260" height="76" rx="10"/><text x="370" y="76" class="step-t">Transformar</text>
+<path d="M622,70 L668,70" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-g" x="680" y="32" width="260" height="76" rx="10"/><text x="700" y="76" class="step-t">Cargar</text>
+
+<rect x="20" y="122" width="260" height="64" rx="8" fill="#f2f6f8" stroke="#c7d4de"/>
+<text x="32" y="140" style="font:800 11px inherit;letter-spacing:.03em;fill:#5a6b76;text-transform:uppercase">Antes</text>
+<text x="32" y="160" style="font:600 13px 'IBM Plex Mono',monospace;fill:#1a1a1a">cantidad: 2</text>
+<text x="32" y="178" style="font:600 13px 'IBM Plex Mono',monospace;fill:#1a1a1a">precio_unitario: 26.000</text>
+<rect x="680" y="122" width="260" height="64" rx="8" fill="#fff8d6" stroke="#c99a00"/>
+<text x="692" y="140" style="font:800 11px inherit;letter-spacing:.03em;fill:#8a6a00;text-transform:uppercase">Ya en fact_venta</text>
+<text x="692" y="162" style="font:700 15px 'IBM Plex Mono',monospace;fill:#171717">ingreso: 52.000 &#10003;</text>
+<text x="692" y="178" style="font:600 11px inherit;fill:#5a6b76">calculado antes de cargar</text>
+
+<text x="20" y="228" class="lane-label" fill="#146c43">ELT &middot; carga crudo, transforma después</text>
+<rect class="box box-b" x="20" y="240" width="260" height="76" rx="10"/><text x="40" y="284" class="step-t">Extraer</text>
+<path d="M292,278 L338,278" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-g" x="350" y="240" width="260" height="76" rx="10"/><text x="370" y="284" class="step-t">Cargar</text>
+<path d="M622,278 L668,278" stroke="#8a97a1" stroke-width="2" marker-end="url(#etlArrow)"/>
+<rect class="box box-hero" x="680" y="240" width="260" height="76" rx="10"/><text x="700" y="284" class="step-t">Transformar</text>
+
+<rect x="350" y="330" width="260" height="64" rx="8" fill="#e9f8ef" stroke="#8fd4ab"/>
+<text x="362" y="348" style="font:800 11px inherit;letter-spacing:.03em;fill:#0d5533;text-transform:uppercase">Cargado tal cual</text>
+<text x="362" y="368" style="font:600 13px 'IBM Plex Mono',monospace;fill:#1a1a1a">cantidad: 2</text>
+<text x="362" y="386" style="font:600 13px 'IBM Plex Mono',monospace;fill:#1a1a1a">precio_unitario: 26.000</text>
+<rect x="680" y="330" width="260" height="64" rx="8" fill="#fff8d6" stroke="#c99a00"/>
+<text x="692" y="348" style="font:800 11px inherit;letter-spacing:.03em;fill:#8a6a00;text-transform:uppercase">Calculado aquí, ya adentro</text>
+<text x="692" y="370" style="font:700 15px 'IBM Plex Mono',monospace;fill:#171717">ingreso: 52.000 &#10003;</text>
+<text x="692" y="386" style="font:600 11px inherit;fill:#5a6b76">calculado después de cargar</text>
 </svg></div><p class="lesson-note">La T se mueve; el resto de la secuencia queda igual. <code>fact_venta.csv</code>, el archivo de la próxima tarjeta, ya te dice cuál de las dos caminó primero &mdash; búscalo tú mismo por la línea 1.</p><div class="g2 wide"><div class="card"><h3>ETL · Extract, Transform, Load</h3><p>Se extrae de Supabase, se transforma <b>antes</b> de guardar (se calcula <code>ingreso</code>, se filtra <code>estado='cerrado'</code>, se une con <code>mesa</code>) y solo entonces se carga la tabla de hechos ya lista.</p></div><div class="card blue"><h3>ELT · Extract, Load, Transform</h3><p>Se extrae y se carga crudo, tal cual, en la bodega &mdash; y la transformación ocurre <b>después</b>, dentro del motor analítico, que suele tener más potencia para eso.</p></div></div><div class="lesson-panel mt"><h3>No lo adivines: ábrelo</h3><p>Busca la columna <code>ingreso</code> y fíjate en qué <code>pedido_id</code> aparecen &mdash; ¿ves algún pedido marcado <code>abierto</code> o <code>anulado</code> en la sesión 9?</p><a class="guide-button" href="Datos/fact_venta.csv" target="_blank" rel="noopener"><strong>Abrir fact_venta.csv</strong><span>El archivo real que vas a cargar hoy</span></a></div><div class="checkpoint mt"><code>fact_venta.csv</code> ya trae <code>ingreso</code> calculado y solo las líneas de pedidos <code>'cerrado'</code> &mdash; lo acabas de comprobar tú mismo. ¿Corresponde eso a ETL o a ELT?</div><div class="ok mt" data-r><b>ETL.</b> La transformación &mdash;calcular, filtrar, unir&mdash; ya ocurrió antes de que el archivo llegara a tu laboratorio; por eso no encontraste ningún pedido abierto o anulado en la columna. En la sesión 13, con BigQuery real, vas a ver el otro camino: cargar más crudo y transformar adentro.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
       <section class="slide dense" data-title="El mapa completo, de las fuentes a la decisión"><div class="ey">Une lo que acabas de ver</div><h2>De once tablas operacionales a una decisión de gerencia</h2><div class="arch-diagram"><svg viewBox="0 0 1200 400" role="img" aria-labelledby="archTitle archDesc" xmlns="http://www.w3.org/2000/svg">
