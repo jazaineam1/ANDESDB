@@ -22,10 +22,10 @@
   "nodes": [
     { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },
     { "id": "firestore", "type": "database", "label": "Firestore", "sublabel": "Sesion 11", "stage": 0, "row": 2, "tag": "documentos" },
-    { "id": "etl", "type": "backend", "label": "ETL", "sublabel": "hoy", "stage": 1, "row": 1, "tag": "hoy" },
-    { "id": "warehouse", "type": "database", "label": "fact_venta", "sublabel": "y 3 dims", "stage": 2, "row": 1, "tag": "esquema fijo" },
-    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "hoy, local", "stage": 3, "row": 0, "tag": "0 creditos" },
-    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "manana", "stage": 3, "row": 2, "tag": "no hoy" }
+    { "id": "etl", "type": "backend", "label": "ETL", "sublabel": "hoy", "stage": 1, "row": 1, "tag": "transforma" },
+    { "id": "warehouse", "type": "database", "label": "fact_venta", "sublabel": "y 3 dims", "stage": 2, "row": 1, "tag": "warehouse, OLAP" },
+    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "hoy, local", "stage": 3, "row": 0, "tag": "consulta OLAP" },
+    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "manana", "stage": 3, "row": 2, "tag": "OLAP futuro" }
   ],
   "flows": [
     { "from": "postgres", "to": "etl", "label": "tablas", "classification": "SQL", "variant": "emphasis", "route": "vertical-channel" },
@@ -37,6 +37,7 @@
   "cards": [
     { "dot": "amber", "title": "Dos fuentes, un mismo Ajiaco", "items": ["PostgreSQL: una fila con columnas fijas", "Firestore: un documento con campos que no todos comparten", "El ETL homogeneiza las dos antes de cargar"] },
     { "dot": "emerald", "title": "Lo que construyes hoy", "items": ["fact_venta nace de linea_pedido filtrando estado='cerrado'", "Tres dimensiones: dim_plato, dim_mesero, dim_fecha", "Corre local, en DuckDB-Wasm, sin cuenta ni credito"] },
-    { "dot": "rose", "title": "Lo que no se construye hoy", "items": ["El dashboard de Power BI se nombra, no se opera", "BigQuery real llega en la Sesion 13", "Databricks y Fabric se nombran para el DP-900, solamente"] }
+    { "dot": "rose", "title": "Lo que no se construye hoy", "items": ["El dashboard de Power BI se nombra, no se opera", "BigQuery real llega en la Sesion 13", "Databricks y Fabric se nombran para el DP-900, solamente"] },
+    { "dot": "violet", "title": "OLTP, OLAP y bodega, sin confundirlos", "items": ["OLTP es solo PostgreSQL: transacciones, muchas escrituras pequenas", "OLAP ocurre donde se agrega y suma: fact_venta, el laboratorio, el dashboard", "fact_venta es la bodega (warehouse) de este flujo: esquema fijo desde antes de cargar", "Aqui no hay data lake: ese camino se queda en la diapositiva 'Lago o bodega', como alternativa"] }
   ]
 }

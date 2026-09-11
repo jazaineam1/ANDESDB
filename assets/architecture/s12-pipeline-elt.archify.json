@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Restaurante ABC: si hubieramos hecho ELT",
+    "output": "s12-pipeline-elt.html",
+    "viewBox": [1075, 520],
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "full-elt", "label": "El camino no tomado", "focus": ["postgres", "firestore", "load", "raw", "clean", "lab", "dashboard"], "note": "Mismas fuentes, pero se cargan crudas primero y se transforman despues, ya dentro de la bodega." },
+      { "id": "where-transform-moves", "label": "Donde se mueve la T", "focus": ["load", "raw", "clean"], "note": "Cargar ya no transforma. La T ocurre adentro de la bodega, entre la tabla cruda y la tabla lista." }
+    ]
+  },
+  "stages": [
+    { "label": "Fuentes" },
+    { "label": "Cargar" },
+    { "label": "Bodega: cruda" },
+    { "label": "Bodega: lista" },
+    { "label": "Presentacion" }
+  ],
+  "nodes": [
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },
+    { "id": "firestore", "type": "database", "label": "Firestore", "sublabel": "Sesion 11", "stage": 0, "row": 2, "tag": "documentos" },
+    { "id": "load", "type": "backend", "label": "Cargar", "sublabel": "tal cual llega", "stage": 1, "row": 1, "tag": "sin transformar" },
+    { "id": "raw", "type": "database", "label": "Tabla cruda", "sublabel": "no es un lago", "stage": 2, "row": 1, "tag": "pre-OLAP" },
+    { "id": "clean", "type": "database", "label": "fact_venta", "sublabel": "transformada", "stage": 3, "row": 1, "tag": "warehouse, OLAP" },
+    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "hoy, local", "stage": 4, "row": 0, "tag": "consulta OLAP" },
+    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "manana", "stage": 4, "row": 2, "tag": "OLAP futuro" }
+  ],
+  "flows": [
+    { "from": "postgres", "to": "load", "label": "tablas", "classification": "SQL", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "firestore", "to": "load", "label": "docs", "classification": "consultas", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "load", "to": "raw", "label": "carga", "classification": "sin transformar", "variant": "emphasis", "route": "straight" },
+    { "from": "raw", "to": "clean", "label": "transforma", "classification": "adentro del motor", "variant": "emphasis", "route": "straight" },
+    { "from": "clean", "to": "lab", "label": "consulta", "classification": "SQL conocido", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "clean", "to": "dashboard", "label": "manana", "classification": "fuera de alcance hoy", "variant": "dashed", "route": "vertical-channel" }
+  ],
+  "cards": [
+    { "dot": "amber", "title": "Lo que cambia frente a ETL", "items": ["Cargar ya no calcula nada: copia tal cual llega", "La bodega recibe dos tablas, no una: cruda y lista", "La T se ejecuta con SQL, adentro del motor analitico"] },
+    { "dot": "emerald", "title": "Por que no se hace hoy asi", "items": ["El laboratorio de hoy corre en tu navegador, sin motor externo", "BigQuery, en la Sesion 13, si tiene esa potencia adentro", "El resultado final es el mismo fact_venta, por dos caminos distintos"] },
+    { "dot": "rose", "title": "El riesgo que ETL evita aqui", "items": ["La tabla cruda vive un momento sin ingreso calculado", "Alguien podria consultarla antes de que termine de transformarse", "ETL evita ese estado intermedio: nunca hay una fact_venta a medias"] },
+    { "dot": "violet", "title": "OLTP, OLAP, lago y bodega, sin confundirlos", "items": ["OLTP es solo PostgreSQL: transacciones, muchas escrituras pequenas", "OLAP ocurre donde se agrega y suma: fact_venta, el laboratorio, el dashboard", "Tabla cruda NO es un data lake real: sigue con esquema fijo, solo le falta transformar", "fact_venta aqui hace de warehouse Y de mart a la vez: un solo tema, ventas"] }
+  ]
+}
