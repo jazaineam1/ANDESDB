@@ -3442,73 +3442,21 @@ GROUP BY p.pedido_id;</code></pre><p class="small">Es casi la comprobación 2 de
 <text x="692" y="386" style="font:600 11px inherit;fill:#5a6b76">calculado después de cargar</text>
 </svg></div><p class="lesson-note">La T se mueve; el resto de la secuencia queda igual. <code>fact_venta.csv</code>, el archivo de la próxima tarjeta, ya te dice cuál de las dos caminó primero &mdash; búscalo tú mismo por la línea 1.</p><div class="g2 wide"><div class="card"><h3>ETL · Extract, Transform, Load</h3><p>Se extrae de Supabase, se transforma <b>antes</b> de guardar (se calcula <code>ingreso</code>, se filtra <code>estado='cerrado'</code>, se une con <code>mesa</code>) y solo entonces se carga la tabla de hechos ya lista.</p></div><div class="card blue"><h3>ELT · Extract, Load, Transform</h3><p>Se extrae y se carga crudo, tal cual, en la bodega &mdash; y la transformación ocurre <b>después</b>, dentro del motor analítico, que suele tener más potencia para eso.</p></div></div><div class="lesson-panel mt"><h3>No lo adivines: ábrelo</h3><p>Busca la columna <code>ingreso</code> y fíjate en qué <code>pedido_id</code> aparecen &mdash; ¿ves algún pedido marcado <code>abierto</code> o <code>anulado</code> en la sesión 9?</p><a class="guide-button" href="Datos/fact_venta.csv" target="_blank" rel="noopener"><strong>Abrir fact_venta.csv</strong><span>El archivo real que vas a cargar hoy</span></a></div><div class="checkpoint mt"><code>fact_venta.csv</code> ya trae <code>ingreso</code> calculado y solo las líneas de pedidos <code>'cerrado'</code> &mdash; lo acabas de comprobar tú mismo. ¿Corresponde eso a ETL o a ELT?</div><div class="ok mt" data-r><b>ETL.</b> La transformación &mdash;calcular, filtrar, unir&mdash; ya ocurrió antes de que el archivo llegara a tu laboratorio; por eso no encontraste ningún pedido abierto o anulado en la columna. En la sesión 13, con BigQuery real, vas a ver el otro camino: cargar más crudo y transformar adentro.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
-      <section class="slide dense" data-title="El mapa completo, de las fuentes a la decisión"><div class="ey">Une lo que acabas de ver</div><h2>De once tablas operacionales a una decisión de gerencia</h2><div class="arch-diagram"><svg viewBox="0 0 1200 400" role="img" aria-labelledby="archTitle archDesc" xmlns="http://www.w3.org/2000/svg">
-<title id="archTitle">Mapa de arquitectura analítica del Restaurante ABC</title>
-<desc id="archDesc">De izquierda a derecha: PostgreSQL y Firestore como fuentes OLTP y de documentos; un proceso ETL las transforma; un data warehouse con fact_venta y sus dimensiones las almacena; y de ahí salen el laboratorio del grano de hoy y, más adelante, un dashboard de gerencia.</desc>
-<defs>
-  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a97a1"/></marker>
-  <g id="icon-db"><ellipse cx="12" cy="6" rx="10" ry="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2,6 v12 a10,4 0 0 0 20,0 v-12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2,12 a10,4 0 0 0 20,0" fill="none" stroke="currentColor" stroke-width="1.6"/></g>
-  <g id="icon-doc"><rect x="3" y="1" width="15" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7,6 h7 M7,10.5 h7 M7,15 h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
-  <g id="icon-etl"><path d="M2,2 h18 l-7,9 v7 l-4,2 v-9 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
-  <g id="icon-dw"><rect x="1" y="12" width="20" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="1" y="5.5" width="20" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11,1 l10,4.5 h-20 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
-  <g id="icon-lab"><rect x="1" y="1" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4,11 l4,-5 l3,3 l4,-6 l3,4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7,18 h8 M9,15 v3 M13,15 v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
-  <g id="icon-dash"><rect x="1" y="1" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="4" y="9" width="3" height="4" fill="currentColor"/><rect x="9" y="6" width="3" height="7" fill="currentColor"/><rect x="14" y="4" width="3" height="9" fill="currentColor"/><path d="M7,18 h8 M9,15 v3 M13,15 v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
-</defs>
-<line x1="300" y1="14" x2="300" y2="386" stroke="#dfe6ec" stroke-width="1.5" stroke-dasharray="4 5"/>
-<line x1="600" y1="14" x2="600" y2="386" stroke="#dfe6ec" stroke-width="1.5" stroke-dasharray="4 5"/>
-<line x1="900" y1="14" x2="900" y2="386" stroke="#dfe6ec" stroke-width="1.5" stroke-dasharray="4 5"/>
-<text x="40" y="24" class="col-h" fill="#124e78">FUENTES · OLTP Y DOCUMENTOS</text>
-<text x="340" y="24" class="col-h" fill="#a15c00">PROCESAMIENTO</text>
-<text x="640" y="24" class="col-h" fill="#8a5a00">ALMACENAMIENTO · OLAP</text>
-<text x="940" y="24" class="col-h" fill="#146c43">PRESENTACIÓN Y ANÁLISIS</text>
-<path d="M260,110 L326,175" fill="none" stroke="#8a97a1" stroke-width="2" marker-end="url(#arrow)"/>
-<path d="M260,270 L326,205" fill="none" stroke="#8a97a1" stroke-width="2" marker-end="url(#arrow)"/>
-<path d="M540,190 L626,190" fill="none" stroke="#8a97a1" stroke-width="2" marker-end="url(#arrow)"/>
-<path d="M860,175 L926,110" fill="none" stroke="#8a97a1" stroke-width="2" marker-end="url(#arrow)"/>
-<path d="M860,205 L926,270" fill="none" stroke="#8a97a1" stroke-width="2" marker-end="url(#arrow)"/>
-<g>
-  <rect x="40" y="60" width="220" height="100" rx="12" class="box box-b"/>
-  <use href="#icon-db" x="56" y="72" width="24" height="24" class="ic ic-b"/>
-  <text x="90" y="90" class="box-t">PostgreSQL</text>
-  <text x="56" y="118" class="box-s">Restaurante ABC</text>
-  <text x="56" y="136" class="box-s">Sesión 9 · OLTP</text>
-</g>
-<g>
-  <rect x="40" y="220" width="220" height="100" rx="12" class="box box-b"/>
-  <use href="#icon-doc" x="56" y="232" width="24" height="24" class="ic ic-b"/>
-  <text x="90" y="250" class="box-t">Firestore</text>
-  <text x="56" y="278" class="box-s">Documentos de la carta</text>
-  <text x="56" y="296" class="box-s">Sesión 11</text>
-</g>
-<g>
-  <rect x="340" y="140" width="200" height="100" rx="12" class="box box-o"/>
-  <use href="#icon-etl" x="356" y="152" width="24" height="24" class="ic ic-o"/>
-  <text x="390" y="170" class="box-t">ETL</text>
-  <text x="356" y="198" class="box-s">Extraer → transformar</text>
-  <text x="356" y="216" class="box-s">→ cargar</text>
-</g>
-<g>
-  <rect x="640" y="140" width="220" height="100" rx="12" class="box box-hero"/>
-  <use href="#icon-dw" x="656" y="152" width="24" height="24" class="ic ic-hero"/>
-  <text x="690" y="170" class="box-t box-t-hero">Data warehouse</text>
-  <text x="656" y="198" class="box-s box-s-hero">fact_venta + dimensiones</text>
-  <text x="656" y="216" class="box-s box-s-hero">lo construyes ahora</text>
-</g>
-<g>
-  <rect x="940" y="60" width="220" height="100" rx="12" class="box box-g"/>
-  <use href="#icon-lab" x="956" y="72" width="24" height="24" class="ic ic-g"/>
-  <text x="990" y="90" class="box-t">Laboratorio del grano</text>
-  <text x="956" y="118" class="box-s">Hoy, en tu navegador</text>
-  <text x="956" y="136" class="box-s">0 créditos, sin cuenta</text>
-</g>
-<g>
-  <rect x="940" y="220" width="220" height="100" rx="12" class="box box-g"/>
-  <use href="#icon-dash" x="956" y="232" width="24" height="24" class="ic ic-g"/>
-  <text x="990" y="250" class="box-t">Dashboard de gerencia</text>
-  <text x="956" y="278" class="box-s">Más adelante, real</text>
-  <text x="956" y="296" class="box-s">Power BI, en Azure</text>
-</g>
-</svg></div><p class="lesson-note">Sigue las flechas: dos fuentes muy distintas —tablas y documentos— entran por el mismo proceso ETL, y solo entonces llegan a una bodega con esquema fijo. Lo que ves en amarillo es exactamente lo que construyes de aquí en adelante.</p><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
+      <section class="slide dense lesson-slide archify-slide" data-title="El mapa completo, de las fuentes a la decisión"><div class="ey">Une lo que acabas de ver</div><h2>De once tablas operacionales a una decisión de gerencia</h2><div class="archify-toolbar"><p>PostgreSQL y Firestore entran por el mismo ETL; solo entonces llegan a fact_venta. Pulsa una caja para ver que recibe y a donde sigue.</p><a class="guide-button" href="../../assets/architecture/s12-pipeline.archify.html?present=1" target="_blank" rel="noopener"><strong>&#9096; Abrir Archify</strong><span>Diagrama interactivo en una pestana amplia</span></a></div>
+<iframe class="archify-frame" src="../../assets/architecture/s12-pipeline.archify.html?present=1" title="Archify: de las fuentes del Restaurante ABC a la decision de gerencia" loading="eager" allow="fullscreen"></iframe><p class="lesson-note">Sigue las flechas: dos fuentes muy distintas —tablas y documentos— entran por el mismo proceso ETL, y solo entonces llegan a una bodega con esquema fijo. Lo que ves en amarillo es exactamente lo que construyes de aquí en adelante.</p><div class="g2">
+<div class="lesson-panel"><h3>As&iacute; se ve en PostgreSQL &mdash; una fila</h3><pre><code>SELECT plato_id, nombre, precio_actual
+FROM plato
+WHERE plato_id = 1;</code></pre><pre data-nocopy><code>plato_id | nombre               | precio_actual
+1        | Ajiaco santafere&ntilde;o   | 28000.00</code></pre></div>
+<div class="lesson-panel"><h3>As&iacute; se ve en Firestore &mdash; un documento</h3><pre><code>{
+  "plato_id": 1,
+  "nombre": "Ajiaco santafere&ntilde;o",
+  "precio_actual": 28000,
+  "categoria": "fuerte",
+  "alergenos": ["gluten", "l&aacute;cteos"]
+}</code></pre></div>
+</div>
+<p class="lesson-note">Mismo Ajiaco, dos formas distintas de guardarlo. La diapositiva siguiente muestra c&oacute;mo el proceso ETL homogeneiza las dos &mdash;y las tablas puente de <code>pedido</code>&mdash; en una sola fila de <code>fact_venta.csv</code>, el archivo que carga tu laboratorio.</p><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
       <section class="slide dense lesson-slide" data-title="El grano: la decisión que va primero"><div class="ey">El concepto central de hoy</div><h2>¿Qué es exactamente una fila de tu tabla de hechos?</h2><p class="lesson-intro"><b>Grano</b> es la respuesta a esa pregunta, dicha en una frase, antes de escribir una sola columna. Si dos personas construyen la misma tabla con un grano distinto, sus números nunca van a coincidir &mdash; y ninguna de las dos se va a dar cuenta sola.</p><p class="lead">Cuatro candidatos para el grano de <code>fact_venta</code>. Solo uno es correcto para la pregunta &laquo;¿cuánto vendió cada plato, cada día?&raquo;.</p><div class="grain-board"><div class="grain-case"><span class="gl">A</span><p>Una fila por pedido cerrado, con el total ya sumado.</p></div><div class="grain-case"><span class="gl">B</span><p>Una fila por línea de plato, dentro de un pedido confirmado &mdash; la cantidad vendida va en su propia columna.</p></div><div class="grain-case"><span class="gl">C</span><p>Una fila por mesa, por día.</p></div><div class="grain-case"><span class="gl">D</span><p>Una fila por cada plato que existe en la carta.</p></div></div><div class="checkpoint mt">¿Cuál de los cuatro, y por qué las otras tres no sirven para &laquo;¿cuánto vendió cada plato?&raquo;?</div><div class="ok mt" data-r><b>B.</b> A ya perdió el detalle por plato &mdash; sumó antes de tiempo. C mezcla varios platos en una sola fila sin decir cuáles. D ni siquiera mira si el plato se vendió: es la carta, no las ventas &mdash; el Tamal de la sesión 9, que nadie ha pedido, tendría una fila igual que el Ajiaco. B es el nivel más fino que todavía distingue plato &mdash; una fila puede traer <code>cantidad = 3</code>, no siempre una unidad &mdash;, y de ahí se puede subir a &laquo;por día&raquo; o &laquo;por mesero&raquo; agrupando &mdash; pero no se puede bajar desde A, C o D sin volver a los datos originales. Esa es la regla: <b>el grano se elige lo más fino que el negocio necesite, nunca más grueso &laquo;porque así pesa menos&raquo;.</b></div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 
