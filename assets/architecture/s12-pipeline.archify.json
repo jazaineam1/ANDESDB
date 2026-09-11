@@ -14,10 +14,10 @@
     ]
   },
   "stages": [
-    { "label": "Fuentes" },
-    { "label": "Procesamiento" },
-    { "label": "Almacenamiento" },
-    { "label": "Presentacion" }
+    { "label": "Fuentes operacionales" },
+    { "label": "Procesamiento: ETL" },
+    { "label": "Almacenamiento: OLAP" },
+    { "label": "Presentacion: OLAP" }
   ],
   "nodes": [
     { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "OLTP, Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },

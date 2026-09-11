@@ -5157,16 +5157,16 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
         <!-- Data Stages -->
         <rect data-graph-role="structural-frame" data-composition-frame-kind="stage" data-composition-frame-id="0" x="16" y="46" width="168" height="520" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="100" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">01 / Fuentes</text>
+        <text x="100" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">01 / Fuentes operacionales</text>
 
         <rect data-graph-role="structural-frame" data-composition-frame-kind="stage" data-composition-frame-id="1" x="231" y="46" width="168" height="520" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="315" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">02 / Procesamiento</text>
+        <text x="315" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">02 / Procesamiento: ETL</text>
 
         <rect data-graph-role="structural-frame" data-composition-frame-kind="stage" data-composition-frame-id="2" x="446" y="46" width="168" height="520" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="530" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">03 / Almacenamiento</text>
+        <text x="530" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">03 / Almacenamiento: OLAP</text>
 
         <rect data-graph-role="structural-frame" data-composition-frame-kind="stage" data-composition-frame-id="3" x="661" y="46" width="168" height="520" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="745" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">04 / Presentacion</text>
+        <text x="745" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">04 / Presentacion: OLAP</text>
 
         <!-- Flow paths -->
         <path data-edge-from="postgres" data-edge-to="etl" data-edge-label="tablas" data-edge-key="0" data-composition-points="156,157;200,157;200,271;259,271" d="M 156 157 L 200 157 L 200 271 L 259 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
@@ -5176,8 +5176,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <path data-edge-from="warehouse" data-edge-to="dashboard" data-edge-label="manana" data-edge-key="4" data-composition-points="586,271;630,271;630,385;689,385" d="M 586 271 L 630 271 L 630 385 L 689 385" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
 
         <!-- Nodes -->
-        <g id="node-postgres" data-node-id="postgres" data-node-label="PostgreSQL" tabindex="0" role="button" aria-label="Focus PostgreSQL, OLTP, Sesion 9, 01 / Fuentes" aria-pressed="false" data-node-kind="database" data-node-sublabel="OLTP, Sesion 9" data-node-tag="OLTP" data-node-context="01 / Fuentes">
-          <title>PostgreSQL · OLTP, Sesion 9 · 01 / Fuentes · OLTP</title>
+        <g id="node-postgres" data-node-id="postgres" data-node-label="PostgreSQL" tabindex="0" role="button" aria-label="Focus PostgreSQL, OLTP, Sesion 9, 01 / Fuentes operacionales" aria-pressed="false" data-node-kind="database" data-node-sublabel="OLTP, Sesion 9" data-node-tag="OLTP" data-node-context="01 / Fuentes operacionales">
+          <title>PostgreSQL · OLTP, Sesion 9 · 01 / Fuentes operacionales · OLTP</title>
           <rect x="44" y="128" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="44" y="128" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(50 134) scale(0.6875)">
@@ -5189,8 +5189,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="fine" x="100" y="175" class="t-database" font-size="7" text-anchor="middle">OLTP</text>
         </g>
 
-        <g id="node-firestore" data-node-id="firestore" data-node-label="Firestore" tabindex="0" role="button" aria-label="Focus Firestore, documentos, S11, 01 / Fuentes" aria-pressed="false" data-node-kind="database" data-node-sublabel="documentos, S11" data-node-tag="documentos" data-node-context="01 / Fuentes">
-          <title>Firestore · documentos, S11 · 01 / Fuentes · documentos</title>
+        <g id="node-firestore" data-node-id="firestore" data-node-label="Firestore" tabindex="0" role="button" aria-label="Focus Firestore, documentos, S11, 01 / Fuentes operacionales" aria-pressed="false" data-node-kind="database" data-node-sublabel="documentos, S11" data-node-tag="documentos" data-node-context="01 / Fuentes operacionales">
+          <title>Firestore · documentos, S11 · 01 / Fuentes operacionales · documentos</title>
           <rect x="44" y="356" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="44" y="356" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(50 362) scale(0.6875)">
@@ -5202,8 +5202,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="fine" x="100" y="403" class="t-database" font-size="7" text-anchor="middle">documentos</text>
         </g>
 
-        <g id="node-etl" data-node-id="etl" data-node-label="ETL" tabindex="0" role="button" aria-label="Focus ETL, transforma aqui, 02 / Procesamiento" aria-pressed="false" data-node-kind="backend" data-node-sublabel="transforma aqui" data-node-tag="transforma" data-node-context="02 / Procesamiento">
-          <title>ETL · transforma aqui · 02 / Procesamiento · transforma</title>
+        <g id="node-etl" data-node-id="etl" data-node-label="ETL" tabindex="0" role="button" aria-label="Focus ETL, transforma aqui, 02 / Procesamiento: ETL" aria-pressed="false" data-node-kind="backend" data-node-sublabel="transforma aqui" data-node-tag="transforma" data-node-context="02 / Procesamiento: ETL">
+          <title>ETL · transforma aqui · 02 / Procesamiento: ETL · transforma</title>
           <rect x="259" y="242" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="259" y="242" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 248) scale(0.6875)">
@@ -5214,8 +5214,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="fine" x="315" y="289" class="t-backend" font-size="7" text-anchor="middle">transforma</text>
         </g>
 
-        <g id="node-warehouse" data-node-id="warehouse" data-node-label="fact_venta" tabindex="0" role="button" aria-label="Focus fact_venta, OLAP, warehouse, 03 / Almacenamiento" aria-pressed="false" data-node-kind="database" data-node-sublabel="OLAP, warehouse" data-node-tag="warehouse, OLAP" data-node-context="03 / Almacenamiento">
-          <title>fact_venta · OLAP, warehouse · 03 / Almacenamiento · warehouse, OLAP</title>
+        <g id="node-warehouse" data-node-id="warehouse" data-node-label="fact_venta" tabindex="0" role="button" aria-label="Focus fact_venta, OLAP, warehouse, 03 / Almacenamiento: OLAP" aria-pressed="false" data-node-kind="database" data-node-sublabel="OLAP, warehouse" data-node-tag="warehouse, OLAP" data-node-context="03 / Almacenamiento: OLAP">
+          <title>fact_venta · OLAP, warehouse · 03 / Almacenamiento: OLAP · warehouse, OLAP</title>
           <rect x="474" y="242" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="474" y="242" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(480 248) scale(0.6875)">
@@ -5227,8 +5227,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="fine" x="530" y="289" class="t-database" font-size="7" text-anchor="middle">warehouse, OLAP</text>
         </g>
 
-        <g id="node-lab" data-node-id="lab" data-node-label="Laboratorio" tabindex="0" role="button" aria-label="Focus Laboratorio, consulta OLAP, 04 / Presentacion" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="consulta OLAP" data-node-tag="consulta OLAP" data-node-context="04 / Presentacion">
-          <title>Laboratorio · consulta OLAP · 04 / Presentacion · consulta OLAP</title>
+        <g id="node-lab" data-node-id="lab" data-node-label="Laboratorio" tabindex="0" role="button" aria-label="Focus Laboratorio, consulta OLAP, 04 / Presentacion: OLAP" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="consulta OLAP" data-node-tag="consulta OLAP" data-node-context="04 / Presentacion: OLAP">
+          <title>Laboratorio · consulta OLAP · 04 / Presentacion: OLAP · consulta OLAP</title>
           <rect x="689" y="128" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="689" y="128" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(695 134) scale(0.6875)">
@@ -5242,8 +5242,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="fine" x="745" y="175" class="t-frontend" font-size="7" text-anchor="middle">consulta OLAP</text>
         </g>
 
-        <g id="node-dashboard" data-node-id="dashboard" data-node-label="Dashboard" tabindex="0" role="button" aria-label="Focus Dashboard, OLAP, manana, 04 / Presentacion" aria-pressed="false" data-node-kind="external" data-node-sublabel="OLAP, manana" data-node-tag="OLAP futuro" data-node-context="04 / Presentacion">
-          <title>Dashboard · OLAP, manana · 04 / Presentacion · OLAP futuro</title>
+        <g id="node-dashboard" data-node-id="dashboard" data-node-label="Dashboard" tabindex="0" role="button" aria-label="Focus Dashboard, OLAP, manana, 04 / Presentacion: OLAP" aria-pressed="false" data-node-kind="external" data-node-sublabel="OLAP, manana" data-node-tag="OLAP futuro" data-node-context="04 / Presentacion: OLAP">
+          <title>Dashboard · OLAP, manana · 04 / Presentacion: OLAP · OLAP futuro</title>
           <rect x="689" y="356" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="689" y="356" width="112" height="58" rx="6" class="c-external" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(695 362) scale(0.6875)">
