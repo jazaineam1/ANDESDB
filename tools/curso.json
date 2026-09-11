@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 11,
+  "sesionActual": 12,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -296,7 +296,7 @@
     {
       "n": 4,
       "titulo": "Más allá de las tablas: NoSQL",
-      "estado": "curso",
+      "estado": "completado",
       "desc": "Elegir NoSQL por requisitos y practicar documentos en servicios reales.",
       "recursos": [],
       "sesiones": [
@@ -337,7 +337,7 @@
           "duracionUtil": 165,
           "modo": "guiada_con_servicio_real",
           "titulo": "Documentos de verdad: Firebase y MongoDB Atlas",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "El carrito que se convirtió en venta: un documento real en Firestore (o en MongoDB Atlas) que al pagar se convierte en una fila relacional real en Supabase. Embeber contra referenciar, y el puente hacia Cosmos DB para el DP-900.",
           "tags": [
             "Firebase",
@@ -372,7 +372,7 @@
     {
       "n": 5,
       "titulo": "Data warehouse, analítica y cloud",
-      "estado": "pendiente",
+      "estado": "curso",
       "desc": "Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.",
       "recursos": [],
       "sesiones": [
@@ -382,7 +382,7 @@
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Fundamentos de data warehouse",
-          "estado": "pendiente",
+          "estado": "hoy",
           "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.",
           "tags": [
             "data warehouse",
