@@ -35,7 +35,7 @@
     { "from": "warehouse", "to": "dashboard", "label": "manana", "classification": "fuera de alcance hoy", "variant": "dashed", "route": "vertical-channel" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Dos fuentes, un mismo Ajiaco", "items": ["PostgreSQL: una fila con columnas fijas", "Firestore: un documento con campos que no todos comparten", "El ETL homogeneiza las dos antes de cargar"] },
+    { "dot": "amber", "title": "Dos fuentes, un mismo Ajiaco", "items": ["PostgreSQL: una fila con columnas fijas", "Firestore: un documento con campos que no todos comparten", "En un pipeline completo, el ETL homogeneizaría las dos", "Hoy fact_venta.csv solo trae el lado de PostgreSQL"] },
     { "dot": "emerald", "title": "Lo que construyes hoy", "items": ["fact_venta nace de linea_pedido filtrando estado='cerrado'", "Tres dimensiones: dim_plato, dim_mesero, dim_fecha", "Corre local, en DuckDB-Wasm, sin cuenta ni credito"] },
     { "dot": "rose", "title": "Lo que no se construye hoy", "items": ["El dashboard de Power BI se nombra, no se opera", "BigQuery real llega en la Sesion 13", "Databricks y Fabric se nombran para el DP-900, solamente"] },
     { "dot": "violet", "title": "OLTP, OLAP y bodega, sin confundirlos", "items": ["OLTP es solo PostgreSQL: transacciones, muchas escrituras pequenas", "OLAP ocurre donde se agrega y suma: fact_venta, el laboratorio, el dashboard", "fact_venta es la bodega (warehouse) de este flujo: esquema fijo desde antes de cargar", "Aqui no hay data lake: ese camino se queda en la diapositiva 'Lago o bodega', como alternativa"] }
