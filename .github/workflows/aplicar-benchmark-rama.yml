@@ -29,6 +29,30 @@ jobs:
       - name: Ejecutar transformador pedagógico
         run: python tools/aplicar-mejoras-benchmark.py
 
+      - name: Mantener recuperación DP-900 mínima en S6
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('assets/learning/learning-plan.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          qs = data['sesiones']['6'].setdefault('dp900', [])
+          if len(qs) < 2:
+              qs.append({
+                  'dominio': 'Relational data on Azure',
+                  'pregunta': 'Una columna tiene DEFAULT abierto. ¿Qué afirmación es correcta?',
+                  'opciones': [
+                      'DEFAULT impide guardar cualquier otro valor',
+                      'DEFAULT propone un valor cuando no se especifica; no sustituye una restricción',
+                      'DEFAULT crea automáticamente una clave primaria',
+                      'DEFAULT normaliza la tabla'
+                  ],
+                  'correcta': 1,
+                  'explicacion': 'DEFAULT define un valor por omisión; CHECK, FK, NOT NULL u otras restricciones son las que pueden impedir estados inválidos.'
+              })
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
       - name: Comprobar sintaxis Python
         run: python -m py_compile tools/aplicar-mejoras-benchmark.py
 
