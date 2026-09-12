@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-auto-986a94144ff2';
+const VERSION = 'andesdb-interactive-20260912-v1';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -14,17 +14,32 @@ const ESSENTIAL = [
   './assets/icons/andesdb-maskable-512.png',
   './assets/pwa-install.js',
   './assets/learning/learning-core.js',
+  './assets/learning/interactive-tools.js',
   './assets/learning/learning-plan.json',
+  './Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html',
+  './Presentaciones/M2/sesion-3-filtros-y-agregaciones.html',
+  './Presentaciones/M2/sesion-4-uniones-de-tablas.html',
+  './Presentaciones/M2/sesion-5-algoritmica-de-tablas.html',
+  './Presentaciones/M2/__original__/sesion-2-bases-de-datos-y-primeras-consultas.html',
+  './Presentaciones/M2/__original__/sesion-3-filtros-y-agregaciones.html',
+  './Presentaciones/M2/__original__/sesion-4-uniones-de-tablas.html',
+  './Presentaciones/M2/__original__/sesion-5-algoritmica-de-tablas.html',
   './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
   './Presentaciones/M3/sql-lab-s6.js',
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
   './Presentaciones/M3/sesion-8-modelado-y-normalizacion.html',
+  './Presentaciones/M3/__original__/sesion-7-de-las-reglas-al-modelo.html',
+  './Presentaciones/M3/__original__/sesion-8-modelado-y-normalizacion.html',
   './Presentaciones/M3/sesion-9-ddl-supabase.html',
   './Presentaciones/M4/sesion-10-sql-o-nosql.html',
+  './Presentaciones/M4/__original__/sesion-10-sql-o-nosql.html',
   './Presentaciones/M4/sesion-11-documentos-de-verdad.html',
   './Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html',
   './Presentaciones/M5/sesion-13-laboratorio-bigquery.html',
   './Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html',
+  './Presentaciones/M5/__original__/sesion-12-fundamentos-data-warehouse.html',
+  './Presentaciones/M5/__original__/sesion-13-laboratorio-bigquery.html',
+  './Presentaciones/M5/__original__/sesion-14-bigquery-anidados-mapa-azure.html',
   './Presentaciones/M6/sesion-15-desafio-final.html',
   './Presentaciones/M6/sesion-16-cierre-dp900.html',
   './assets/learning/dp900-map.json',
@@ -113,7 +128,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:learning\/learning-core\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core|interactive-tools)\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
