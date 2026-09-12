@@ -1,0 +1,16 @@
+(() => {
+  'use strict';
+  if (window.self !== window.top || document.getElementById('andes-session-lab-btn')) return;
+  const script = document.currentScript || [...document.scripts].find(s => /session-lab-button\.js(?:\?|$)/.test(s.src));
+  if (!script) return;
+  const ROOT = new URL('../../', script.src);
+  const m = (location.pathname + ' ' + document.title).match(/sesion[-_\s]*(\d{1,2})/i);
+  const session = m ? Number(m[1]) : null;
+  if (!session || session < 1 || session > 16) return;
+  const primary={1:'s1-diagnostico',2:'sql-s2',3:'sql-s3',4:'sql-s4',5:'sql-s5',6:'s6-reglas-evidencia',7:'erd-s7',8:'erd-s8',9:'s9-constraints',10:'decision-s10',11:'s11-documentos',12:'warehouse-s12',13:'bigquery-s13',14:'unnest-s14',15:'s15-integrador',16:'s16-dp900'};
+  const codes=[1,2,3,4,5,6,7,8,9].map(i=>`s${session}-r${i}`).concat(primary[session]);
+  const a=document.createElement('a');a.id='andes-session-lab-btn';a.href=new URL(`lab.html?session=${session}`,ROOT).href;a.textContent=`🧪 Lab S${session} · 0/10`;
+  const st=document.createElement('style');st.textContent=`#andes-session-lab-btn{position:fixed;right:12px;top:58px;z-index:2147481750;background:#0f1b28ee;color:#fff;text-decoration:none;border:1px solid #ffffff55;border-radius:999px;padding:9px 12px;font:850 12px/1 system-ui;box-shadow:0 8px 24px #0004;backdrop-filter:blur(8px)}@media(max-width:760px){#andes-session-lab-btn{top:auto;bottom:58px;right:10px}}`;document.head.appendChild(st);document.body.appendChild(a);
+  async function refresh(){const api=window.ANDES_LMS;if(!api)return;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed'||api.localCompleted?.(c)).length;}}catch{}a.textContent=`🧪 Lab S${session} · ${n}/10`;}
+  addEventListener('andesdb:challenge-completed',refresh);addEventListener('storage',refresh);setTimeout(refresh,600);
+})();
