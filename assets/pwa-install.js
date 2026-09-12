@@ -36,6 +36,31 @@
     }
   }
 
+  function load(src, ordered = true) {
+    if ([...document.scripts].some(s => s.src === src)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = !ordered;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  async function loadAnalytics() {
+    try {
+      if (!window.ANDES_PUBLIC_ANALYTICS_CONFIG) {
+        await load(new URL('assets/analytics-config.js?v=20260912a', ROOT).href);
+      }
+      if (!window.ANDES_PUBLIC_ANALYTICS) {
+        await load(new URL('assets/analytics.js?v=20260912a', ROOT).href);
+      }
+    } catch (err) {
+      console.warn('[ANDESDB Analytics] No se pudo cargar GA4:', err);
+    }
+  }
+
   async function init() {
     // La PWA permanece disponible para quien quiera instalarla desde las
     // opciones nativas del navegador, pero el sitio no muestra banners,
@@ -43,7 +68,8 @@
     document.getElementById('andes-pwa-install')?.remove();
     document.getElementById('andes-pwa-modal')?.remove();
     ensureManifest();
-    await registerServiceWorker();
+    registerServiceWorker();
+    loadAnalytics();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
