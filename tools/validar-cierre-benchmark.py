@@ -44,8 +44,9 @@ def forbid(text: str, tokens: list[str], label: str) -> None:
 
 def max_timing(text: str) -> int:
     vals = []
-    for a, b in re.findall(r'(\d+)\s*(?:–|&ndash;|-)\s*(\d+)\s*(?:min|minutos)', text, flags=re.I):
-        vals.append(int(html.unescape(b)))
+    decoded = html.unescape(text)
+    for _a, b in re.findall(r'(\d+)\s*(?:–|-)\s*(\d+)\s*(?:min|minutos)', decoded, flags=re.I):
+        vals.append(int(b))
     return max(vals, default=0)
 
 
@@ -61,6 +62,9 @@ def main() -> int:
 
     s4 = read('Presentaciones/M2/sesion-4-uniones-de-tablas.html')
     require(s4, ['Checkpoint · elige el JOIN', 'Mapa relacional en texto'], 'S4')
+
+    s5 = read('Presentaciones/M2/sesion-5-algoritmica-de-tablas.html')
+    require(s5, ['Método ANDESDB', 'Extensión · VIEW'], 'S5')
 
     s6 = read('Presentaciones/M3/sesion-6-reglas-de-negocio.html')
     forbid(visible(s6), ['OLTP', 'OLAP', 'laguna de datos', 'bodega de datos', 'ETL', 'ELT'], 'S6 visible')
@@ -81,6 +85,8 @@ def main() -> int:
     for stale in ['Antes de las formas normales', 'La pregunta central', 'Resumen visual']:
         if f'data-title="{stale}"' in s9:
             err(f'S9: sigue el reteaching {stale!r}')
+    if 'normalización y DDL' in s9.casefold():
+        err('S9: el título aún promete normalización como parte del núcleo')
 
     s10 = read('Presentaciones/M4/sesion-10-sql-o-nosql.html')
     forbid(s10, ['Firestore y en\n                Cosmos DB', 'Firestore y Cosmos DB'], 'S10 continuidad')
@@ -93,10 +99,29 @@ def main() -> int:
     require(s12, ['Cuatro tablas del miniwarehouse + una tabla operacional defectuosa', 'Reasoning Check · 368.000'], 'S12')
 
     s13 = read('Presentaciones/M5/sesion-13-laboratorio-bigquery.html')
-    require(s13, ['BigQuery Sandbox', 'fact_venta.csv', '44 filas', '1.455.000', 'bytes procesados', 'TU_PROYECTO'], 'S13')
+    require(
+        s13,
+        [
+            'BigQuery Sandbox', 'fact_venta.csv', '44 filas', '1.455.000',
+            'bytes procesados', 'TU_PROYECTO', '50–125 min · autónomo guiado',
+            '125–135 min', '135–145 min'
+        ],
+        'S13',
+    )
+    if max_timing(s13) > 145:
+        err(f'S13: la sesión corta muestra tiempos mayores a 145 min ({max_timing(s13)})')
 
     s14 = read('Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html')
-    require(s14, ['Relacional vs anidado', 'STRUCT', 'ARRAY', 'UNNEST', 'Parquet', 'Azure Blob Storage', 'Power BI'], 'S14')
+    require(
+        s14,
+        [
+            'Relacional vs anidado', 'STRUCT', 'ARRAY', 'UNNEST', 'Parquet',
+            'Transferencia Azure por casos', 'Azure Blob Storage', 'Azure Files',
+            'Azure Table Storage', 'Azure Cosmos DB', 'Microsoft Fabric',
+            'Azure Databricks', 'Power BI'
+        ],
+        'S14',
+    )
 
     for f in ['README.md', 'decisiones.md', 'schema.sql', 'queries.sql', 'validaciones.sql', 'arquitectura.md']:
         if not (ROOT / 'Plantillas/proyecto-final' / f).exists():
@@ -107,13 +132,58 @@ def main() -> int:
     s16 = read('Presentaciones/M6/sesion-16-cierre-dp900.html')
     require(s16, ['Pre/Post', 'Mapa curso → DP-900', 'Diagnóstico personal', 'Salida individual'], 'S16')
 
+    # DP-900: no basta con cuatro dominios; cada objetivo debe tener evidencia y nivel.
     dp = json.loads(read('assets/learning/dp900-map.json') or '{}')
-    if len(dp.get('dominios', [])) != 4:
+    domains = dp.get('dominios', [])
+    if len(domains) != 4:
         err('DP-900: el mapa debe tener cuatro dominios')
+    objectives = [o for d in domains for o in d.get('objetivos', [])]
+    if len(objectives) < 23:
+        err(f'DP-900: mapa demasiado grueso; se esperaban >=23 objetivos y hay {len(objectives)}')
+    allowed = {'aprendido', 'transferido', 'reconocido'}
+    for i, obj in enumerate(objectives, start=1):
+        if not obj.get('objetivo'):
+            err(f'DP-900 objetivo {i}: falta nombre')
+        if not obj.get('sesiones'):
+            err(f'DP-900 objetivo {i}: faltan sesiones')
+        if not obj.get('evidencia'):
+            err(f'DP-900 objetivo {i}: falta evidencia')
+        if obj.get('nivel') not in allowed:
+            err(f"DP-900 objetivo {i}: nivel inválido {obj.get('nivel')!r}")
+    dp_text = json.dumps(dp, ensure_ascii=False)
+    require(
+        dp_text,
+        [
+            'CSV, JSON and Parquet', 'Azure SQL Managed Instance',
+            'Azure Database for PostgreSQL', 'Azure Blob Storage',
+            'Azure Files', 'Azure Table Storage', 'Cosmos DB APIs',
+            'batch vs streaming', 'Power BI'
+        ],
+        'DP-900 granularidad',
+    )
 
+    # Instructor View: contenido sustantivo, no stubs repetidos.
+    questions = set()
     for n in range(1, 17):
         g = read(f'docs/instructor/S{n:02d}.md')
-        require(g, ['Pregunta central', 'Error esperable principal', 'Dónde probablemente se atascan', 'No avanzar hasta que', 'Si vas 15 minutos atrasado', 'Si vas 15 minutos adelantado', 'Evidencia mínima'], f'Guía S{n:02d}')
+        require(
+            g,
+            [
+                'Pregunta central', 'Error esperable principal',
+                'Dónde probablemente se atascan', 'No avanzar hasta que',
+                'Si vas 15 minutos atrasado', 'Si vas 15 minutos adelantado',
+                'Evidencia mínima', 'Intervención docente'
+            ],
+            f'Guía S{n:02d}',
+        )
+        if len(g) < 850:
+            err(f'Guía S{n:02d}: demasiado breve ({len(g)} caracteres)')
+        m = re.search(r'## Pregunta central\s*\n([^\n]+)', g)
+        if m:
+            q = m.group(1).strip().casefold()
+            if q in questions:
+                err(f'Guía S{n:02d}: pregunta central duplicada')
+            questions.add(q)
 
     if ERRORS:
         print('\n=== Cierre benchmark: FALLÓ ===')
@@ -121,7 +191,7 @@ def main() -> int:
             print('  ✗', e)
         return 1
     print('\n=== Cierre benchmark: OK ===')
-    print('  ✓ coherencia semántica, tiempos, continuidad, evidencias e Instructor View')
+    print('  ✓ coherencia semántica, tiempos, continuidad, evidencias, DP-900 e Instructor View')
     return 0
 
 
