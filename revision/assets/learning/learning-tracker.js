@@ -6,6 +6,7 @@
   const files = [
     ['analytics-config.js?v=20260912a','ANDES_ANALYTICS_CONFIG'],
     ['analytics.js?v=20260912a','ANDES_ANALYTICS'],
+    ['heartbeat-policy.js?v=20260912a','__ANDES_HEARTBEAT_POLICY__'],
     ['learning-tracker-v3.js?v=20260912f','ANDES_LMS'],
     ['access-gate.js?v=20260912a','__ANDES_ACCESS_GATE__']
   ];
@@ -13,6 +14,7 @@
     if (global==='ANDES_LMS' && window.ANDES_LMS?.version?.startsWith('3.')) return false;
     if (global==='ANDES_ANALYTICS_CONFIG' && window.ANDES_ANALYTICS_CONFIG) return false;
     if (global==='ANDES_ANALYTICS' && window.ANDES_ANALYTICS) return false;
+    if (global==='__ANDES_HEARTBEAT_POLICY__' && window.__ANDES_HEARTBEAT_POLICY__) return false;
     return ![...document.scripts].some(s => s.src && s.src.includes(file.split('?')[0]));
   });
   if (document.readyState === 'loading') {
