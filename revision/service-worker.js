@@ -1,145 +1,26 @@
-const VERSION = 'andesdb-lms-20260912-v4';
+const VERSION = 'andesdb-lms-20260912-v5';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
 
 const ESSENTIAL = [
-  './',
-  './index.html',
-  './learning-hub.html',
-  './teacher-dashboard.html',
-  './manifest.webmanifest',
-  './assets/andesdb-icon.svg',
-  './assets/andesdb-icon-maskable.svg',
-  './assets/icons/andesdb-192.png',
-  './assets/icons/andesdb-512.png',
-  './assets/icons/andesdb-maskable-512.png',
-  './assets/pwa-install.js',
-  './assets/pwa-install-base.js',
-  './assets/learning/learning-core.js',
-  './assets/learning/learning-core-base.js',
-  './assets/learning/learning-tracker.js',
-  './assets/learning/learning-tracker-v2.js',
-  './assets/learning/learning-extra-labs.js',
-  './assets/learning/interactive-tools.js',
-  './assets/learning/interactive-nav.js',
-  './assets/learning/interactive-nav-base.js',
-  './assets/learning/learning-plan.json',
-  './Presentaciones/M1/sesion-1-diagnostico.html',
-  './Presentaciones/M1/__original__/sesion-1-diagnostico.html',
-  './Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html',
-  './Presentaciones/M2/sesion-3-filtros-y-agregaciones.html',
-  './Presentaciones/M2/sesion-4-uniones-de-tablas.html',
-  './Presentaciones/M2/sesion-5-algoritmica-de-tablas.html',
-  './Presentaciones/M2/__original__/sesion-2-bases-de-datos-y-primeras-consultas.html',
-  './Presentaciones/M2/__original__/sesion-3-filtros-y-agregaciones.html',
-  './Presentaciones/M2/__original__/sesion-4-uniones-de-tablas.html',
-  './Presentaciones/M2/__original__/sesion-5-algoritmica-de-tablas.html',
-  './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
-  './Presentaciones/M3/sql-lab-s6.js',
-  './Presentaciones/M3/sql-lab-s6-base.js',
-  './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
-  './Presentaciones/M3/sesion-8-modelado-y-normalizacion.html',
-  './Presentaciones/M3/__original__/sesion-7-de-las-reglas-al-modelo.html',
-  './Presentaciones/M3/__original__/sesion-8-modelado-y-normalizacion.html',
-  './Presentaciones/M3/sesion-9-ddl-supabase.html',
-  './Presentaciones/M3/sql-lab-s9.js',
-  './Presentaciones/M3/sql-lab-s9-base.js',
-  './Presentaciones/M4/sesion-10-sql-o-nosql.html',
-  './Presentaciones/M4/__original__/sesion-10-sql-o-nosql.html',
-  './Presentaciones/M4/sesion-11-documentos-de-verdad.html',
-  './Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html',
-  './Presentaciones/M5/sesion-13-laboratorio-bigquery.html',
-  './Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html',
-  './Presentaciones/M5/__original__/sesion-12-fundamentos-data-warehouse.html',
-  './Presentaciones/M5/__original__/sesion-13-laboratorio-bigquery.html',
-  './Presentaciones/M5/__original__/sesion-14-bigquery-anidados-mapa-azure.html',
-  './Presentaciones/M6/sesion-15-desafio-final.html',
-  './Presentaciones/M6/sesion-16-cierre-dp900.html',
-  './Presentaciones/M6/__original__/sesion-16-cierre-dp900.html',
-  './assets/learning/dp900-map.json',
-  './Presentaciones/M3/tutorial-supabase.html',
-  './Presentaciones/M3/formulario-reservas.html',
-  './Presentaciones/M3/constructor-abc.html',
-  './Scripts/S9.sql',
-  './Scripts/S9-restaurante-abc.sql',
-  './assets/vendor/sqljs/sql-wasm.js',
-  './assets/vendor/sqljs/sql-wasm.wasm',
-  './Presentaciones/M2/base-datos/dvdrental.db'
+  './','./index.html','./learning-hub.html','./lab.html','./teacher-dashboard.html','./manifest.webmanifest',
+  './assets/andesdb-icon.svg','./assets/andesdb-icon-maskable.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png','./assets/icons/andesdb-maskable-512.png',
+  './assets/pwa-install.js','./assets/pwa-install-base.js','./assets/learning/learning-core.js','./assets/learning/learning-core-base.js',
+  './assets/learning/learning-tracker.js','./assets/learning/learning-tracker-v3.js','./assets/learning/learning-content-v3.js',
+  './assets/learning/learning-extra-labs.js','./assets/learning/interactive-tools.js','./assets/learning/interactive-nav.js','./assets/learning/interactive-nav-base.js','./assets/learning/learning-plan.json',
+  './Presentaciones/M1/sesion-1-diagnostico.html','./Presentaciones/M1/__original__/sesion-1-diagnostico.html',
+  './Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html','./Presentaciones/M2/sesion-3-filtros-y-agregaciones.html','./Presentaciones/M2/sesion-4-uniones-de-tablas.html','./Presentaciones/M2/sesion-5-algoritmica-de-tablas.html',
+  './Presentaciones/M2/__original__/sesion-2-bases-de-datos-y-primeras-consultas.html','./Presentaciones/M2/__original__/sesion-3-filtros-y-agregaciones.html','./Presentaciones/M2/__original__/sesion-4-uniones-de-tablas.html','./Presentaciones/M2/__original__/sesion-5-algoritmica-de-tablas.html',
+  './Presentaciones/M3/sesion-6-reglas-de-negocio.html','./Presentaciones/M3/sql-lab-s6.js','./Presentaciones/M3/sql-lab-s6-base.js','./Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html','./Presentaciones/M3/sesion-8-modelado-y-normalizacion.html','./Presentaciones/M3/__original__/sesion-7-de-las-reglas-al-modelo.html','./Presentaciones/M3/__original__/sesion-8-modelado-y-normalizacion.html','./Presentaciones/M3/sesion-9-ddl-supabase.html','./Presentaciones/M3/sql-lab-s9.js','./Presentaciones/M3/sql-lab-s9-base.js',
+  './Presentaciones/M4/sesion-10-sql-o-nosql.html','./Presentaciones/M4/__original__/sesion-10-sql-o-nosql.html','./Presentaciones/M4/sesion-11-documentos-de-verdad.html',
+  './Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html','./Presentaciones/M5/sesion-13-laboratorio-bigquery.html','./Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html','./Presentaciones/M5/__original__/sesion-12-fundamentos-data-warehouse.html','./Presentaciones/M5/__original__/sesion-13-laboratorio-bigquery.html','./Presentaciones/M5/__original__/sesion-14-bigquery-anidados-mapa-azure.html',
+  './Presentaciones/M6/sesion-15-desafio-final.html','./Presentaciones/M6/sesion-16-cierre-dp900.html','./Presentaciones/M6/__original__/sesion-16-cierre-dp900.html',
+  './assets/learning/dp900-map.json','./Presentaciones/M3/tutorial-supabase.html','./Presentaciones/M3/formulario-reservas.html','./Presentaciones/M3/constructor-abc.html','./Scripts/S9.sql','./Scripts/S9-restaurante-abc.sql','./assets/vendor/sqljs/sql-wasm.js','./assets/vendor/sqljs/sql-wasm.wasm','./Presentaciones/M2/base-datos/dvdrental.db'
 ];
-
-self.addEventListener('install', event => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CORE);
-    await Promise.allSettled(ESSENTIAL.map(async rel => {
-      try {
-        const url = new URL(rel, self.location.href);
-        const response = await fetch(url, { cache: 'reload' });
-        if (response.ok) await cache.put(url, response.clone());
-      } catch (_) {}
-    }));
-    await self.skipWaiting();
-  })());
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k.startsWith('andesdb-') && ![CORE, RUNTIME].includes(k)).map(k => caches.delete(k)));
-    await self.clients.claim();
-  })());
-});
-
-function shouldCache(url) {
-  if (url.origin !== self.location.origin) return false;
-  if (!url.pathname.startsWith(BASE)) return false;
-  if (/\.(pptx|docx|zip)$/i.test(url.pathname)) return false;
-  return true;
-}
-
-async function networkFirst(request) {
-  const cache = await caches.open(RUNTIME);
-  try {
-    const fresh = await fetch(request);
-    if (fresh.ok && shouldCache(new URL(request.url))) await cache.put(request, fresh.clone());
-    return fresh;
-  } catch (_) {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    const home = await caches.match(new URL('./index.html', self.location.href));
-    return home || Response.error();
-  }
-}
-
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) {
-    fetch(request).then(async fresh => {
-      if (fresh.ok && shouldCache(new URL(request.url))) {
-        const cache = await caches.open(RUNTIME);
-        await cache.put(request, fresh.clone());
-      }
-    }).catch(() => {});
-    return cached;
-  }
-  const fresh = await fetch(request);
-  if (fresh.ok && shouldCache(new URL(request.url))) {
-    const cache = await caches.open(RUNTIME);
-    await cache.put(request, fresh.clone());
-  }
-  return fresh;
-}
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
-  const url = new URL(request.url);
-  if (!shouldCache(url)) return;
-
-  const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core(?:-base)?|learning-tracker(?:-v2)?|learning-extra-labs|interactive-tools|interactive-nav(?:-base)?)\.js|learning\/learning-plan\.json|pwa-install(?:-base)?\.js)$/i.test(url.pathname);
-  const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
-
-  if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
-  else if (isAsset) event.respondWith(cacheFirst(request));
-});
+self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CORE);await Promise.allSettled(ESSENTIAL.map(async rel=>{try{const url=new URL(rel,self.location.href);const response=await fetch(url,{cache:'reload'});if(response.ok)await cache.put(url,response.clone())}catch(_){}}));await self.skipWaiting()})())});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('andesdb-')&&![CORE,RUNTIME].includes(k)).map(k=>caches.delete(k)));await self.clients.claim()})())});
+function shouldCache(url){if(url.origin!==self.location.origin)return false;if(!url.pathname.startsWith(BASE))return false;if(/\.(pptx|docx|zip)$/i.test(url.pathname))return false;return true}
+async function networkFirst(request){const cache=await caches.open(RUNTIME);try{const fresh=await fetch(request);if(fresh.ok&&shouldCache(new URL(request.url)))await cache.put(request,fresh.clone());return fresh}catch(_){const cached=await caches.match(request);if(cached)return cached;const home=await caches.match(new URL('./index.html',self.location.href));return home||Response.error()}}
+async function cacheFirst(request){const cached=await caches.match(request);if(cached){fetch(request).then(async fresh=>{if(fresh.ok&&shouldCache(new URL(request.url))){const cache=await caches.open(RUNTIME);await cache.put(request,fresh.clone())}}).catch(()=>{});return cached}const fresh=await fetch(request);if(fresh.ok&&shouldCache(new URL(request.url))){const cache=await caches.open(RUNTIME);await cache.put(request,fresh.clone())}return fresh}
+self.addEventListener('fetch',event=>{const request=event.request;if(request.method!=='GET')return;const url=new URL(request.url);if(!shouldCache(url))return;const isDocument=request.mode==='navigate'||/\.html?$/i.test(url.pathname);const isLearningRuntime=/\/assets\/(?:learning\/(?:learning-core(?:-base)?|learning-tracker(?:-v[23])?|learning-content-v3|learning-extra-labs|interactive-tools|interactive-nav(?:-base)?)\.js|learning\/learning-plan\.json|pwa-install(?:-base)?\.js)$/i.test(url.pathname);const isAsset=/\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);if(isDocument||isLearningRuntime)event.respondWith(networkFirst(request));else if(isAsset)event.respondWith(cacheFirst(request))});
