@@ -3,6 +3,8 @@ name: Sincronizar sitio desde manifiestos
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'tools/curso.json'
       - 'tools/estilo-portada.css'
