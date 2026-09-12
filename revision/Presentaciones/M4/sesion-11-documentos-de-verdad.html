@@ -3308,6 +3308,20 @@
           <span>Universidad de los Andes · Colsubsidio</span>
         </div>
       </section>
+<section class="slide dense" data-title="Hilo conductor" data-hilo="s11">
+<div class="ey">Hilo conductor · sesión 11</div>
+<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
+<div class="g2">
+  <div class="card"><h3>Venimos de</h3><p>S10 dejó criterios para elegir representación; ahora probamos una arquitectura híbrida con estado mutable y hechos auditables.</p></div>
+  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Qué debe vivir embebido o referenciado y cuál sistema es fuente de verdad en cada momento?</strong></p></div>
+</div>
+<div class="g2" style="margin-top:1em">
+  <div class="card"><h3>Debe quedar evidencia</h3><p>Documentos consultados + decisión embed/reference + checkout confirmado y localizado en PostgreSQL.</p></div>
+  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>Cada checkout confirmado produce un hecho operacional. Cuando esos hechos crecen y queremos historia, tendencias y tableros, consultar la operación directamente deja de ser suficiente: S12.</p></div>
+</div>
+<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 11</span></div>
+</section>
+
 <section class="slide dense" data-title="Una selección todavía no es un pedido"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>Una selección todavía no es un pedido</h2><p class="lead">El cliente cambia de opinión. Al confirmar, el negocio debe conservar lo acordado.</p><div class="g3"><div class="card"><h3>Carta</h3><p>Una ficha por plato, con atributos propios.</p></div><div class="card"><h3>Carrito</h3><p>Una selección editable. Temporal por su ciclo de vida; Firestore sí la persiste.</p></div><div class="card"><h3>Pedido</h3><p>Cantidades y precios registrados con las reglas de S9.</p></div></div><div class="checkpoint mt">Antes de abrir consolas: si cambia la carta, ¿debe cambiar un pedido ya confirmado?</div><div class="ok mt" data-r><b>No.</b> El precio queda congelado en el instante de pagar: <code>linea_pedido.precio_unitario</code> es una copia, no una referencia a <code>plato.precio_actual</code> — la misma regla de la sesión 9. Si el Ajiaco sube de precio mañana, el pedido de hoy no cambia. Esa es la razón técnica por la que el navegador lee documentos y solicita a PostgreSQL confirmar el pedido, en vez de guardar todo en un solo lugar. <a class="guide-button" href="#arquitectura-archify"><strong>Explorar Archify</strong><span>El mapa interactivo de esta aplicación</span></a></div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
 
 
@@ -3797,7 +3811,7 @@ END LOOP;</code></pre>
         <div class="break">
           <div class="ey">Cierre</div>
           <h2>El carrito ya no es un dibujo</h2>
-          <p class="lead">La pregunta de la diapositiva 3 tiene ya una respuesta con las manos: <b>las dos cosas, según el momento.</b> Mientras se arma, el carrito es estado de pantalla — se pierde sin costo. En el instante en que se confirma, deja de serlo y se vuelve un hecho del negocio, con precio congelado y una fila que no se borra.</p>
+          <p class="lead">La pregunta de la diapositiva 3 tiene ya una respuesta con las manos: <b>las dos cosas, según el momento.</b> Mientras se arma, el carrito es un estado transitorio y mutable del proceso. En nuestra arquitectura lo persistimos temporalmente en Firestore. Al confirmar, nace un hecho permanente del negocio en PostgreSQL, con cantidades y precios históricos.</p>
           <div class="g3">
             <div class="ok"><h3>Lo que se llevan</h3><p>Documentos con las manos, embeber contra referenciar, y un carrito que de verdad se convirtió en venta.</p></div>
             <div class="card"><h3>Lo que viene</h3><p>En la sesión 12 empieza el otro camino: hechos, dimensiones y el grano analítico &mdash; el que la sesión 6 dejó aparcado.</p></div>
@@ -3807,7 +3821,16 @@ END LOOP;</code></pre>
         <div class="brand"><span>Cierre</span><span>De documentos a decisiones</span></div>
       </section>
 
-      <section class="slide mid" data-title="Salida">
+      
+<section class="slide dense" data-title="Contingencia explícita" data-opcional="true">
+<div class="ey">Plan B · no confundir práctica con evidencia</div><h2>Si Firestore se bloquea, la clase sigue; la evidencia cloud queda pendiente</h2>
+<div class="g2"><div class="card"><h3>Modo contingencia</h3><p>Usa <code>carrito-abc.html</code> para practicar forma del documento, embed/reference y transición carrito → pedido.</p></div><div class="card blue"><h3>Qué NO demuestra</h3><p>No demuestra persistencia ni listener de Firestore. Esa evidencia se recupera en el servicio real cuando vuelva el acceso.</p></div></div><div class="warn">La contingencia conserva el aprendizaje conceptual sin fingir equivalencia técnica.</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 11 · Documentos de verdad</span></div></section>
+<section class="slide dense" data-title="Reasoning Check · checkout">
+<div class="ey">🔍 Reasoning Check</div><h2>¿Qué ocurre si el pedido se crea pero sus líneas fallan?</h2><div class="g2"><div class="card"><h3>Escenario</h3><p>El checkout escribe <code>pedido</code>. La segunda escritura falla antes de completar <code>linea_pedido</code>.</p></div><div class="card blue"><h3>Discute</h3><ul class="checks"><li>¿qué inconsistencia queda?</li><li>¿qué significa “todo o nada”?</li><li>¿qué merece una transacción?</li></ul></div></div><div class="ctx"><b>Evidencia:</b> 2 documentos · ≥2 filtros · embed/reference defendido · compra localizada en PostgreSQL.</div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 11 · Documentos de verdad</span></div></section>
+
+<section class="slide mid" data-title="Salida">
         <div class="break">
           <div class="ey">Salida</div>
           <h2>Selecciona una opción en el chat antes de irte</h2>
