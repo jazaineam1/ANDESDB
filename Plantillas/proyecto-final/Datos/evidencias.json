@@ -1,6 +1,126 @@
 [
-  {"caso_id":1001,"evidencias":[{"tipo":"foto","url":"img/1001-1.jpg"},{"tipo":"comentario","texto":"Luminaria apagada desde hace dos noches"}]},
-  {"caso_id":1003,"evidencias":[{"tipo":"foto","url":"img/1003-1.jpg"},{"tipo":"foto","url":"img/1003-2.jpg"},{"tipo":"comentario","texto":"El hueco ocupa parte del carril"}]},
-  {"caso_id":1007,"evidencias":[{"tipo":"video","url":"video/1007-1.mp4"},{"tipo":"comentario","texto":"El semáforo cambia de forma intermitente"}]},
-  {"caso_id":1012,"evidencias":[{"tipo":"foto","url":"img/1012-1.jpg"},{"tipo":"comentario","texto":"Intersección con alto flujo peatonal"},{"tipo":"comentario","texto":"Se requiere priorización"}]}
+  {
+    "caso_id": 1001,
+    "fuente": "Web",
+    "evidencias": [
+      {
+        "evidencia_id": "EV1001-01",
+        "tipo": "foto",
+        "archivo": "img/1001-1.jpg",
+        "mime_type": "image/jpeg",
+        "tamano_bytes": 2483100,
+        "ancho_px": 4032,
+        "alto_px": 3024,
+        "capturada_en": "2026-08-01T08:12:44-05:00",
+        "dispositivo": "Portatil",
+        "os": "Windows 11",
+        "ubicacion": {"localidad": "Chapinero", "latitud": 4.6483, "longitud": -74.0638}
+      },
+      {
+        "evidencia_id": "EV1001-02",
+        "tipo": "comentario",
+        "texto": "Luminaria apagada desde hace dos noches",
+        "idioma": "es",
+        "tamano_bytes": 43
+      }
+    ]
+  },
+  {
+    "caso_id": 1003,
+    "fuente": "Web",
+    "evidencias": [
+      {
+        "evidencia_id": "EV1003-01",
+        "tipo": "foto",
+        "archivo": "img/1003-1.jpg",
+        "mime_type": "image/jpeg",
+        "tamano_bytes": 3154200,
+        "ancho_px": 4032,
+        "alto_px": 3024,
+        "capturada_en": "2026-08-02T10:26:10-05:00",
+        "dispositivo": "Portatil",
+        "os": "macOS 15",
+        "ubicacion": {"localidad": "Teusaquillo", "latitud": 4.6455, "longitud": -74.0930}
+      },
+      {
+        "evidencia_id": "EV1003-02",
+        "tipo": "foto",
+        "archivo": "img/1003-2.jpg",
+        "mime_type": "image/jpeg",
+        "tamano_bytes": 2870600,
+        "ancho_px": 4032,
+        "alto_px": 3024,
+        "capturada_en": "2026-08-02T10:27:03-05:00",
+        "dispositivo": "Portatil",
+        "os": "macOS 15"
+      },
+      {
+        "evidencia_id": "EV1003-03",
+        "tipo": "comentario",
+        "texto": "El hueco ocupa parte del carril",
+        "idioma": "es",
+        "tamano_bytes": 32
+      }
+    ]
+  },
+  {
+    "caso_id": 1007,
+    "fuente": "App",
+    "evidencias": [
+      {
+        "evidencia_id": "EV1007-01",
+        "tipo": "video",
+        "archivo": "video/1007-1.mp4",
+        "mime_type": "video/mp4",
+        "tamano_bytes": 18642000,
+        "ancho_px": 1920,
+        "alto_px": 1080,
+        "duracion_s": 18.4,
+        "capturada_en": "2026-08-05T06:37:12-05:00",
+        "dispositivo": "Movil",
+        "os": "iOS 19",
+        "ubicacion": {"localidad": "Usaquen", "latitud": 4.6950, "longitud": -74.0300}
+      },
+      {
+        "evidencia_id": "EV1007-02",
+        "tipo": "comentario",
+        "texto": "El semaforo cambia de forma intermitente",
+        "idioma": "es",
+        "tamano_bytes": 41
+      }
+    ]
+  },
+  {
+    "caso_id": 1012,
+    "fuente": "App",
+    "evidencias": [
+      {
+        "evidencia_id": "EV1012-01",
+        "tipo": "foto",
+        "archivo": "img/1012-1.jpg",
+        "mime_type": "image/jpeg",
+        "tamano_bytes": 4218800,
+        "ancho_px": 4032,
+        "alto_px": 3024,
+        "capturada_en": "2026-08-10T05:51:08-05:00",
+        "dispositivo": "Movil",
+        "os": "iOS 19",
+        "ubicacion": {"localidad": "Usaquen", "latitud": 4.6950, "longitud": -74.0300}
+      },
+      {
+        "evidencia_id": "EV1012-02",
+        "tipo": "comentario",
+        "texto": "Interseccion con alto flujo peatonal",
+        "idioma": "es",
+        "tamano_bytes": 37
+      },
+      {
+        "evidencia_id": "EV1012-03",
+        "tipo": "comentario",
+        "texto": "Se requiere priorizacion",
+        "idioma": "es",
+        "tamano_bytes": 25
+      }
+    ]
+  }
 ]
