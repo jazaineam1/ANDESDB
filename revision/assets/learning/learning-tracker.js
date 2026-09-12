@@ -18,8 +18,8 @@
   })();
   setTimeout(async()=>{
     try{
-      if(!window.ANDES_ANALYTICS_CONFIG)await add('analytics-config.js?v=20260912a',false);
-      if(!window.ANDES_ANALYTICS)await add('analytics.js?v=20260912a',false);
+      if(!window.ANDES_ANALYTICS_CONFIG)await add('analytics-config.js?v=20260912-ga4a',false);
+      if(!window.ANDES_ANALYTICS)await add('analytics.js?v=20260912-ga4a',false);
     }catch(_){ }
   },800);
 })();
