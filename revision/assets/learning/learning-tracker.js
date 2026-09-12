@@ -1,15 +1,28 @@
 (() => {
   'use strict';
   const current = document.currentScript || [...document.scripts].find(s => /learning-tracker\.js(?:\?|$)/.test(s.src));
-  if (!current || window.ANDES_LMS?.version?.startsWith('3.')) return;
-  const src = new URL('learning-tracker-v3.js?v=20260912e', current.src).href;
-  if ([...document.scripts].some(s => s.src === src)) return;
+  if (!current) return;
+  const dir = new URL('./', current.src);
+  const files = [
+    ['analytics-config.js?v=20260912a','ANDES_ANALYTICS_CONFIG'],
+    ['analytics.js?v=20260912a','ANDES_ANALYTICS'],
+    ['learning-tracker-v3.js?v=20260912f','ANDES_LMS'],
+    ['access-gate.js?v=20260912a','__ANDES_ACCESS_GATE__']
+  ];
+  const need = files.filter(([file,global]) => {
+    if (global==='ANDES_LMS' && window.ANDES_LMS?.version?.startsWith('3.')) return false;
+    if (global==='ANDES_ANALYTICS_CONFIG' && window.ANDES_ANALYTICS_CONFIG) return false;
+    if (global==='ANDES_ANALYTICS' && window.ANDES_ANALYTICS) return false;
+    return ![...document.scripts].some(s => s.src && s.src.includes(file.split('?')[0]));
+  });
   if (document.readyState === 'loading') {
-    document.write('<script src="' + src.replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '"><' + '/script>');
+    for (const [file] of need) {
+      const src = new URL(file, dir).href.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      document.write('<script src="'+src+'"><'+'/script>');
+    }
     return;
   }
-  const el = document.createElement('script');
-  el.src = src;
-  el.async = false;
-  document.head.appendChild(el);
+  for (const [file] of need) {
+    const el=document.createElement('script');el.src=new URL(file,dir).href;el.async=false;document.head.appendChild(el);
+  }
 })();
