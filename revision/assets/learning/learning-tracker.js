@@ -12,7 +12,7 @@
     try{
       if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
       if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912f');
-      await add('access-gate.js?v=20260912b');
+      await add('access-gate.js?v=20260912-nav1');
     }catch(e){console.error('ANDESDB LMS runtime',e)}
   })();
   setTimeout(async()=>{
