@@ -1,0 +1,49 @@
+name: Aplicar benchmark pedagógico en rama
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - mejoras-benchmark-pedagogico
+    paths:
+      - 'tools/aplicar-mejoras-benchmark.py'
+      - '.github/workflows/aplicar-benchmark-rama.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark-pedagogico-rama
+  cancel-in-progress: false
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar rama
+        uses: actions/checkout@v4
+        with:
+          ref: mejoras-benchmark-pedagogico
+          fetch-depth: 0
+
+      - name: Ejecutar transformador pedagógico
+        run: python tools/aplicar-mejoras-benchmark.py
+
+      - name: Comprobar sintaxis Python
+        run: python -m py_compile tools/aplicar-mejoras-benchmark.py
+
+      - name: Validar curso existente
+        run: python tools/validar_curso.py
+
+      - name: Publicar cambios solo en la rama
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No hay cambios generados'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md tools/curso.json assets/learning docs Presentaciones service-worker.js .claude .codex
+          git commit -m 'Aplicar benchmark pedagógico sin cambiar estilo visual'
+          git push origin HEAD:mejoras-benchmark-pedagogico
