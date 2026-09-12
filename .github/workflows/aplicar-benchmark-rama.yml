@@ -26,8 +26,32 @@ jobs:
           ref: mejoras-benchmark-pedagogico
           fetch-depth: 0
 
-      - name: Ejecutar transformador pedagógico
-        run: python tools/aplicar-mejoras-benchmark.py
+      - name: Ejecutar transformador pedagógico una sola vez
+        run: |
+          if [ -f docs/BENCHMARK-PEDAGOGICO-APLICADO.md ]; then
+            echo 'Benchmark ya aplicado; no se duplican checkpoints ni diapositivas.'
+          else
+            python tools/aplicar-mejoras-benchmark.py
+          fi
+
+      - name: Corregir identificador visual de nuevas sesiones
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          archivos = {
+              13: Path('Presentaciones/M5/sesion-13-laboratorio-bigquery.html'),
+              14: Path('Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html'),
+              15: Path('Presentaciones/M6/sesion-15-desafio-final.html'),
+              16: Path('Presentaciones/M6/sesion-16-cierre-dp900.html'),
+              1: Path('Presentaciones/M1/sesion-1-diagnostico.html'),
+          }
+          for n, p in archivos.items():
+              if not p.exists():
+                  continue
+              text = p.read_text(encoding='utf-8')
+              text = text.replace('%3E12%3C/text%3E', f'%3E{n}%3C/text%3E')
+              p.write_text(text, encoding='utf-8')
+          PY
 
       - name: Mantener recuperación DP-900 mínima en S6
         run: |
@@ -69,5 +93,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add README.md tools/curso.json assets/learning docs Presentaciones service-worker.js .claude .codex
-          git commit -m 'Aplicar benchmark pedagógico sin cambiar estilo visual'
+          git commit -m 'Ajustar identificadores sin alterar el estilo visual'
           git push origin HEAD:mejoras-benchmark-pedagogico
