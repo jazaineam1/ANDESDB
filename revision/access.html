@@ -4,37 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>ANDESDB · Validando acceso</title>
+<title>ANDESDB · Acceso</title>
 <style>
-:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f4f6f8;color:#111827;min-height:100vh;display:grid;place-items:center;padding:22px}.card{width:min(560px,100%);background:#fff;border:1px solid #dbe2ea;border-radius:20px;padding:26px;box-shadow:0 18px 50px #0f172a14}.ey{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#8a7300;font-weight:900}.mark{width:54px;height:54px;border-radius:16px;background:#0e1a24;color:#ffd600;display:grid;place-items:center;font-size:1.5rem;margin-bottom:16px}h1{margin:.3rem 0 .5rem;font-size:1.7rem}p{color:#64748b;line-height:1.5}.state{margin-top:16px;padding:12px 14px;border-radius:12px;background:#eef6ff;color:#1e3a5f}.state.err{background:#fee2e2;color:#7f1d1d}.btn{display:inline-flex;margin-top:14px;padding:10px 13px;border-radius:10px;background:#111827;color:#fff;text-decoration:none;font-weight:800}
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f4f6f8;color:#111827;min-height:100vh;display:grid;place-items:center;padding:22px}.card{width:min(560px,100%);background:#fff;border:1px solid #dbe2ea;border-radius:20px;padding:26px;box-shadow:0 18px 50px #0f172a14}.ey{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#8a7300;font-weight:900}.mark{width:54px;height:54px;border-radius:16px;background:#0e1a24;color:#ffd600;display:grid;place-items:center;font-size:1.5rem;margin-bottom:16px}h1{margin:.3rem 0 .5rem;font-size:1.7rem}p{color:#64748b;line-height:1.5}.state{margin-top:16px;padding:12px 14px;border-radius:12px;background:#eef6ff;color:#1e3a5f}.state.ok{background:#dcfce7;color:#14532d}.state.err{background:#fee2e2;color:#7f1d1d}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{display:inline-flex;padding:10px 13px;border:0;border-radius:10px;background:#111827;color:#fff;text-decoration:none;font:800 1rem system-ui;cursor:pointer}.btn.alt{background:#e8edf2;color:#111827}.btn:disabled{opacity:.55;cursor:wait}.small{font-size:.83rem;color:#64748b;margin-top:10px}
 </style>
 </head>
 <body>
 <main class="card">
   <div class="mark">🎓</div>
   <div class="ey">ANDESDB · acceso seguro</div>
-  <h1 id="title">Validando tu acceso…</h1>
-  <p id="copy">El enlace se verifica una sola vez. No necesitas contraseña.</p>
+  <h1 id="title">Comprobando tu acceso…</h1>
+  <p id="copy">Si ya tienes una sesión activa, entraremos directamente. Un enlace nuevo solo se consume cuando tú confirmas.</p>
   <div class="state" id="state">Conectando con la plataforma…</div>
-  <a class="btn" id="back" href="portal.html" hidden>Volver al portal</a>
+  <div class="actions" id="actions" hidden>
+    <button class="btn" id="enter" type="button">Entrar a ANDESDB</button>
+    <a class="btn alt" id="back" href="portal.html">Volver al portal</a>
+  </div>
+  <div class="small" id="hint"></div>
 </main>
 <script>
 (()=>{'use strict';
-const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-auth',STORE='andesdb.lms.auth.v1',state=document.getElementById('state'),title=document.getElementById('title'),copy=document.getElementById('copy'),back=document.getElementById('back');
+const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-auth',STORE='andesdb.lms.auth.v1',state=document.getElementById('state'),title=document.getElementById('title'),copy=document.getElementById('copy'),actions=document.getElementById('actions'),enter=document.getElementById('enter'),hint=document.getElementById('hint');
 const p=new URLSearchParams(location.hash.replace(/^#/,'')),token=p.get('token')||'';
 history.replaceState(null,'',location.pathname);
-async function run(){
- if(!token){title.textContent='Enlace incompleto';copy.textContent='Solicita al docente un nuevo enlace de acceso.';state.textContent='No encontramos el token de acceso.';state.className='state err';back.hidden=false;return}
- try{
-  const c=new AbortController(),timer=setTimeout(()=>c.abort(),8000);
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'claim_access',token}),signal:c.signal});clearTimeout(timer);
-  const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.error||`HTTP ${r.status}`);
-  localStorage.setItem(STORE,JSON.stringify({token:x.token,expires_at:x.expires_at,auth_session_id:x.auth_session_id,user:x.user}));
-  state.textContent='Acceso confirmado. Entrando a tus cursos…';
-  location.replace('portal.html?access=ok');
- }catch(e){title.textContent='No se pudo usar este enlace';copy.textContent='Los enlaces son personales y de un solo uso. Si ya lo abriste antes, solicita uno nuevo al docente.';state.textContent=e.name==='AbortError'?'La plataforma tardó demasiado. Intenta nuevamente.':e.message;state.className='state err';back.hidden=false}
-}
-run();
+const readAuth=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}};
+async function call(body,authToken='',ms=8000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),ms);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json',...(authToken?{'Authorization':'Bearer '+authToken}:{})},body:JSON.stringify(body),signal:c.signal});const x=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(x.error||`HTTP ${r.status}`);e.data=x;throw e}return x}finally{clearTimeout(timer)}}
+async function existingSession(){const a=readAuth();if(!a?.token)return false;try{const x=await call({action:'me'},a.token,3500);a.user=x.user;a.expires_at=x.expires_at;a.auth_session_id=x.auth_session_id;localStorage.setItem(STORE,JSON.stringify(a));state.className='state ok';state.textContent='Ya tienes una sesión activa. Entrando a tus cursos…';location.replace('portal.html?access=active');return true}catch{localStorage.removeItem(STORE);return false}}
+function errorView(message,used=false){title.textContent=used?'Este enlace ya fue usado':'No se pudo usar este enlace';copy.textContent=used?'Si ya ingresaste antes en este dispositivo, vuelve al portal. Si estás en otro dispositivo, solicita al docente un nuevo enlace.':'Solicita al docente un nuevo enlace de acceso.';state.className='state err';state.textContent=message;actions.hidden=false;enter.hidden=true;hint.textContent='No necesitas crear otra cuenta: un nuevo enlace puede asociarse a tu matrícula existente.'}
+async function inspect(){if(await existingSession())return;if(!token){errorView('No encontramos un token de acceso.');return}try{const x=await call({action:'inspect_access',token},'',6000);title.textContent=`Acceso listo${x.display_name?' para '+x.display_name:''}`;copy.textContent='El enlace todavía NO se ha consumido. Pulsa el botón para iniciar tu sesión en este dispositivo.';state.className='state ok';state.textContent='Matrícula activa · '+((x.courses||[]).join(', ')||'ANDESDB');actions.hidden=false;hint.textContent='Por seguridad, el enlace es personal y de un solo uso. Tu sesión continuará activa después de entrar.'}catch(e){errorView(e.name==='AbortError'?'La plataforma tardó demasiado. Intenta nuevamente.':e.message,!!e.data?.used)}}
+enter.onclick=async()=>{enter.disabled=true;enter.textContent='Ingresando…';try{const x=await call({action:'claim_access',token},'',8000);localStorage.setItem(STORE,JSON.stringify({token:x.token,expires_at:x.expires_at,auth_session_id:x.auth_session_id,user:x.user}));state.className='state ok';state.textContent='Acceso confirmado. Entrando a tus cursos…';location.replace('portal.html?access=ok')}catch(e){enter.disabled=false;enter.textContent='Entrar a ANDESDB';errorView(e.name==='AbortError'?'La plataforma tardó demasiado. Intenta nuevamente.':e.message,!!e.data?.used)}};
+inspect();
 })();
 </script>
 </body>
