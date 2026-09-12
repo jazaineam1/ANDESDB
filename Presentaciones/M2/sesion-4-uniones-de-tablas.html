@@ -668,20 +668,6 @@ pre:hover .copybtn{opacity:1}
 </svg>
 <div class="brand"><span>Sesión 4 · Módulo 2</span><span>Dise&ntilde;o y Gesti&oacute;n de Bases de Datos con SQL</span></div>
 </section>
-<section class="slide dense" data-title="Hilo conductor" data-hilo="s04">
-<div class="ey">Hilo conductor · sesión 4</div>
-<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
-<div class="g2">
-  <div class="card"><h3>Venimos de</h3><p>S3 sabe resumir correctamente una tabla, pero muchas preguntas viven repartidas entre varias.</p></div>
-  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Cómo combinamos tablas preservando las filas que la pregunta exige?</strong></p></div>
-</div>
-<div class="g2" style="margin-top:1em">
-  <div class="card"><h3>Debe quedar evidencia</h3><p>JOIN elegido por semántica, cardinalidad explicada y resultado validado.</p></div>
-  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>Un JOIN puede ser correcto y aun así inflar totales si mezcla granos distintos. S5 diseña primero la tabla resultado.</p></div>
-</div>
-<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 4</span></div>
-</section>
-
 <section class="slide mid" data-title="Agenda"><div class="ey">Qu&eacute; haremos hoy</div><h2>De una tabla a varias</h2>
 <div class="agenda-grid">
 <article><b>1</b><h3>C&oacute;mo se apuntan</h3><p>Llaves primarias y for&aacute;neas: por qu&eacute; una tabla sabe de otra.</p></article>
@@ -1132,7 +1118,7 @@ WHERE r.rental_id IS NULL;</pre></button>
 UNION
 SELECT COUNT(*) FROM rental;</pre></button>
 </div>
-<button class="verify">Verificar</button><div class="fb" aria-live="polite"></div></div>
+<button class="verify">Verificar</button><div class="fb"></div></div>
 <div class="brand"><span>Bloque 5 · Encadenar</span><span>Buscar ausencias: LEFT + IS NULL</span></div>
 </section>
 <section class="slide xdense mid" data-title="Desafío integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
@@ -1177,27 +1163,6 @@ LIMIT    5;</pre>
 <p class="small" style="margin-top:.7em">De los cuatro, el que vas a escribir el 90&nbsp;% de las veces es <code>LEFT JOIN</code>. <code>RIGHT</code> y <code>FULL OUTER</code> hay que <em>reconocerlos</em> m&aacute;s que escribirlos.</p></div></div>
 <div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
 </section>
-
-<section class="slide dense" data-title="NULL después de LEFT JOIN">
-<div class="ey">Concepto difícil · 8 minutos</div><h2>Que falte una coincidencia también es información</h2><div class="g2"><div><pre><code>SELECT f.title, i.inventory_id
-FROM film AS f
-LEFT JOIN inventory AS i
-  ON f.film_id = i.film_id
-WHERE i.inventory_id IS NULL;</code></pre></div><div class="card"><h3>Predice</h3><p>¿Qué películas aparecerán?</p><div class="warn"><b>No uses:</b> <code>= NULL</code>. Usa <code>IS NULL</code> / <code>IS NOT NULL</code>.</div></div></div>
-<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 4 · Uniones de tablas</span></div></section>
-<section class="slide dense" data-title="Reasoning Check · JOIN">
-<div class="ey">🔍 Reasoning Check</div><h2>La consulta corre. ¿El resultado tiene el grano que esperabas?</h2><div class="ctx">Esperabas una fila por película. Después de unir <code>film → inventory → rental</code> aparecen miles de filas.</div><div class="g2"><div class="card"><h3>No respondas con DISTINCT</h3><p>Explica qué representa ahora una fila y por qué una película puede repetirse.</p></div><div class="card blue"><h3>Criterio</h3><p>Distingues duplicados de datos de una multiplicación legítima por cambio de grano.</p></div></div>
-<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 4 · Uniones de tablas</span></div></section>
-
-<section class="slide dense" data-title="Checkpoint · elige el JOIN">
-<div class="ey">Evidencia · 7 minutos · sin receta</div><h2>El motor no elige la semántica por ti</h2>
-<div class="ctx"><b>Pregunta:</b> muestra <b>todas las películas</b>, incluidas las que nunca han sido alquiladas, y cuenta sus alquileres.</div>
-<div class="g2"><div class="card"><h3>Antes de escribir</h3><ul class="checks"><li>elige <code>INNER</code> o <code>LEFT JOIN</code></li><li>justifica qué filas deben sobrevivir sin coincidencia</li><li>declara qué representa una fila del resultado</li></ul></div><div class="card blue"><h3>Criterio</h3><p>No basta con que ejecute: la elección del JOIN debe preservar las películas sin alquiler.</p></div></div>
-<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 4 · Uniones de tablas</span></div></section>
-<section class="slide dense" data-title="Mapa relacional en texto">
-<div class="ey">Accesibilidad · equivalente del diagrama</div><h2>La misma cadena, sin depender del SVG</h2>
-<div class="g2"><div class="card"><h3>Camino principal</h3><p><code>film 1:N inventory 1:N rental N:1 customer</code></p><p>Una película puede tener varias copias; una copia puede alquilarse muchas veces; cada alquiler pertenece a un cliente.</p></div><div class="card blue"><h3>Pago</h3><p><code>rental 1:N payment</code></p><p>La cardinalidad explica por qué unir puede multiplicar filas aunque ningún dato esté duplicado.</p></div></div>
-<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 4 · Uniones de tablas</span></div></section>
 <section class="slide yellow dense mid" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
 <h2>Ya puedes responder preguntas de verdad</h2>
 <div class="g2">
