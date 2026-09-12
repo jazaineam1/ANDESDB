@@ -1,7 +1,7 @@
-const VERSION='andesdb-lms-20260912-v16';
+const VERSION='andesdb-lms-20260912-v17';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
-  './','./portal.html','./index.html','./learning-hub.html','./lab.html','./teacher-dashboard.html','./manifest.webmanifest',
+  './','./portal.html','./access.html','./index.html','./learning-hub.html','./lab.html','./teacher-dashboard.html','./manifest.webmanifest',
   './assets/andesdb-icon.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png',
   './assets/pwa-install.js','./assets/learning/access-gate.js','./assets/learning/learning-tracker.js','./assets/learning/learning-tracker-v3.js',
   './assets/learning/lab-content-v4.js','./assets/learning/lab-content-v4-patch.js','./assets/learning/lab-runtime-v4.js','./assets/learning/lab-runtime-v5.js','./assets/learning/session-lab-button.js'
