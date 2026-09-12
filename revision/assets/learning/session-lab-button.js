@@ -11,6 +11,8 @@
   const codes=[1,2,3,4,5,6,7,8,9].map(i=>`s${session}-r${i}`).concat(primary[session]);
   const a=document.createElement('a');a.id='andes-session-lab-btn';a.href=new URL(`lab.html?session=${session}`,ROOT).href;a.textContent=`🧪 Lab S${session} · 0/10`;
   const st=document.createElement('style');st.textContent=`#andes-session-lab-btn{position:fixed;right:12px;top:58px;z-index:2147481750;background:#0f1b28ee;color:#fff;text-decoration:none;border:1px solid #ffffff55;border-radius:999px;padding:9px 12px;font:850 12px/1 system-ui;box-shadow:0 8px 24px #0004;backdrop-filter:blur(8px)}@media(max-width:760px){#andes-session-lab-btn{top:auto;bottom:58px;right:10px}}`;document.head.appendChild(st);document.body.appendChild(a);
-  async function refresh(){const api=window.ANDES_LMS;if(!api)return;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed'||api.localCompleted?.(c)).length;}}catch{}a.textContent=`🧪 Lab S${session} · ${n}/10`;}
-  addEventListener('andesdb:challenge-completed',refresh);addEventListener('storage',refresh);setTimeout(refresh,600);
+  function relabelApplied(){const old=document.getElementById('andes-toolkit-btn');if(old)old.innerHTML='🧩 Reto aplicado';}
+  async function refresh(){relabelApplied();const api=window.ANDES_LMS;if(!api)return false;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed'||api.localCompleted?.(c)).length;}}catch{}a.textContent=`🧪 Lab S${session} · ${n}/10`;return true;}
+  addEventListener('andesdb:challenge-completed',refresh);addEventListener('storage',refresh);
+  let tries=0;const timer=setInterval(async()=>{relabelApplied();if(await refresh()||++tries>20)clearInterval(timer)},350);
 })();
