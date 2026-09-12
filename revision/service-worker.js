@@ -1,4 +1,4 @@
-const VERSION='andesdb-lms-20260912-v10';
+const VERSION='andesdb-lms-20260912-v11';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 // Solo el shell mínimo. Presentaciones, SQLite, WASM y laboratorios se cachean al usarlos.
 const ESSENTIAL=[
