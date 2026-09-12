@@ -1,166 +1,216 @@
-# ANDESDB
+# ANDESDB · capa `revision/`
 
 Repositorio del curso **Diseño y Gestión de Bases de Datos con SQL**, desarrollado para **Universidad de los Andes · Colsubsidio**.
 
-ANDESDB no es únicamente una colección de presentaciones. El repositorio funciona como un **sitio de curso reproducible**: organiza el recorrido de 16 sesiones, genera la portada, publica materiales, integra laboratorios SQL en el navegador, mantiene actividades interactivas, usa servicios cloud reales en las sesiones técnicas y valida automáticamente que el sitio y sus recursos permanezcan coherentes.
+`revision/` combina dos superficies distintas:
+
+1. un **sitio de curso reproducible** con 16 sesiones, presentaciones, recursos y laboratorios;
+2. un **LMS autenticado** con matrícula, progreso server-side, analítica académica, agenda, anuncios, entregas, competencias y control docente.
+
+La tecnología sigue al objetivo de aprendizaje: los servicios cloud reales se usan cuando operar el servicio es parte del resultado esperado; los motores locales/WASM funcionan como continuidad o fallback, no como reemplazo artificial.
 
 ## Curso
 
 - **48 horas · 16 sesiones**.
 - Clases virtuales sincrónicas.
 - Actividad práctica aproximadamente cada 10–15 minutos.
-- SQL y modelado con casos persistentes, especialmente `dvdrental` y **Restaurante ABC**.
+- 10 evidencias verificables por sesión en el LMS: **160 prácticas**.
+- SQL y modelado con `dvdrental` y **Restaurante ABC**.
 - Preparación transversal de conceptos relacionados con **DP-900** desde la sesión 6.
-- Servicios cloud reales primero; los laboratorios locales funcionan como continuidad/fallback y no sustituyen la experiencia real cuando esta es parte del objetivo.
-- El sitio público **no mantiene progreso personal persistente por dispositivo**.
+- Servicios cloud reales primero; fallback local cuando evita que un problema de acceso detenga la clase.
 
 ## Recorrido académico
 
 | Sesiones | Bloque | Qué se trabaja |
 |---|---|---|
 | 1 | Valor y ecosistema de datos | Problema, actores, decisiones y valor de los datos. |
-| 2–5 | SQL | `SELECT`, filtros, agregaciones, `JOIN`, CTE, control del nivel de agregación y construcción de tablas. |
-| 6 | Reglas de negocio | Evidencia, restricciones, permisos, patrones e hipótesis; introducción a OLTP/OLAP, lake, warehouse y ETL/ELT. |
-| 7 | De las reglas al modelo | Entidades, atributos, relaciones, cardinalidades y primer modelo del Restaurante ABC. |
+| 2–5 | SQL | `SELECT`, filtros, agregaciones, `JOIN`, CTE y control del grano. |
+| 6 | Reglas de negocio | Evidencia, restricciones, permisos, patrones e hipótesis. |
+| 7 | De las reglas al modelo | Entidades, atributos, relaciones y cardinalidades. |
 | 8 | Normalización | Dependencias, anomalías, 1FN, 2FN y 3FN. |
-| 9 | DDL + Azure SQL | `CREATE TABLE`, PK, FK, `NOT NULL`, `UNIQUE`, `CHECK` y comparación de opciones Azure SQL. |
-| 10 | SQL o NoSQL | Decisión de arquitectura según relaciones, consistencia y patrones de acceso. |
-| 11 | Firestore + Cosmos DB | Documentos, partición y servicios NoSQL reales. |
-| 12 | Data warehouse | Grano, hechos, dimensiones, modelo estrella, batch y streaming. |
-| 13 | BigQuery | Laboratorio real de warehouse/SQL en cloud. |
-| 14 | Datos anidados y analítica | BigQuery semiestructurado y transferencia conceptual hacia el ecosistema analítico de Azure. |
-| 15 | Reto integrador | Trabajo técnico con datos imperfectos y decisiones de arquitectura/modelado. |
-| 16 | Cierre | Integración de conceptos y repaso acumulado del curso. |
+| 9 | DDL e integridad | `CREATE TABLE`, PK, FK, `NOT NULL`, `UNIQUE`, `CHECK` y PostgreSQL/Supabase. |
+| 10–11 | SQL / NoSQL | Decisión de arquitectura, documentos y servicios NoSQL. |
+| 12 | Data warehouse | Grano, hechos, dimensiones, estrella, batch y streaming. |
+| 13–14 | Analítica cloud | BigQuery, partición, clustering, ARRAY/STRUCT/UNNEST y transferencia Azure. |
+| 15 | Reto integrador | Diagnóstico, modelo, implementación, pruebas y defensa. |
+| 16 | Cierre | Integración y recuperación acumulativa DP-900. |
 
-La fuente de verdad del recorrido está en [`tools/curso.json`](tools/curso.json). La experiencia pedagógica detallada de S6–S16 vive en [`assets/learning/learning-plan.json`](assets/learning/learning-plan.json).
+La fuente de verdad del recorrido es [`tools/curso.json`](tools/curso.json). La experiencia pedagógica detallada de S6–S16 vive en [`assets/learning/learning-plan.json`](assets/learning/learning-plan.json).
 
-## Arquitectura del curso público
+## LMS autenticado
 
-```text
-GitHub repository
-│
-├── tools/curso.json                 ← manifiesto del curso
-├── assets/learning/learning-plan.json
-│                                      ← actividades y decisiones pedagógicas
-│
-├── tools/construir-index.py
-├── tools/integrar-experiencia.py
-│          │
-│          └──────────────► index.html + páginas integradas
-│
-├── Presentaciones/
-│   ├── M1/
-│   ├── M2/
-│   └── M3/
-│
-├── Scripts/                         ← SQL utilizado en clase
-├── assets/vendor/
-│   ├── sqljs/                       ← SQL en el navegador
-│   └── duckdb/                      ← analítica local/fallback
-│
-└── GitHub Pages                     ← publicación del curso
-```
+Entrada principal:
 
-El navegador puede ejecutar prácticas SQL localmente con motores WebAssembly. Esto permite que varios ejercicios funcionen sin instalar un servidor de base de datos para cada estudiante. Cuando una sesión tiene como objetivo operar un servicio cloud real, el laboratorio local solo sirve para evitar que un problema de acceso detenga por completo la clase.
+- [`portal.html`](portal.html) — login, progreso, continuar, avisos, competencias, agenda, cuenta y dispositivos;
+- [`learning-hub.html`](learning-hub.html) — índice compacto y buscable de las 16 sesiones;
+- [`lab.html`](lab.html) — laboratorio de 10 prácticas por sesión;
+- [`calendar.html`](calendar.html) — agenda académica + exportación `.ics`;
+- [`assignment.html`](assignment.html) — envío de evidencias;
+- [`teacher-dashboard.html`](teacher-dashboard.html) — control docente integral;
+- [`verify.html`](verify.html) — verificación pública de certificados.
 
-## Cómo se genera el sitio
+### Principio de persistencia
 
-El flujo esperado es:
+El expediente académico vive en **Supabase/PostgreSQL**, no en el navegador.
+
+`localStorage` y `sessionStorage` se reservan para sesión técnica o caché temporal de interfaz. Los logros que cuentan se registran mediante Edge Functions y el backend valida la sesión/rol antes de consultar o cambiar datos.
+
+### Cohortes
+
+El modelo distingue:
 
 ```text
-curso.json + learning-plan.json
-             │
-             ▼
-generadores del repositorio
-             │
-             ▼
-index.html + presentaciones integradas
-             │
-             ▼
-validadores / CI
-             │
-             ▼
-GitHub Pages
+Curso
+  └── Cohorte / course run
+        ├── matrículas
+        ├── eventos
+        ├── progreso por sesión
+        ├── progreso por actividad
+        ├── anuncios
+        ├── entregas
+        ├── competencias
+        └── certificados
 ```
 
-No conviene editar manualmente archivos generados cuando existe una fuente declarativa equivalente. Los workflows del repositorio comprueban sincronización, estructura y sintaxis antes de considerar válido un cambio.
+Esto permite agregar futuras ediciones/cursos sin reutilizar una S1 global como identidad académica.
 
-## Laboratorios
+## Experiencia del estudiante
 
-El curso combina varios tipos de práctica:
+El recorrido de navegación es intencionalmente corto:
 
-- consultas SQL sobre `dvdrental`;
-- laboratorios SQL ejecutados directamente en el navegador;
-- constructor interactivo del caso **Restaurante ABC** para pasar de reglas a entidades, relaciones, restricciones y normalización;
-- DuckDB-Wasm para actividades analíticas locales;
-- laboratorios reales de Azure SQL, Firestore, Azure Cosmos DB y BigQuery según la sesión.
+```text
+Portal → Curso → Sesión → Presentación / Lectura / Laboratorio
+```
 
-La diferenciación técnica más profunda se concentra en las sesiones **9, 11, 12, 13, 14 y 15**. Las sesiones conceptuales no agregan una capa artificial de “nivel básico/reto” cuando esa diferencia no aporta al objetivo de aprendizaje.
+El LMS añade:
 
-## Soluciones y material docente
+- reanudación de actividad;
+- progreso por práctica y sesión;
+- tiempo activo;
+- anuncios con leído/no leído;
+- agenda y calendario interoperable `.ics`;
+- entregas de texto, URL o archivo privado;
+- mapa de competencias;
+- marcadores/notas en presentaciones;
+- gestión de contraseña y sesiones/dispositivos.
 
-Parte del material docente y de las soluciones no se publica inmediatamente. El repositorio distingue entre:
+## Experiencia docente
 
-- material del estudiante;
-- guiones/notas privadas del docente;
-- soluciones programadas para actividades autónomas;
-- recursos públicos que pueden permanecer en GitHub aunque no aparezcan enlazados desde la portada.
+El panel permite:
 
-Los libretos docentes y otros archivos internos están excluidos del sitio público mediante `.gitignore` y las soluciones que requieren publicación posterior tienen un flujo separado.
+- aprobar matrículas y crear/restablecer credenciales;
+- consultar cohorte, progreso, intentos, pistas y tiempo activo;
+- detectar estudiantes que requieren atención;
+- identificar prácticas con mayor fricción;
+- abrir la ficha individual de un estudiante;
+- desactivar/reactivar cuentas y revocar sesiones;
+- publicar anuncios;
+- crear y revisar entregas;
+- exportar el progreso a CSV;
+- emitir certificados verificables cuando se cumplen los criterios.
+
+## Competencias
+
+Las actividades se vinculan con competencias de:
+
+- fundamentos SQL;
+- SQL relacional y control del grano;
+- reglas/modelado conceptual;
+- normalización;
+- DDL e integridad;
+- arquitectura SQL/NoSQL;
+- data warehouse;
+- analítica cloud;
+- integración profesional;
+- DP-900.
+
+El dominio se deriva de evidencia completada. Una actividad que requiere juicio humano pasa por revisión docente en vez de calificarse como correcta solo por haber sido abierta.
+
+## Analítica
+
+### Supabase
+
+Fuente de verdad individual para identidad académica, matrícula, progreso, tiempo activo, intentos, pistas, evidencias, competencias y riesgo pedagógico.
+
+### GA4
+
+La propiedad `G-Z5YG0TNP8J` se usa para comportamiento web agregado: páginas/presentaciones, slides, engagement, dispositivo, navegador, sistema operativo y geografía aproximada. No se envía a GA4 nombre, correo, username, token, consulta SQL escrita ni respuesta académica individual.
+
+La conexión directa mediante GA4 Data API requiere credenciales de lectura que **nunca deben publicarse en GitHub**.
+
+## Arquitectura
+
+```text
+GitHub Pages · revision/
+│
+├── Portal / Curso / Agenda / Presentaciones / Laboratorios
+├── runtime LMS + PWA + GA4
+│       │
+│       ├─────────────► GA4 (web agregado)
+│       │
+│       ▼
+│   Supabase Edge Functions
+│       │
+│       ▼
+│   PostgreSQL LMS + Storage privado
+│
+└── sql.js / DuckDB-Wasm para prácticas locales
+```
+
+Documentación completa: [`docs/LMS-INTEGRAL.md`](docs/LMS-INTEGRAL.md).
 
 ## Seguridad
 
-El curso público y el futuro componente de persistencia se tratan como superficies diferentes.
+La superficie LMS se endurece de forma independiente de las bases didácticas:
 
-La rama experimental [`piloto-lms-sdd-secure`](../../tree/piloto-lms-sdd-secure) desarrolla el hardening integral y un piloto de persistencia por estudiante bajo **Specification-Driven Development (SDD)**. Ese trabajo **no debe interpretarse todavía como producción ni como certificación de seguridad**.
+- contraseñas con `pgcrypto`/bcrypt;
+- tokens almacenados en base únicamente como hash;
+- roles verificados server-side;
+- rate limit de login;
+- RLS y revocación de acceso directo a tablas LMS internas;
+- RPC académicos sensibles limitados a `service_role`;
+- bucket de entregas privado y URLs firmadas temporales;
+- revocación de sesiones y desactivación de cuentas;
+- auditoría de acciones privilegiadas.
 
-La arquitectura objetivo del piloto separa explícitamente:
+**GitHub Pages sigue siendo hospedaje estático público.** El gate protege la experiencia autenticada y los datos del LMS, pero no convierte un HTML publicado en un archivo confidencial. Material realmente privado debe servirse desde almacenamiento/backend autenticado.
 
-```text
-ORIGEN A · LMS autenticado
-Supabase Auth + JWT + RLS/RPC
-        │
-        │ postMessage con origen validado
-        ▼
-ORIGEN B · laboratorio aislado
-constructor / actividad interactiva
-```
+Las tablas y RPC de los ejercicios didácticos (por ejemplo Restaurante ABC) no deben confundirse con la capa de autorización académica.
 
-El laboratorio no debe recibir tokens de sesión del LMS. Las credenciales privilegiadas, connection strings y secretos no pertenecen al frontend ni al repositorio.
+## Materiales y soluciones
 
-Antes de usar persistencia con estudiantes reales, el piloto debe superar sus gates de autorización, aislamiento cross-user, XSS, backup/restore, manejo de secretos, CI y privacidad.
+Los guiones docentes, encuestas con PII, soluciones privadas y otros materiales protegidos se mantienen fuera de la superficie pública según `.gitignore` y los flujos de publicación controlada.
 
-## Estructura principal
+## Generación y validación
 
-```text
-ANDESDB/
-├── index.html
-├── Presentaciones/       sesiones y recursos interactivos
-├── Scripts/              consultas SQL de clase
-├── assets/
-│   ├── learning/         experiencia pedagógica S6–S16
-│   └── vendor/           motores WebAssembly locales
-├── tools/                manifiestos, generadores y validadores
-├── docs/                 documentación operativa/técnica
-├── soluciones_cifradas/  soluciones con publicación controlada
-└── .github/workflows/    automatización y validación
-```
+No conviene editar manualmente archivos generados cuando existe una fuente declarativa equivalente.
 
-## Validación local
-
-Antes de publicar cambios importantes del curso se recomienda ejecutar:
+Antes de publicar cambios importantes desde `revision/`:
 
 ```bash
 python tools/pre_push_check.py
-python tools/validar_curso.py
 ```
 
-En la rama de hardening de seguridad se añaden gates adicionales específicos para esa arquitectura.
+Resultado esperado:
 
-## Principio de diseño
+```text
+PRE-PUSH ANDESDB: OK
+```
 
-El repositorio intenta mantener una regla sencilla:
+Después se revisan los workflows de GitHub Actions, el `HEAD` final de `main` y la publicación en GitHub Pages.
 
-> **La tecnología sigue al objetivo de aprendizaje.**
+## Interoperabilidad
 
-Una actividad local se usa cuando reduce fricción. Un servicio real se usa cuando operar ese servicio es parte del aprendizaje. La automatización existe para hacer el curso más consistente y reproducible, no para agregar complejidad visible al estudiante.
+El calendario usa `.ics`, compatible con Google Calendar, Outlook y Apple Calendar sin OAuth adicional. Para una futura integración institucional con Moodle/Canvas, el camino previsto es **LTI 1.3/LTI Advantage**; su activación depende de credenciales y registro de la institución, no de secretos embebidos en el repositorio.
+
+## Costo
+
+La arquitectura está diseñada para la escala del curso usando:
+
+- GitHub Pages;
+- Supabase Free dentro de sus límites;
+- GA4 estándar;
+- motores WASM en navegador;
+- calendarios `.ics`.
+
+No se habilitan automáticamente planes pagos, SMTP pago, VPS ni otros servicios con costo.
