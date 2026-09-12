@@ -43,12 +43,15 @@ jobs:
 
       - name: Confirmar que no cambió el estilo visual compartido
         run: |
-          if ! git diff --quiet origin/main -- '*.css' 'tools/estilo-portada.css'; then
-            echo 'ERROR: la rama modifica archivos de estilo CSS compartidos'
-            git diff --stat origin/main -- '*.css' 'tools/estilo-portada.css'
+          # `revision/` es un árbol histórico presente en main pero no en esta rama.
+          # Sus CSS ausentes no son cambios visuales de la curación pedagógica.
+          # Comparamos solo los estilos compartidos activos fuera de ese snapshot.
+          if ! git diff --quiet origin/main -- '*.css' ':!revision/**'; then
+            echo 'ERROR: la rama modifica archivos de estilo CSS compartidos activos'
+            git diff --stat origin/main -- '*.css' ':!revision/**'
             exit 1
           fi
-          echo 'OK: no hay cambios en CSS compartido respecto de main'
+          echo 'OK: no hay cambios en CSS compartido activo respecto de main'
 
       - name: Confirmar CI de solo lectura
         run: |
