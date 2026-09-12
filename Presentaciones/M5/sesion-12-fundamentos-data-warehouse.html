@@ -3343,6 +3343,20 @@
           <span>Universidad de los Andes · Colsubsidio</span>
         </div>
       </section>
+<section class="slide dense" data-title="Hilo conductor" data-hilo="s12">
+<div class="ey">Hilo conductor · sesión 12</div>
+<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
+<div class="g2">
+  <div class="card"><h3>Venimos de</h3><p>S11 terminó con ventas confirmadas como hechos operacionales; ahora acumulamos esos hechos para responder preguntas históricas sin castigar la operación.</p></div>
+  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Cómo transformamos datos operacionales en una estructura diseñada para analizar?</strong></p></div>
+</div>
+<div class="g2" style="margin-top:1em">
+  <div class="card"><h3>Debe quedar evidencia</h3><p>Grano declarado + tabla de hechos + dimensiones + medidas + validación del total correcto.</p></div>
+  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>El modelo estrella funciona localmente. S13 comprueba que el mismo razonamiento se sostiene en un warehouse cloud real.</p></div>
+</div>
+<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 12</span></div>
+</section>
+
 
       <section class="slide dense" data-title="Dónde estamos"><div class="ey">Sesión 12 · El otro camino</div><h2>Dos caminos, y hoy empieza el segundo</h2><p class="lead">Desde la sesión 6 el curso sigue en realidad dos hilos. Hasta la sesión 11 recorrimos uno solo.</p><div class="g2 wide"><div class="card blue"><h3>Camino de diseño · S6→S11, ya recorrido</h3><p>Reglas → modelo → normalización → tablas → SQL/NoSQL → documentos. Construimos la base que hace <b>funcionar</b> el negocio.</p></div><div class="card"><h3>Camino analítico · empieza hoy</h3><p>OLTP, OLAP, lago, bodega, grano, hechos y dimensiones. Lo que se hace <b>después</b>, para entender el negocio, no para operarlo.</p></div></div><div class="checkpoint mt">En la sesión 6 se mencionaron OLTP y OLAP en la misma respiración que las reglas de negocio. ¿Por qué hasta hoy los tocamos con las manos?</div><div class="ok mt" data-r><b>Porque faltaba el problema que los hace necesarios.</b> Sin un modelo operacional propio, OLAP era una palabra suelta. Hoy tienes tu propio Restaurante ABC en PostgreSQL, con pedidos, líneas y platos reales &mdash; y una pregunta que ese modelo, tal como está, responde caro: <b>si PostgreSQL ya registra perfectamente las ventas, ¿por qué hace falta otra estructura para analizarlas?</b> Esa es la pregunta de hoy.</div><div class="brand"><span>Fundamentos de data warehouse</span><span>Del OLTP al modelo estrella</span></div></section>
 

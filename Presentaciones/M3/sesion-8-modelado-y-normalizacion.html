@@ -15,6 +15,20 @@
 </style></head>
 <body><main class="stage">
 <section class="slide dark dense" data-title="Portada"><img class="logo portada-logo" src="../../Imagenes/Presentaci%C3%B3n-removebg-preview.png" alt="Universidad de los Andes · Colsubsidio"><div class="ey">Sesión 8 · Módulo 3</div><h1>Modelo completo y <span class="accent">normalización</span></h1><p class="lead">La sesión 7 llegó hasta entidades. Hoy no saltamos al recorte: primero completamos el modelo completo del Restaurante ABC —entidades, atributos, relaciones y cardinalidades— y solo después hacemos zoom para normalizar.</p><p class="small">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio</p><div class="brand"><span>ANDESDB · Sesión 8</span><span>Continuidad real de S7</span></div></section>
+<section class="slide dense" data-title="Hilo conductor" data-hilo="s08">
+<div class="ey">Hilo conductor · sesión 8</div>
+<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
+<div class="g2">
+  <div class="card"><h3>Venimos de</h3><p>S7 produjo el modelo conceptual; ahora hay que comprobar que su estructura relacional no introduzca anomalías.</p></div>
+  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Cómo reducimos redundancia problemática conservando las reglas y la reconstrucción de la información?</strong></p></div>
+</div>
+<div class="g2" style="margin-top:1em">
+  <div class="card"><h3>Debe quedar evidencia</h3><p>Modelo-base normalizado con dependencias, 1FN, 2FN, 3FN y reconstrucción comprobada.</p></div>
+  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>Un modelo correcto en papel todavía no impide datos inválidos. S9 convierte decisiones del modelo en restricciones ejecutables.</p></div>
+</div>
+<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 8</span></div>
+</section>
+
 
 <section class="slide mid" data-title="Punto de partida"><div class="ey">0–8 minutos · Recuperación</div><h2>No partimos de un modelo terminado</h2><div class="g2"><div class="card"><h3>Lo que sí alcanzamos</h3><ul class="checks"><li>Clasificar reglas por nivel de certeza.</li><li>Diferenciar Estructura, Restricción, Aplicación y Pendiente.</li><li>Empezar a decidir sustantivos: entidad, atributo o ninguno.</li></ul></div><div class="warn"><h3>Lo que falta antes de normalizar</h3><ul class="checks"><li>Completar todas las entidades relevantes.</li><li>Decidir atributos de cada una.</li><li>Marcar relaciones y cardinalidades.</li><li>Procesar la llamada que cambia pedido–mesa.</li></ul></div></div><div class="stop mt"><strong>Regla de hoy:</strong> la normalización no reemplaza el modelo. Primero modelo completo; después recorte.</div><div class="brand"><span>Apertura</span><span>Primero modelo completo, luego recorte</span></div></section>
 

@@ -61,6 +61,12 @@
           "redacta regla comprobable",
           "deja pregunta pendiente"
         ]
+      },
+      "hilo": {
+        "hereda": "S2–S5 enseñaron a leer un esquema y obtener respuestas; ahora usamos esa lectura como evidencia, no como verdad automática del negocio.",
+        "pregunta": "¿Qué puedo afirmar del negocio y con qué grado de certeza?",
+        "evidencia": "Observación → certeza → evidencia → regla comprobable → pregunta pendiente.",
+        "puente": "Las reglas siguen escritas en lenguaje natural. S7 las transforma en entidades, relaciones y cardinalidades."
       }
     },
     "7": {
@@ -111,6 +117,12 @@
           "3 decisiones explicadas",
           "1 duda de negocio permanece explícita"
         ]
+      },
+      "hilo": {
+        "hereda": "S6 dejó reglas defendibles y dudas explícitas del Restaurante ABC.",
+        "pregunta": "¿Qué entidades y relaciones necesita el modelo para representar esas reglas?",
+        "evidencia": "Primer modelo conceptual con cardinalidades y decisiones justificadas.",
+        "puente": "Un primer modelo puede repetir hechos o esconder dependencias. S8 lo somete a normalización sin perder el negocio."
       }
     },
     "8": {
@@ -158,6 +170,12 @@
           "no pierde reglas del negocio",
           "comprueba que puede reconstruir la información"
         ]
+      },
+      "hilo": {
+        "hereda": "S7 produjo el modelo conceptual; ahora hay que comprobar que su estructura relacional no introduzca anomalías.",
+        "pregunta": "¿Cómo reducimos redundancia problemática conservando las reglas y la reconstrucción de la información?",
+        "evidencia": "Modelo-base normalizado con dependencias, 1FN, 2FN, 3FN y reconstrucción comprobada.",
+        "puente": "Un modelo correcto en papel todavía no impide datos inválidos. S9 convierte decisiones del modelo en restricciones ejecutables."
       }
     },
     "9": {
@@ -211,6 +229,12 @@
           "dos pruebas negativas",
           "explica por qué ejecutar no demuestra integridad"
         ]
+      },
+      "hilo": {
+        "hereda": "S8 dejó un modelo relacional normalizado y reglas que deben protegerse.",
+        "pregunta": "¿Cómo hacemos que PostgreSQL haga cumplir las reglas y cómo demostramos que realmente las cumple?",
+        "evidencia": "schema.sql + tests.sql con PK, FK, NOT NULL, CHECK, DEFAULT y pruebas negativas.",
+        "puente": "Ya sabemos construir bien una solución relacional. S10 formula la pregunta más importante: ¿cuándo una tabla relacional no es la mejor representación?"
       }
     },
     "10": {
@@ -262,6 +286,12 @@
           "costo o riesgo",
           "reconoce cuándo falta información"
         ]
+      },
+      "hilo": {
+        "hereda": "S9 demostró la fortaleza del modelo relacional cuando necesitamos integridad y reglas explícitas.",
+        "pregunta": "¿Qué evidencia necesito antes de decidir entre relacional, documentos u otra familia?",
+        "evidencia": "Decisión defendida por patrón de acceso, consistencia, forma/evolución del dato y costo o riesgo.",
+        "puente": "Decidir “documentos” en papel no demuestra el trade-off. S11 lo vive en un servicio real y lo combina con la fuente relacional de verdad."
       }
     },
     "11": {
@@ -307,19 +337,25 @@
         },
         {
           "dominio": "Non-relational data on Azure",
-          "pregunta": "¿Qué opción de Azure Storage está orientada a objetos como imágenes, archivos y grandes cantidades de datos no estructurados?",
+          "pregunta": "En una base distribuida por particiones, ¿qué decisión afecta directamente cómo se distribuyen y consultan los datos?",
           "opciones": [
-            "Azure Blob Storage",
-            "Azure SQL Managed Instance",
-            "Azure Table Storage exclusivamente",
-            "Azure DNS"
+            "Elegir una clave de partición adecuada",
+            "Cambiar el color del portal",
+            "Usar siempre una sola colección",
+            "Eliminar todos los identificadores"
           ],
           "correcta": 0,
-          "explicacion": "Blob Storage almacena grandes cantidades de datos de objetos/no estructurados."
+          "explicacion": "La clave de partición condiciona distribución y acceso; el objetivo es transferir el razonamiento documental antes de memorizar servicios."
         }
       ],
       "solucion": {
         "modo": "manual"
+      },
+      "hilo": {
+        "hereda": "S10 dejó criterios para elegir representación; ahora probamos una arquitectura híbrida con estado mutable y hechos auditables.",
+        "pregunta": "¿Qué debe vivir embebido o referenciado y cuál sistema es fuente de verdad en cada momento?",
+        "evidencia": "Documentos consultados + decisión embed/reference + checkout confirmado y localizado en PostgreSQL.",
+        "puente": "Cada checkout confirmado produce un hecho operacional. Cuando esos hechos crecen y queremos historia, tendencias y tableros, consultar la operación directamente deja de ser suficiente: S12."
       }
     },
     "12": {
@@ -376,6 +412,12 @@
       ],
       "solucion": {
         "modo": "manual"
+      },
+      "hilo": {
+        "hereda": "S11 terminó con ventas confirmadas como hechos operacionales; ahora acumulamos esos hechos para responder preguntas históricas sin castigar la operación.",
+        "pregunta": "¿Cómo transformamos datos operacionales en una estructura diseñada para analizar?",
+        "evidencia": "Grano declarado + tabla de hechos + dimensiones + medidas + validación del total correcto.",
+        "puente": "El modelo estrella funciona localmente. S13 comprueba que el mismo razonamiento se sostiene en un warehouse cloud real."
       }
     },
     "13": {
@@ -422,21 +464,27 @@
         },
         {
           "dominio": "Analytics workload on Azure",
-          "pregunta": "¿Cuál de estos productos aparece en la ruta de estudio DP-900 para cargas analíticas?",
+          "pregunta": "¿Qué característica distingue a una carga analítica de la operación transaccional que construimos en S9?",
           "opciones": [
-            "Azure Databricks",
-            "Azure DNS",
-            "Microsoft Paint",
-            "Azure DevTest Labs como almacén principal"
+            "Busca explorar y agregar grandes conjuntos históricos sin ser la ruta principal de la transacción",
+            "Debe usar el mismo esquema y motor que la operación",
+            "Solo admite datos JSON",
+            "No necesita validar resultados"
           ],
           "correcta": 0,
-          "explicacion": "Azure Databricks forma parte de los servicios que el candidato debe reconocer dentro del panorama analítico de Azure."
+          "explicacion": "S13 transfiere el concepto de almacén analítico; los nombres de productos Azure se concentran en S14 y S16."
         }
       ],
       "solucion": {
         "modo": "programada",
         "publicar": "20:00",
         "zona": "America/Bogota"
+      },
+      "hilo": {
+        "hereda": "S12 dejó un miniwarehouse con grano, hechos, dimensiones y medidas ya validados.",
+        "pregunta": "¿Qué cambia cuando ese mismo modelo llega a BigQuery y el costo de lectura se vuelve visible?",
+        "evidencia": "Carga validada de 44 filas / 1.455.000 + consultas de negocio + lectura de bytes procesados.",
+        "puente": "Un warehouse real no recibe únicamente tablas planas. S14 trabaja JSON/Parquet y estructuras anidadas y luego transfiere esas decisiones al mapa Azure."
       }
     },
     "14": {
@@ -493,6 +541,12 @@
       ],
       "solucion": {
         "modo": "manual"
+      },
+      "hilo": {
+        "hereda": "S13 probó el modelo analítico en cloud; ahora cambiamos la forma del dato y preguntamos cuándo conviene mantener estructura anidada.",
+        "pregunta": "¿Cuándo conviene una representación plana, relacional o anidada y cómo se traduce la necesidad a servicios Azure?",
+        "evidencia": "STRUCT/ARRAY/UNNEST ejecutados + decisión de representación + mapa necesidad → familia/servicio.",
+        "puente": "Ya practicamos las piezas por separado. S15 quita la receta y obliga a elegir modelo, transformación, consultas y arquitectura a partir del problema."
       }
     },
     "15": {
@@ -523,7 +577,7 @@
       },
       "dp900": [
         {
-          "dominio": "Integración",
+          "dominio": "Analytics workload on Azure",
           "pregunta": "Tienes miles de transacciones operacionales y necesitas un tablero histórico pesado. ¿Qué principio es más adecuado?",
           "opciones": [
             "Separar la carga analítica de la operación principal",
@@ -535,7 +589,7 @@
           "explicacion": "Separar cargas operacionales y analíticas evita competencia innecesaria y permite estructuras optimizadas para cada propósito."
         },
         {
-          "dominio": "Integración",
+          "dominio": "Core data concepts",
           "pregunta": "Antes de elegir un datastore, lo primero es comprender:",
           "opciones": [
             "Requisitos, relaciones y patrones de acceso",
@@ -557,7 +611,13 @@
         "queries.sql",
         "validaciones.sql",
         "arquitectura.md"
-      ]
+      ],
+      "hilo": {
+        "hereda": "S1–S14 construyeron el repertorio: preguntar, modelar, implementar, elegir representación, analizar y transferir a cloud.",
+        "pregunta": "¿Puedo resolver un problema completo sin que la herramienta ni el modelo estén decididos de antemano?",
+        "evidencia": "Diagnóstico + modelo + transformación + consultas + validaciones + arquitectura + defensa oral.",
+        "puente": "La defensa final revela qué dominios ya dominamos y dónde todavía dudamos. S16 convierte esa evidencia en diagnóstico y plan DP-900."
+      }
     },
     "16": {
       "fecha": "2026-09-22",
@@ -616,7 +676,77 @@
           "define siguiente paso de estudio"
         ]
       },
-      "evidencia_prepost": "Repite las cinco preguntas diagnósticas de S1 antes de consultar apuntes y compara la calidad de las explicaciones."
+      "evidencia_prepost": "Repite las cinco preguntas diagnósticas de S1 antes de consultar apuntes y compara la calidad de las explicaciones.",
+      "hilo": {
+        "hereda": "S15 produjo evidencia auténtica de desempeño, no solo respuestas de opción múltiple.",
+        "pregunta": "¿Qué aprendí, qué puedo transferir y qué me falta para demostrarlo en DP-900?",
+        "evidencia": "Pre/post + diagnóstico por dominio + transferencia por escenarios + plan personal de estudio.",
+        "puente": "Se cierra el ciclo: problema → evidencia → consulta → modelo → implementación → elección tecnológica → analítica → validación → decisión."
+      }
     }
+  },
+  "hilo_conductor": {
+    "pregunta_madre": "¿Cómo convertimos una necesidad de negocio en una solución de datos defendible, comprobable y transferible?",
+    "actos": [
+      {
+        "acto": 1,
+        "sesiones": [
+          1
+        ],
+        "nombre": "Por qué importan los datos",
+        "pregunta": "¿Qué decisión queremos mejorar y qué papel cumplen los datos?"
+      },
+      {
+        "acto": 2,
+        "sesiones": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "nombre": "Responder preguntas con confianza",
+        "pregunta": "¿Cómo obtenemos una respuesta correcta, explicable y validada con SQL?"
+      },
+      {
+        "acto": 3,
+        "sesiones": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "nombre": "Diseñar y hacer cumplir el modelo",
+        "pregunta": "¿Cómo pasamos de reglas del negocio a una base que proteja esas reglas?"
+      },
+      {
+        "acto": 4,
+        "sesiones": [
+          10,
+          11
+        ],
+        "nombre": "Elegir la representación adecuada",
+        "pregunta": "¿Cuándo convienen tablas, documentos o una arquitectura híbrida?"
+      },
+      {
+        "acto": 5,
+        "sesiones": [
+          12,
+          13,
+          14
+        ],
+        "nombre": "Separar operación y analítica y llevarla a cloud",
+        "pregunta": "¿Cómo diseñamos para análisis y transferimos el razonamiento entre nubes?"
+      },
+      {
+        "acto": 6,
+        "sesiones": [
+          15,
+          16
+        ],
+        "nombre": "Integrar, demostrar y transferir",
+        "pregunta": "¿Podemos resolver el problema completo y explicar lo aprendido en un marco externo?"
+      }
+    ],
+    "regla": "hereda → pregunta central → evidencia → limitación/puente siguiente"
   }
 }

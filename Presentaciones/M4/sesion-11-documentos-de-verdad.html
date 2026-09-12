@@ -3308,6 +3308,20 @@
           <span>Universidad de los Andes · Colsubsidio</span>
         </div>
       </section>
+<section class="slide dense" data-title="Hilo conductor" data-hilo="s11">
+<div class="ey">Hilo conductor · sesión 11</div>
+<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
+<div class="g2">
+  <div class="card"><h3>Venimos de</h3><p>S10 dejó criterios para elegir representación; ahora probamos una arquitectura híbrida con estado mutable y hechos auditables.</p></div>
+  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Qué debe vivir embebido o referenciado y cuál sistema es fuente de verdad en cada momento?</strong></p></div>
+</div>
+<div class="g2" style="margin-top:1em">
+  <div class="card"><h3>Debe quedar evidencia</h3><p>Documentos consultados + decisión embed/reference + checkout confirmado y localizado en PostgreSQL.</p></div>
+  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>Cada checkout confirmado produce un hecho operacional. Cuando esos hechos crecen y queremos historia, tendencias y tableros, consultar la operación directamente deja de ser suficiente: S12.</p></div>
+</div>
+<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 11</span></div>
+</section>
+
 <section class="slide dense" data-title="Una selección todavía no es un pedido"><div class="ey">Sesión 11 · Restaurante ABC</div><h2>Una selección todavía no es un pedido</h2><p class="lead">El cliente cambia de opinión. Al confirmar, el negocio debe conservar lo acordado.</p><div class="g3"><div class="card"><h3>Carta</h3><p>Una ficha por plato, con atributos propios.</p></div><div class="card"><h3>Carrito</h3><p>Una selección editable. Temporal por su ciclo de vida; Firestore sí la persiste.</p></div><div class="card"><h3>Pedido</h3><p>Cantidades y precios registrados con las reglas de S9.</p></div></div><div class="checkpoint mt">Antes de abrir consolas: si cambia la carta, ¿debe cambiar un pedido ya confirmado?</div><div class="ok mt" data-r><b>No.</b> El precio queda congelado en el instante de pagar: <code>linea_pedido.precio_unitario</code> es una copia, no una referencia a <code>plato.precio_actual</code> — la misma regla de la sesión 9. Si el Ajiaco sube de precio mañana, el pedido de hoy no cambia. Esa es la razón técnica por la que el navegador lee documentos y solicita a PostgreSQL confirmar el pedido, en vez de guardar todo en un solo lugar. <a class="guide-button" href="#arquitectura-archify"><strong>Explorar Archify</strong><span>El mapa interactivo de esta aplicación</span></a></div><div class="brand"><span>Documentos de verdad</span><span>Predice · ejecuta · explica</span></div></section>
 
 

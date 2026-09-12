@@ -3327,6 +3327,20 @@
 <section class="slide dark" data-title="Portada">
 <div class="ey">Sesión 13 de 16 · laboratorio real</div><h2>BigQuery: del modelo estrella a un warehouse cloud</h2><p class="lead">Primero éxito operacional; después razonamos sobre costo y arquitectura.</p>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 13 · Laboratorio BigQuery</span></div></section>
+<section class="slide dense" data-title="Hilo conductor" data-hilo="s13">
+<div class="ey">Hilo conductor · sesión 13</div>
+<h2>Esta clase existe porque la anterior dejó un problema abierto</h2>
+<div class="g2">
+  <div class="card"><h3>Venimos de</h3><p>S12 dejó un miniwarehouse con grano, hechos, dimensiones y medidas ya validados.</p></div>
+  <div class="card blue"><h3>Pregunta de hoy</h3><p><strong>¿Qué cambia cuando ese mismo modelo llega a BigQuery y el costo de lectura se vuelve visible?</strong></p></div>
+</div>
+<div class="g2" style="margin-top:1em">
+  <div class="card"><h3>Debe quedar evidencia</h3><p>Carga validada de 44 filas / 1.455.000 + consultas de negocio + lectura de bytes procesados.</p></div>
+  <div class="card blue"><h3>Esto obliga a abrir la siguiente</h3><p>Un warehouse real no recibe únicamente tablas planas. S14 trabaja JSON/Parquet y estructuras anidadas y luego transfiere esas decisiones al mapa Azure.</p></div>
+</div>
+<div class="brand"><span>ANDESDB · una sola historia de 16 sesiones</span><span>Sesión 13</span></div>
+</section>
+
 
 <section class="slide dense" data-title="Briefing">
 <div class="ey">Producto de hoy</div><h2>Cuatro evidencias, no veinte capturas</h2><div class="g2"><div class="card"><ul class="checks"><li>consulta en BigQuery real</li><li>consultas núcleo resueltas</li></ul></div><div class="card blue"><ul class="checks"><li>validación por consulta</li><li>bytes procesados observados</li></ul></div></div>
