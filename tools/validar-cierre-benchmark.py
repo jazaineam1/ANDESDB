@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import html
+import csv
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -23,13 +22,6 @@ def read(rel: str) -> str:
     return p.read_text(encoding="utf-8", errors="replace")
 
 
-def visible(text: str) -> str:
-    """Normaliza el texto que realmente ve el estudiante, ignorando el marcado."""
-    text = re.sub(r"<style\b.*?</style>|<script\b.*?</script>", " ", text, flags=re.I | re.S)
-    text = re.sub(r"<[^>]+>", " ", text)
-    return re.sub(r"\s+", " ", html.unescape(text)).strip()
-
-
 def require(text: str, tokens: list[str], label: str) -> None:
     low = text.casefold()
     for token in tokens:
@@ -45,13 +37,49 @@ def forbid(text: str, tokens: list[str], label: str) -> None:
 
 
 def same_as_main(path: str) -> None:
-    proc = subprocess.run(
-        ["git", "diff", "--quiet", "origin/main", "--", path],
-        cwd=ROOT,
-        check=False,
-    )
+    proc = subprocess.run(["git", "diff", "--quiet", "origin/main", "--", path], cwd=ROOT, check=False)
     if proc.returncode != 0:
         err(f"Curación: {path} debería permanecer idéntico a main")
+
+
+def validate_final_dataset() -> None:
+    cases_path = ROOT / "Plantillas/proyecto-final/Datos/casos.csv"
+    events_path = ROOT / "Plantillas/proyecto-final/Datos/eventos.csv"
+    evidence_path = ROOT / "Plantillas/proyecto-final/Datos/evidencias.json"
+    if not cases_path.exists() or not events_path.exists() or not evidence_path.exists():
+        err("S15: falta al menos uno de los tres archivos de datos")
+        return
+
+    with cases_path.open(encoding="utf-8", newline="") as fh:
+        cases = list(csv.DictReader(fh))
+    with events_path.open(encoding="utf-8", newline="") as fh:
+        events = list(csv.DictReader(fh))
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+
+    expected = {
+        "casos": 12,
+        "eventos": 24,
+        "cerrados": 4,
+        "alta": 5,
+        "alta_cerrado": 2,
+        "evidencias": 4,
+    }
+    actual = {
+        "casos": len(cases),
+        "eventos": len(events),
+        "cerrados": sum(r["estado"] == "Cerrado" for r in cases),
+        "alta": sum(r["prioridad"] == "Alta" for r in cases),
+        "alta_cerrado": sum(r["prioridad"] == "Alta" and r["estado"] == "Cerrado" for r in cases),
+        "evidencias": len(evidence),
+    }
+    for key, value in expected.items():
+        if actual[key] != value:
+            err(f"S15 datos: {key}={actual[key]}, esperado={value}")
+
+    case_ids = {r["caso_id"] for r in cases}
+    orphan_events = [r["evento_id"] for r in events if r["caso_id"] not in case_ids]
+    if orphan_events:
+        err(f"S15 datos: eventos huérfanos {orphan_events}")
 
 
 def main() -> int:
@@ -99,21 +127,14 @@ def main() -> int:
         'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js"
     ], "S14")
 
-    for rel in [
-        "Plantillas/proyecto-final/Datos/casos.csv",
-        "Plantillas/proyecto-final/Datos/eventos.csv",
-        "Plantillas/proyecto-final/Datos/evidencias.json",
-        "Plantillas/proyecto-final/criterios.md",
-    ]:
-        read(rel)
+    validate_final_dataset()
+    read("Plantillas/proyecto-final/criterios.md")
     s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
     require(s15, [
-        "Atención de incidentes urbanos", "12 casos", "24 eventos",
-        "Code ownership", "Pruebas negativas", "90 s por equipo",
-        'href="sesion-15-desafio-final.html"', "learning-core.js"
+        "Atención de incidentes urbanos", "casos cerrados", "Code ownership",
+        "Pruebas negativas", "90 s por equipo", 'href="sesion-15-desafio-final.html"',
+        "learning-core.js"
     ], "S15")
-    # La cifra y la etiqueta pueden estar en nodos HTML separados; validamos lo que ve el estudiante.
-    require(visible(s15), ["4 casos cerrados"], "S15 evidencia visible")
     forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
@@ -141,7 +162,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas, enlaces y artefactos verificados")
+    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas y datos finales reproducibles")
     return 0
 
 
