@@ -1,5 +1,13 @@
 (() => {
   'use strict';
+  try {
+    if (localStorage.getItem('andesdb.lab4.migrated') !== '1') {
+      const key='andesdb.lms.local.v1';
+      const x=JSON.parse(localStorage.getItem(key)||'{}');
+      if (x && typeof x==='object') { x.completed={}; localStorage.setItem(key,JSON.stringify(x)); }
+      localStorage.setItem('andesdb.lab4.migrated','1');
+    }
+  } catch (_) {}
   if (window.self !== window.top || document.getElementById('andes-session-lab-btn')) return;
   const script = document.currentScript || [...document.scripts].find(s => /session-lab-button\.js(?:\?|$)/.test(s.src));
   if (!script) return;
@@ -12,7 +20,7 @@
   const a=document.createElement('a');a.id='andes-session-lab-btn';a.href=new URL(`lab.html?session=${session}`,ROOT).href;a.textContent=`🧪 Laboratorio S${session} · 0/10`;
   const st=document.createElement('style');st.textContent=`#andes-session-lab-btn{position:fixed;right:12px;top:58px;z-index:2147481750;background:#0f1b28f2;color:#fff;text-decoration:none;border:1px solid #ffffff55;border-radius:999px;padding:10px 13px;font:850 12px/1 system-ui;box-shadow:0 8px 24px #0004;backdrop-filter:blur(8px)}#andes-toolkit-btn{display:none!important}@media(max-width:760px){#andes-session-lab-btn{top:auto;bottom:58px;right:10px}}`;document.head.appendChild(st);document.body.appendChild(a);
   function hideLegacy(){const old=document.getElementById('andes-toolkit-btn');if(old){old.style.display='none';old.setAttribute('aria-hidden','true')}}
-  async function refresh(){hideLegacy();const api=window.ANDES_LMS;if(!api)return false;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed'||api.localCompleted?.(c)).length;}}catch{}a.textContent=`🧪 Laboratorio S${session} · ${n}/10`;return true;}
+  async function refresh(){hideLegacy();const api=window.ANDES_LMS;if(!api)return false;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed').length;}}catch{}a.textContent=`🧪 Laboratorio S${session} · ${n}/10`;return true;}
   addEventListener('andesdb:challenge-completed',refresh);addEventListener('storage',refresh);
   let tries=0;const timer=setInterval(async()=>{hideLegacy();if(await refresh()||++tries>30)clearInterval(timer)},350);
 })();
