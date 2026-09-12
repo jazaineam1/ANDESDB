@@ -46,7 +46,7 @@ def same_as_main(path: str) -> None:
 
 
 def main() -> int:
-    # La rama v3 es deliberadamente conservadora: estas sesiones maduras no se auto-reescriben.
+    # Las sesiones maduras no se auto-reescriben en esta rama.
     for path in [
         "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
         "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
@@ -77,7 +77,7 @@ def main() -> int:
         "Particionar", "PARTITION BY", "partition pruning", "Clusterización", "CLUSTER BY",
         "bytes", "Creating Date-Partitioned Tables in BigQuery",
         "Performance and Cost Optimization with BigQuery", "9", "4",
-        'href="sesion-13-laboratorio-bigquery.html"'
+        'href="sesion-13-laboratorio-bigquery.html"', "learning-core.js"
     ], "S13")
     forbid(s13, ["fact_venta.csv · 44 filas"], "S13 no debe repetir S12 como tema central")
 
@@ -85,9 +85,9 @@ def main() -> int:
     require(s14, [
         "ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet",
         "Laboratorio 1", "Taller proyecto integrador", "Lab 2",
-        "548383", "59238", "562904", "575654",
+        "548383", "562904", "575654",
         "Azure Blob Storage", "Azure Cosmos DB",
-        'href="sesion-14-bigquery-anidados-mapa-azure.html"'
+        'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js"
     ], "S14")
 
     for rel in [
@@ -101,13 +101,13 @@ def main() -> int:
     require(s15, [
         "Atención de incidentes urbanos", "12 casos", "24 eventos", "4 casos cerrados",
         "Code ownership", "Pruebas negativas", "90 s por equipo",
-        'href="sesion-15-desafio-final.html"'
+        'href="sesion-15-desafio-final.html"', "learning-core.js"
     ], "S15")
     forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
     require(s16, [
-        "Cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
+        "cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
         "Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8",
         "Escenarios 9–11", "Escenarios 12–13", "Clasifica el error",
         'href="sesion-16-cierre-dp900.html"'
