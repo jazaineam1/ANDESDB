@@ -3379,6 +3379,17 @@ UNNEST(lineas) AS linea;</code></pre><div class="checkpoint">Predice antes de ej
 <div class="ey">Evidencia · transferencia</div><h2>Elige representación antes de producto</h2><p class="lead">Decide tabla plana, normalizada o anidada y justifica con patrón de consulta + limitación.</p>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
+<section class="slide dense" data-title="Transferencia Azure por casos">
+<div class="ey">DP-900 · razona antes de nombrar</div><h2>El servicio aparece después del requisito</h2>
+<table class="data"><tr><th>Necesidad</th><th>Familia / servicio a reconocer</th><th>Por qué</th></tr>
+<tr><td>CSV/Parquet históricos y objetos</td><td><b>Azure Blob Storage</b></td><td>almacenamiento de objetos</td></tr>
+<tr><td>carpetas compartidas mediante protocolo de archivos</td><td><b>Azure Files</b></td><td>recurso compartido de archivos</td></tr>
+<tr><td>clave/valor simple y económico</td><td><b>Azure Table Storage</b></td><td>NoSQL tabular simple</td></tr>
+<tr><td>documentos distribuidos y baja latencia global</td><td><b>Azure Cosmos DB</b></td><td>NoSQL administrado y distribuido</td></tr>
+<tr><td>ingeniería/analítica a escala</td><td><b>Microsoft Fabric / Azure Databricks</b></td><td>procesamiento y analítica</td></tr>
+<tr><td>consumo de indicadores</td><td><b>Power BI</b></td><td>capa semántica y visualización</td></tr></table>
+<div class="checkpoint"><b>Reasoning Check:</b> “tengo JSON” no basta para elegir Cosmos DB. Declara patrón de acceso, consistencia, distribución y carga antes del producto.</div>
+<div class="brand"><span>ANDESDB · transferencia, no memorización</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 <section class="slide dark" data-title="Cierre">
 <div class="ey">Salida</div><h2>La tecnología sigue al problema</h2><div class="ctx"><b>S15:</b> nadie te dirá qué modelo ni herramienta usar.</div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
