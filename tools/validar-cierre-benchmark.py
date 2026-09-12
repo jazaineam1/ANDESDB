@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import html
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -19,6 +21,13 @@ def read(rel: str) -> str:
         err(f"Falta {rel}")
         return ""
     return p.read_text(encoding="utf-8", errors="replace")
+
+
+def visible(text: str) -> str:
+    """Normaliza el texto que realmente ve el estudiante, ignorando el marcado."""
+    text = re.sub(r"<style\b.*?</style>|<script\b.*?</script>", " ", text, flags=re.I | re.S)
+    text = re.sub(r"<[^>]+>", " ", text)
+    return re.sub(r"\s+", " ", html.unescape(text)).strip()
 
 
 def require(text: str, tokens: list[str], label: str) -> None:
@@ -99,10 +108,12 @@ def main() -> int:
         read(rel)
     s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
     require(s15, [
-        "Atención de incidentes urbanos", "12 casos", "24 eventos", "4 casos cerrados",
+        "Atención de incidentes urbanos", "12 casos", "24 eventos",
         "Code ownership", "Pruebas negativas", "90 s por equipo",
         'href="sesion-15-desafio-final.html"', "learning-core.js"
     ], "S15")
+    # La cifra y la etiqueta pueden estar en nodos HTML separados; validamos lo que ve el estudiante.
+    require(visible(s15), ["4 casos cerrados"], "S15 evidencia visible")
     forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
