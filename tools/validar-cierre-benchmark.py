@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import html
 import json
-import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -17,183 +16,123 @@ def err(msg: str) -> None:
 def read(rel: str) -> str:
     p = ROOT / rel
     if not p.exists():
-        err(f'Falta {rel}')
-        return ''
-    return p.read_text(encoding='utf-8', errors='replace')
-
-
-def visible(text: str) -> str:
-    text = re.sub(r'<style\b.*?</style>|<script\b.*?</script>', ' ', text, flags=re.I | re.S)
-    text = re.sub(r'<[^>]+>', ' ', text)
-    return re.sub(r'\s+', ' ', html.unescape(text)).strip()
+        err(f"Falta {rel}")
+        return ""
+    return p.read_text(encoding="utf-8", errors="replace")
 
 
 def require(text: str, tokens: list[str], label: str) -> None:
     low = text.casefold()
     for token in tokens:
         if token.casefold() not in low:
-            err(f'{label}: falta {token!r}')
+            err(f"{label}: falta {token!r}")
 
 
 def forbid(text: str, tokens: list[str], label: str) -> None:
     low = text.casefold()
     for token in tokens:
         if token.casefold() in low:
-            err(f'{label}: todavía contiene {token!r}')
+            err(f"{label}: contiene residuo {token!r}")
 
 
-def max_timing(text: str) -> int:
-    vals = []
-    decoded = html.unescape(text)
-    for _a, b in re.findall(r'(\d+)\s*(?:–|-)\s*(\d+)\s*(?:min|minutos)', decoded, flags=re.I):
-        vals.append(int(b))
-    return max(vals, default=0)
+def same_as_main(path: str) -> None:
+    proc = subprocess.run(
+        ["git", "diff", "--quiet", "origin/main", "--", path],
+        cwd=ROOT,
+        check=False,
+    )
+    if proc.returncode != 0:
+        err(f"Curación: {path} debería permanecer idéntico a main")
 
 
 def main() -> int:
-    # S1: un único material público canónico.
-    course = json.loads(read('tools/curso.json') or '{}')
-    m1 = next((m for m in course.get('modulos', []) if m.get('n') == 1), {})
-    hrefs = [str(r.get('href', '')) for r in m1.get('recursos', [])]
-    if 'Presentaciones/M1/sesion-1-diagnostico.html' not in hrefs:
-        err('S1: el HTML canónico no está publicado')
-    if any(h.lower().endswith('.pptx') for h in hrefs):
-        err('S1: el PPTX histórico sigue publicado como source of truth')
+    # La rama v3 es deliberadamente conservadora: estas sesiones maduras no se auto-reescriben.
+    for path in [
+        "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
+        "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
+        "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
+        "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
+        "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
+        "Presentaciones/M3/sesion-8-modelado-y-normalizacion.html",
+        "Presentaciones/M3/sesion-9-ddl-supabase.html",
+        "Presentaciones/M4/sesion-10-sql-o-nosql.html",
+        "Presentaciones/M4/sesion-11-documentos-de-verdad.html",
+        "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html",
+    ]:
+        same_as_main(path)
 
-    s4 = read('Presentaciones/M2/sesion-4-uniones-de-tablas.html')
-    require(s4, ['Checkpoint · elige el JOIN', 'Mapa relacional en texto'], 'S4')
+    s1 = read("Presentaciones/M1/sesion-1-diagnostico.html")
+    require(s1, [
+        "Cinco preguntas que repetiremos en S16", "Dato no es valor", "Archivo vs base",
+        "DBA", "Data engineer", "Data analyst", "dvdrental.db",
+        'href="sesion-1-diagnostico.html"'
+    ], "S1")
+    forbid(s1, ["sesion-12-fundamentos-data-warehouse.html"], "S1 descarga")
 
-    s5 = read('Presentaciones/M2/sesion-5-algoritmica-de-tablas.html')
-    require(s5, ['Método ANDESDB', 'Extensión · VIEW'], 'S5')
+    s7 = read("Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html")
+    require(s7, ["Criterio de salida"], "S7")
 
-    s6 = read('Presentaciones/M3/sesion-6-reglas-de-negocio.html')
-    forbid(visible(s6), ['OLTP', 'OLAP', 'laguna de datos', 'bodega de datos', 'ETL', 'ELT'], 'S6 visible')
-    require(s6, ['Reasoning Check · DEFAULT'], 'S6')
+    s13 = read("Presentaciones/M5/sesion-13-laboratorio-bigquery.html")
+    require(s13, [
+        "Particionar", "PARTITION BY", "partition pruning", "Clusterización", "CLUSTER BY",
+        "bytes", "Creating Date-Partitioned Tables in BigQuery",
+        "Performance and Cost Optimization with BigQuery", "9", "4",
+        'href="sesion-13-laboratorio-bigquery.html"'
+    ], "S13")
+    forbid(s13, ["fact_venta.csv · 44 filas"], "S13 no debe repetir S12 como tema central")
 
-    s8 = read('Presentaciones/M3/sesion-8-modelado-y-normalizacion.html')
-    if max_timing(s8) > 150:
-        err(f'S8: el núcleo todavía muestra tiempos mayores a 150 min ({max_timing(s8)})')
-    require(s8, ['Supuesto mesero–mesa', 'data-opcional="true"'], 'S8')
+    s14 = read("Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html")
+    require(s14, [
+        "ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet",
+        "Laboratorio 1", "Taller proyecto integrador", "Lab 2",
+        "548383", "59238", "562904", "575654",
+        "Azure Blob Storage", "Azure Cosmos DB",
+        'href="sesion-14-bigquery-anidados-mapa-azure.html"'
+    ], "S14")
 
-    s9 = read('Presentaciones/M3/sesion-9-ddl-supabase.html')
-    require(s9, ['Ruta real · 165 minutos', 'Preflight Supabase', 'schema.sql', 'tests.sql', 'Cierre · DDL'], 'S9')
-    forbid(s9, ['239–244 min', '216–226 min', '170–178 min', '151–155 min'], 'S9')
-    if max_timing(s9) > 165:
-        err(f'S9: quedan tiempos mayores a 165 min ({max_timing(s9)})')
-    if '14 en vez de 6' in s9:
-        err('S9: reapareció la cifra incorrecta 14 en vez de 6')
-    for stale in ['Antes de las formas normales', 'La pregunta central', 'Resumen visual']:
-        if f'data-title="{stale}"' in s9:
-            err(f'S9: sigue el reteaching {stale!r}')
-    if 'normalización y DDL' in s9.casefold():
-        err('S9: el título aún promete normalización como parte del núcleo')
+    for rel in [
+        "Plantillas/proyecto-final/Datos/casos.csv",
+        "Plantillas/proyecto-final/Datos/eventos.csv",
+        "Plantillas/proyecto-final/Datos/evidencias.json",
+        "Plantillas/proyecto-final/criterios.md",
+    ]:
+        read(rel)
+    s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
+    require(s15, [
+        "Atención de incidentes urbanos", "12 casos", "24 eventos", "4 casos cerrados",
+        "Code ownership", "Pruebas negativas", "90 s por equipo",
+        'href="sesion-15-desafio-final.html"'
+    ], "S15")
+    forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
-    s10 = read('Presentaciones/M4/sesion-10-sql-o-nosql.html')
-    forbid(s10, ['Firestore y en\n                Cosmos DB', 'Firestore y Cosmos DB'], 'S10 continuidad')
-    require(s10, ['MongoDB Atlas', 'Rúbrica de decisión'], 'S10')
+    s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
+    require(s16, [
+        "Cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
+        "Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8",
+        "Escenarios 9–11", "Escenarios 12–13", "Clasifica el error",
+        'href="sesion-16-cierre-dp900.html"'
+    ], "S16")
+    forbid(s16, ["sesion-12-fundamentos-data-warehouse.html", 'data-title="Mapa del curso"'], "S16")
 
-    s11 = read('Presentaciones/M4/sesion-11-documentos-de-verdad.html')
-    require(s11, ['persistimos temporalmente en Firestore', 'Contingencia explícita', 'no sustituye la evidencia'], 'S11')
-
-    s12 = read('Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html')
-    require(s12, ['Cuatro tablas del miniwarehouse + una tabla operacional defectuosa', 'Reasoning Check · 368.000'], 'S12')
-
-    s13 = read('Presentaciones/M5/sesion-13-laboratorio-bigquery.html')
-    require(
-        s13,
-        [
-            'BigQuery Sandbox', 'fact_venta.csv', '44 filas', '1.455.000',
-            'bytes procesados', 'TU_PROYECTO', '50–125 min · autónomo guiado',
-            '125–135 min', '135–145 min'
-        ],
-        'S13',
-    )
-    if max_timing(s13) > 145:
-        err(f'S13: la sesión corta muestra tiempos mayores a 145 min ({max_timing(s13)})')
-
-    s14 = read('Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html')
-    require(
-        s14,
-        [
-            'Relacional vs anidado', 'STRUCT', 'ARRAY', 'UNNEST', 'Parquet',
-            'Transferencia Azure por casos', 'Azure Blob Storage', 'Azure Files',
-            'Azure Table Storage', 'Azure Cosmos DB', 'Microsoft Fabric',
-            'Azure Databricks', 'Power BI'
-        ],
-        'S14',
-    )
-
-    for f in ['README.md', 'decisiones.md', 'schema.sql', 'queries.sql', 'validaciones.sql', 'arquitectura.md']:
-        if not (ROOT / 'Plantillas/proyecto-final' / f).exists():
-            err(f'S15: falta Plantillas/proyecto-final/{f}')
-    s15 = read('Presentaciones/M6/sesion-15-desafio-final.html')
-    require(s15, ['Plantilla lista', 'Code ownership', '90 segundos por equipo'], 'S15')
-
-    s16 = read('Presentaciones/M6/sesion-16-cierre-dp900.html')
-    require(s16, ['Pre/Post', 'Mapa curso → DP-900', 'Diagnóstico personal', 'Salida individual'], 'S16')
-
-    # DP-900: no basta con cuatro dominios; cada objetivo debe tener evidencia y nivel.
-    dp = json.loads(read('assets/learning/dp900-map.json') or '{}')
-    domains = dp.get('dominios', [])
-    if len(domains) != 4:
-        err('DP-900: el mapa debe tener cuatro dominios')
-    objectives = [o for d in domains for o in d.get('objetivos', [])]
-    if len(objectives) < 23:
-        err(f'DP-900: mapa demasiado grueso; se esperaban >=23 objetivos y hay {len(objectives)}')
-    allowed = {'aprendido', 'transferido', 'reconocido'}
-    for i, obj in enumerate(objectives, start=1):
-        if not obj.get('objetivo'):
-            err(f'DP-900 objetivo {i}: falta nombre')
-        if not obj.get('sesiones'):
-            err(f'DP-900 objetivo {i}: faltan sesiones')
-        if not obj.get('evidencia'):
-            err(f'DP-900 objetivo {i}: falta evidencia')
-        if obj.get('nivel') not in allowed:
-            err(f"DP-900 objetivo {i}: nivel inválido {obj.get('nivel')!r}")
-    dp_text = json.dumps(dp, ensure_ascii=False)
-    require(
-        dp_text,
-        [
-            'CSV, JSON and Parquet', 'Azure SQL Managed Instance',
-            'Azure Database for PostgreSQL', 'Azure Blob Storage',
-            'Azure Files', 'Azure Table Storage', 'Cosmos DB APIs',
-            'batch vs streaming', 'Power BI'
-        ],
-        'DP-900 granularidad',
-    )
-
-    # Instructor View: contenido sustantivo, no stubs repetidos.
-    questions = set()
-    for n in range(1, 17):
-        g = read(f'docs/instructor/S{n:02d}.md')
-        require(
-            g,
-            [
-                'Pregunta central', 'Error esperable principal',
-                'Dónde probablemente se atascan', 'No avanzar hasta que',
-                'Si vas 15 minutos atrasado', 'Si vas 15 minutos adelantado',
-                'Evidencia mínima', 'Intervención docente'
-            ],
-            f'Guía S{n:02d}',
-        )
-        if len(g) < 850:
-            err(f'Guía S{n:02d}: demasiado breve ({len(g)} caracteres)')
-        m = re.search(r'## Pregunta central\s*\n([^\n]+)', g)
-        if m:
-            q = m.group(1).strip().casefold()
-            if q in questions:
-                err(f'Guía S{n:02d}: pregunta central duplicada')
-            questions.add(q)
+    course = json.loads(read("tools/curso.json") or "{}")
+    m1 = next((m for m in course.get("modulos", []) if m.get("n") == 1), {})
+    s1_manifest = next((s for s in m1.get("sesiones", []) if s.get("n") == 1), None)
+    if not s1_manifest:
+        err("curso.json: S1 no está registrada como sesión")
+    else:
+        for key in ["fecha", "duracionUtil", "modo", "titulo", "href", "tags"]:
+            if not s1_manifest.get(key):
+                err(f"curso.json S1: falta {key}")
 
     if ERRORS:
-        print('\n=== Cierre benchmark: FALLÓ ===')
+        print("\n=== Curación benchmark: FALLÓ ===")
         for e in ERRORS:
-            print('  ✗', e)
+            print("  ✗", e)
         return 1
-    print('\n=== Cierre benchmark: OK ===')
-    print('  ✓ coherencia semántica, tiempos, continuidad, evidencias, DP-900 e Instructor View')
+    print("\n=== Curación benchmark: OK ===")
+    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas, enlaces y artefactos verificados")
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -1,662 +1,125 @@
 {
-  "_comentario": "Manifiesto único del curso. Para cambiar el recorrido se edita este archivo y se regenera index.html. La experiencia pedagógica detallada S6-S16 vive en assets/learning/learning-plan.json y se valida en CI. Continuidad S8-S9 ajustada al avance real de S7.",
+  "_comentario": "Manifiesto único y compacto del recorrido S1–S16. El detalle pedagógico S6–S16 vive en assets/learning/learning-plan.json; CI valida que la rama no reescriba sesiones maduras.",
   "titulo": "Diseño y Gestión de Bases de Datos con SQL",
   "institucion": "Universidad de los Andes · Colsubsidio",
-  "subtitulo": "Aprende a entender un problema de datos, modelarlo, consultarlo y elegir la tecnología adecuada. Practicamos con datos reales y servicios cloud reales.",
-  "datos": [
-    "48 horas · 16 sesiones",
-    "Clases virtuales sincrónicas",
-    "Actividad práctica cada 10–15 minutos"
-  ],
+  "subtitulo": "Entender un problema de datos, consultarlo, modelarlo, implementarlo y elegir la tecnología adecuada.",
+  "datos": ["48 horas · 16 sesiones", "Clases virtuales sincrónicas", "Actividad práctica cada 10–15 minutos"],
   "sesionActual": 12,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "diferenciacionTecnicaSesiones": [
-      11,
-      12,
-      13,
-      14,
-      15
-    ],
+    "diferenciacionTecnicaSesiones": [11, 12, 13, 14, 15],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
-    "sesionesAutonomas": [
-      7,
-      10,
-      13
-    ],
+    "sesionesAutonomas": [7, 10, 13],
     "trabajoAutonomoMin": 60,
     "publicacionSolucionesAutonomas": "20:00 America/Bogota"
   },
   "herramientas": [
-    {
-      "icono": "💻",
-      "titulo": "Beekeeper Studio",
-      "desc": "El programa con el que abrimos las bases de datos. Windows, macOS y Ubuntu.",
-      "href": "https://www.beekeeperstudio.io/get",
-      "externo": true
-    },
-    {
-      "icono": "📋",
-      "titulo": "Chuleta de SQL en PDF",
-      "desc": "Una página con lo esencial del lenguaje. Se abre en el navegador y se puede imprimir.",
-      "href": "Presentaciones/M2/Clases%201,%202,%203/sql-basics-cheat-sheet-a4.pdf"
-    }
+    {"icono": "💻", "titulo": "Beekeeper Studio", "desc": "Cliente para abrir y consultar las bases relacionales del curso.", "href": "https://www.beekeeperstudio.io/get", "externo": true},
+    {"icono": "📋", "titulo": "Chuleta SQL", "desc": "Referencia rápida del módulo SQL.", "href": "Presentaciones/M2/chuleta-taller.html"}
   ],
   "instalacion": [
-    {
-      "txt": "🪟 Windows",
-      "href": "Presentaciones/M1/guia-instalacion-beekeeper-windows.docx",
-      "download": true
-    },
-    {
-      "txt": "🐧 Ubuntu",
-      "href": "Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html"
-    },
-    {
-      "txt": "🍎 macOS",
-      "href": "Presentaciones/M1/guia-instalacion-beekeeper-macos.docx",
-      "download": true
-    }
+    {"txt": "🪟 Windows", "href": "Presentaciones/M1/guia-instalacion-beekeeper-windows.docx", "download": true},
+    {"txt": "🐧 Ubuntu", "href": "Presentaciones/M1/guia-instalacion-beekeeper-ubuntu.html"},
+    {"txt": "🍎 macOS", "href": "Presentaciones/M1/guia-instalacion-beekeeper-macos.docx", "download": true}
   ],
   "modulos": [
     {
       "n": 1,
       "titulo": "¿Cómo generamos valor con datos?",
       "estado": "completado",
-      "desc": "Dato ≠ valor, actores, decisiones y el ecosistema de datos.",
-      "recursos": [
+      "desc": "Decisiones, forma de los datos, roles y preparación técnica.",
+      "recursos": [],
+      "sesiones": [
         {
-          "txt": "🧭 Sesión 1 · presentación canónica: diagnóstico, ecosistema y roles",
-          "href": "Presentaciones/M1/sesion-1-diagnostico.html"
+          "n": 1,
+          "fecha": "2026-08-18",
+          "duracionUtil": 165,
+          "modo": "guiada",
+          "titulo": "Cómo generamos valor con datos",
+          "estado": "completado",
+          "desc": "Diagnóstico inicial, dato vs valor, archivo vs base, tipos de dato, roles y preflight de Beekeeper/dvdrental.",
+          "href": "Presentaciones/M1/sesion-1-diagnostico.html",
+          "tags": ["dato", "decisión", "archivo vs base", "estructurado", "semiestructurado", "DBA", "data engineer", "data analyst"]
         }
-      ],
-      "sesiones": []
+      ]
     },
     {
       "n": 2,
       "titulo": "Explorando bases de datos con SQL",
       "estado": "completado",
-      "desc": "Consultar, filtrar, agrupar, unir tablas y construir la tabla que te piden.",
+      "desc": "Consultar, filtrar, agrupar, unir tablas y controlar el nivel de agregación.",
       "recursos": [
-        {
-          "txt": "🗄️ La base de datos (archivo)",
-          "href": "Presentaciones/M2/base-datos/dvdrental.db",
-          "download": true
-        },
-        {
-          "txt": "📄 Hoja de ayuda para los ejercicios",
-          "href": "Presentaciones/M2/chuleta-taller.html"
-        },
-        {
-          "txt": "📘 Guía para repasar en casa",
-          "href": "Presentaciones/M2/referencia-modulo-2.html"
-        }
+        {"txt": "🗄️ dvdrental.db", "href": "Presentaciones/M2/base-datos/dvdrental.db", "download": true},
+        {"txt": "📄 Hoja de ayuda", "href": "Presentaciones/M2/chuleta-taller.html"}
       ],
       "sesiones": [
-        {
-          "n": 2,
-          "titulo": "De la decisión a la primera consulta",
-          "estado": "completado",
-          "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
-          "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": [
-            "SELECT",
-            "DISTINCT",
-            "COUNT",
-            "WHERE",
-            "ORDER BY",
-            "LIMIT"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S2.sql",
-              "download": true
-            }
-          ]
-        },
-        {
-          "n": 3,
-          "titulo": "Filtrar mejor y resumir",
-          "estado": "completado",
-          "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
-          "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": [
-            "BETWEEN",
-            "IN",
-            "LIKE",
-            "GROUP BY",
-            "HAVING"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S3.sql",
-              "download": true
-            }
-          ]
-        },
-        {
-          "n": 4,
-          "titulo": "Uniones de tablas",
-          "estado": "completado",
-          "desc": "Responder preguntas que ninguna tabla contesta sola. Las cinco preguntas del JOIN, los cuatro tipos de unión, y el patrón para encontrar lo que falta.",
-          "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html",
-          "tags": [
-            "UNION",
-            "UNION ALL",
-            "INNER JOIN",
-            "LEFT JOIN",
-            "RIGHT JOIN",
-            "FULL OUTER"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S4.sql",
-              "download": true
-            }
-          ]
-        },
-        {
-          "n": 5,
-          "titulo": "Algorítmica de tablas",
-          "estado": "completado",
-          "desc": "Dibujar la tabla antes de escribirla, controlar el nivel de agregación y resumir antes de unir para que las cuentas no se inflen.",
-          "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html",
-          "tags": [
-            "WITH",
-            "CTE",
-            "COUNT(DISTINCT)",
-            "COALESCE",
-            "CASE",
-            "nivel de agregación"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S5.sql",
-              "download": true
-            }
-          ]
-        }
+        {"n": 2, "fecha": "2026-08-19", "duracionUtil": 165, "modo": "guiada", "titulo": "De la decisión a la primera consulta", "estado": "completado", "desc": "Bases de datos, SQL y primeras consultas sobre una base real.", "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html", "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"]},
+        {"n": 3, "fecha": "2026-08-21", "duracionUtil": 165, "modo": "guiada", "titulo": "Filtrar mejor y resumir", "estado": "completado", "desc": "Filtros, agregaciones, GROUP BY y HAVING.", "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html", "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"]},
+        {"n": 4, "fecha": "2026-08-25", "duracionUtil": 165, "modo": "guiada", "titulo": "Uniones de tablas", "estado": "completado", "desc": "Responder preguntas que ninguna tabla contesta sola.", "href": "Presentaciones/M2/sesion-4-uniones-de-tablas.html", "tags": ["UNION", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"]},
+        {"n": 5, "fecha": "2026-08-26", "duracionUtil": 165, "modo": "guiada", "titulo": "Algorítmica de tablas", "estado": "completado", "desc": "CTE, CASE, COALESCE y control del nivel de agregación.", "href": "Presentaciones/M2/sesion-5-algoritmica-de-tablas.html", "tags": ["WITH", "CTE", "COUNT(DISTINCT)", "COALESCE", "CASE", "nivel de agregación"]}
       ]
     },
     {
       "n": 3,
       "titulo": "Modelos de datos útiles",
       "estado": "completado",
-      "desc": "De la conversación con el negocio al modelo: reglas, entidades, relaciones, normalización y tablas reales.",
-      "recursos": [
-        {
-          "txt": "🗄️ La base de datos (archivo)",
-          "href": "Presentaciones/M2/base-datos/dvdrental.db",
-          "download": true
-        }
-      ],
+      "desc": "De las reglas del negocio a un esquema relacional que protege decisiones.",
+      "recursos": [],
       "sesiones": [
-        {
-          "n": 6,
-          "fecha": "2026-08-28",
-          "duracionUtil": 165,
-          "modo": "guiada",
-          "titulo": "Reglas de negocio",
-          "estado": "completado",
-          "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. El camino analítico se reserva para la sesión 12.",
-          "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
-          "tags": [
-            "reglas de negocio",
-            "evidencia",
-            "restricciones",
-            "permisos",
-            "patrones",
-            "hipótesis"
-          ],
-          "recursos": [
-            {
-              "txt": "📄 Las consultas de la clase (archivo de texto)",
-              "href": "Scripts/S6.sql",
-              "download": true
-            }
-          ]
-        },
-        {
-          "n": 7,
-          "fecha": "2026-09-01",
-          "duracionUtil": 145,
-          "modo": "autonomo_guiado",
-          "trabajoAutonomoMin": 75,
-          "titulo": "De las reglas al modelo",
-          "estado": "completado",
-          "href": "Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html",
-          "desc": "Convertir las diez reglas del Restaurante ABC en entidades, relaciones y cardinalidades — y descubrir cuántas de esas reglas el esquema no puede hacer cumplir.",
-          "tags": [
-            "entidades",
-            "relaciones",
-            "cardinalidad",
-            "modelo ER",
-            "workshop"
-          ],
-          "recursos": [
-            {
-              "txt": "🧱 El constructor: de la frase a la tabla",
-              "href": "Presentaciones/M3/constructor-abc.html?sesion=7"
-            },
-            {
-              "txt": "🎬 Apoyo con dvdrental durante la sesión",
-              "href": "Presentaciones/M3/constructor-abc.html?caso=dvd&sesion=7"
-            }
-          ]
-        },
-        {
-          "n": 8,
-          "fecha": "2026-09-02",
-          "duracionUtil": 165,
-          "modo": "guiada",
-          "titulo": "Modelado y normalización",
-          "estado": "completado",
-          "href": "Presentaciones/M3/sesion-8-modelado-y-normalizacion.html",
-          "desc": "Continuar desde el avance real de S7: completar atributos y relaciones con guía paso a paso, fijar un modelo-base común y normalizar ese recorte con dependencias, 1FN, 2FN, 3FN y reconstrucción sin pérdida.",
-          "tags": [
-            "atributos",
-            "relaciones",
-            "1FN",
-            "2FN",
-            "3FN",
-            "dependencias",
-            "reconstrucción"
-          ],
-          "recursos": [
-            {
-              "txt": "🧱 El constructor · continúa desde entidades",
-              "href": "Presentaciones/M3/constructor-abc.html?sesion=8"
-            }
-          ]
-        },
-        {
-          "n": 9,
-          "fecha": "2026-09-04",
-          "duracionUtil": 165,
-          "modo": "guiada_con_servicio_real",
-          "titulo": "SQL para creación de tablas",
-          "estado": "completado",
-          "desc": "Convertir el modelo del Restaurante ABC en PostgreSQL real y demostrar con pruebas positivas y negativas que las restricciones protegen reglas.",
-          "tags": [
-            "PostgreSQL",
-            "Supabase",
-            "CREATE TABLE",
-            "PRIMARY KEY",
-            "FOREIGN KEY",
-            "NOT NULL",
-            "CHECK",
-            "DEFAULT",
-            "pruebas"
-          ],
-          "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
-          "recursos": [
-            {
-              "txt": "🧪 Cierre S9: crea tu base y prueba reservas",
-              "href": "Presentaciones/M3/tutorial-supabase.html"
-            }
-          ]
-        }
+        {"n": 6, "fecha": "2026-08-28", "duracionUtil": 165, "modo": "guiada", "titulo": "Reglas de negocio", "estado": "completado", "desc": "Evidencia, restricciones, permisos, patrones e hipótesis.", "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html", "tags": ["reglas de negocio", "evidencia", "restricciones", "hipótesis"]},
+        {"n": 7, "fecha": "2026-09-01", "duracionUtil": 145, "modo": "autonomo_guiado", "trabajoAutonomoMin": 75, "titulo": "De las reglas al modelo", "estado": "completado", "desc": "Entidades, relaciones y cardinalidades a partir del Restaurante ABC.", "href": "Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html", "tags": ["entidades", "relaciones", "cardinalidad", "modelo ER"]},
+        {"n": 8, "fecha": "2026-09-02", "duracionUtil": 165, "modo": "guiada", "titulo": "Modelado y normalización", "estado": "completado", "desc": "Modelo completo, dependencias, 1FN, 2FN, 3FN y reconstrucción.", "href": "Presentaciones/M3/sesion-8-modelado-y-normalizacion.html", "tags": ["1FN", "2FN", "3FN", "dependencias", "reconstrucción"]},
+        {"n": 9, "fecha": "2026-09-04", "duracionUtil": 165, "modo": "guiada_con_servicio_real", "titulo": "SQL para creación de tablas", "estado": "completado", "desc": "PostgreSQL real en Supabase, DDL y restricciones comprobadas con pruebas.", "href": "Presentaciones/M3/sesion-9-ddl-supabase.html", "tags": ["PostgreSQL", "Supabase", "CREATE TABLE", "PRIMARY KEY", "FOREIGN KEY", "CHECK", "DEFAULT"]}
       ]
     },
     {
       "n": 4,
       "titulo": "Más allá de las tablas: NoSQL",
       "estado": "completado",
-      "desc": "Elegir NoSQL por requisitos y practicar documentos en servicios reales.",
+      "desc": "Elegir representación por requisitos y practicar documentos en servicios reales.",
       "recursos": [],
       "sesiones": [
-        {
-          "n": 10,
-          "fecha": "2026-09-08",
-          "duracionUtil": 145,
-          "modo": "autonomo_guiado",
-          "trabajoAutonomoMin": 75,
-          "titulo": "Taller de casos: ¿SQL o NoSQL?",
-          "estado": "completado",
-          "desc": "Seis retos de arquitectura de datos, con un caso real: el requerimiento de la SIC a más de 50 empresas. En el tablero integrado se elige una ruta y se contrasta con evidencia de un caso real. La tecnología va detrás del problema, no delante.",
-          "tags": [
-            "SQL vs NoSQL",
-            "patrón de acceso",
-            "consistencia",
-            "CAP",
-            "clave-valor",
-            "documentos",
-            "grafos",
-            "series de tiempo",
-            "costo operativo",
-            "arquitectura híbrida",
-            "fuente de verdad"
-          ],
-          "href": "Presentaciones/M4/sesion-10-sql-o-nosql.html",
-          "recursos": [
-            {
-              "txt": "📊 Material original del módulo (PowerPoint)",
-              "href": "Presentaciones/M4/M4C1 V4 Introducción a bases NoSQL.pptx",
-              "download": true
-            }
-          ]
-        },
-        {
-          "n": 11,
-          "fecha": "2026-09-09",
-          "duracionUtil": 165,
-          "modo": "guiada_con_servicio_real",
-          "titulo": "Documentos de verdad: Firebase y MongoDB Atlas",
-          "estado": "completado",
-          "desc": "El carrito que se convirtió en venta: un documento real en Firestore (o en MongoDB Atlas) que al pagar se convierte en una fila relacional real en Supabase. Embeber contra referenciar, y el puente hacia Cosmos DB para el DP-900.",
-          "tags": [
-            "Firebase",
-            "Firestore",
-            "MongoDB Atlas",
-            "documentos",
-            "embeber vs referenciar",
-            "Cosmos DB"
-          ],
-          "href": "Presentaciones/M4/sesion-11-documentos-de-verdad.html",
-          "recursos": [
-            {
-              "txt": "🛒 El carrito que se convirtió en venta (Firestore, en vivo)",
-              "href": "Presentaciones/M4/carrito-abc-firebase.html"
-            },
-            {
-              "txt": "🛒 La misma herramienta, con el carrito guardado localmente",
-              "href": "Presentaciones/M4/carrito-abc.html"
-            },
-            {
-              "txt": "🔥 Ejercicio: tu primera base de documentos en Firestore",
-              "href": "Presentaciones/M4/ejercicio-firebase.html"
-            },
-            {
-              "txt": "🍃 Extensión: tu primera base de documentos en MongoDB Atlas",
-              "href": "Presentaciones/M4/ejercicio-atlas.html"
-            }
-          ]
-        }
+        {"n": 10, "fecha": "2026-09-08", "duracionUtil": 145, "modo": "autonomo_guiado", "trabajoAutonomoMin": 75, "titulo": "Taller de casos: ¿SQL o NoSQL?", "estado": "completado", "desc": "Decidir tecnología desde patrón de acceso, consistencia, forma del dato y costo.", "href": "Presentaciones/M4/sesion-10-sql-o-nosql.html", "tags": ["SQL vs NoSQL", "documentos", "grafos", "series de tiempo", "arquitectura híbrida"]},
+        {"n": 11, "fecha": "2026-09-09", "duracionUtil": 165, "modo": "guiada_con_servicio_real", "titulo": "Documentos de verdad: Firebase y MongoDB Atlas", "estado": "completado", "desc": "Documentos, embeber vs referenciar y arquitectura híbrida con PostgreSQL.", "href": "Presentaciones/M4/sesion-11-documentos-de-verdad.html", "tags": ["Firestore", "MongoDB Atlas", "documentos", "embeber vs referenciar", "Cosmos DB"]}
       ]
     },
     {
       "n": 5,
-      "titulo": "Data warehouse, analítica y cloud",
-      "estado": "curso",
-      "desc": "Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.",
+      "titulo": "Analítica y cloud",
+      "estado": "en_curso",
+      "desc": "Del modelo operacional al dimensional y de allí a optimización y datos anidados en BigQuery.",
       "recursos": [],
       "sesiones": [
-        {
-          "n": 12,
-          "fecha": "2026-09-11",
-          "duracionUtil": 165,
-          "modo": "guiada",
-          "titulo": "Fundamentos de data warehouse",
-          "estado": "hoy",
-          "desc": "Partir del dolor de consultar la operación para diseñar un modelo analítico: grano, hechos, dimensiones, medidas y batch/streaming. La transferencia de servicios Azure se concentra en S14.",
-          "tags": [
-            "data warehouse",
-            "modelo estrella",
-            "hechos",
-            "dimensiones",
-            "batch",
-            "streaming"
-          ],
-          "href": "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html",
-          "recursos": [
-            {
-              "txt": "🧮 Laboratorio del grano (DuckDB-Wasm, en tu navegador, 0 créditos)",
-              "href": "labs/grano-estrella.html"
-            }
-          ]
-        },
-        {
-          "n": 13,
-          "fecha": "2026-09-15",
-          "duracionUtil": 145,
-          "modo": "autonomo_guiado_con_servicio_real",
-          "trabajoAutonomoMin": 75,
-          "titulo": "Laboratorio BigQuery",
-          "estado": "pendiente",
-          "desc": "Llevar el modelo estrella de S12 a Google BigQuery real: cargar, consultar, validar y observar bytes procesados. DuckDB-Wasm es contingencia, no sustituto del servicio cloud.",
-          "tags": [
-            "BigQuery",
-            "cloud",
-            "warehouse",
-            "SQL",
-            "workshop"
-          ],
-          "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html"
-        },
-        {
-          "n": 14,
-          "fecha": "2026-09-16",
-          "duracionUtil": 165,
-          "modo": "guiada_con_servicio_real",
-          "titulo": "BigQuery anidados + mapa Azure",
-          "estado": "pendiente",
-          "desc": "Cambiar la forma del dato con STRUCT/ARRAY/UNNEST, JSON y Parquet en BigQuery real; después transferir la necesidad a almacenamiento, Cosmos DB, Fabric/Databricks y Power BI.",
-          "tags": [
-            "nested",
-            "JSON",
-            "Parquet",
-            "BigQuery",
-            "Power BI",
-            "Azure analytics"
-          ],
-          "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html"
-        }
+        {"n": 12, "fecha": "2026-09-11", "duracionUtil": 165, "modo": "guiada", "titulo": "Fundamentos de data warehouse", "estado": "hoy", "desc": "OLTP/OLAP, grano, hechos, dimensiones, medidas y modelo estrella con laboratorio local.", "href": "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html", "tags": ["OLTP", "OLAP", "data warehouse", "grano", "hechos", "dimensiones", "ETL", "ELT"]},
+        {"n": 13, "fecha": "2026-09-15", "duracionUtil": 165, "modo": "autonomo_guiado_con_servicio_real", "trabajoAutonomoMin": 75, "titulo": "BigQuery: partición, clusterización y costo", "estado": "pendiente", "desc": "Optimizar BigQuery con partición, clustering, pruning y evidencia de bytes procesados.", "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html", "tags": ["BigQuery", "PARTITION BY", "clusterización", "pruning", "bytes procesados", "costo"]},
+        {"n": 14, "fecha": "2026-09-16", "duracionUtil": 165, "modo": "guiada_con_servicio_real", "titulo": "BigQuery anidado y transferencia cloud", "estado": "pendiente", "desc": "JSON, ARRAY, STRUCT, UNNEST, formatos y transferencia de necesidades a servicios Azure.", "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html", "tags": ["JSON", "ARRAY", "STRUCT", "UNNEST", "Parquet", "Azure"]}
       ]
     },
     {
       "n": 6,
-      "titulo": "Desafío final y consolidación",
+      "titulo": "Integración y cierre",
       "estado": "pendiente",
-      "desc": "Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.",
+      "desc": "Resolver un caso nuevo y convertir la evidencia de aprendizaje en un plan DP-900.",
       "recursos": [],
       "sesiones": [
-        {
-          "n": 15,
-          "fecha": "2026-09-18",
-          "duracionUtil": 165,
-          "modo": "autonomo_guiado",
-          "trabajoAutonomoMin": 90,
-          "titulo": "Desafío final integrador",
-          "estado": "pendiente",
-          "desc": "Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.",
-          "tags": [
-            "desafío",
-            "datos sucios",
-            "modelado",
-            "validación",
-            "arquitectura"
-          ],
-          "href": "Presentaciones/M6/sesion-15-desafio-final.html"
-        },
-        {
-          "n": 16,
-          "fecha": "2026-09-22",
-          "duracionUtil": 145,
-          "modo": "consolidacion",
-          "titulo": "Cierre + preparación DP-900",
-          "estado": "pendiente",
-          "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.",
-          "tags": [
-            "DP-900",
-            "cierre",
-            "retrieval practice",
-            "plan de estudio"
-          ],
-          "href": "Presentaciones/M6/sesion-16-cierre-dp900.html"
-        }
+        {"n": 15, "fecha": "2026-09-18", "duracionUtil": 165, "modo": "proyecto_integrador", "titulo": "Desafío final integrador", "estado": "pendiente", "desc": "Caso nuevo de incidentes urbanos con datos relacionales y semiestructurados, pruebas y defensa.", "href": "Presentaciones/M6/sesion-15-desafio-final.html", "tags": ["proyecto", "modelado", "SQL", "NoSQL", "validación", "arquitectura", "code ownership"]},
+        {"n": 16, "fecha": "2026-09-22", "duracionUtil": 165, "modo": "cierre_y_transferencia", "titulo": "Cierre + preparación DP-900", "estado": "pendiente", "desc": "Pre/post, 13 escenarios ponderados por dominio, diagnóstico de errores y plan individual.", "href": "Presentaciones/M6/sesion-16-cierre-dp900.html", "tags": ["DP-900", "pre/post", "escenarios", "diagnóstico", "plan de estudio"]}
       ]
     }
   ],
-  "glosario": "El curso cuenta una sola historia: decisión → consulta → respuesta validada → reglas → modelo → implementación → elección de representación → arquitectura híbrida → analítica → cloud → integración → transferencia. Cada sesión debe explicar qué hereda, qué resuelve, qué evidencia deja y por qué la siguiente es necesaria.",
-  "materialesHoy": [],
   "hiloConductor": {
     "preguntaMadre": "¿Cómo convertimos una necesidad de negocio en una solución de datos defendible, comprobable y transferible?",
-    "reglaNarrativa": "Cada sesión hereda una evidencia, resuelve una pregunta y deja una limitación que hace necesaria la siguiente.",
     "actos": [
-      {
-        "acto": 1,
-        "sesiones": [
-          1
-        ],
-        "nombre": "Por qué importan los datos",
-        "pregunta": "¿Qué decisión queremos mejorar y qué papel cumplen los datos?"
-      },
-      {
-        "acto": 2,
-        "sesiones": [
-          2,
-          3,
-          4,
-          5
-        ],
-        "nombre": "Responder preguntas con confianza",
-        "pregunta": "¿Cómo obtenemos una respuesta correcta, explicable y validada con SQL?"
-      },
-      {
-        "acto": 3,
-        "sesiones": [
-          6,
-          7,
-          8,
-          9
-        ],
-        "nombre": "Diseñar y hacer cumplir el modelo",
-        "pregunta": "¿Cómo pasamos de reglas del negocio a una base que proteja esas reglas?"
-      },
-      {
-        "acto": 4,
-        "sesiones": [
-          10,
-          11
-        ],
-        "nombre": "Elegir la representación adecuada",
-        "pregunta": "¿Cuándo convienen tablas, documentos o una arquitectura híbrida?"
-      },
-      {
-        "acto": 5,
-        "sesiones": [
-          12,
-          13,
-          14
-        ],
-        "nombre": "Separar operación y analítica y llevarla a cloud",
-        "pregunta": "¿Cómo diseñamos para análisis y transferimos el razonamiento entre nubes?"
-      },
-      {
-        "acto": 6,
-        "sesiones": [
-          15,
-          16
-        ],
-        "nombre": "Integrar, demostrar y transferir",
-        "pregunta": "¿Podemos resolver el problema completo y explicar lo aprendido en un marco externo?"
-      }
-    ],
-    "sesiones": {
-      "1": {
-        "hereda": "Partimos de decisiones reales y del diagnóstico del grupo; todavía no asumimos que una herramienta produzca valor por sí sola.",
-        "pregunta": "¿Cómo pasa un dato de existir a generar una decisión?",
-        "evidencia": "Cadena evento → dato → almacenamiento → transformación → consumidor → decisión, más un diagnóstico inicial.",
-        "puente": "Una decisión necesita respuestas verificables. En S2 aprendemos a preguntarle a una base de datos sin modificarla."
-      },
-      "2": {
-        "hereda": "S1 dejó una decisión que necesita evidencia y una cadena para convertir datos en respuestas.",
-        "pregunta": "¿Cómo obtenemos una primera respuesta de una base sin alterar los datos?",
-        "evidencia": "SELECT, WHERE, ORDER BY y LIMIT usados para responder una pregunta concreta y validar el resultado.",
-        "puente": "Listar filas ya no basta cuando el negocio pide comparar y resumir. S3 convierte filas en información agregada."
-      },
-      "3": {
-        "hereda": "S2 ya permite recuperar filas correctas de una tabla.",
-        "pregunta": "¿Cómo filtramos con precisión y convertimos muchas filas en un resumen útil?",
-        "evidencia": "Filtros, GROUP BY, agregaciones y HAVING con una salida cuyo significado se puede explicar.",
-        "puente": "Una sola tabla no contiene todas las respuestas. S4 obliga a relacionar fuentes sin perder la semántica de la pregunta."
-      },
-      "4": {
-        "hereda": "S3 sabe resumir correctamente una tabla, pero muchas preguntas viven repartidas entre varias.",
-        "pregunta": "¿Cómo combinamos tablas preservando las filas que la pregunta exige?",
-        "evidencia": "JOIN elegido por semántica, cardinalidad explicada y resultado validado.",
-        "puente": "Un JOIN puede ser correcto y aun así inflar totales si mezcla granos distintos. S5 diseña primero la tabla resultado."
-      },
-      "5": {
-        "hereda": "S4 permite unir tablas; ahora debemos evitar construir consultas correctas sintácticamente pero equivocadas en su nivel de detalle.",
-        "pregunta": "¿Cómo diseño la tabla resultado y su grano antes de escribir SQL?",
-        "evidencia": "Método ANDESDB: pregunta → grano → fuentes → filtros → agregación → validación.",
-        "puente": "Hasta ahora consultamos un esquema que ya existía. En S6 cambiamos de lado: debemos descubrir qué reglas del negocio debería representar una base."
-      },
-      "6": {
-        "hereda": "S2–S5 enseñaron a leer un esquema y obtener respuestas; ahora usamos esa lectura como evidencia, no como verdad automática del negocio.",
-        "pregunta": "¿Qué puedo afirmar del negocio y con qué grado de certeza?",
-        "evidencia": "Observación → certeza → evidencia → regla comprobable → pregunta pendiente.",
-        "puente": "Las reglas siguen escritas en lenguaje natural. S7 las transforma en entidades, relaciones y cardinalidades."
-      },
-      "7": {
-        "hereda": "S6 dejó reglas defendibles y dudas explícitas del Restaurante ABC.",
-        "pregunta": "¿Qué entidades y relaciones necesita el modelo para representar esas reglas?",
-        "evidencia": "Primer modelo conceptual con cardinalidades y decisiones justificadas.",
-        "puente": "Un primer modelo puede repetir hechos o esconder dependencias. S8 lo somete a normalización sin perder el negocio."
-      },
-      "8": {
-        "hereda": "S7 produjo el modelo conceptual; ahora hay que comprobar que su estructura relacional no introduzca anomalías.",
-        "pregunta": "¿Cómo reducimos redundancia problemática conservando las reglas y la reconstrucción de la información?",
-        "evidencia": "Modelo-base normalizado con dependencias, 1FN, 2FN, 3FN y reconstrucción comprobada.",
-        "puente": "Un modelo correcto en papel todavía no impide datos inválidos. S9 convierte decisiones del modelo en restricciones ejecutables."
-      },
-      "9": {
-        "hereda": "S8 dejó un modelo relacional normalizado y reglas que deben protegerse.",
-        "pregunta": "¿Cómo hacemos que PostgreSQL haga cumplir las reglas y cómo demostramos que realmente las cumple?",
-        "evidencia": "schema.sql + tests.sql con PK, FK, NOT NULL, CHECK, DEFAULT y pruebas negativas.",
-        "puente": "Ya sabemos construir bien una solución relacional. S10 formula la pregunta más importante: ¿cuándo una tabla relacional no es la mejor representación?"
-      },
-      "10": {
-        "hereda": "S9 demostró la fortaleza del modelo relacional cuando necesitamos integridad y reglas explícitas.",
-        "pregunta": "¿Qué evidencia necesito antes de decidir entre relacional, documentos u otra familia?",
-        "evidencia": "Decisión defendida por patrón de acceso, consistencia, forma/evolución del dato y costo o riesgo.",
-        "puente": "Decidir “documentos” en papel no demuestra el trade-off. S11 lo vive en un servicio real y lo combina con la fuente relacional de verdad."
-      },
-      "11": {
-        "hereda": "S10 dejó criterios para elegir representación; ahora probamos una arquitectura híbrida con estado mutable y hechos auditables.",
-        "pregunta": "¿Qué debe vivir embebido o referenciado y cuál sistema es fuente de verdad en cada momento?",
-        "evidencia": "Documentos consultados + decisión embed/reference + checkout confirmado y localizado en PostgreSQL.",
-        "puente": "Cada checkout confirmado produce un hecho operacional. Cuando esos hechos crecen y queremos historia, tendencias y tableros, consultar la operación directamente deja de ser suficiente: S12."
-      },
-      "12": {
-        "hereda": "S11 terminó con ventas confirmadas como hechos operacionales; ahora acumulamos esos hechos para responder preguntas históricas sin castigar la operación.",
-        "pregunta": "¿Cómo transformamos datos operacionales en una estructura diseñada para analizar?",
-        "evidencia": "Grano declarado + tabla de hechos + dimensiones + medidas + validación del total correcto.",
-        "puente": "El modelo estrella funciona localmente. S13 comprueba que el mismo razonamiento se sostiene en un warehouse cloud real."
-      },
-      "13": {
-        "hereda": "S12 dejó un miniwarehouse con grano, hechos, dimensiones y medidas ya validados.",
-        "pregunta": "¿Qué cambia cuando ese mismo modelo llega a BigQuery y el costo de lectura se vuelve visible?",
-        "evidencia": "Carga validada de 44 filas / 1.455.000 + consultas de negocio + lectura de bytes procesados.",
-        "puente": "Un warehouse real no recibe únicamente tablas planas. S14 trabaja JSON/Parquet y estructuras anidadas y luego transfiere esas decisiones al mapa Azure."
-      },
-      "14": {
-        "hereda": "S13 probó el modelo analítico en cloud; ahora cambiamos la forma del dato y preguntamos cuándo conviene mantener estructura anidada.",
-        "pregunta": "¿Cuándo conviene una representación plana, relacional o anidada y cómo se traduce la necesidad a servicios Azure?",
-        "evidencia": "STRUCT/ARRAY/UNNEST ejecutados + decisión de representación + mapa necesidad → familia/servicio.",
-        "puente": "Ya practicamos las piezas por separado. S15 quita la receta y obliga a elegir modelo, transformación, consultas y arquitectura a partir del problema."
-      },
-      "15": {
-        "hereda": "S1–S14 construyeron el repertorio: preguntar, modelar, implementar, elegir representación, analizar y transferir a cloud.",
-        "pregunta": "¿Puedo resolver un problema completo sin que la herramienta ni el modelo estén decididos de antemano?",
-        "evidencia": "Diagnóstico + modelo + transformación + consultas + validaciones + arquitectura + defensa oral.",
-        "puente": "La defensa final revela qué dominios ya dominamos y dónde todavía dudamos. S16 convierte esa evidencia en diagnóstico y plan DP-900."
-      },
-      "16": {
-        "hereda": "S15 produjo evidencia auténtica de desempeño, no solo respuestas de opción múltiple.",
-        "pregunta": "¿Qué aprendí, qué puedo transferir y qué me falta para demostrarlo en DP-900?",
-        "evidencia": "Pre/post + diagnóstico por dominio + transferencia por escenarios + plan personal de estudio.",
-        "puente": "Se cierra el ciclo: problema → evidencia → consulta → modelo → implementación → elección tecnológica → analítica → validación → decisión."
-      }
-    }
+      "S1: decisión y ecosistema",
+      "S2–S5: consultar y controlar el grano",
+      "S6–S9: reglas, modelo e implementación",
+      "S10–S11: elegir representación",
+      "S12–S14: operación, analítica y cloud",
+      "S15–S16: integrar, demostrar y transferir"
+    ]
   }
 }

@@ -1,17 +1,7 @@
-# Auditoría benchmark · cierre
+# Estado de auditoría benchmark
 
-Esta rama corrige los hallazgos de aceptación posteriores a la primera aplicación del benchmark.
+Este archivo ya no certifica que la auditoría esté “cerrada”. Las auditorías humanas v1 y v2 encontraron regresiones que los validadores automáticos no detectaron.
 
-- S1 tiene un único material canónico público.
-- S4 exige elegir y justificar JOIN y ofrece equivalente textual.
-- S6 no enseña el hilo analítico reservado para S12.
-- S8 cierra el núcleo en 150 min y deja 15 min de colchón.
-- S9 usa una única cronología de 165 min, sin reteaching extenso de normalización.
-- S10 corrige la continuidad de S11.
-- S11 explicita contingencia sin fingir equivalencia técnica.
-- S12 distingue las cuatro tablas dimensionales de la comparación operacional defectuosa.
-- S13 incluye carga reproducible, validación 44 / 1.455.000, Sandbox y costo de lectura.
-- S14 incluye comparación relacional/anidado, UNNEST ejecutable, formatos y transferencia Azure por casos.
-- S15 tiene plantillas reales.
-- S16 conecta explícitamente curso y dominios DP-900.
-- S1–S16 tienen Instructor View específica.
+El estado y las decisiones vigentes están documentados en `docs/CURACION-MANUAL-BENCHMARK.md`.
+
+**Criterio actual:** CI puede demostrar ausencia de ciertas regresiones objetivas; no sustituye una revisión humana del contenido ni autoriza por sí solo un merge a `main`.

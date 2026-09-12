@@ -29,26 +29,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validar curso
+      - name: Traer main para comparar sesiones maduras
+        run: git fetch origin main
+
+      - name: Validar manifiesto general del curso
         run: python tools/validar_curso.py
 
-      - name: Validar regresiones manuales
-        run: |
-          if [ -f tools/validar-regresiones-manuales.py ]; then
-            python tools/validar-regresiones-manuales.py
-          else
-            echo 'Validador manual aún no instalado'
-          fi
+      - name: Validar curación pedagógica y regresiones
+        run: python tools/validar-cierre-benchmark.py
 
-      - name: Confirmar que no cambió el estilo visual
+      - name: Validar hilo conductor
+        run: python tools/validar-hilo-conductor.py
+
+      - name: Confirmar que no cambió el estilo visual compartido
         run: |
-          git fetch origin main
           if ! git diff --quiet origin/main -- '*.css' 'tools/estilo-portada.css'; then
-            echo 'ERROR: la rama modifica archivos de estilo CSS'
+            echo 'ERROR: la rama modifica archivos de estilo CSS compartidos'
             git diff --stat origin/main -- '*.css' 'tools/estilo-portada.css'
             exit 1
           fi
-          echo 'OK: no hay cambios en CSS respecto de main'
+          echo 'OK: no hay cambios en CSS compartido respecto de main'
 
       - name: Confirmar CI de solo lectura
         run: |

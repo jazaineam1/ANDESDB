@@ -1,0 +1,6 @@
+[
+  {"caso_id":1001,"evidencias":[{"tipo":"foto","url":"img/1001-1.jpg"},{"tipo":"comentario","texto":"Luminaria apagada desde hace dos noches"}]},
+  {"caso_id":1003,"evidencias":[{"tipo":"foto","url":"img/1003-1.jpg"},{"tipo":"foto","url":"img/1003-2.jpg"},{"tipo":"comentario","texto":"El hueco ocupa parte del carril"}]},
+  {"caso_id":1007,"evidencias":[{"tipo":"video","url":"video/1007-1.mp4"},{"tipo":"comentario","texto":"El semáforo cambia de forma intermitente"}]},
+  {"caso_id":1012,"evidencias":[{"tipo":"foto","url":"img/1012-1.jpg"},{"tipo":"comentario","texto":"Intersección con alto flujo peatonal"},{"tipo":"comentario","texto":"Se requiere priorización"}]}
+]
