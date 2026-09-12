@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -40,6 +41,57 @@ def same_as_main(path: str) -> None:
     proc = subprocess.run(["git", "diff", "--quiet", "origin/main", "--", path], cwd=ROOT, check=False)
     if proc.returncode != 0:
         err(f"Curación: {path} debería permanecer idéntico a main")
+
+
+def section(text: str, heading: str) -> str:
+    match = re.search(
+        rf"^## {re.escape(heading)}\s*\n(.*?)(?=^## |\Z)",
+        text,
+        flags=re.M | re.S,
+    )
+    return match.group(1).strip() if match else ""
+
+
+def validate_instructor_guides() -> None:
+    """Impide volver a guías de apariencia institucional pero contenido clonado."""
+    required_headings = [
+        "Pregunta central",
+        "Hilo conductor",
+        "Error esperable principal",
+        "Dónde probablemente se atascan",
+        "No avanzar hasta que…",
+        "Evidencia mínima",
+        "Si vas 15 minutos atrasado",
+        "Si vas 15 minutos adelantado",
+        "Intervención docente",
+        "Regla de cierre",
+    ]
+    seen_questions: set[str] = set()
+    seen_stuck: set[str] = set()
+    seen_interventions: set[str] = set()
+
+    for n in range(1, 17):
+        rel = f"docs/instructor/S{n:02d}.md"
+        guide = read(rel)
+        require(guide, [f"# S{n:02d} · Guía docente"], f"Guía S{n:02d}")
+        for heading in required_headings:
+            if not section(guide, heading):
+                err(f"Guía S{n:02d}: falta sección sustantiva {heading!r}")
+        if len(guide) < 1100:
+            err(f"Guía S{n:02d}: demasiado breve para ser una guía útil ({len(guide)} caracteres)")
+
+        question = section(guide, "Pregunta central").casefold()
+        stuck = section(guide, "Dónde probablemente se atascan").casefold()
+        intervention = section(guide, "Intervención docente").casefold()
+        if question in seen_questions:
+            err(f"Guía S{n:02d}: pregunta central duplicada")
+        if stuck in seen_stuck:
+            err(f"Guía S{n:02d}: bloque de atascos duplicado")
+        if intervention in seen_interventions:
+            err(f"Guía S{n:02d}: intervención docente duplicada")
+        seen_questions.add(question)
+        seen_stuck.add(stuck)
+        seen_interventions.add(intervention)
 
 
 def validate_final_dataset() -> None:
@@ -156,13 +208,15 @@ def main() -> int:
             if not s1_manifest.get(key):
                 err(f"curso.json S1: falta {key}")
 
+    validate_instructor_guides()
+
     if ERRORS:
         print("\n=== Curación benchmark: FALLÓ ===")
         for e in ERRORS:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas y datos finales reproducibles")
+    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas, datos reproducibles y guías docentes específicas")
     return 0
 
 
