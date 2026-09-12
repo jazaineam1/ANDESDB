@@ -1,9 +1,10 @@
-const VERSION='andesdb-lms-20260912-v26';
+const VERSION='andesdb-lms-20260912-v27';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './','./portal.html','./access.html','./index.html','./learning-hub.html','./lab.html','./teacher-dashboard.html','./manifest.webmanifest',
   './assets/andesdb-icon.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png',
   './assets/pwa-install.js','./assets/learning/access-gate.js','./assets/learning/learning-tracker.js','./assets/learning/learning-tracker-v3.js',
+  './assets/learning/analytics-config.js','./assets/learning/analytics.js',
   './assets/learning/lab-content-v4.js','./assets/learning/lab-content-v4-patch.js','./assets/learning/lab-runtime-v4.js','./assets/learning/lab-runtime-v5.js','./assets/learning/session-lab-button.js'
 ];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CORE);for(const rel of ESSENTIAL){try{const url=new URL(rel,self.location.href);const r=await fetch(url,{cache:'reload'});if(r.ok)await cache.put(url,r.clone())}catch(_){}}await self.skipWaiting()})())});
@@ -11,4 +12,4 @@ self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=a
 function allowed(url){return url.origin===self.location.origin&&url.pathname.startsWith(BASE)&&!/\.(pptx|docx|zip)$/i.test(url.pathname)}
 async function networkFirst(request){const cache=await caches.open(RUNTIME);try{const r=await fetch(request);if(r.ok)await cache.put(request,r.clone());return r}catch(_){return(await caches.match(request))||(await caches.match(new URL('./portal.html',self.location.href)))||Response.error()}}
 async function cacheFirst(request){const cached=await caches.match(request);if(cached){fetch(request).then(async r=>{if(r.ok){const cache=await caches.open(RUNTIME);await cache.put(request,r.clone())}}).catch(()=>{});return cached}const r=await fetch(request);if(r.ok){const cache=await caches.open(RUNTIME);await cache.put(request,r.clone())}return r}
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(!allowed(url))return;const doc=req.mode==='navigate'||/\.html?$/i.test(url.pathname);const runtime=/\/assets\/learning\/(?:learning-tracker(?:-v[23])?|lab-content-v4(?:-patch)?|lab-runtime-v[45]|session-lab-button|access-gate)\.js$/i.test(url.pathname);const asset=/\.(?:js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);if(doc||runtime)event.respondWith(networkFirst(req));else if(asset)event.respondWith(cacheFirst(req))});
+self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(!allowed(url))return;const doc=req.mode==='navigate'||/\.html?$/i.test(url.pathname);const runtime=/\/assets\/learning\/(?:learning-tracker(?:-v[23])?|analytics(?:-config)?|lab-content-v4(?:-patch)?|lab-runtime-v[45]|session-lab-button|access-gate)\.js$/i.test(url.pathname);const asset=/\.(?:js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);if(doc||runtime)event.respondWith(networkFirst(req));else if(asset)event.respondWith(cacheFirst(req))});
