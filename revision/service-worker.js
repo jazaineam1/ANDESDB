@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-lms-20260912-v3';
+const VERSION = 'andesdb-lms-20260912-v4';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -19,6 +19,7 @@ const ESSENTIAL = [
   './assets/learning/learning-core.js',
   './assets/learning/learning-core-base.js',
   './assets/learning/learning-tracker.js',
+  './assets/learning/learning-tracker-v2.js',
   './assets/learning/learning-extra-labs.js',
   './assets/learning/interactive-tools.js',
   './assets/learning/interactive-nav.js',
@@ -136,7 +137,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core(?:-base)?|learning-tracker|learning-extra-labs|interactive-tools|interactive-nav(?:-base)?)\.js|learning\/learning-plan\.json|pwa-install(?:-base)?\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core(?:-base)?|learning-tracker(?:-v2)?|learning-extra-labs|interactive-tools|interactive-nav(?:-base)?)\.js|learning\/learning-plan\.json|pwa-install(?:-base)?\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
