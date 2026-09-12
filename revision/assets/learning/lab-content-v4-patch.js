@@ -2,10 +2,103 @@
   'use strict';
   const S=window.ANDES_LAB_CONTENT?.sessions;
   if(!S)return;
-  for(const session of Object.values(S)){
-    for(const task of (session.tasks||[])){
-      if(task.type==='sql') task.starter='-- Escribe tu consulta aquí\n';
-    }
-  }
-  if(S[15]?.tasks?.[0]) S[15].tasks[0].requirements=[['qué|cuál|cuánto|cómo'],['dato|venta|cliente|pedido|producto']];
+  const C=(title,prompt,categories,items,answers,explain)=>({type:'classify',title,prompt,categories,items,answers,explain});
+  const O=(title,prompt,items,answer,explain)=>({type:'order',title,prompt,items,answer,explain});
+  const markCode=t=>{if(t&&t.type==='text'){t.autoValidated=true;t.codeLike=true;}return t};
+  for(const session of Object.values(S)) for(const task of (session.tasks||[])) if(task.type==='sql') task.starter='-- Escribe tu consulta aquí\n';
+
+  // Regla pedagógica: ninguna respuesta conceptual abierta cuenta como evidencia.
+  // Se conserva escritura libre únicamente cuando es código/JSON/DDL y el sistema la valida automáticamente.
+
+  // S1 · contexto
+  S[1].strategy='Clasificar, ordenar y relacionar conceptos';
+  S[1].tasks[3]=C('CSV vs SGBD','Clasifica qué describe mejor cada elemento.',['Archivo','SGBD'],['ventas.csv','PostgreSQL','archivo plano sin gestión transaccional','motor que administra consultas, permisos y transacciones'],['Archivo','SGBD','Archivo','SGBD'],'Un CSV almacena datos; un SGBD administra datos y operaciones sobre ellos.');
+  S[1].tasks[6]=C('Reconocer el grano','Identifica qué enunciados sí declaran qué representa una fila.',['Declara grano','No declara grano'],['Una fila por pedido','Una fila contiene nombre y ciudad','Una fila por línea de producto vendida','La tabla tiene 8 columnas'],['Declara grano','No declara grano','Declara grano','No declara grano'],'El grano define la unidad representada por cada fila.');
+  S[1].tasks[9]=C('¿Cuándo conviene un SGBD?','Clasifica cada necesidad.',['Favorece usar SGBD','Puede resolverse con archivo simple'],['Varios usuarios actualizan datos compartidos','Necesitas integridad y relaciones','Lista personal de 20 filas sin concurrencia','Archivo temporal de intercambio'],['Favorece usar SGBD','Favorece usar SGBD','Puede resolverse con archivo simple','Puede resolverse con archivo simple'],'Concurrencia, integridad y consultas compartidas son señales fuertes para usar un SGBD.');
+
+  // S6 · reglas de negocio
+  S[6].strategy='Clasificar evidencia y construir reglas verificables';
+  S[6].tasks[1]=C('Regla con cardinalidad','Selecciona qué redacción convierte la idea en una regla verificable.',['Regla precisa','Regla ambigua'],['Cada pedido pertenece exactamente a un cliente','Los pedidos tienen clientes','Un pedido puede existir sin cliente porque sí','Cada pedido referencia un cliente existente'],['Regla precisa','Regla ambigua','Regla ambigua','Regla precisa'],'Una regla útil explicita obligación y cardinalidad.');
+  S[6].tasks[4]=C('Documentar incertidumbre','Clasifica la forma de documentar una regla aún no confirmada.',['Correcta','Riesgosa'],['Hipótesis: una mesa conserva mesero. Validar con operación.','Agregar CHECK porque parece funcionar en la muestra','Pendiente de validar con responsable de negocio','Asumirla verdadera porque no vimos excepciones'],['Correcta','Riesgosa','Correcta','Riesgosa'],'Una hipótesis debe quedar explícita y con fuente o responsable de validación.');
+  S[6].tasks[7]=C('Alcance de una regla','Decide si el enunciado incluye contexto suficiente.',['Alcance claro','Alcance incompleto'],['Durante un turno, una mesa solo puede tener una reserva activa','Una mesa tiene reserva','Mientras el pedido esté abierto, puede recibir líneas nuevas','Los pedidos cambian'],['Alcance claro','Alcance incompleto','Alcance claro','Alcance incompleto'],'El contexto temporal o de estado evita reglas aparentemente universales.');
+  S[6].tasks[9]=C('Reserva y mesa','Clasifica cuál regla expresa mejor la relación.',['Precisa','Imprecisa'],['Cada reserva activa corresponde exactamente a una mesa','Las reservas usan mesas','Una reserva puede apuntar a cualquier cosa','Cada reserva referencia una mesa existente'],['Precisa','Imprecisa','Imprecisa','Precisa'],'La regla debe permitir traducirse luego a cardinalidad e integridad referencial.');
+
+  // S7 · modelo ER
+  S[7].strategy='Construir el modelo mediante decisiones verificables';
+  S[7].tasks[2]=C('Entidad asociativa','Clasifica qué nombres/modelos resuelven correctamente Pedido–Plato N:M.',['Adecuado','No adecuado'],['LINEA_PEDIDO con pedido_id y plato_id','DETALLE_PEDIDO con pedido_id y plato_id','PLATO con pedido_id repetido','PEDIDO con diez columnas plato_1…plato_10'],['Adecuado','Adecuado','No adecuado','No adecuado'],'La asociativa convierte N:M en dos relaciones 1:N y puede guardar cantidad/precio.');
+  S[7].tasks[5]=C('Opcionalidad del pago','Clasifica las reglas.',['Permite 0 pagos','Exige al menos 1 pago'],['Un pedido puede tener cero o un pago mientras esté abierto','Todo pedido debe tener exactamente un pago desde que nace','El pago es opcional hasta confirmar la compra','Pedido 1:1 Pago obligatorio siempre'],['Permite 0 pagos','Exige al menos 1 pago','Permite 0 pagos','Exige al menos 1 pago'],'La opcionalidad forma parte de la cardinalidad.');
+  S[7].tasks[8]=C('Grano de LINEA_PEDIDO','Identifica qué describe correctamente una fila.',['Grano correcto','No es el grano'],['Un plato específico dentro de un pedido','Un pedido completo','Una combinación pedido–plato con cantidad','Un cliente'],['Grano correcto','No es el grano','Grano correcto','No es el grano'],'LINEA_PEDIDO existe al nivel de la relación entre pedido e ítem.');
+  S[7].tasks[9]=C('Modelo defendible','Clasifica si la relación está respaldada por una regla.',['Defendible','No defendible'],['Cliente 1:N Pedido porque cada pedido pertenece a un cliente','Pedido N:M Plato porque un pedido puede incluir varios platos y un plato aparecer en muchos pedidos','Cliente N:M Pedido porque se ve bonito en el diagrama','Pago 1:1 Pedido sin regla de negocio que lo confirme'],['Defendible','Defendible','No defendible','No defendible'],'La cardinalidad debe rastrearse a una regla explícita.');
+
+  // S8 · normalización
+  S[8].strategy='Detectar dependencias y reconstruir el modelo';
+  S[8].tasks[3]=C('Dependencia parcial · 2FN','Clasifica los casos.',['Dependencia parcial','No es parcial'],['En PK(pedido_id, producto_id), nombre_producto depende solo de producto_id','cantidad depende de pedido_id y producto_id','fecha_pedido depende solo de pedido_id dentro de una tabla cuya PK es compuesta','precio_unitario histórico depende de toda la línea'],['Dependencia parcial','No es parcial','Dependencia parcial','No es parcial'],'Una dependencia parcial usa solo una parte de una clave compuesta.');
+  S[8].tasks[4]=C('Dependencia transitiva · 3FN','Clasifica los casos.',['Transitiva','No transitiva'],['pedido_id → cliente_id → nombre_cliente','pedido_id → fecha_pedido','producto_id → categoria_id → nombre_categoria','linea_id → cantidad'],['Transitiva','No transitiva','Transitiva','No transitiva'],'En 3FN un atributo no clave no debería depender de otro atributo no clave.');
+  S[8].tasks[7]=C('Granos después de normalizar','Asigna el grano correcto.',['PEDIDO','LINEA_PEDIDO'],['Una fila por pedido','Una fila por producto dentro de un pedido'],['PEDIDO','LINEA_PEDIDO'],'Separar tablas también separa sus unidades de observación.');
+  S[8].tasks[9]=C('¿Qué problema resuelve 3FN?','Clasifica las consecuencias.',['Reduce anomalías','No es objetivo directo'],['Evitar repetir nombre_cliente en cada pedido','Reducir inconsistencias al actualizar atributos descriptivos','Hacer todas las consultas más cortas','Eliminar cualquier JOIN'],['Reduce anomalías','Reduce anomalías','No es objetivo directo','No es objetivo directo'],'3FN ataca redundancia y anomalías de actualización; no promete eliminar JOINs.');
+
+  // S9 · DDL: escritura libre sí se conserva porque es código autovalidado.
+  S[9].strategy='Editor DDL autovalidado · 10 prácticas';
+  S[9].intro='Aquí sí escribes: es DDL, no respuesta abierta. Cada fragmento se valida automáticamente por estructura y palabras clave; nadie tiene que corregirlo manualmente.';
+  S[9].tasks.forEach(markCode);
+
+  // S10 · decisión SQL/NoSQL
+  S[10].strategy='Canvas de decisión estructurado';
+  S[10].tasks[2]=C('Consistencia fuerte','Clasifica el nivel de tolerancia al error.',['Requiere consistencia fuerte','Puede tolerar consistencia eventual'],['Saldo bancario','Contador de likes','Transferencia de dinero','Feed social'],['Requiere consistencia fuerte','Puede tolerar consistencia eventual','Requiere consistencia fuerte','Puede tolerar consistencia eventual'],'El impacto de una lectura/escritura incorrecta orienta el nivel de consistencia.');
+  S[10].tasks[3]=C('Embeber o referenciar','Decide qué patrón reduce JOINs sin introducir duplicación peligrosa.',['Embeber','Referenciar'],['Items pequeños de un carrito leídos siempre juntos','Producto compartido y actualizado por miles de pedidos','Dirección histórica congelada al comprar','Usuario global reutilizado en muchas colecciones'],['Embeber','Referenciar','Embeber','Referenciar'],'Embeber favorece agregados que se leen/cambian juntos; referenciar favorece entidades compartidas.');
+  S[10].tasks[5]=C('Patrones de acceso','Clasifica si la frase es una consulta concreta que sirve para diseñar.',['Patrón útil','Demasiado vaga'],['Obtener pedido por id con sus líneas','Que el sistema sea rápido','Listar ventas de un cliente en los últimos 30 días','Necesitamos Big Data'],['Patrón útil','Demasiado vaga','Patrón útil','Demasiado vaga'],'El diseño parte de consultas concretas, no de adjetivos.');
+  S[10].tasks[8]=C('Costo operativo','Clasifica los efectos de añadir otra tecnología.',['Costo real','No elimina el costo'],['Más monitoreo y backups','Más habilidades que mantener en el equipo','No habrá que operar nada','La complejidad desaparece automáticamente'],['Costo real','Costo real','No elimina el costo','No elimina el costo'],'Una tecnología adicional agrega operación, seguridad, capacitación y observabilidad.');
+  S[10].tasks[9]=C('Decisión defendible','Clasifica cada decisión.',['Defendible','Débil'],['SQL para pagos por integridad y transacciones','Documentos para catálogo flexible leído como agregado','NoSQL porque está de moda','SQL porque siempre es mejor'],['Defendible','Defendible','Débil','Débil'],'La tecnología debe conectarse con patrón de acceso y consistencia.');
+
+  // S11 · documentos. JSON sigue siendo escritura técnica autovalidada.
+  S[11].tasks[1]=markCode(S[11].tasks[1]);
+  S[11].tasks[2]=markCode(S[11].tasks[2]);
+  S[11].tasks[5]=C('Patrón que justifica embeber','Clasifica la consulta.',['Favorece embeber','Favorece referenciar'],['Obtener carrito completo con todos sus items en una sola lectura','Actualizar el mismo producto desde miles de documentos','Leer pedido y sus líneas siempre juntos','Mantener un catálogo global único'],['Favorece embeber','Favorece referenciar','Favorece embeber','Favorece referenciar'],'El patrón de lectura y actualización define la frontera del agregado.');
+  S[11].tasks[7]=C('Duplicación peligrosa','Clasifica cuándo una copia embebida se vuelve riesgosa.',['Riesgosa','Aceptable como snapshot'],['Nombre de producto mutable copiado en miles de documentos vivos','Precio histórico congelado al momento de compra','Dato maestro que cambia con frecuencia duplicado en muchas colecciones','Dirección de envío histórica de una venta cerrada'],['Riesgosa','Aceptable como snapshot','Riesgosa','Aceptable como snapshot'],'Duplicar datos mutables crea inconsistencias; snapshots históricos pueden ser intencionales.');
+  S[11].tasks[9]=C('Frontera del agregado','Clasifica qué debería quedar dentro o fuera del documento pedido.',['Dentro del agregado','Referencia externa'],['líneas del pedido','dirección histórica de envío','catálogo global de productos','usuario corporativo compartido'],['Dentro del agregado','Dentro del agregado','Referencia externa','Referencia externa'],'La frontera depende de consistencia y ciclo de vida compartido.');
+
+  // S12 · DW
+  S[12].strategy='Construir una estrella con decisiones verificables';
+  S[12].tasks[1]=C('Grano de fact_ventas','Clasifica los enunciados.',['Grano válido','No declara grano'],['Una fila por línea de producto vendida','Tabla de ventas con cliente y fecha','Una fila por ticket completo','Tiene una columna monto'],['Grano válido','No declara grano','Grano válido','No declara grano'],'El grano siempre responde qué representa una fila.');
+  S[12].tasks[4]=C('Dimensión fecha','Asigna cada atributo.',['Útil en DimFecha','No es atributo temporal'],['año','mes','trimestre','nombre_producto'],['Útil en DimFecha','Útil en DimFecha','Útil en DimFecha','No es atributo temporal'],'DimFecha centraliza jerarquías y atributos de calendario.');
+  S[12].tasks[6]=C('Clave sustituta','Clasifica las razones.',['Razón válida','No es razón principal'],['Manejar historia/SCD sin depender de la clave operacional','Desacoplar cambios en claves naturales','Eliminar toda necesidad de integridad','Evitar tener dimensiones'],['Razón válida','Razón válida','No es razón principal','No es razón principal'],'Las surrogate keys ayudan a desacoplar e historizar dimensiones.');
+  S[12].tasks[9]=C('Estrella final','Asigna cada elemento del modelo.',['Hecho','Dimensión'],['monto_venta','unidades','cliente','producto','fecha'],['Hecho','Hecho','Dimensión','Dimensión','Dimensión'],'La estrella separa medidas/eventos de contexto descriptivo.');
+
+  // S13 · BigQuery: SQL escrito permanece; explicaciones abiertas pasan a decisiones estructuradas.
+  [0,1,5,6].forEach(i=>markCode(S[13].tasks[i]));
+  S[13].tasks[3]=C('Costo de SELECT *','Clasifica el efecto.',['Puede aumentar bytes procesados','No necesariamente aumenta bytes'],['Leer columnas que no necesitas','Proyectar solo id y fecha','Escanear una tabla ancha completa','Usar selección explícita de columnas'],['Puede aumentar bytes procesados','No necesariamente aumenta bytes','Puede aumentar bytes procesados','No necesariamente aumenta bytes'],'En consultas on-demand, leer más columnas suele implicar más datos procesados.');
+  S[13].tasks[8]=C('Antes de ejecutar una consulta cara','Clasifica qué revisar.',['Revisar antes','No ayuda al costo'],['bytes estimados','filtro de partición','columnas seleccionadas','color del editor'],['Revisar antes','Revisar antes','Revisar antes','No ayuda al costo'],'Bytes, columnas y particiones son controles prácticos de costo.');
+  S[13].tasks[9]=C('Consulta analítica defendible','Clasifica los diseños.',['Defendible','Débil'],['Una fila por día y región, SUM(monto), filtrando fecha particionada','SELECT * sin filtro sobre 10 TB para mirar qué hay','Una fila por cliente y mes con filtro de partición','Consulta sin declarar qué representa cada fila'],['Defendible','Débil','Defendible','Débil'],'Semántica, grano y filtro deben estar claros antes de optimizar.');
+
+  // S14 · anidados
+  [1,2,6].forEach(i=>markCode(S[14].tasks[i]));
+  S[14].tasks[5]=C('Grano después de UNNEST','Clasifica el resultado.',['Grano correcto','Incorrecto'],['Una fila por item de cada pedido','Una fila por pedido completo después de expandir items','Una fila por combinación pedido–item','Una fila por base de datos'],['Grano correcto','Incorrecto','Grano correcto','Incorrecto'],'UNNEST suele bajar el grano del agregado al elemento repetido.');
+  S[14].tasks[8]=C('¿Cuándo ayuda anidar?','Clasifica los efectos.',['Puede ayudar','No es garantía'],['Reducir JOINs cuando los atributos se leen juntos','Mejorar localidad para un agregado','Hacer cualquier consulta automáticamente barata','Eliminar toda duplicación'],['Puede ayudar','Puede ayudar','No es garantía','No es garantía'],'Anidar es una decisión de modelado ligada al patrón de acceso.');
+  S[14].tasks[9]=C('Transferencia conceptual a Azure','Clasifica las equivalencias.',['Comparación funcional válida','Comparación incorrecta'],['BigQuery y Fabric/Synapse pueden cubrir analítica/warehouse','BigQuery y Azure SQL Database son idénticos','Cloud SQL y Azure SQL Database comparten el rol de OLTP gestionado','Todos los servicios cloud son intercambiables'],['Comparación funcional válida','Comparación incorrecta','Comparación funcional válida','Comparación incorrecta'],'Compara por función y carga de trabajo, no como equivalencias exactas de producto.');
+
+  // S15 · el "proyecto" pasa a ser caso integrador autocorregible, porque no habrá revisión humana.
+  S[15].strategy='Caso integrador guiado · 10 evidencias autocorregibles';
+  S[15].intro='No se piden ensayos ni entregas abiertas. Resuelves un caso de punta a punta mediante decisiones de modelado, integridad, consultas y arquitectura que el sistema puede verificar.';
+  S[15].tasks=[
+    C('Pregunta de negocio','Clasifica cuáles preguntas son suficientemente concretas para diseñar datos.',['Útil','Demasiado vaga'],['¿Cuánto vende cada categoría por mes?','¿Cómo mejorar todo?','¿Qué clientes llevan 30 días sin comprar?','Necesitamos más datos'],['Útil','Demasiado vaga','Útil','Demasiado vaga'],'Una buena pregunta define entidad, medida o condición observable.'),
+    C('Grano principal','Escoge qué frases sí declaran el grano.',['Declara grano','No declara grano'],['Una fila por pedido','Una fila por línea de pedido','Tabla con ventas y clientes','Tiene 12 columnas'],['Declara grano','Declara grano','No declara grano','No declara grano'],'Sin grano no se pueden defender conteos ni JOINs.'),
+    C('Entidades y atributos','Clasifica.',['Entidad','Atributo'],['Cliente','correo','Pedido','fecha_pedido','Producto','precio'],['Entidad','Atributo','Entidad','Atributo','Entidad','Atributo'],'Las entidades tienen identidad; los atributos las describen.'),
+    C('Cardinalidad','Asigna la cardinalidad más natural.',['1:1','1:N','N:M'],['Cliente–Pedido','Pedido–Pago si solo se admite un pago','Pedido–Producto'],['1:N','1:1','N:M'],'La cardinalidad se deriva de la regla del caso.'),
+    C('Regla implementable','Clasifica.',['Implementable','Ambigua'],['Cada pedido pertenece a exactamente un cliente','Los pedidos son importantes','Cantidad debe ser mayor que cero','Los clientes suelen comprar'],['Implementable','Ambigua','Implementable','Ambigua'],'Una regla implementable puede convertirse en PK/FK/CHECK/UNIQUE o prueba.'),
+    markCode(S[15].tasks[5]),
+    markCode(S[15].tasks[6]),
+    C('SQL o NoSQL','Clasifica la opción más natural.',['SQL/relacional','Documento/NoSQL'],['Pagos con integridad transaccional','Catálogo con estructura muy variable leído como agregado','Contabilidad','Configuración flexible de una app'],['SQL/relacional','Documento/NoSQL','SQL/relacional','Documento/NoSQL'],'La elección depende del patrón de acceso y consistencia.'),
+    C('Operación o analítica','Decide dónde vive cada necesidad.',['OLTP operacional','Warehouse/OLAP'],['Registrar pedido','Actualizar pago','Comparar ventas de 5 años','Analizar cohortes mensuales'],['OLTP operacional','OLTP operacional','Warehouse/OLAP','Warehouse/OLAP'],'Separa el sistema de registro de la carga analítica.'),
+    O('Arquitectura final','Ordena el flujo lógico.',['Visualizar métricas','Registrar operación en fuente de verdad','Publicar/extraer datos','Transformar y cargar capa analítica'],['Registrar operación en fuente de verdad','Publicar/extraer datos','Transformar y cargar capa analítica','Visualizar métricas'],'La arquitectura final separa responsabilidades y conserva una fuente de verdad.')
+  ];
+
+  // S16 · DP-900
+  S[16].strategy='Mapa de escenarios autocorregible';
+  S[16].tasks[2]=C('Rasgos OLTP','Clasifica.',['Típico de OLTP','No es rasgo principal'],['muchas transacciones pequeñas','baja latencia operativa','agregaciones históricas masivas','actualizaciones frecuentes'],['Típico de OLTP','Típico de OLTP','No es rasgo principal','Típico de OLTP'],'OLTP prioriza operación transaccional, concurrencia y respuesta rápida.');
+  S[16].tasks[3]=C('Rasgos OLAP','Clasifica.',['Típico de OLAP','No es rasgo principal'],['lecturas históricas','agregaciones sobre muchos datos','registrar un pago individual','análisis por dimensiones'],['Típico de OLAP','Típico de OLAP','No es rasgo principal','Típico de OLAP'],'OLAP está orientado a análisis, escaneo y agregación.'),
+  S[16].tasks[6]=C('Azure SQL vs Cosmos DB','Relaciona el escenario.',['Azure SQL / relacional','Cosmos DB / documentos'],['integridad relacional y transacciones','documentos flexibles distribuidos globalmente','FKs y joins transaccionales','agregado JSON con esquema variable'],['Azure SQL / relacional','Cosmos DB / documentos','Azure SQL / relacional','Cosmos DB / documentos'],'No es una competencia absoluta: cada servicio responde a patrones distintos.');
+  S[16].tasks[7]=C('¿Para qué sirve un warehouse?','Clasifica.',['Propósito de warehouse','No es propósito principal'],['integrar datos históricos de varias fuentes','analizar tendencias','registrar cada transacción operacional con baja latencia','soportar BI y agregaciones'],['Propósito de warehouse','Propósito de warehouse','No es propósito principal','Propósito de warehouse'],'El warehouse separa e integra la carga analítica.'),
+  S[16].tasks[9]=C('Transferencia a Azure','Relaciona concepto aprendido con familia Azure.',['Azure SQL','Cosmos DB','Fabric/Synapse'],['OLTP relacional','NoSQL/documentos','Warehouse/OLAP'],['Azure SQL','Cosmos DB','Fabric/Synapse'],'La meta es reconocer la función del servicio a partir de la carga de trabajo.')
+
+  window.ANDES_LAB_CONTENT.version='4.1.0';
 })();
