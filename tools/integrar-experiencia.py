@@ -2,11 +2,12 @@
 """Integra la experiencia común de ANDESDB.
 
 - index.html: metadatos PWA + instalador visible.
+- Todas las sesiones públicas: analítica GA4 agregada y sin PII.
 - S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
 - S6 conserva únicamente su laboratorio SQL específico.
 - S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
-- S2-S5 se dejan intactas deliberadamente.
+- S2-S5 se dejan intactas pedagógicamente; solo reciben analítica pública.
 
 Es idempotente: puede ejecutarse en cada build.
 """
@@ -20,6 +21,8 @@ ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
 PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
+PUBLIC_ANALYTICS_CONFIG = ROOT / "assets" / "analytics-config.js"
+PUBLIC_ANALYTICS = ROOT / "assets" / "analytics.js"
 TECHNICAL_DIFFERENTIATION = {11, 12, 13, 14, 15}
 
 
@@ -46,6 +49,21 @@ def remove_learning_script(text: str) -> tuple[str, bool]:
     return new, new != text
 
 
+def ensure_public_analytics(text: str, path: Path) -> tuple[str, bool]:
+    changed = False
+    cfg_src = relative_url(path, PUBLIC_ANALYTICS_CONFIG)
+    js_src = relative_url(path, PUBLIC_ANALYTICS)
+    cfg_tag = f'<script src="{cfg_src}?v=20260912a"></script>'
+    js_tag = f'<script src="{js_src}?v=20260912a"></script>'
+    if "assets/analytics-config.js" not in text:
+        text, ok = inject_before(text, "</body>", cfg_tag)
+        changed |= ok
+    if "assets/analytics.js" not in text:
+        text, ok = inject_before(text, "</body>", js_tag)
+        changed |= ok
+    return text, changed
+
+
 def process_index() -> bool:
     path = ROOT / "index.html"
     if not path.exists():
@@ -65,8 +83,7 @@ def process_index() -> bool:
             text, ok = inject_before(text, "</head>", fragment)
             changed |= ok
 
-    # La portada instala la PWA, pero ya no mantiene progreso personal ni carga
-    # la capa de práctica técnica.
+    # La portada instala la PWA y pwa-install.js carga la analítica pública.
     text, removed = remove_learning_script(text)
     changed |= removed
 
@@ -85,26 +102,30 @@ def process_session(path: Path) -> bool:
     if not m:
         return False
     n = int(m.group(1))
-    if n < 6:
-        return False
 
     text = path.read_text(encoding="utf-8")
     changed = False
 
-    if n in TECHNICAL_DIFFERENTIATION:
-        if "learning-core.js" not in text:
-            src = relative_url(path, LEARNING)
-            text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
-            changed |= ok
-    else:
-        text, removed = remove_learning_script(text)
-        changed |= removed
+    # Mantener la diferenciación técnica previa únicamente para S6+.
+    if n >= 6:
+        if n in TECHNICAL_DIFFERENTIATION:
+            if "learning-core.js" not in text:
+                src = relative_url(path, LEARNING)
+                text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+                changed |= ok
+        else:
+            text, removed = remove_learning_script(text)
+            changed |= removed
 
-    if 12 <= n <= 14:
-        if "analytics-fallback-link.js" not in text:
-            src = relative_url(path, ANALYTICS_FALLBACK)
-            text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
-            changed |= ok
+        if 12 <= n <= 14:
+            if "analytics-fallback-link.js" not in text:
+                src = relative_url(path, ANALYTICS_FALLBACK)
+                text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
+                changed |= ok
+
+    # GA4 público se instala en todas las presentaciones S1-S16.
+    text, analytics_changed = ensure_public_analytics(text, path)
+    changed |= analytics_changed
 
     if changed:
         path.write_text(text, encoding="utf-8")
