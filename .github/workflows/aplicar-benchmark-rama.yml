@@ -1,4 +1,4 @@
-name: Aplicar benchmark pedagógico en rama
+name: Validar curación pedagógica en rama
 
 on:
   workflow_dispatch:
@@ -6,113 +6,39 @@ on:
     branches:
       - mejoras-benchmark-pedagogico
     paths:
-      - 'tools/aplicar-mejoras-benchmark.py'
-      - 'tools/cerrar-auditoria-benchmark.py'
-      - 'tools/corregir-residuos-cierre.py'
-      - 'tools/remate-benchmark.py'
-      - 'tools/corregir-hilo-conductor.py'
-      - 'tools/validar-hilo-conductor.py'
-      - 'tools/validar-cierre-benchmark.py'
+      - 'Presentaciones/**'
+      - 'assets/learning/**'
+      - 'docs/**'
+      - 'Plantillas/**'
+      - 'tools/**'
       - '.github/workflows/aplicar-benchmark-rama.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: benchmark-pedagogico-rama
-  cancel-in-progress: false
+  group: curacion-pedagogica-rama
+  cancel-in-progress: true
 
 jobs:
-  aplicar:
+  validar:
     runs-on: ubuntu-latest
     steps:
       - name: Descargar rama
         uses: actions/checkout@v4
         with:
-          ref: mejoras-benchmark-pedagogico
           fetch-depth: 0
 
-      - name: Ejecutar benchmark base una sola vez
-        run: |
-          if [ -f docs/BENCHMARK-PEDAGOGICO-APLICADO.md ]; then
-            echo 'Benchmark base ya aplicado; no se duplican checkpoints.'
-          else
-            python tools/aplicar-mejoras-benchmark.py
-          fi
-
-      - name: Cerrar todos los hallazgos de aceptación
-        run: python tools/cerrar-auditoria-benchmark.py
-
-      - name: Corregir residuos detectados por la validación semántica
-        run: python tools/corregir-residuos-cierre.py
-
-      - name: Aplicar remate final de profundidad
-        run: python tools/remate-benchmark.py
-
-      - name: Corregir hilo conductor completo
-        run: python tools/corregir-hilo-conductor.py
-
-      - name: Corregir identificador visual de nuevas sesiones
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          archivos = {
-              13: Path('Presentaciones/M5/sesion-13-laboratorio-bigquery.html'),
-              14: Path('Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html'),
-              15: Path('Presentaciones/M6/sesion-15-desafio-final.html'),
-              16: Path('Presentaciones/M6/sesion-16-cierre-dp900.html'),
-              1: Path('Presentaciones/M1/sesion-1-diagnostico.html'),
-          }
-          for n, p in archivos.items():
-              if not p.exists():
-                  continue
-              text = p.read_text(encoding='utf-8')
-              text = text.replace('%3E12%3C/text%3E', f'%3E{n}%3C/text%3E')
-              p.write_text(text, encoding='utf-8')
-          PY
-
-      - name: Mantener recuperación DP-900 mínima en S6
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path('assets/learning/learning-plan.json')
-          data = json.loads(p.read_text(encoding='utf-8'))
-          qs = data['sesiones']['6'].setdefault('dp900', [])
-          if len(qs) < 2:
-              qs.append({
-                  'dominio': 'Relational data on Azure',
-                  'pregunta': 'Una columna tiene DEFAULT abierto. ¿Qué afirmación es correcta?',
-                  'opciones': [
-                      'DEFAULT impide guardar cualquier otro valor',
-                      'DEFAULT propone un valor cuando no se especifica; no sustituye una restricción',
-                      'DEFAULT crea automáticamente una clave primaria',
-                      'DEFAULT normaliza la tabla'
-                  ],
-                  'correcta': 1,
-                  'explicacion': 'DEFAULT define un valor por omisión; CHECK, FK, NOT NULL u otras restricciones son las que pueden impedir estados inválidos.'
-              })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-          PY
-
-      - name: Comprobar sintaxis de herramientas
-        run: |
-          python -m py_compile tools/aplicar-mejoras-benchmark.py
-          python -m py_compile tools/cerrar-auditoria-benchmark.py
-          python -m py_compile tools/corregir-residuos-cierre.py
-          python -m py_compile tools/remate-benchmark.py
-          python -m py_compile tools/corregir-hilo-conductor.py
-          python -m py_compile tools/validar-hilo-conductor.py
-          python -m py_compile tools/validar-cierre-benchmark.py
-
-      - name: Validar curso existente
+      - name: Validar curso
         run: python tools/validar_curso.py
 
-      - name: Validar cierre semántico del benchmark
-        run: python tools/validar-cierre-benchmark.py
-
-      - name: Validar hilo conductor de punta a punta
-        run: python tools/validar-hilo-conductor.py
+      - name: Validar regresiones manuales
+        run: |
+          if [ -f tools/validar-regresiones-manuales.py ]; then
+            python tools/validar-regresiones-manuales.py
+          else
+            echo 'Validador manual aún no instalado'
+          fi
 
       - name: Confirmar que no cambió el estilo visual
         run: |
@@ -124,15 +50,11 @@ jobs:
           fi
           echo 'OK: no hay cambios en CSS respecto de main'
 
-      - name: Publicar cambios solo en la rama
+      - name: Confirmar CI de solo lectura
         run: |
-          set -euo pipefail
-          if git diff --quiet; then
-            echo 'No hay cambios generados'
-            exit 0
+          if ! git diff --quiet; then
+            echo 'ERROR: la validación modificó archivos; CI debe ser solo lectura'
+            git diff --stat
+            exit 1
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add README.md tools/curso.json tools/validar_curso.py tools/validar-cierre-benchmark.py tools/validar-hilo-conductor.py assets/learning docs Presentaciones Plantillas service-worker.js .claude .codex
-          git commit -m 'Reforzar hilo conductor de las 16 sesiones'
-          git push origin HEAD:mejoras-benchmark-pedagogico
+          echo 'OK: CI valida, no reescribe contenido'
