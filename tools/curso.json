@@ -410,8 +410,23 @@
           "trabajoAutonomoMin": 75,
           "titulo": "Laboratorio BigQuery",
           "estado": "pendiente",
-          "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
-          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"]
+          "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición y clusterización de tablas, con la ruta de certificado de Google Skills.",
+          "tags": ["BigQuery", "cloud", "warehouse", "particion", "clusterizacion", "SQL", "workshop"],
+          "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
+          "recursos": [
+            {
+              "txt": "🎓 Ruta Beginner: Google Cloud Data Analytics Certificate",
+              "href": "https://www.skills.google/paths/420"
+            },
+            {
+              "txt": "▶ Laboratorio real: partición de tablas en BigQuery",
+              "href": "https://www.skills.google/paths/420/course_templates/1295/labs/562865"
+            },
+            {
+              "txt": "▶ Laboratorio real: clusterización de tablas en BigQuery",
+              "href": "https://www.skills.google/paths/420/course_templates/1304/labs/562975"
+            }
+          ]
         },
         {
           "n": 14,
