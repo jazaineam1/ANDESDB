@@ -92,26 +92,85 @@ def validate_final_dataset() -> None:
     if not cases_path.exists() or not events_path.exists() or not evidence_path.exists():
         err("S15: falta al menos uno de los tres archivos de datos")
         return
+
     with cases_path.open(encoding="utf-8", newline="") as fh:
         cases = list(csv.DictReader(fh))
     with events_path.open(encoding="utf-8", newline="") as fh:
-        events = list(csv.DictReader(fh))
+        reader = csv.DictReader(fh)
+        events = list(reader)
+        event_columns = set(reader.fieldnames or [])
     evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-    expected = {"casos": 12, "eventos": 24, "cerrados": 4, "alta": 5, "alta_cerrado": 2, "evidencias": 4}
+
+    required_event_columns = {
+        "evento_id", "caso_id", "fecha_evento", "tipo_evento",
+        "estado_anterior", "estado_nuevo", "agente_id", "minutos_desde_anterior",
+        "canal_evento", "os", "dispositivo", "navegador", "ip_origen",
+        "localidad_evento", "latitud", "longitud", "payload_bytes",
+        "latencia_ms", "resultado", "http_status",
+    }
+    missing_columns = sorted(required_event_columns - event_columns)
+    if missing_columns:
+        err(f"S15 datos: eventos.csv perdió columnas requeridas {missing_columns}")
+
+    expected = {
+        "casos": 12,
+        "eventos": 24,
+        "cerrados": 4,
+        "alta": 5,
+        "alta_cerrado": 2,
+        "evidencias": 4,
+        "errores_evento": 2,
+        "sin_ip": 2,
+        "creaciones": 12,
+    }
     actual = {
-        "casos": len(cases), "eventos": len(events),
+        "casos": len(cases),
+        "eventos": len(events),
         "cerrados": sum(r["estado"] == "Cerrado" for r in cases),
         "alta": sum(r["prioridad"] == "Alta" for r in cases),
         "alta_cerrado": sum(r["prioridad"] == "Alta" and r["estado"] == "Cerrado" for r in cases),
         "evidencias": len(evidence),
+        "errores_evento": sum(r.get("resultado") == "Error" for r in events),
+        "sin_ip": sum(not (r.get("ip_origen") or "").strip() for r in events),
+        "creaciones": sum(r.get("tipo_evento") == "creacion" for r in events),
     }
     for key, value in expected.items():
         if actual[key] != value:
             err(f"S15 datos: {key}={actual[key]}, esperado={value}")
+
     case_ids = {r["caso_id"] for r in cases}
     orphan_events = [r["evento_id"] for r in events if r["caso_id"] not in case_ids]
     if orphan_events:
         err(f"S15 datos: eventos huérfanos {orphan_events}")
+
+    missing_ip_wrong_channel = [
+        r["evento_id"] for r in events
+        if not (r.get("ip_origen") or "").strip() and r.get("canal_evento") != "Telefono"
+    ]
+    if missing_ip_wrong_channel:
+        err(f"S15 datos: IP ausente fuera de Telefono {missing_ip_wrong_channel}")
+
+    allowed_ip_prefixes = ("192.0.2.", "198.51.100.", "203.0.113.", "2001:db8:")
+    unsafe_ips = [
+        r["evento_id"] for r in events
+        if (r.get("ip_origen") or "").strip()
+        and not r["ip_origen"].startswith(allowed_ip_prefixes)
+    ]
+    if unsafe_ips:
+        err(f"S15 datos: IP fuera de rangos reservados para documentación {unsafe_ips}")
+
+    file_evidence = [
+        item
+        for doc in evidence
+        for item in doc.get("evidencias", [])
+        if item.get("tipo") in {"foto", "video"}
+    ]
+    if not file_evidence:
+        err("S15 datos: evidencias.json no contiene archivos foto/video")
+    for item in file_evidence:
+        for field in ["archivo", "mime_type", "tamano_bytes"]:
+            if field not in item:
+                err(f"S15 datos: evidencia {item.get('evidencia_id', '?')} sin {field}")
 
 
 def validate_course_s13(course: dict) -> None:
@@ -166,7 +225,11 @@ def main() -> int:
     validate_final_dataset()
     read("Plantillas/proyecto-final/criterios.md")
     s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
-    require(s15, ["Atención de incidentes urbanos", "casos cerrados", "Code ownership", "Pruebas negativas", "90 s por equipo", 'href="sesion-15-desafio-final.html"', "learning-core.js"], "S15")
+    require(s15, [
+        "Atención de incidentes urbanos", "casos cerrados", "Code ownership", "90 s por equipo",
+        "Anatomía del evento", "payload_bytes", "latencia_ms", "Debe fallar",
+        'href="sesion-15-desafio-final.html"', "learning-core.js"
+    ], "S15")
     forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
@@ -191,7 +254,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ sesiones maduras protegidas, S13 alineada a M5C2, datos reproducibles y guías específicas")
+    print("  ✓ sesiones maduras protegidas, S13 alineada a M5C2, dataset S15 trazable y guías específicas")
     return 0
 
 
