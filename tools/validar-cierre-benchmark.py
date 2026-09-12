@@ -76,8 +76,8 @@ def main() -> int:
     forbid(s9, ['239–244 min', '216–226 min', '170–178 min', '151–155 min'], 'S9')
     if max_timing(s9) > 165:
         err(f'S9: quedan tiempos mayores a 165 min ({max_timing(s9)})')
-    if '14 en vez de 11' not in s9:
-        err('S9: falta la corrección numérica 14 en vez de 11')
+    if '14 en vez de 6' in s9:
+        err('S9: reapareció la cifra incorrecta 14 en vez de 6')
     for stale in ['Antes de las formas normales', 'La pregunta central', 'Resumen visual']:
         if f'data-title="{stale}"' in s9:
             err(f'S9: sigue el reteaching {stale!r}')

@@ -1117,6 +1117,14 @@ SELECT ROUND(AVG(length), 2) FROM con_copia;
 <div class="ey">Método reusable · antes de escribir SQL</div><h2>Seis pasos para construir una tabla sin inflar las cuentas</h2><div class="g2"><div class="card"><ol><li><b>Declara la fila final.</b></li><li><b>Dibuja las columnas.</b></li><li><b>Lleva cada fuente al mismo grano.</b></li></ol></div><div class="card blue"><ol start="4"><li><b>Une.</b></li><li><b>Calcula.</b></li><li><b>Valida conteos y totales.</b></li></ol></div></div><div class="hintbox"><strong>Transferencia:</strong> volverá en S12 y S15.</div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 5 · Algorítmica de tablas</span></div></section>
 
+<section class="slide dense" data-title="Extensión · VIEW" data-opcional="true">
+<div class="ey">Opcional · si el núcleo ya está logrado</div><h2>Cuando una consulta se vuelve una pieza reutilizable</h2>
+<div class="g2"><div><pre><code>CREATE VIEW resumen_clientes AS
+SELECT customer_id,
+       COUNT(*) AS alquileres
+FROM rental
+GROUP BY customer_id;</code></pre></div><div class="card blue"><h3>Idea</h3><p>Una vista da nombre a una consulta. No cambia el método ANDESDB: primero declaras el grano y validas; después decides si vale la pena reutilizarla.</p></div></div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 5 · Algorítmica de tablas</span></div></section>
 <section class="slide yellow mid" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
 <h2>Ya no copias consultas: las dise&ntilde;as</h2>
 <div class="g2">

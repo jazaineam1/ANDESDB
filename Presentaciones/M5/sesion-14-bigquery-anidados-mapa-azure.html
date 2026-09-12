@@ -3332,6 +3332,10 @@
 <div class="ey">Conecta S8 + S11 + S13</div><h2>Tres formas de representar el mismo pedido</h2><div class="g3"><div class="card"><h3>Relacional</h3><p>pedido + línea</p></div><div class="card blue"><h3>Documento</h3><p>líneas anidadas</p></div><div class="card"><h3>Analítico</h3><p>STRUCT/ARRAY</p></div></div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
+<section class="slide dense" data-title="Relacional vs anidado">
+<div class="ey">Puente S8 → S14</div><h2>¿Por qué separar primero y volver a anidar después?</h2>
+<div class="g2"><div class="card"><h3>OLTP relacional</h3><p><code>pedido</code> + <code>linea_pedido</code> protege integridad y evita repetir datos operacionales.</p></div><div class="card blue"><h3>Analítica/documento anidado</h3><p>Si las líneas casi siempre se leen junto con el pedido, una estructura anidada puede reducir JOINs y acercar almacenamiento al patrón de lectura.</p></div></div><div class="warn"><b>No hay contradicción:</b> el modelo depende de la carga de trabajo.</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 <section class="slide dense" data-title="ARRAY y STRUCT">
 <div class="ey">Concepto · 15 min</div><h2>Una columna también puede contener estructura</h2><pre><code>{ pedido_id: 42, lineas: [{plato: "Ajiaco", cantidad: 2}] }</code></pre><div class="ctx"><b>STRUCT</b> agrupa campos; <b>ARRAY</b> repite valores/estructuras.</div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
@@ -3340,22 +3344,36 @@
 <div class="ey">Hazlo conmigo</div><h2>Para consultar el arreglo, lo convertimos temporalmente en filas</h2><pre><code>SELECT pedido_id, linea.plato, linea.cantidad
 FROM pedidos, UNNEST(lineas) AS linea;</code></pre>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
+<section class="slide dense" data-title="UNNEST ejecutable">
+<div class="ey">BigQuery real · consulta autocontenida</div><h2>Prueba ARRAY, STRUCT y UNNEST sin cargar otro archivo</h2>
+<pre><code>WITH pedidos AS (
+  SELECT 42 AS pedido_id,
+         [STRUCT('Ajiaco' AS plato, 2 AS cantidad),
+          STRUCT('Jugo' AS plato, 1 AS cantidad)] AS lineas
+)
+SELECT pedido_id, linea.plato, linea.cantidad
+FROM pedidos,
+UNNEST(lineas) AS linea;</code></pre><div class="checkpoint">Predice antes de ejecutar: ¿cuántas filas aparecen y qué representa cada una?</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
+
 
 <section class="slide dense" data-title="Reasoning Check">
 <div class="ey">🔍 Reasoning Check</div><h2>Normalizar o anidar no es una decisión moral</h2><div class="g2"><div class="card"><p>¿Las líneas se leen junto con el pedido?</p></div><div class="card blue"><p>¿Se comparten/actualizan independientemente?</p></div></div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
-<section class="slide dense" data-title="Formatos">
-<div class="ey">JSON · Parquet</div><h2>Mismo negocio, distinta representación física</h2><div class="g2"><div class="card"><h3>JSON</h3><p>semiestructurado y anidado</p></div><div class="card blue"><h3>Parquet</h3><p>columnar y analítico</p></div></div>
-<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
+<section class="slide dense" data-title="CSV · JSON · Parquet">
+<div class="ey">Transferencia de formatos</div><h2>La misma venta puede viajar con estructuras físicas distintas</h2>
+<div class="g3"><div class="card"><h3>CSV</h3><p>Plano, simple y universal. La jerarquía se aplana.</p></div><div class="card blue"><h3>JSON</h3><p>Semiestructurado; conserva objetos y arreglos de forma natural.</p></div><div class="card"><h3>Parquet</h3><p>Columnar, tipado y eficiente para analítica; puede conservar estructuras anidadas.</p></div></div><div class="ctx"><b>Pregunta:</b> ¿cuál elegirías para intercambio humano sencillo, documento anidado y lectura analítica por columnas?</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
 <section class="slide dense" data-title="Workshop">
 <div class="ey">45 min · BigQuery real</div><h2>Consulta datos anidados</h2><ul class="checks"><li>campo de STRUCT</li><li><code>UNNEST</code></li><li>agrega tras expandir</li><li>predice filas antes de ejecutar</li></ul>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
-<section class="slide dense" data-title="Mapa Azure">
-<div class="ey">Transferencia DP-900</div><h2>Concepto primero; servicio después</h2><div class="g3"><div class="card"><h3>Almacenar</h3><p>Blob · Files · Table · Cosmos</p></div><div class="card blue"><h3>Procesar</h3><p>Fabric · Databricks</p></div><div class="card"><h3>Consumir</h3><p>Power BI</p></div></div>
-<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
+<section class="slide dense" data-title="Azure por casos">
+<div class="ey">DP-900 · transferencia, no catálogo</div><h2>Elige servicio a partir de la necesidad</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Reconoce</th></tr></thead><tbody><tr><td>Objetos y archivos masivos</td><td><b>Azure Blob Storage</b></td></tr><tr><td>Compartición de archivos tipo SMB</td><td><b>Azure Files</b></td></tr><tr><td>Clave/atributos simples</td><td><b>Table Storage</b></td></tr><tr><td>NoSQL distribuido globalmente</td><td><b>Cosmos DB</b></td></tr><tr><td>Ingeniería/analítica</td><td><b>Fabric / Databricks</b></td></tr><tr><td>Consumo visual</td><td><b>Power BI</b></td></tr></tbody></table><div class="checkpoint">Primero nombra la necesidad; después el producto.</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 14 · BigQuery anidado + mapa Azure</span></div></section>
 
 <section class="slide dense" data-title="Checkpoint">
 <div class="ey">Evidencia · transferencia</div><h2>Elige representación antes de producto</h2><p class="lead">Decide tabla plana, normalizada o anidada y justifica con patrón de consulta + limitación.</p>

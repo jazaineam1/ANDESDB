@@ -3808,6 +3808,10 @@ END LOOP;</code></pre>
       </section>
 
       
+<section class="slide dense" data-title="Contingencia explícita" data-opcional="true">
+<div class="ey">Plan B · no confundir práctica con evidencia</div><h2>Si Firestore se bloquea, la clase sigue; la evidencia cloud queda pendiente</h2>
+<div class="g2"><div class="card"><h3>Modo contingencia</h3><p>Usa <code>carrito-abc.html</code> para practicar forma del documento, embed/reference y transición carrito → pedido.</p></div><div class="card blue"><h3>Qué NO demuestra</h3><p>No demuestra persistencia ni listener de Firestore. Esa evidencia se recupera en el servicio real cuando vuelva el acceso.</p></div></div><div class="warn">La contingencia conserva el aprendizaje conceptual sin fingir equivalencia técnica.</div>
+<div class="brand"><span>ANDESDB · evidencia y razonamiento</span><span>Sesión 11 · Documentos de verdad</span></div></section>
 <section class="slide dense" data-title="Reasoning Check · checkout">
 <div class="ey">🔍 Reasoning Check</div><h2>¿Qué ocurre si el pedido se crea pero sus líneas fallan?</h2><div class="g2"><div class="card"><h3>Escenario</h3><p>El checkout escribe <code>pedido</code>. La segunda escritura falla antes de completar <code>linea_pedido</code>.</p></div><div class="card blue"><h3>Discute</h3><ul class="checks"><li>¿qué inconsistencia queda?</li><li>¿qué significa “todo o nada”?</li><li>¿qué merece una transacción?</li></ul></div></div><div class="ctx"><b>Evidencia:</b> 2 documentos · ≥2 filtros · embed/reference defendido · compra localizada en PostgreSQL.</div>
 <div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 11 · Documentos de verdad</span></div></section>

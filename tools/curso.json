@@ -70,12 +70,7 @@
       "desc": "Dato ≠ valor, actores, decisiones y el ecosistema de datos.",
       "recursos": [
         {
-          "txt": "📊 Introducción al curso",
-          "download": true,
-          "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"
-        },
-        {
-          "txt": "🧭 Diagnóstico de entrada y roles de datos",
+          "txt": "🧭 Sesión 1 · presentación canónica: diagnóstico, ecosistema y roles",
           "href": "Presentaciones/M1/sesion-1-diagnostico.html"
         }
       ],
