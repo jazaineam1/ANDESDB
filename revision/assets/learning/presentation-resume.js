@@ -1,0 +1,9 @@
+(()=>{
+'use strict';
+if(window.__ANDES_PRESENTATION_RESUME__)return;window.__ANDES_PRESENTATION_RESUME__=true;
+const target=Number(new URLSearchParams(location.search).get('slide'));if(!Number.isInteger(target)||target<1)return;
+function current(){const slides=[...document.querySelectorAll('.slide')];let i=slides.findIndex(x=>x.classList.contains('active'));if(i>=0)return i+1;const r=[...document.querySelectorAll('.reveal .slides section')],j=r.findIndex(x=>x.classList.contains('present'));return j>=0?j+1:null}
+function cleanup(){const u=new URL(location.href);u.searchParams.delete('slide');history.replaceState(null,'',u.pathname+(u.searchParams.toString()?'?'+u.searchParams.toString():'')+u.hash)}
+async function tryResume(){if(window.Reveal?.slide){window.Reveal.slide(target-1);cleanup();return true}let c=current();if(c==null)return false;if(c===target){cleanup();return true}const key=target>c?'ArrowRight':'ArrowLeft',steps=Math.min(80,Math.abs(target-c));for(let i=0;i<steps;i++){document.dispatchEvent(new KeyboardEvent('keydown',{key,code:key,bubbles:true}));window.dispatchEvent(new KeyboardEvent('keydown',{key,code:key,bubbles:true}));await new Promise(r=>setTimeout(r,25));const now=current();if(now===target){cleanup();return true}if(now!=null)c=now}const selector=target>c?'button[aria-label*="Siguiente" i],button[title*="Siguiente" i],.next,#next':'button[aria-label*="Anterior" i],button[title*="Anterior" i],.prev,#prev';for(let i=0;i<steps;i++){const b=document.querySelector(selector);if(!b)break;b.click();await new Promise(r=>setTimeout(r,30));if(current()===target){cleanup();return true}}return false}
+let tries=0;const timer=setInterval(async()=>{if(await tryResume()||++tries>40)clearInterval(timer)},100);
+})();
