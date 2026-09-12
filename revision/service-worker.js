@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-interactive-20260912-v1';
+const VERSION = 'andesdb-interactive-20260912-v2';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -15,6 +15,7 @@ const ESSENTIAL = [
   './assets/pwa-install.js',
   './assets/learning/learning-core.js',
   './assets/learning/interactive-tools.js',
+  './assets/learning/interactive-nav.js',
   './assets/learning/learning-plan.json',
   './Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html',
   './Presentaciones/M2/sesion-3-filtros-y-agregaciones.html',
@@ -128,7 +129,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core|interactive-tools)\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:learning\/(?:learning-core|interactive-tools|interactive-nav)\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));

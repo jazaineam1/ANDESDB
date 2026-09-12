@@ -21,6 +21,7 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
   let html=await response.text();
   const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
+  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912b"><\/script>';
   const clarify=`<script>
   document.addEventListener('DOMContentLoaded',()=>{
     const m=(location.pathname+' '+document.title).match(/sesion[-_\\s]*(\\d{1,2})/i); const n=m?Number(m[1]):0;
@@ -32,7 +33,7 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   <\/script>`;
   const lower=html.toLowerCase();
   const pos=lower.lastIndexOf('</body>');
-  html=pos>=0?html.slice(0,pos)+kit+'\n'+clarify+'\n'+html.slice(pos):html+kit+clarify;
+  html=pos>=0?html.slice(0,pos)+kit+'\n'+nav+'\n'+clarify+'\n'+html.slice(pos):html+kit+nav+clarify;
   document.open();
   document.write(html);
   document.close();
