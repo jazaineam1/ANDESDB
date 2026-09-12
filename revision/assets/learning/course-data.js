@@ -1,0 +1,21 @@
+(()=>{
+'use strict';
+if(window.ANDES_COURSE?.version==='2.0.0')return;
+const script=document.currentScript||[...document.scripts].find(s=>/course-data\.js(?:\?|$)/.test(s.src));
+const ROOT=script?new URL('../../',script.src):new URL('./',location.href);
+let manifest=null,sessions=[],modules=[];
+const normalize=m=>{
+  modules=(m.modulos||[]).map(mod=>({...mod,sesiones:mod.sesiones||[]}));
+  sessions=modules.flatMap(mod=>(mod.sesiones||[]).map(s=>({...s,module_number:mod.n,module_title:mod.titulo,module_desc:mod.desc||''})));
+  sessions.sort((a,b)=>Number(a.n)-Number(b.n));
+  manifest=m;return m;
+};
+const readyPromise=fetch(new URL('tools/curso.json',ROOT),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('No se pudo cargar el manifiesto del curso');return r.json()}).then(normalize).catch(e=>{console.error('ANDESDB course manifest',e);return null});
+function fold(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+function session(n){return sessions.find(x=>Number(x.n)===Number(n))||null}
+function search(q){const x=fold(q).trim();if(!x)return [...sessions];return sessions.filter(s=>fold([s.n,s.titulo,s.desc,(s.tags||[]).join(' '),s.module_title,(s.recursos||[]).map(r=>r.txt).join(' ')].join(' ')).includes(x))}
+function upcoming(now=new Date()){return sessions.filter(s=>s.fecha&&new Date(`${s.fecha}T23:59:59-05:00`)>=now).sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)))}
+function icsText(){const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ANDESDB//LMS//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:ANDESDB','X-WR-TIMEZONE:America/Bogota'];for(const s of sessions.filter(x=>x.fecha)){const d=String(s.fecha).replaceAll('-','');const start=`${d}T180000`;const mins=Number(s.duracionUtil||165),endDate=new Date(`${s.fecha}T18:00:00-05:00`);endDate.setMinutes(endDate.getMinutes()+mins);const pad=n=>String(n).padStart(2,'0'),end=`${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;lines.push('BEGIN:VEVENT',`UID:andesdb-s${s.n}-${s.fecha}@jazaineam1.github.io`,`DTSTAMP:${stamp}`,`DTSTART;TZID=America/Bogota:${start}`,`DTEND;TZID=America/Bogota:${end}`,`SUMMARY:${esc(`ANDESDB · S${s.n} · ${s.titulo}`)}`,`DESCRIPTION:${esc(s.desc||'')}`,`URL:${new URL(s.href,ROOT).href}`,'END:VEVENT')}lines.push('END:VCALENDAR');return lines.join('\r\n')}
+function downloadCalendar(){const blob=new Blob([icsText()],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ANDESDB-calendario.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},0)}
+window.ANDES_COURSE={version:'2.0.0',ROOT,ready:()=>readyPromise,get manifest(){return manifest},get sessions(){return sessions},get modules(){return modules},session,search,upcoming,icsText,downloadCalendar};
+})();
