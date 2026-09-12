@@ -1,6 +1,11 @@
 window.ANDES_ANALYTICS_CONFIG = Object.freeze({
-  enabled: false,
-  ga4MeasurementId: '',
+  enabled: true,
+  ga4MeasurementId: 'G-Z5YG0TNP8J',
   sendPageViews: true,
-  privacyMode: 'no-pii'
+  mirrorLmsEvents: true,
+  collectActorType: true,
+  privacyMode: 'no-pii',
+  allowGoogleSignals: false,
+  allowAdPersonalization: false,
+  safePageLocation: true
 });
