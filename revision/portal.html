@@ -42,5 +42,7 @@ async function logout(token){clearAuth();try{await call('learning-auth',{method:
 (async()=>{const a=await hydrate(getAuth());a?.user?signedView(a):loginView('student')})();
 })();
 </script>
+<script src="assets/learning/analytics-config.js?v=20260912-ga4a"></script>
+<script src="assets/learning/analytics.js?v=20260912-ga4a"></script>
 </body>
 </html>
