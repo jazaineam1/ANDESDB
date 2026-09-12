@@ -8,15 +8,13 @@
     if(has(file.split('?')[0])){resolve();return}
     const s=document.createElement('script');s.src=new URL(file,dir).href;s.async=!ordered;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
   });
-  // Núcleo LMS: se carga en orden, pero sin bloquear el parser de la página.
   (async()=>{
     try{
       if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
       if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912f');
-      await add('access-gate.js?v=20260912a');
+      await add('access-gate.js?v=20260912b');
     }catch(e){console.error('ANDESDB LMS runtime',e)}
   })();
-  // Analítica web no debe retrasar presentaciones ni laboratorios.
   setTimeout(async()=>{
     try{
       if(!window.ANDES_ANALYTICS_CONFIG)await add('analytics-config.js?v=20260912a',false);
