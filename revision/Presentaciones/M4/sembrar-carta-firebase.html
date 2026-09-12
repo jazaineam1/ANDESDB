@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sembrar la carta en Firestore · herramienta del docente</title>
+<meta name="robots" content="noindex">
+<style>
+body{font:16px/1.5 "Segoe UI",Arial,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;color:#16202a}
+h1{font-size:1.4rem}
+label{display:block;font-weight:700;margin:1rem 0 .3rem;font-size:.9rem}
+input{width:100%;padding:.6rem;border:2px solid #dbe3ea;border-radius:8px;font:inherit}
+button{margin-top:1.2rem;padding:.7rem 1.4rem;border-radius:999px;border:0;background:#c47f00;color:#fff;font-weight:800;cursor:pointer;font-size:1rem}
+button:disabled{opacity:.5;cursor:progress}
+pre{background:#0d151c;color:#eaf1f7;padding:1rem;border-radius:8px;white-space:pre-wrap;font-size:.85rem;margin-top:1rem;max-height:300px;overflow:auto}
+.aviso{background:#fff3e0;border-left:5px solid #c47f00;padding:.9rem 1rem;border-radius:8px;margin:1rem 0;font-size:.92rem}
+</style>
+</head>
+<body>
+<h1>Sembrar la carta del ABC en Firestore</h1>
+<div class="aviso">
+  <b>Herramienta de un solo uso, para el docente.</b> Antes de usarla: en Firestore →
+  <b>Reglas</b>, pega temporalmente <code>allow read, write: if true;</code> dentro de
+  <code>match /{document=**}</code>, publica, siembra aquí, y luego vuelve a pegar las
+  reglas finales del manual (<code>ejercicio-firebase.html#rules</code>) antes
+  de la clase. Esta página no se enlaza desde ningún otro lugar del sitio.
+</div>
+<div class="aviso" style="border-left-color:#146c43;background:#e4f5ec">
+  <b>apiKey y projectId ya están incorporados</b>, igual que en <code>carrito-abc-firebase.html</code>:
+  es una clave web pública (identifica el proyecto, no lo administra) y no hace falta pegarla a mano
+  cada vez que se resiembra la carta.
+</div>
+<button id="ir" type="button">Sembrar los 24 productos</button>
+<pre id="log">Esperando…</pre>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+var CARTA = [
+  {"plato_id":1,"nombre":"Ajiaco santafereño","precio_actual":28000,"categoria":"fuerte","alergenos":["gluten","lácteos"],"descripcion":"Sopa bogotana de pollo con tres papas y guascas, servida con crema de leche y alcaparras aparte.","foto":"ajiaco.jpg"},
+  {"plato_id":2,"nombre":"Bandeja paisa","precio_actual":34000,"categoria":"fuerte","alergenos":["huevo"],"descripcion":"Fríjoles, arroz, carne molida, chicharrón, huevo frito, arepa y aguacate.","extras_disponibles":["arepa adicional","aguacate adicional","chorizo"]},
+  {"plato_id":3,"nombre":"Sancocho de gallina","precio_actual":30000,"categoria":"fuerte","descripcion":"Sancocho trifásico con gallina, papa criolla, mazorca y yuca."},
+  {"plato_id":4,"nombre":"Limonada de coco","precio_actual":9000,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Limonada natural batida con leche de coco."},
+  {"plato_id":5,"nombre":"Arepa de choclo","precio_actual":7500,"categoria":"entrada","vegetariano":true,"descripcion":"Arepa dulce de choclo con queso campesino."},
+  {"plato_id":6,"nombre":"Sobrebarriga al horno","precio_actual":36000,"categoria":"fuerte","descripcion":"Sobrebarriga horneada en salsa criolla, con papa salada y ensalada."},
+  {"plato_id":7,"nombre":"Postre de natas","precio_actual":11000,"categoria":"postre","alergenos":["lácteos","huevo"],"descripcion":"Postre tradicional de natas de leche."},
+  {"plato_id":8,"nombre":"Tamal tolimense","precio_actual":22000,"categoria":"fuerte","descripcion":"Tamal de cerdo y pollo envuelto en hoja de plátano, servido en el desayuno.","alergenos":["gluten"],"disponible_desde":"06:00","disponible_hasta":"11:00","nota_disponibilidad":"Solo se sirve en el horario de desayuno."},
+  {"plato_id":9,"nombre":"Empanadas de pipián","precio_actual":8500,"categoria":"entrada","vegetariano":true,"alergenos":["gluten"],"descripcion":"Tres empanadas crujientes de papa criolla y maní, con ají de la casa.","salsas_incluidas":["ají de maní","hogao"]},
+  {"plato_id":10,"nombre":"Patacones con hogao","precio_actual":10000,"categoria":"entrada","vegetariano":true,"vegano":true,"descripcion":"Patacones de plátano verde con hogao fresco y cilantro.","nivel_picante":["suave","medio"]},
+  {"plato_id":11,"nombre":"Cazuela de mariscos","precio_actual":42000,"categoria":"fuerte","alergenos":["mariscos","lácteos"],"descripcion":"Cazuela cremosa de camarón, calamar y pescado con arroz de coco.","disponible_porcion":["individual","para compartir"]},
+  {"plato_id":12,"nombre":"Trucha al ajillo","precio_actual":39000,"categoria":"fuerte","alergenos":["pescado"],"descripcion":"Trucha fresca al ajillo con papa criolla y ensalada de la huerta.","acompanamientos_elegibles":["papa criolla","ensalada","arroz"]},
+  {"plato_id":13,"nombre":"Lomo al trapo","precio_actual":48000,"categoria":"fuerte","descripcion":"Lomo de res cocido al trapo, servido con papas rústicas.","terminos_disponibles":["medio","tres cuartos"]},
+  {"plato_id":14,"nombre":"Pollo sudado","precio_actual":27000,"categoria":"fuerte","descripcion":"Pollo campesino en salsa criolla, arroz blanco y yuca cocida.","incluye_sopa":true},
+  {"plato_id":15,"nombre":"Ensalada campesina","precio_actual":18000,"categoria":"entrada","vegetariano":true,"descripcion":"Hojas frescas, aguacate, tomate, maíz y queso campesino.","aderezos":["miel mostaza","limón","balsámico"]},
+  {"plato_id":16,"nombre":"Sopa de guineo","precio_actual":16000,"categoria":"sopa","vegetariano":true,"descripcion":"Sopa tradicional de guineo verde, cilantro y queso opcional.","queso_opcional":true},
+  {"plato_id":17,"nombre":"Jugo de lulo","precio_actual":7000,"categoria":"bebida","vegano":true,"descripcion":"Jugo natural de lulo preparado al momento.","sin_azucar_disponible":true},
+  {"plato_id":18,"nombre":"Chocolate santafereño","precio_actual":8500,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Chocolate caliente con queso campesino y pan para acompañar.","incluye_queso":true},
+  {"plato_id":19,"nombre":"Café colombiano","precio_actual":6000,"categoria":"bebida","vegano":true,"descripcion":"Café de origen preparado al momento.","metodos_preparacion":["espresso","filtrado","prensa francesa"]},
+  {"plato_id":20,"nombre":"Avena casera","precio_actual":7500,"categoria":"bebida","alergenos":["lácteos"],"descripcion":"Avena fría con canela y toque de vainilla.","servida_fria":true},
+  {"plato_id":21,"nombre":"Brevas con arequipe","precio_actual":12000,"categoria":"postre","alergenos":["lácteos"],"descripcion":"Brevas en almíbar rellenas de arequipe y queso.","para_compartir":true},
+  {"plato_id":22,"nombre":"Oblea bogotana","precio_actual":9000,"categoria":"postre","alergenos":["gluten","lácteos"],"descripcion":"Oblea crujiente con rellenos a elección.","rellenos_disponibles":["arequipe","mora","queso","coco"]},
+  {"plato_id":23,"nombre":"Helado de curuba","precio_actual":10000,"categoria":"postre","alergenos":["lácteos"],"descripcion":"Helado artesanal de curuba.","tamanos":["una bola","dos bolas"]},
+  {"plato_id":24,"nombre":"Pan de bono recién horneado","precio_actual":5000,"categoria":"panadería","alergenos":["lácteos","huevo"],"descripcion":"Pan de bono caliente horneado en tandas durante el día.","horneado_cada_minutos":45}
+];
+
+var log = document.getElementById('log');
+function escribir(t) { log.textContent += '\n' + t; }
+
+document.getElementById('ir').addEventListener('click', function () {
+  var apiKey = "AIzaSyCRlrphuLxRbyzj98WaUjAxGIFoUUrWCsU";
+  var projectId = "restauranteabc-451f1";
+
+  var btn = this; btn.disabled = true;
+  log.textContent = 'Conectando...';
+
+  firebase.initializeApp({ apiKey: apiKey, projectId: projectId });
+  var db = firebase.firestore();
+
+  db.collection('carta').get().then(function (existentes) {
+    if (!existentes.empty) {
+      escribir('Ya hay ' + existentes.size + ' documento(s) en "carta". Bórralos a mano en la consola si quieres empezar de cero, o continúa para agregar de todas formas.');
+    }
+    var pendientes = CARTA.map(function (plato) {
+      return db.collection('carta').add(plato).then(function () {
+        escribir('✓ ' + plato.plato_id + ' · ' + plato.nombre);
+      }).catch(function (e) {
+        escribir('✗ ' + plato.nombre + ': ' + e.message);
+      });
+    });
+    return Promise.all(pendientes);
+  }).then(function () {
+  escribir('\nListo. Verifica en Firestore → carta que haya 24 documentos.');
+    btn.disabled = false;
+  }).catch(function (e) {
+    escribir('ERROR general: ' + e.message);
+    btn.disabled = false;
+  });
+});
+</script>
+</body>
+</html>

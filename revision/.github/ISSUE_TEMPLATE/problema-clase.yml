@@ -1,0 +1,92 @@
+name: 🐛 Reportar problema de clase
+description: Reporta un error en una sesión, consulta, laboratorio o recurso del curso.
+title: "[S?] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportarlo. No necesitas saber GitHub: completa lo que puedas. Este formulario ayuda a reproducir el problema sin perder tiempo de clase.
+  - type: dropdown
+    id: sesion
+    attributes:
+      label: Sesión
+      options:
+        - S6 · Reglas de negocio
+        - S7 · Modelado
+        - S8 · Normalización
+        - S9 · DDL + Azure SQL
+        - S10 · SQL o NoSQL
+        - S11 · Firestore + Cosmos DB
+        - S12 · Data warehouse
+        - S13 · BigQuery Lab
+        - S14 · BigQuery anidados
+        - S15 · Desafío final
+        - S16 · Cierre / DP-900
+        - Otra / no sé
+    validations:
+      required: true
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: ¿Dónde ocurrió?
+      options:
+        - Presentación / navegación
+        - Consulta SQL
+        - Laboratorio SQL en navegador
+        - Taller / instrucciones
+        - Quiz DP-900
+        - Azure
+        - Firestore / Firebase
+        - Cosmos DB
+        - BigQuery
+        - Descarga / archivo
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: objetivo
+    attributes:
+      label: ¿Qué estabas intentando hacer?
+      placeholder: Ej. Ejecutar la segunda consulta del Taller 1 y clasificar el resultado.
+    validations:
+      required: true
+  - type: textarea
+    id: ocurrido
+    attributes:
+      label: ¿Qué ocurrió?
+      placeholder: Copia el mensaje de error o describe exactamente lo que viste.
+    validations:
+      required: true
+  - type: textarea
+    id: consulta
+    attributes:
+      label: Consulta o código (si aplica)
+      render: sql
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Dispositivo / sistema
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Android
+        - iPhone / iPad
+        - Otro
+  - type: dropdown
+    id: conexion
+    attributes:
+      label: Conexión aproximada
+      options:
+        - Wi-Fi / cable estable
+        - Datos móviles
+        - Conexión lenta o intermitente
+        - No sé
+  - type: checkboxes
+    id: intento
+    attributes:
+      label: Antes de enviar
+      options:
+        - label: Recargué la página una vez.
+        - label: Si era un laboratorio cloud, probé cerrar y volver a abrir la sesión.

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Restaurante ABC · El carrito que se convirtió en venta (Firebase) · ANDESDB</title>
+<meta name="description" content="Versión Firebase: el carrito vive como documento en Firestore. Al pagar, se convierte en un pedido real en PostgreSQL (Supabase). Sesión 11, pista alternativa.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c47f00'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Segoe UI,Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --verde:#c47f00; --verde-sua:#fff3e0; --rojo:#a52a2a; --rojo-sua:#fdeaea;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#fff; --codigo:#3a2f00;
+  --sombra:0 8px 26px rgba(16,32,48,.12); --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#3a2c0f; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945; --papel:#0d151c; --carta:#141f29;
+  --az-sua:#16303f; --y-sua:#3a3410; --verde-sua:#3a2c0f; --rojo-sua:#3a1a1a;
+  --codigo:#ffe97a; --sombra:0 8px 26px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{overflow-x:hidden}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow-x:hidden}
+.wrap{width:min(1120px,100%);margin:0 auto;padding:1.6rem 1.1rem 3.5rem}
+header.top{background:#8a5a00;color:#fff;padding:1.5rem 0 1.7rem}
+header.top .wrap{padding-bottom:0}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.7rem;color:var(--y)}
+.cinta::before{content:"";width:2.1em;height:.4em;background:var(--y);border-radius:2px}
+h1{margin:.35em 0 .2em;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.1;
+  letter-spacing:-.02em;text-wrap:balance}
+header.top p{margin:0;color:#ffe9c2;max-width:64ch}
+h2{font-size:1.22rem;margin:0 0 .2em;letter-spacing:-.01em}
+.rej{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.rej > *{min-width:0}
+@media (max-width:900px){.rej{grid-template-columns:1fr}}
+.tarj{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);
+  padding:1.25rem 1.35rem;box-shadow:var(--sombra);min-width:0}
+.tarj + .tarj{margin-top:1.1rem}
+.tarj p,.tarj li,.tarj td{overflow-wrap:anywhere}
+label{display:block;font-weight:700;font-size:.86rem;margin:.9rem 0 .3rem}
+label span{font-weight:400;color:var(--tenue)}
+input,select{width:100%;padding:.62rem .7rem;border:2px solid var(--linea);border-radius:9px;
+  background:var(--papel);color:var(--tinta);font:inherit;font-size:.98rem}
+input:focus,select:focus{outline:none;border-color:var(--az);box-shadow:0 0 0 3px var(--az-sua)}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+button{font:inherit;font-weight:800;cursor:pointer;border-radius:999px;border:2px solid #8a5a00;
+  background:#8a5a00;color:#fff;padding:.7rem 1.5rem;margin-top:1.2rem}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:disabled{opacity:.55;cursor:progress}
+button.suave{background:transparent;color:var(--az);border-color:var(--linea);padding:.4rem .95rem;margin:0;font-size:.84rem}
+button.mini{padding:.28rem .6rem;margin:0;font-size:.82rem;border-radius:8px}
+button.peligro{background:transparent;color:var(--rojo);border-color:var(--rojo)}
+button:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.aviso{border-radius:10px;padding:.8em 1em;margin-top:1rem;font-size:.94rem;
+  border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua)}
+.aviso.bien{border-left-color:#0d5533;background:#e4f5ec}
+.aviso.mal{border-left-color:var(--rojo);background:var(--rojo-sua)}
+.aviso.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.aviso h3{margin:0 0 .25em;font-size:1em}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.92em;color:var(--codigo)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.46em .55em;text-align:left;border-bottom:1px solid var(--linea)}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue);
+  border-bottom:2px solid var(--linea)}
+tbody tr.nueva{background:var(--y-sua)}
+.desliza{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.marca{font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
+.pastilla{display:inline-block;background:var(--y);color:#3a2f00;font-weight:800;
+  border-radius:999px;padding:.16em .7em;font-size:.76rem}
+.pie{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--linea);
+  font-size:.8rem;color:var(--tenue)}
+[hidden]{display:none!important}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem;margin-top:1rem}
+.plato{border:1px solid var(--linea);border-radius:16px;background:var(--carta);
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 8px rgba(16,32,48,.06);
+  transition:transform .16s ease,box-shadow .16s ease}
+.plato:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(16,32,48,.14)}
+.plato .banner{height:5.2rem;display:flex;align-items:center;justify-content:center;
+  font-size:2.3rem;position:relative;background:
+    radial-gradient(120% 160% at 20% 0%,rgba(255,255,255,.35),transparent 60%),
+    linear-gradient(135deg,var(--bg1,#f4a340),var(--bg2,#c47f00))}
+.plato .banner .precio-flot{position:absolute;right:.6rem;bottom:.5rem;background:#fff;
+  color:#8a5a00;font-weight:800;font-size:.82rem;padding:.22em .6em;border-radius:999px;
+  box-shadow:0 3px 8px rgba(0,0,0,.18);font-variant-numeric:tabular-nums}
+.plato .cuerpo{padding:.85rem .95rem 1rem;display:flex;flex-direction:column;gap:.4rem;flex:1}
+.plato h3{margin:0;font-size:1.02rem;line-height:1.25}
+.plato .tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.plato .tag{font-size:.66rem;background:var(--az-sua);color:var(--az);border-radius:999px;
+  padding:.15em .55em;font-weight:700;text-transform:capitalize}
+.plato .tag.alerta{background:var(--rojo-sua);color:var(--rojo)}
+.plato .desc{font-size:.81rem;color:var(--tenue);flex:1;line-height:1.4;margin:0}
+.plato button{margin-top:.3rem;width:100%;display:flex;align-items:center;justify-content:center;gap:.4em}
+/* --- paneles de pregunta: se expanden al hacer clic, cerrados por defecto ------- */
+.pregunta{border:1px solid var(--linea);border-radius:12px;margin-top:.8rem;overflow:hidden;
+  background:var(--papel)}
+.pregunta summary{list-style:none;cursor:pointer;padding:.85rem 1rem;font-weight:800;
+  font-size:.95rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  color:var(--tinta)}
+.pregunta summary::-webkit-details-marker{display:none}
+.pregunta summary::after{content:"+";font-size:1.3rem;font-weight:400;color:var(--tenue);
+  transition:transform .18s ease;flex:0 0 auto;line-height:1}
+.pregunta[open] summary::after{transform:rotate(45deg)}
+.pregunta summary:hover{background:var(--az-sua)}
+.pregunta summary:focus-visible{outline:3px solid var(--y);outline-offset:-3px}
+.pregunta .respuesta{padding:0 1.1rem 1.05rem;font-size:.92rem;line-height:1.5}
+.pregunta .respuesta p:first-child{margin-top:0}
+.carrito-linea{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.5rem 0;border-bottom:1px solid var(--linea)}
+.carrito-linea:last-child{border-bottom:0}
+.carrito-linea .nombre{font-weight:700;font-size:.92rem}
+.carrito-linea .sub{font-size:.78rem;color:var(--tenue)}
+.carrito-total{display:flex;justify-content:space-between;align-items:center;
+  font-weight:800;font-size:1.1rem;margin-top:.7rem;padding-top:.7rem;border-top:2px solid var(--linea)}
+.vacio{color:var(--tenue);font-size:.9rem;padding:.6rem 0}
+.en-vivo{display:inline-flex;align-items:center;gap:.35em;font-size:.7rem;font-weight:800;
+  color:#0d5533;text-transform:uppercase;letter-spacing:.06em}
+.en-vivo::before{content:"";width:.55em;height:.55em;border-radius:50%;background:#2ebd75;
+  animation:pulso 1.4s ease-in-out infinite}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.35}}
+@media (max-width:560px){
+  .wrap{padding:1rem .75rem 2.5rem}
+  header.top{padding:1.2rem 0 1.35rem}
+  .tarj{padding:1rem}
+  .par{grid-template-columns:1fr;gap:0}
+  table{font-size:.82rem}
+  th,td{padding:.42rem}
+  .menu{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="cinta">Restaurante ABC · ANDESDB · Sesión 11 · pista Firebase</div>
+  <h1>El carrito que se convirtió en venta</h1>
+  <p>Tu carrito vive como <b>documento en Firestore</b>. Cuando pagas, se convierte
+     en un <b>pedido real en PostgreSQL</b> (el mismo esquema de la sesión 9) — y el
+     carrito de Firestore deja de existir, en tiempo real. Firebase mantiene su vía sin
+     servidor para el navegador; Atlas la retiró en 2025 — por eso esta es la versión que
+     de verdad guarda el carrito en la nube (la <a href="carrito-abc.html">versión con el
+     carrito local</a> explica por qué).</p>
+</div></header>
+
+<div class="wrap">
+
+  <!-- ---------- configuración: solo la ve quien abre sin enlace ---------- -->
+  <section class="tarj" id="panelConfig" hidden>
+    <h2>Falta la conexión</h2>
+    <p>Supabase ya está preparado para esta clase. Solo falta la configuración web del
+       proyecto Firebase del docente para que el carrito pueda vivir en Firestore.</p>
+    <div class="aviso ojo">
+      <h3>Dos bases, dos conexiones</h3>
+      El carrito habla con <b>Firebase Firestore</b> y la compra confirmada habla con
+      <b>Supabase</b> (la misma base de la sesión 9). La configuración web de Firebase
+      es pública por diseño — la seguridad la ponen las <i>Security Rules</i> de
+      Firestore, no el secreto de esta clave. Ver "Qué acaba de pasar" más abajo.
+    </div>
+    <h3 style="margin-top:1rem">Firebase</h3>
+    <label for="cfgFbApiKey">apiKey</label>
+    <input id="cfgFbApiKey" type="text" placeholder="AIzaSy..." autocomplete="off">
+    <label for="cfgFbProject">projectId</label>
+    <input id="cfgFbProject" type="text" placeholder="restauranteabc-xxxxx" autocomplete="off">
+    <div class="par">
+      <div><label for="cfgFbDomain">authDomain</label>
+        <input id="cfgFbDomain" type="text" placeholder="restauranteabc-xxxxx.firebaseapp.com" autocomplete="off"></div>
+      <div><label for="cfgFbBucket">appId</label>
+        <input id="cfgFbBucket" type="text" placeholder="1:xxxx:web:xxxx" autocomplete="off"></div>
+    </div>
+    <h3 style="margin-top:1.1rem">Supabase</h3>
+    <label for="cfgUrl">Project URL</label>
+    <input id="cfgUrl" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+    <label for="cfgKey">Clave publishable</label>
+    <input id="cfgKey" type="text" placeholder="sb_publishable_…" autocomplete="off">
+    <button id="btnConfig" type="button">Conectar</button>
+    <div class="aviso mal" id="cfgError" hidden></div>
+  </section>
+
+  <!-- ---------- la aplicación ---------- -->
+  <div id="app" hidden>
+    <div class="rej">
+
+      <section class="tarj">
+        <div class="cab">
+          <h2>La carta (documentos en Firestore) <span class="en-vivo" id="etiquetaVivo" hidden>en vivo</span></h2>
+          <button class="suave" id="refrescarCarta" type="button">Actualizar</button>
+        </div>
+        <p class="marca" id="estadoCarta">Cargando…</p>
+        <div class="menu" id="menu"></div>
+      </section>
+
+      <div>
+        <section class="tarj">
+          <h2>Tu carrito <span class="pastilla" id="pastillaCarrito">0</span></h2>
+          <div id="lineasCarrito"><p class="vacio">Todavía no agregaste nada.</p></div>
+          <div class="carrito-total" id="totalCarrito" hidden>
+            <span>Total</span><span id="totalValor">$ 0</span>
+          </div>
+        </section>
+
+        <section class="tarj">
+          <h2>Confirmar y pagar</h2>
+          <form id="form" novalidate>
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" name="nombre" type="text" required minlength="3" maxlength="100"
+                   autocomplete="name" placeholder="Camila Restrepo">
+            <label for="telefono">Teléfono <span>— solo números</span></label>
+            <input id="telefono" name="telefono" type="tel" required
+                   inputmode="numeric" placeholder="3104458821" autocomplete="tel">
+            <label for="mesa">Mesa</label>
+            <select id="mesa" name="mesa" required>
+              <option value="">Cargando las mesas…</option>
+            </select>
+            <button id="pagar" type="submit">Confirmar y pagar</button>
+          </form>
+          <div class="aviso bien" id="ok" hidden></div>
+          <div class="aviso mal"  id="error" hidden></div>
+        </section>
+      </div>
+
+      <section class="tarj" id="verificacion" hidden aria-live="polite">
+        <h2>Verifica: tu compra ya es una fila</h2>
+        <p id="resumenVerificacion"></p>
+        <div class="desliza">
+          <table>
+            <thead><tr><th>Dónde</th><th>Qué pasó</th></tr></thead>
+            <tbody id="filasVerificacion"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="tarj">
+        <h2>Antes de seguir: contesta esto tú mismo</h2>
+        <p class="marca" style="margin-top:0">Clic en cada pregunta para revelar la respuesta — intenta contestarla primero en tu cabeza.</p>
+
+        <details class="pregunta">
+          <summary>¿Con qué usuario o contraseña se conecta esta página a la base de datos?</summary>
+          <div class="respuesta">
+            <p>Con <b>ninguna contraseña de base de datos</b>. Firebase crea una
+               <b>sesión anónima</b>: no pregunta correo al estudiante, pero identifica el
+               navegador con un <code>uid</code>. Firestore usa ese <code>uid</code> y las
+               <b>Security Rules</b> —no una clave secreta— para decidir qué carrito puede
+               leer o escribir. Del lado de Supabase, las once tablas del esquema de la sesión 9
+               siguen cerradas con <i>row level security</i>: la única puerta es la función
+               <code>registrar_pedido()</code> (la misma que usa la pista de Atlas).</p>
+            <p class="marca" id="dondeEscribe"></p>
+          </div>
+        </details>
+
+        <details class="pregunta">
+          <summary>Tu carrito solo guarda plato_id y cantidad. Entonces, ¿de dónde sale el precio que de verdad se cobra?</summary>
+          <div class="respuesta">
+            <p>Sale de <code>plato.precio_actual</code>, <b>dentro de
+               <code>registrar_pedido()</code></b>, en el instante de pagar — nunca de lo
+               que este navegador envía. Si el precio viniera del navegador, cualquiera
+               podría editarlo antes de enviarlo.</p>
+          </div>
+        </details>
+
+        <details class="pregunta">
+          <summary>¿Qué notarías si abrieras esta página en dos pestañas del mismo navegador?</summary>
+          <div class="respuesta">
+            <p>El carrito se actualizaría <b>solo</b> en la otra pestaña, sin recargar: eso
+               es un <i>listener</i> de Firestore (<code>onSnapshot</code>), algo que la
+               pista de Atlas no hace por defecto. Es justo la fila "Tiempo real" de la
+               comparación Firebase vs. Atlas de la diapositiva de cierre — aquí la están
+               viendo funcionar, no solo leyéndola.</p>
+          </div>
+        </details>
+
+        <details class="pregunta">
+          <summary>¿Por qué el carrito es un documento y la venta confirmada es una fila de una tabla?</summary>
+          <div class="respuesta">
+            <p>Misma pregunta que dejó abierta el Reto 1 de la sesión 10:
+               <i>"¿el carrito es un dato del negocio o estado de una pantalla?"</i></p>
+            <ul>
+              <li><b>El carrito es documento</b> porque es estado que se puede abandonar,
+                vaciar o perder sin ningún costo real de negocio.</li>
+              <li><b>La compra confirmada es relacional</b> porque en ese instante sí
+                necesita atomicidad, las claves foráneas del esquema de la sesión 9, y un
+                total que se pueda reconstruir y auditar.</li>
+              <li><b>Nunca hay dos fuentes de verdad al mismo tiempo:</b> después de confirmar el pedido en Supabase, se intenta borrar el carrito en Firestore. Si falla, queda limpieza pendiente.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <div>
+        <section class="tarj">
+          <div class="cab">
+            <h2>Pedidos de la clase</h2>
+            <button class="suave" id="refrescarPedidos" type="button">Actualizar</button>
+          </div>
+          <p class="marca" id="estadoPedidos">Cargando…</p>
+          <div class="desliza">
+            <table>
+              <thead><tr><th>#</th><th>Nombre</th><th>Mesa</th><th>Total</th><th>Hora</th></tr></thead>
+              <tbody id="filasPedidos"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+
+<section class="tarj" id="consultas-carta" style="margin:1rem 0">
+<h2>Consultas de carta · solo lectura</h2>
+<p>Trabajas con el catálogo compartido de 24 productos, no con tu proyecto individual. Predice, ejecuta y compara. Ningún botón de este panel modifica datos.</p>
+<label for="consulta-carta">Pregunta de negocio</label>
+<select id="consulta-carta">
+<option value="base">¿Qué datos tienen Ajiaco y Tamal?</option>
+<option value="horario">¿Qué plato está disponible desde las 06:00?</option>
+<option value="barato">¿Cuál es el plato más barato de los 24?</option>
+<option value="resumen">¿Cuántos platos base hay y cuál es su precio medio?</option>
+<option value="ajiaco">Solo Ajiaco: ¿qué pasa con el resumen?</option>
+</select>
+<p id="consulta-prediccion">Antes de ejecutar, di cuántos documentos o qué valores esperas.</p>
+<pre id="consulta-codigo" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+<button id="ejecutar-consulta" type="button">Ejecutar consulta en Firestore</button>
+<p id="consulta-estado" role="status" aria-live="polite">Elige una consulta. Requiere conexión al servicio real.</p>
+<pre id="consulta-resultado" style="white-space:pre-wrap;overflow-wrap:anywhere" aria-label="Resultado de la consulta"></pre>
+<p><a href="ejercicio-firebase.html#consultas-s11">Cómo se lee el código y cómo interpretar los resultados</a></p>
+</section>
+  <p class="pie">Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes ·
+     Colsubsidio. Esta página es material de clase: los datos que envíes son visibles
+     para el resto del curso. Esta es la versión en vivo, con Firestore en la nube — hay
+     también una <a href="carrito-abc.html">versión con el carrito guardado localmente</a>,
+     que explica por qué MongoDB Atlas ya no puede hacer esto sin un servidor propio.</p>
+</div>
+
+<!-- Firebase, compat build: globales sin necesitar un bundler, igual de estático que
+     el resto del sitio. Versión fijada a propósito, como pide el resto del repo. -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // =====================================================================
+  //  LA CONEXIÓN, QUEMADA AQUÍ
+  //
+  //  Firebase Console -> Configuración del proyecto -> tus apps -> Config
+  //  del SDK. Estos valores son públicos por diseño (viajan en el HTML de
+  //  cualquier app Firebase): la seguridad la ponen las Security Rules de
+  //  Firestore, no el secreto de esta clave.
+  //
+  //  Supabase: el MISMO proyecto de S9-restaurante-abc.sql — no crear uno
+  //  nuevo. Es la misma clave que ya usa carrito-abc.html.
+  // =====================================================================
+  // Esta es configuración web pública de Firebase, autorizada solo para este
+  // recurso. No equivale a una service key: Authentication y Firestore Rules
+  // siguen siendo obligatorios. Nunca agregues una clave privada aquí.
+  var CONEXION = {
+    fbApiKey: 'AIzaSyCRlrphuLxRbyzj98WaUjAxGIFoUUrWCsU',
+    fbProjectId: 'restauranteabc-451f1',
+    fbAuthDomain: 'restauranteabc-451f1.firebaseapp.com',
+    fbStorageBucket: 'restauranteabc-451f1.firebasestorage.app',
+    fbMessagingSenderId: '502761637252',
+    fbAppId: '1:502761637252:web:cead5cc7383067c78049d1',
+    fbMeasurementId: 'G-DXNEY0XBXF',
+    url: 'https://gnpouhsvsisqoxketlfr.supabase.co',   // el mismo proyecto de S9-restaurante-abc.sql
+    key: 'sb_publishable_9l_od2Dg78hu1mPrmxAabA_erL2Tlge'
+  };
+
+  var LLAVE = 'abc-carrito-firebase-conexion';
+  var LLAVE_CARRITO_ID = 'abc-carrito-firebase-id';
+  var cfg = null;
+  var db = null;
+  var auth = null;
+  var uid = null;
+  var carrito = { lineas: [] };
+  var carta = [];
+  var dejarDeEscuchar = null;
+
+  function leerConfig() {
+    var p = new URLSearchParams(location.search);
+    var deUrl = {
+      fbApiKey: (p.get('fbApiKey') || '').trim(),
+      fbProjectId: (p.get('fbProjectId') || '').trim(),
+      fbAuthDomain: (p.get('fbAuthDomain') || '').trim(),
+      fbAppId: (p.get('fbAppId') || '').trim(),
+      url: (p.get('url') || CONEXION.url || '').trim().replace(/\/+$/, ''),
+      key: (p.get('key') || CONEXION.key || '').trim()
+    };
+    if (deUrl.fbApiKey && deUrl.fbProjectId && deUrl.url && deUrl.key) {
+      try { localStorage.setItem(LLAVE, JSON.stringify(deUrl)); } catch (e) {}
+      return deUrl;
+    }
+    if (CONEXION.fbApiKey && CONEXION.fbProjectId && CONEXION.url && CONEXION.key) {
+      return CONEXION;
+    }
+    try {
+      var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+      if (g && g.fbApiKey && g.fbProjectId && g.url && g.key) return g;
+    } catch (e) {}
+    return null;
+  }
+
+  function idCarrito() {
+    try {
+      var id = localStorage.getItem(LLAVE_CARRITO_ID);
+      if (!id) {
+        id = 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+        localStorage.setItem(LLAVE_CARRITO_ID, id);
+      }
+      return id;
+    } catch (e) {
+      return 'c-sin-guardar-' + Math.random().toString(36).slice(2, 8);
+    }
+  }
+
+  // --- hablar con Supabase (RPC) — idéntico a carrito-abc.html -----------
+  function rpc(nombre, cuerpo) {
+    return fetch(cfg.url + '/rest/v1/rpc/' + nombre, {
+      method: 'POST',
+      headers: {
+        'apikey': cfg.key, 'Authorization': 'Bearer ' + cfg.key,
+        'Content-Type': 'application/json', 'Accept': 'application/json'
+      },
+      body: JSON.stringify(cuerpo || {})
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        var d = null;
+        try { d = t ? JSON.parse(t) : null; } catch (e) {}
+        if (!r.ok) {
+          var m = (d && (d.message || d.hint || d.details)) || ('La base respondió ' + r.status + '.');
+          throw new Error(m);
+        }
+        return d;
+      });
+    });
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function pinta(caja, texto, titulo) {
+    caja.innerHTML = (titulo ? '<h3>' + titulo + '</h3>' : '') + texto;
+    caja.hidden = false;
+  }
+  function moneda(n) { return '$ ' + Number(n || 0).toLocaleString('es-CO'); }
+
+  // --- arranque -------------------------------------------------------
+  function arrancar() {
+    $('panelConfig').hidden = true;
+    $('app').hidden = false;
+
+    firebase.initializeApp({
+      apiKey: cfg.fbApiKey,
+      authDomain: cfg.fbAuthDomain || (cfg.fbProjectId + '.firebaseapp.com'),
+      projectId: cfg.fbProjectId,
+      storageBucket: cfg.fbStorageBucket,
+      messagingSenderId: cfg.fbMessagingSenderId,
+      appId: cfg.fbAppId,
+      measurementId: cfg.fbMeasurementId
+    });
+    db = firebase.firestore();
+    auth = firebase.auth();
+
+    $('dondeEscribe').textContent = 'Carrito en Firestore (' + cfg.fbProjectId +
+      ') · Pedido en ' + cfg.url.replace(/^https?:\/\//, '');
+
+    cargarCarta();
+    iniciarSesionAnonima();
+    cargarMesas();
+    cargarPedidos();
+    setInterval(cargarPedidos, 15000);
+  }
+
+  // El usuario anónimo no pide correo ni contraseña. Sí entrega un uid real
+  // para que las Security Rules puedan separar el carrito de cada navegador.
+  function iniciarSesionAnonima() {
+    auth.onAuthStateChanged(function (usuario) {
+      if (usuario) {
+        uid = usuario.uid;
+        escucharCarrito();
+        return;
+      }
+      auth.signInAnonymously().catch(function (e) {
+        pinta($('error'), 'No se pudo iniciar la sesión anónima: ' + e.message,
+          'Activa Authentication → Anonymous en Firebase');
+      });
+    });
+  }
+
+  // --- catálogo (Firestore, colección "carta") -------------------------
+  function cargarCarta() {
+    db.collection('carta').orderBy('plato_id').get()
+      .then(function (snap) {
+        carta = snap.docs.map(function (d) { return d.data(); });
+        pintarMenu();
+        $('estadoCarta').textContent = carta.length + ' platos cargados desde Firestore.';
+      })
+      .catch(function (e) {
+        $('estadoCarta').textContent = 'No se pudo leer la carta: ' + e.message;
+      });
+  }
+
+  // categoría -> ícono y par de colores del banner, solo estética (no viene de Firestore)
+  var VITRINA = {
+    fuerte:   { icono: '🍲', c1: '#e07a2c', c2: '#a5501a' },
+    bebida:   { icono: '🥤', c1: '#3fa6c9', c2: '#1f6f8f' },
+    entrada:  { icono: '🌽', c1: '#7bb661', c2: '#4a7f36' },
+    postre:   { icono: '🍮', c1: '#d9a441', c2: '#a5701f' },
+    sopa:     { icono: '🥣', c1: '#bf7b45', c2: '#87502e' },
+    'panadería': { icono: '🥖', c1: '#b7833d', c2: '#795426' }
+  };
+  function vitrinaDe(p) {
+    return VITRINA[p.categoria] || { icono: '🍽️', c1: '#c9903f', c2: '#8a5a00' };
+  }
+
+  function pintarMenu() {
+    $('menu').innerHTML = carta.map(function (p) {
+      var v = vitrinaDe(p);
+      var tags = (p.alergenos || []).map(function (a) {
+        return '<span class="tag alerta">⚠ ' + a + '</span>';
+      }).join('') + (p.vegetariano ? '<span class="tag">🌱 vegetariano</span>' : '') +
+        (p.categoria ? '<span class="tag">' + p.categoria + '</span>' : '') +
+        (p.nota_disponibilidad ? '<span class="tag alerta">⏰ ' + p.disponible_desde + '–' + p.disponible_hasta + '</span>' : '');
+      return '<article class="plato">' +
+        '<div class="banner" style="--bg1:' + v.c1 + ';--bg2:' + v.c2 + '">' + v.icono +
+          '<span class="precio-flot">' + moneda(p.precio_actual) + '</span>' +
+        '</div>' +
+        '<div class="cuerpo">' +
+          '<h3>' + p.nombre + '</h3>' +
+          '<div class="tags">' + tags + '</div>' +
+          '<p class="desc">' + (p.descripcion || '') + '</p>' +
+          '<button type="button" data-agregar="' + p.plato_id + '">🛒 Agregar al carrito</button>' +
+        '</div>' +
+        '</article>';
+    }).join('') || '<p class="vacio">La carta está vacía. ¿Se sembró la colección?</p>';
+
+    $('menu').querySelectorAll('[data-agregar]').forEach(function (b) {
+      b.addEventListener('click', function () { agregarAlCarrito(Number(b.dataset.agregar)); });
+    });
+  }
+
+  // --- carrito (Firestore, colección "carritos") ------------------------
+  // onSnapshot: el carrito se actualiza SOLO si cambia en Firestore desde
+  // otra pestaña/dispositivo con el mismo _carritoId. Esto es justo la
+  // diferencia de "tiempo real" que la pista de Atlas no tiene de fábrica.
+  function escucharCarrito() {
+    if (!uid) return;
+    $('etiquetaVivo').hidden = false;
+    if (dejarDeEscuchar) dejarDeEscuchar();
+    dejarDeEscuchar = db.collection('carritos').doc(idCarrito())
+      .onSnapshot(function (doc) {
+        carrito.lineas = (doc.exists && doc.data().lineas) || carrito.lineas;
+        pintarCarrito();
+      }, function (e) {
+        pinta($('error'), 'No se pudo escuchar el carrito: ' + e.message, 'Firestore');
+      });
+  }
+
+  function guardarCarritoEnFirestore() {
+    if (!uid) return Promise.reject(new Error('La sesión anónima todavía no está lista. Intenta de nuevo en un momento.'));
+    return db.collection('carritos').doc(idCarrito()).set({
+      lineas: carrito.lineas,
+      owner_uid: uid,
+      actualizado_en: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+
+  function agregarAlCarrito(platoId) {
+    var plato = carta.filter(function (p) { return p.plato_id === platoId; })[0];
+    if (!plato) return;
+    var linea = carrito.lineas.filter(function (l) { return l.plato_id === platoId; })[0];
+    if (linea) { linea.cantidad += 1; }
+    else { carrito.lineas.push({ plato_id: platoId, cantidad: 1, nombre: plato.nombre, precio: plato.precio_actual }); }
+    pintarCarrito();
+    guardarCarritoEnFirestore().catch(function (e) {
+      pinta($('error'), 'No se pudo guardar el carrito en Firestore: ' + e.message, 'Se agregó localmente, pero no en la nube');
+    });
+  }
+
+  function quitarDelCarrito(platoId) {
+    carrito.lineas = carrito.lineas.filter(function (l) { return l.plato_id !== platoId; });
+    pintarCarrito();
+    guardarCarritoEnFirestore().catch(function () {});
+  }
+
+  function pintarCarrito() {
+    var cont = $('lineasCarrito');
+    $('pastillaCarrito').textContent = carrito.lineas.reduce(function (n, l) { return n + l.cantidad; }, 0);
+    if (!carrito.lineas.length) {
+      cont.innerHTML = '<p class="vacio">Todavía no agregaste nada.</p>';
+      $('totalCarrito').hidden = true;
+      return;
+    }
+    var total = 0;
+    cont.innerHTML = carrito.lineas.map(function (l) {
+      total += l.cantidad * l.precio;
+      return '<div class="carrito-linea">' +
+        '<div><div class="nombre">' + l.nombre + '</div>' +
+        '<div class="sub">' + l.cantidad + ' × ' + moneda(l.precio) + '</div></div>' +
+        '<button class="mini peligro" type="button" data-quitar="' + l.plato_id + '">Quitar</button>' +
+        '</div>';
+    }).join('');
+    cont.querySelectorAll('[data-quitar]').forEach(function (b) {
+      b.addEventListener('click', function () { quitarDelCarrito(Number(b.dataset.quitar)); });
+    });
+    $('totalCarrito').hidden = false;
+    $('totalValor').textContent = moneda(total);
+  }
+
+  // --- mesas (Supabase, reutiliza mesas_disponibles) ---------------------
+  function cargarMesas() {
+    rpc('mesas_disponibles').then(function (ms) {
+      var s = $('mesa');
+      s.innerHTML = '';
+      (ms || []).forEach(function (m) {
+        var o = document.createElement('option');
+        o.value = m.mesa;
+        o.textContent = 'Mesa ' + m.mesa + ' · ' + m.puestos +
+                        (m.puestos === 1 ? ' puesto' : ' puestos') + ' · ' + m.mesero;
+        s.appendChild(o);
+      });
+      if (!ms || !ms.length) s.innerHTML = '<option value="">No hay mesas</option>';
+    }).catch(function () {
+      $('mesa').innerHTML = '<option value="">No se pudieron cargar</option>';
+    });
+  }
+
+  // --- pedidos de la clase (Supabase, listar_pedidos) ---------------------
+  function cargarPedidos(recien) {
+    return rpc('listar_pedidos').then(function (ps) {
+      ps = ps || [];
+      $('filasPedidos').innerHTML = ps.map(function (p) {
+        var cls = p.pedido_id === recien ? ' class="nueva"' : '';
+        return '<tr' + cls + '><td>' + p.pedido_id + '</td><td>' + p.nombre + '</td><td>' +
+          p.mesa + '</td><td>' + moneda(p.total) + '</td><td>' +
+          new Date(p.creado_en).toLocaleTimeString('es-CO') + '</td></tr>';
+      }).join('');
+      $('estadoPedidos').textContent = ps.length +
+        (ps.length === 1 ? ' pedido en la base' : ' pedidos en la base') +
+        ' · actualizado a las ' + new Date().toLocaleTimeString('es-CO');
+    }).catch(function (e) {
+      $('estadoPedidos').textContent = 'No se pudo leer la lista: ' + e.message;
+    });
+  }
+
+  function mostrarVerificacion(pedidoId, total, carritoBorrado) {
+    $('resumenVerificacion').textContent = carritoBorrado
+      ? 'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
+        '. El carrito temporal de Firestore se eliminó.'
+      : 'El pedido ' + pedidoId + ' quedó en PostgreSQL por ' + moneda(total) +
+        '. El carrito temporal no se pudo eliminar y requiere limpieza.';
+    $('filasVerificacion').innerHTML =
+      '<tr><td>Firestore · carritos</td><td>' + (carritoBorrado
+        ? 'DELETE: el documento de tu carrito se borró.'
+        : 'PENDIENTE: la venta ya existe; el documento residual se debe limpiar.') + '</td></tr>' +
+      '<tr><td>PostgreSQL · pedido</td><td>INSERT: nació el pedido ' + pedidoId + '.</td></tr>' +
+      '<tr><td>PostgreSQL · pedido_mesa</td><td>INSERT: se asoció la mesa elegida.</td></tr>' +
+      '<tr><td>PostgreSQL · linea_pedido</td><td>INSERT: una fila por cada plato, con el precio de HOY copiado.</td></tr>' +
+      '<tr><td>PostgreSQL · pago</td><td>INSERT: ' + moneda(total) + ', reconstruido sumando líneas.</td></tr>';
+    $('verificacion').hidden = false;
+  }
+
+  // --- confirmar y pagar: Firestore para leer, Supabase para escribir ----
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    $('ok').hidden = true; $('error').hidden = true;
+
+    if (!carrito.lineas.length) {
+      return pinta($('error'), 'Agrega al menos un plato antes de pagar.', 'El carrito está vacío');
+    }
+    var datos = {
+      p_nombre: $('nombre').value.trim(),
+      p_telefono: $('telefono').value.trim(),
+      p_mesa: parseInt($('mesa').value, 10),
+      p_lineas: carrito.lineas.map(function (l) { return { plato_id: l.plato_id, cantidad: l.cantidad }; })
+    };
+    if (!datos.p_nombre || datos.p_nombre.length < 3) {
+      return pinta($('error'), 'Escribe tu nombre completo.', 'Falta algo');
+    }
+    if (!datos.p_mesa) {
+      return pinta($('error'), 'Elige una mesa de la lista.', 'Falta algo');
+    }
+
+    var b = $('pagar'); b.disabled = true; b.textContent = 'Confirmando…';
+
+    rpc('registrar_pedido', datos).then(function (r) {
+      var fila = (r && r[0]) || {};
+      pinta($('ok'), (fila.mensaje || 'Pedido guardado.'), '✓ Se convirtió en venta');
+      carrito.lineas = [];
+      pintarCarrito();
+      $('form').reset();
+      return db.collection('carritos').doc(idCarrito()).delete()
+        .then(function () {
+          mostrarVerificacion(fila.pedido_id, fila.total, true);
+          return cargarPedidos(fila.pedido_id);
+        })
+        .catch(function (e) {
+          mostrarVerificacion(fila.pedido_id, fila.total, false);
+          pinta($('error'), 'La venta sí quedó guardada, pero el carrito no se pudo borrar: ' + e.message,
+            'Limpieza pendiente');
+          return cargarPedidos(fila.pedido_id);
+        });
+    }).catch(function (e) {
+      pinta($('error'), e.message, 'La base la rechazó');
+    }).then(function () {
+      b.disabled = false; b.textContent = 'Confirmar y pagar';
+    });
+  });
+
+  $('refrescarCarta').addEventListener('click', cargarCarta);
+  $('refrescarPedidos').addEventListener('click', function () { cargarPedidos(); });
+
+  $('btnConfig').addEventListener('click', function () {
+    var c = {
+      fbApiKey: $('cfgFbApiKey').value.trim(),
+      fbProjectId: $('cfgFbProject').value.trim(),
+      fbAuthDomain: $('cfgFbDomain').value.trim(),
+      fbAppId: $('cfgFbBucket').value.trim(),
+      url: $('cfgUrl').value.trim().replace(/\/+$/, ''),
+      key: $('cfgKey').value.trim()
+    };
+    if (!c.fbApiKey || !c.fbProjectId) {
+      return pinta($('cfgError'), 'Faltan el apiKey o el projectId de Firebase.', 'Revisa Firebase');
+    }
+    if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(c.url)) {
+      return pinta($('cfgError'), 'La dirección de Supabase tiene que ser la del proyecto.', 'Revisa Supabase');
+    }
+    cfg = c;
+    try { localStorage.setItem(LLAVE, JSON.stringify(cfg)); } catch (e) {}
+    arrancar();
+  });
+
+  cfg = leerConfig();
+  if (cfg) {
+    arrancar();
+  } else {
+    $('cfgUrl').value = CONEXION.url || '';
+    $('cfgKey').value = CONEXION.key || '';
+    $('panelConfig').hidden = false;
+  }
+})();
+</script>
+<script src="consultas-s11.js"></script>
+</body>
+</html>

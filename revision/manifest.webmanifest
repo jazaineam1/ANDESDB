@@ -1,0 +1,52 @@
+{
+  "id": "./",
+  "name": "Diseño y Gestión de Bases de Datos con SQL",
+  "short_name": "ANDESDB",
+  "description": "Curso interactivo de Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#171717",
+  "lang": "es-CO",
+  "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/icons/andesdb-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/andesdb-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/andesdb-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/andesdb-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Inicio del curso",
+      "short_name": "Inicio",
+      "url": "./?source=shortcut"
+    },
+    {
+      "name": "Sesión 6 · Reglas de negocio",
+      "short_name": "Sesión 6",
+      "url": "./Presentaciones/M3/sesion-6-reglas-de-negocio.html?source=shortcut"
+    }
+  ]
+}

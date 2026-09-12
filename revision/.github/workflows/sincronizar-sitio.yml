@@ -1,0 +1,73 @@
+name: Sincronizar sitio desde manifiestos
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tools/curso.json'
+      - 'tools/estilo-portada.css'
+      - 'tools/construir-index.py'
+      - 'tools/integrar-experiencia.py'
+      - 'assets/learning/learning-core.js'
+      - 'assets/learning/learning-plan.json'
+      - 'Presentaciones/**/*.html'
+      - 'Scripts/*.sql'
+      - '.github/workflows/sincronizar-sitio.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: andesdb-writes
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Generar portada desde curso.json
+        run: python tools/construir-index.py
+
+      - name: Integrar PWA y experiencia S6+
+        run: python tools/integrar-experiencia.py
+
+      - name: Renovar caché del sitio
+        env:
+          BUILD_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import os, re
+          from pathlib import Path
+          p = Path('service-worker.js')
+          text = p.read_text(encoding='utf-8')
+          sha = os.environ['BUILD_SHA'][:12]
+          text = re.sub(
+              r"const VERSION = '[^']+';",
+              f"const VERSION = 'andesdb-auto-{sha}';",
+              text,
+              count=1,
+          )
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validar curso
+        run: python tools/validar_curso.py
+
+      - name: Publicar cambios generados
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- index.html Presentaciones service-worker.js; then
+            echo 'Sitio ya sincronizado'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html Presentaciones service-worker.js
+          git commit -m 'Sincronizar sitio, index y cache'
+          git pull --rebase origin main
+          git push origin main

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sesi&oacute;n 10 &middot; Introducci&oacute;n a bases NoSQL &middot; ANDESDB</title>
+<meta name="description" content="Sesi&oacute;n 10 del m&oacute;dulo 4: clave-valor, documentos y grafos, teorema CAP, SQL frente a NoSQL, y Firestore paso a paso.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23124e78'/%3E%3Ctext x='16' y='23' font-size='15' font-family='Segoe UI,Arial' font-weight='bold' fill='%23ffd600' text-anchor='middle'%3E10%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --y:#ffd600; --y-sua:#fff8cc; --az:#124e78; --az-sua:#e9f4ff;
+  --tinta:#16202a; --tenue:#5d6b78; --linea:#dbe3ea;
+  --papel:#f2f4f6; --carta:#ffffff; --sombra:0 10px 34px rgba(16,32,48,.16);
+  --codigo:#3a2f00;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945;
+    --papel:#0d151c; --carta:#141f29; --az-sua:#16303f; --y-sua:#3a3410; --codigo:#ffe97a;
+    --sombra:0 10px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --tinta:#eaf1f7; --tenue:#9fb0bf; --linea:#2b3945;
+  --papel:#0d151c; --carta:#141f29; --az-sua:#16303f; --y-sua:#3a3410; --codigo:#ffe97a;
+  --sombra:0 10px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow:hidden}
+
+/* la fila y la columna se fijan a minmax(0,1fr): dejadas en auto crecian con
+   la lamina y el max-height:100% de la imagen no ataba a nada, asi que el pie
+   de cada diapositiva del PowerPoint se salia por abajo */
+.mazo{position:fixed;inset:0;display:grid;place-items:center;padding:2.2vmin;
+  grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+.lam{display:none;width:100%;height:100%;min-width:0;min-height:0}
+.lam.viva{display:grid;place-items:center}
+/* el limite se mide contra el viewport y no en porcentaje: el porcentaje
+   colgaba de una cadena de alturas que no llegaba a ser definida, y la lamina
+   salia a lo ancho y se cortaba por abajo */
+.lam img{max-width:calc(100vw - 4.4vmin);max-height:calc(100vh - 4.4vmin);
+  width:auto;height:auto;object-fit:contain;
+  border-radius:var(--r);box-shadow:var(--sombra);background:#fff}
+
+/* --- las de Supabase, que si son HTML --- */
+/* la tarjeta se ajusta a lo que lleva dentro, no al alto de la pantalla:
+   estirarla dejaba un hueco muerto entre el contenido y el pie */
+.lam.propia.viva{display:grid;grid-template-rows:auto auto auto;align-content:start;
+  width:min(1600px,100%);height:auto;max-height:100%;background:var(--carta);
+  border-radius:var(--r);box-shadow:var(--sombra);padding:3.2vmin 4vmin;overflow:auto}
+.cinta{display:flex;align-items:center;gap:.6em;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;font-size:.72rem;color:var(--az)}
+.cinta::before{content:"";width:2.1em;height:.42em;background:var(--y);border-radius:2px}
+.lam.propia h2{margin:.28em 0 .5em;font-size:clamp(1.5rem,3.1vmin,2.5rem);line-height:1.12;
+  letter-spacing:-.015em;text-wrap:balance}
+.dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2.4vmin;align-items:start}
+.pila{display:flex;flex-direction:column;gap:1.4vmin;min-width:0}
+.toma{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--linea);
+  box-shadow:0 3px 14px rgba(16,32,48,.13)}
+.lam.propia ol,.lam.propia ul{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:.5em}
+.lam.propia li{font-size:clamp(.9rem,1.75vmin,1.08rem)}
+.caja{border:1px solid var(--linea);border-left:5px solid var(--az);background:var(--az-sua);
+  border-radius:10px;padding:.85em 1.05em;font-size:clamp(.85rem,1.7vmin,1.03rem)}
+.caja.ojo{border-left-color:#c47f00;background:var(--y-sua)}
+.caja h3{margin:0 0 .3em;font-size:1em;letter-spacing:.02em}
+/* el color del codigo es un token, no un literal: escrito a pelo se volvia
+   marron sobre marron en cuanto el tema pasaba a oscuro */
+code{font-family:Consolas,"Cascadia Mono",monospace;background:var(--y-sua);
+  padding:.08em .34em;border-radius:5px;font-size:.94em;color:var(--codigo)}
+.pie{display:flex;justify-content:space-between;gap:1em;margin-top:1.2vmin;
+  padding-top:.7vmin;border-top:1px solid var(--linea);
+  font-size:.74rem;color:var(--tenue);letter-spacing:.05em;text-transform:uppercase}
+
+/* --- barra --- */
+.barra{position:fixed;top:1.1vmin;right:1.4vmin;z-index:40;display:flex;gap:.4em;align-items:center}
+.barra button,.barra a{border:1px solid var(--linea);background:var(--carta);color:var(--tinta);
+  width:2.5rem;height:2.5rem;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+  font:800 .95rem/1 inherit;text-decoration:none;box-shadow:0 2px 8px rgba(16,32,48,.12)}
+.barra button:hover,.barra a:hover{background:var(--az);color:#fff;border-color:var(--az)}
+.barra button:focus-visible,.barra a:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.count{font-variant-numeric:tabular-nums;font-weight:800;font-size:.82rem;background:var(--tinta);
+  color:var(--papel);padding:.42em .72em;border-radius:999px}
+.bar{position:fixed;left:0;bottom:0;height:4px;background:var(--y);z-index:41;
+  transition:width .18s ease}
+.clockBox{position:fixed;left:1.4vmin;top:1.1vmin;z-index:40;background:var(--tinta);color:var(--papel);
+  padding:.4em .8em;border-radius:999px;font:800 .95rem/1 Consolas,monospace;
+  font-variant-numeric:tabular-nums;display:none}
+.clockBox.viva{display:block}
+.nowTitle{position:fixed;left:1.4vmin;bottom:1.2vmin;z-index:40;font-size:.72rem;
+  color:var(--tenue);letter-spacing:.05em;text-transform:uppercase;max-width:52vw;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.barra,.avance,.reloj,.nowTitle{display:none}}
+</style>
+</head>
+<body>
+<div class="mazo">
+<section class="lam" data-title="Diseño y Gestión de Bases de Datos con SQL"><img src="laminas/01.jpg" alt="Diapositiva 1: Diseño y Gestión de Bases de Datos con SQL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="RECORDEMOS QUE EXISTEN DOS TIPOS DE BASES DE DATOS"><img src="laminas/02.png" alt="Diapositiva 2: RECORDEMOS QUE EXISTEN DOS TIPOS DE BASES DE DATOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="BASES DE DATOS NoSQL"><img src="laminas/03.jpg" alt="Diapositiva 3: BASES DE DATOS NoSQL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Esquema flexible vs. fijo"><img src="laminas/04.jpg" alt="Diapositiva 4: Esquema flexible vs. fijo" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="FORMATOS NO TABULARES"><img src="laminas/05.jpg" alt="Diapositiva 5: FORMATOS NO TABULARES" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="PARES CLAVE-VALOR"><img src="laminas/06.png" alt="Diapositiva 6: PARES CLAVE-VALOR" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="PARES CLAVE-VALOR"><img src="laminas/07.png" alt="Diapositiva 7: PARES CLAVE-VALOR" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="PARES CLAVE-VALOR"><img src="laminas/08.png" alt="Diapositiva 8: PARES CLAVE-VALOR" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DOCUMENTOS JSON"><img src="laminas/09.jpg" alt="Diapositiva 9: DOCUMENTOS JSON" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DOCUMENTOS JSON"><img src="laminas/10.jpg" alt="Diapositiva 10: DOCUMENTOS JSON" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="BASES DE DATOS DE DOCUMENTOS"><img src="laminas/11.jpg" alt="Diapositiva 11: BASES DE DATOS DE DOCUMENTOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="GRAFOS"><img src="laminas/12.jpg" alt="Diapositiva 12: GRAFOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="GRAFOS"><img src="laminas/13.jpg" alt="Diapositiva 13: GRAFOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Pregunta 1"><img src="laminas/14.jpg" alt="Diapositiva 14: Pregunta 1" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Pregunta 1"><img src="laminas/15.jpg" alt="Diapositiva 15: Pregunta 1" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Pregunta 1"><img src="laminas/16.png" alt="Diapositiva 16: Pregunta 1" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="SISTEMAS DISTRIBUIDOS"><img src="laminas/17.png" alt="Diapositiva 17: SISTEMAS DISTRIBUIDOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="SISTEMAS DISTRIBUIDOS"><img src="laminas/18.png" alt="Diapositiva 18: SISTEMAS DISTRIBUIDOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="SISTEMAS DISTRIBUIDOS"><img src="laminas/19.png" alt="Diapositiva 19: SISTEMAS DISTRIBUIDOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="TEOREMA CAP"><img src="laminas/20.jpg" alt="Diapositiva 20: TEOREMA CAP" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="TEOREMA CAP"><img src="laminas/21.png" alt="Diapositiva 21: TEOREMA CAP" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="PRINCIPALES DIFERENCIAS ENTRE SISTEMAS RELACIONALES Y NoSQ"><img src="laminas/22.jpg" alt="Diapositiva 22: PRINCIPALES DIFERENCIAS ENTRE SISTEMAS RELACIONALES Y NoSQ" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="NORMALIZACIÓN VS. DESNORMALIZACIÓN"><img src="laminas/23.jpg" alt="Diapositiva 23: NORMALIZACIÓN VS. DESNORMALIZACIÓN" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Artículo"><img src="laminas/24.jpg" alt="Diapositiva 24: Artículo" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Artículo"><img src="laminas/25.jpg" alt="Diapositiva 25: Artículo" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="COMPLEJIDAD EN LAS CONSULTAS"><img src="laminas/26.jpg" alt="Diapositiva 26: COMPLEJIDAD EN LAS CONSULTAS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="LAS BASES DE DATOS SQL PREFIEREN LA CONSISTENCIA E INTEGRI"><img src="laminas/27.png" alt="Diapositiva 27: LAS BASES DE DATOS SQL PREFIEREN LA CONSISTENCIA E INTEGRI" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="NoSQL suelen “relajar” este requisito, favoreciendo la dis"><img src="laminas/28.jpg" alt="Diapositiva 28: NoSQL suelen “relajar” este requisito, favoreciendo la dis" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CONSISTENCIA EVENTUAL"><img src="laminas/29.jpg" alt="Diapositiva 29: CONSISTENCIA EVENTUAL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Pregunta 2."><img src="laminas/30.jpg" alt="Diapositiva 30: Pregunta 2." loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Pregunta 2."><img src="laminas/31.jpg" alt="Diapositiva 31: Pregunta 2." loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ESCALABILIDAD VERTICAL VS. HORIZONTAL"><img src="laminas/32.jpg" alt="Diapositiva 32: ESCALABILIDAD VERTICAL VS. HORIZONTAL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="EN RESUMEN"><img src="laminas/33.jpg" alt="Diapositiva 33: EN RESUMEN" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¿EN QUÉ CASOS CONVIENE USAR NoSQL?"><img src="laminas/34.jpg" alt="Diapositiva 34: ¿EN QUÉ CASOS CONVIENE USAR NoSQL?" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="APLICACIONES CON DATOS MASIVOS O BIG DATA"><img src="laminas/35.jpg" alt="Diapositiva 35: APLICACIONES CON DATOS MASIVOS O BIG DATA" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="APLICACIONES EN TIEMPO REAL CON ALTA CONCURRENCIA"><img src="laminas/36.jpg" alt="Diapositiva 36: APLICACIONES EN TIEMPO REAL CON ALTA CONCURRENCIA" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="DATOS SEMI-ESTRUCTURADOS O HETEROGÉNEOS"><img src="laminas/37.jpg" alt="Diapositiva 37: DATOS SEMI-ESTRUCTURADOS O HETEROGÉNEOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="EVOLUCIÓN FRECUENTE DEL MODELO DE DATOS"><img src="laminas/38.jpg" alt="Diapositiva 38: EVOLUCIÓN FRECUENTE DEL MODELO DE DATOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ALTOS PICOS DE CARGA Y ESCALABILIDAD IMPREDECIBLE"><img src="laminas/39.jpg" alt="Diapositiva 39: ALTOS PICOS DE CARGA Y ESCALABILIDAD IMPREDECIBLE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Ejercicio"><img src="laminas/40.jpg" alt="Diapositiva 40: Ejercicio" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CASOS DE USO ESPECÍFICOS POR TIPO DE NoSQL"><img src="laminas/41.jpg" alt="Diapositiva 41: CASOS DE USO ESPECÍFICOS POR TIPO DE NoSQL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¿CUÁNDO SEGUIR CON UNA BASE SQL RELACIONAL?"><img src="laminas/42.jpg" alt="Diapositiva 42: ¿CUÁNDO SEGUIR CON UNA BASE SQL RELACIONAL?" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¿CUÁNDO ELEGIR UNA BASE NOSQL?"><img src="laminas/43.jpg" alt="Diapositiva 43: ¿CUÁNDO ELEGIR UNA BASE NOSQL?" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="EJEMPLOS DE BASES DE DATOS NOSQL POPULARES"><img src="laminas/44.jpg" alt="Diapositiva 44: EJEMPLOS DE BASES DE DATOS NOSQL POPULARES" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="UN OJITO A UNA NUBE CON UN SERVICIO NOSQL"><img src="laminas/45.jpg" alt="Diapositiva 45: UN OJITO A UNA NUBE CON UN SERVICIO NOSQL" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="GOOGLE FIREBASE FIRESTORE: ESTRUCTURA Y CONSULTAS BÁSICAS"><img src="laminas/46.jpg" alt="Diapositiva 46: GOOGLE FIREBASE FIRESTORE: ESTRUCTURA Y CONSULTAS BÁSICAS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="COLECCIONES Y DOCUMENTOS"><img src="laminas/47.jpg" alt="Diapositiva 47: COLECCIONES Y DOCUMENTOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="TIPOS DE DATOS"><img src="laminas/48.jpg" alt="Diapositiva 48: TIPOS DE DATOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="ESQUEMA FLEXIBLE"><img src="laminas/49.jpg" alt="Diapositiva 49: ESQUEMA FLEXIBLE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="SUBCOLECCIONES"><img src="laminas/50.jpg" alt="Diapositiva 50: SUBCOLECCIONES" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="LÍMITES DE LOS DOCUMENTOS"><img src="laminas/51.jpg" alt="Diapositiva 51: LÍMITES DE LOS DOCUMENTOS" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="CONSULTAS EN FIRESTORE"><img src="laminas/52.jpg" alt="Diapositiva 52: CONSULTAS EN FIRESTORE" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="RECORDEMOS… CONSULTAS SIMPLES DE LECTURA"><img src="laminas/53.jpg" alt="Diapositiva 53: RECORDEMOS… CONSULTAS SIMPLES DE LECTURA" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="EJEMPLOS CONSULTAS Más que el código y el lenguaje, noten"><img src="laminas/54.jpg" alt="Diapositiva 54: EJEMPLOS CONSULTAS Más que el código y el lenguaje, noten" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Obtener documentos de users con edad mayor a 30, ordenados"><img src="laminas/55.jpg" alt="Diapositiva 55: Obtener documentos de users con edad mayor a 30, ordenados" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Obtener los 10 posts más recientes de un usuario específic"><img src="laminas/56.jpg" alt="Diapositiva 56: Obtener los 10 posts más recientes de un usuario específic" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¡Reto!"><img src="laminas/57.jpg" alt="Diapositiva 57: ¡Reto!" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Diapositiva 58"><img src="laminas/58.jpg" alt="Diapositiva 58: Diapositiva 58" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Diapositiva 59"><img src="laminas/59.jpg" alt="Diapositiva 59: Diapositiva 59" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Vamos a Firebase"><img src="laminas/60.jpg" alt="Diapositiva 60: Vamos a Firebase" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Para esto buscamos en google"><img src="laminas/61.png" alt="Diapositiva 61: Para esto buscamos en google" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Iniciamos sesión"><img src="laminas/62.png" alt="Diapositiva 62: Iniciamos sesión" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="En los entornos de nube encontraremos proyectos. Cada proy"><img src="laminas/63.png" alt="Diapositiva 63: En los entornos de nube encontraremos proyectos. Cada proy" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Asignamos el nombre"><img src="laminas/64.png" alt="Diapositiva 64: Asignamos el nombre" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Analytics es gratis, pero si quieren no lo pongamos, tampo"><img src="laminas/65.png" alt="Diapositiva 65: Analytics es gratis, pero si quieren no lo pongamos, tampo" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Esperamos a que se cree el proyecto"><img src="laminas/66.png" alt="Diapositiva 66: Esperamos a que se cree el proyecto" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Nos aparece confirmación. Damos clic en continuar."><img src="laminas/67.png" alt="Diapositiva 67: Nos aparece confirmación. Damos clic en continuar." loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Esta es una nube pensada muy para desarrolladores. Nosotro"><img src="laminas/68.png" alt="Diapositiva 68: Esta es una nube pensada muy para desarrolladores. Nosotro" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="(Paréntesis) Noten, la cantidad de servicios. Esta es la v"><img src="laminas/69.png" alt="Diapositiva 69: (Paréntesis) Noten, la cantidad de servicios. Esta es la v" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="(Paréntesis 2) Cada nube cobra diferente, por ejemplo, en"><img src="laminas/70.png" alt="Diapositiva 70: (Paréntesis 2) Cada nube cobra diferente, por ejemplo, en" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Abajito buscamos el recurso Firestore, y le decimos que qu"><img src="laminas/71.png" alt="Diapositiva 71: Abajito buscamos el recurso Firestore, y le decimos que qu" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="La primera vez nos lo ofrecen. Vamos a Crear base de datos"><img src="laminas/72.png" alt="Diapositiva 72: La primera vez nos lo ofrecen. Vamos a Crear base de datos" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Indicamos nombre y región (en nube por lo general si tengo"><img src="laminas/73.png" alt="Diapositiva 73: Indicamos nombre y región (en nube por lo general si tengo" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Podemos indicar modo pruebas para que nos deje escribir co"><img src="laminas/74.png" alt="Diapositiva 74: Podemos indicar modo pruebas para que nos deje escribir co" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Esperamos a que se aprovisione el recurso."><img src="laminas/75.jpg" alt="Diapositiva 75: Esperamos a que se aprovisione el recurso." loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Ya tenemos el recurso! Ver panel de la izquierda donde dic"><img src="laminas/76.png" alt="Diapositiva 76: Ya tenemos el recurso! Ver panel de la izquierda donde dic" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="El id puede ser nuestro o el automático único."><img src="laminas/77.png" alt="Diapositiva 77: El id puede ser nuestro o el automático único." loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Firestore es una base indexada. ¡Tomen 3 minutos para crea"><img src="laminas/78.png" alt="Diapositiva 78: Firestore es una base indexada. ¡Tomen 3 minutos para crea" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="Noten que lo que se visualiza junto, se almacena junto. Es"><img src="laminas/79.png" alt="Diapositiva 79: Noten que lo que se visualiza junto, se almacena junto. Es" loading="lazy" decoding="async"></section>
+<section class="lam" data-title="¡Gracias!"><img src="laminas/80.jpg" alt="Diapositiva 80: ¡Gracias!" loading="lazy" decoding="async"></section>
+</div>
+<div class="barra">
+  <span class="count" id="count">1 / 80</span>
+  <button id="prev" type="button" title="Anterior" aria-label="Diapositiva anterior">&larr;</button>
+  <button id="next" type="button" title="Siguiente" aria-label="Diapositiva siguiente">&rarr;</button>
+  <button id="timeBtn" type="button" title="Cron&oacute;metro (T)" aria-label="Cron&oacute;metro">T</button>
+  <button id="fullBtn" type="button" title="Pantalla completa (F)" aria-label="Pantalla completa">F</button>
+  <a id="dlBtn" href="M4C1%20V4%20Introduccio%CC%81n%20a%20bases%20NoSQL.pptx" download
+     title="Descargar el PowerPoint original" aria-label="Descargar el PowerPoint original">&darr;</a>
+</div>
+<div class="clockBox" id="clockBox">00:00</div>
+<div class="nowTitle" id="nowTitle"></div>
+<div class="bar" id="bar"></div>
+<script>
+(function(){
+  var L = Array.prototype.slice.call(document.querySelectorAll('.lam'));
+  var i = 0, t0 = null, tick = null;
+  var cuenta = document.getElementById('count');
+  var avance = document.getElementById('bar');
+  var rotulo = document.getElementById('nowTitle');
+  var reloj  = document.getElementById('clockBox');
+
+  function ir(n){
+    i = Math.max(0, Math.min(L.length - 1, n));
+    L.forEach(function(s, k){ s.classList.toggle('viva', k === i); });
+    cuenta.textContent = (i + 1) + ' / ' + L.length;
+    avance.style.width = ((i + 1) / L.length * 100) + '%';
+    rotulo.textContent = L[i].dataset.title || '';
+    try { localStorage.setItem('s9pptx', i); } catch (e) {}
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function pinta(){
+    var s = Math.floor((Date.now() - t0) / 1000);
+    reloj.textContent = ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2);
+  }
+  function crono(){
+    if (tick) { clearInterval(tick); tick = null; reloj.classList.remove('viva'); return; }
+    t0 = Date.now(); reloj.classList.add('viva'); pinta(); tick = setInterval(pinta, 1000);
+  }
+  document.getElementById('prev').onclick = function(){ ir(i - 1); };
+  document.getElementById('next').onclick = function(){ ir(i + 1); };
+  document.getElementById('timeBtn').onclick = crono;
+  document.getElementById('fullBtn').onclick = function(){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  };
+  document.addEventListener('keydown', function(e){
+    if (/^(INPUT|TEXTAREA)$/.test((e.target.tagName || ''))) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); ir(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); ir(i - 1); }
+    else if (k === 'Home') ir(0);
+    else if (k === 'End') ir(L.length - 1);
+    else if (k === 't' || k === 'T') crono();
+    else if (k === 'f' || k === 'F') document.getElementById('fullBtn').click();
+  });
+  var d = 0;
+  document.addEventListener('touchstart', function(e){ d = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    var x = e.changedTouches[0].clientX - d;
+    if (Math.abs(x) > 55) ir(i + (x < 0 ? 1 : -1));
+  }, {passive:true});
+
+  var n = parseInt((location.hash || '').slice(1), 10);
+  if (!n) { try { n = parseInt(localStorage.getItem('s9pptx'), 10) + 1; } catch (e) {} }
+  ir((n || 1) - 1);
+})();
+</script>
+</body>
+</html>

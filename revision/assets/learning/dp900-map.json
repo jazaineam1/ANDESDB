@@ -1,0 +1,258 @@
+{
+  "version": "2026-07-21",
+  "regla": "concepto → evidencia → transferencia → reconocimiento del servicio",
+  "niveles": {
+    "aprendido": "el estudiante lo construye o explica desde un problema",
+    "transferido": "lo aplica en una tecnología distinta",
+    "reconocido": "identifica el servicio o término del blueprint sin convertir la clase en catálogo"
+  },
+  "dominios": [
+    {
+      "dominio": "Core data concepts",
+      "peso": "25–30%",
+      "objetivos": [
+        {
+          "objetivo": "structured, semi-structured and unstructured data",
+          "sesiones": [
+            1,
+            2,
+            11,
+            14
+          ],
+          "evidencia": "clasificación de casos + documentos JSON",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "common file formats: CSV, JSON and Parquet",
+          "sesiones": [
+            2,
+            13,
+            14
+          ],
+          "evidencia": "carga CSV + comparación JSON/Parquet",
+          "nivel": "transferido"
+        },
+        {
+          "objetivo": "transactional vs analytical workloads",
+          "sesiones": [
+            9,
+            12,
+            13
+          ],
+          "evidencia": "PostgreSQL operacional vs modelo estrella/BigQuery",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "data roles: DBA, data engineer, data analyst",
+          "sesiones": [
+            1,
+            16
+          ],
+          "evidencia": "pre/post de roles",
+          "nivel": "aprendido"
+        }
+      ]
+    },
+    {
+      "dominio": "Relational data on Azure",
+      "peso": "20–25%",
+      "objetivos": [
+        {
+          "objetivo": "relational concepts: tables, keys and relationships",
+          "sesiones": [
+            4,
+            7,
+            8,
+            9
+          ],
+          "evidencia": "JOIN + modelo ER + PK/FK",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "normalization and why it is used",
+          "sesiones": [
+            8,
+            9
+          ],
+          "evidencia": "anomalía → dependencia → 1FN/2FN/3FN",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "common SQL statements",
+          "sesiones": [
+            2,
+            3,
+            4,
+            5,
+            9
+          ],
+          "evidencia": "consultas + DDL + pruebas",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "database objects: tables and views; indexes at recognition level",
+          "sesiones": [
+            5,
+            9,
+            16
+          ],
+          "evidencia": "CREATE TABLE + VIEW opcional + escenario de reconocimiento",
+          "nivel": "transferido"
+        },
+        {
+          "objetivo": "Azure SQL Database, Azure SQL Managed Instance and SQL Server on Azure VMs",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "escenarios de selección por nivel de administración",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "Azure Database for PostgreSQL and MySQL",
+          "sesiones": [
+            9,
+            14,
+            16
+          ],
+          "evidencia": "transferencia desde PostgreSQL/Supabase a servicio administrado Azure",
+          "nivel": "reconocido"
+        }
+      ]
+    },
+    {
+      "dominio": "Non-relational data on Azure",
+      "peso": "15–20%",
+      "objetivos": [
+        {
+          "objetivo": "Azure Blob Storage",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "caso CSV/Parquet/objetos",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "Azure Files",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "caso de recurso compartido de archivos",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "Azure Table Storage",
+          "sesiones": [
+            10,
+            14,
+            16
+          ],
+          "evidencia": "caso clave/valor simple",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "document and key-value use cases",
+          "sesiones": [
+            10,
+            11
+          ],
+          "evidencia": "rúbrica SQL/NoSQL + Firestore/Atlas",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "Azure Cosmos DB use cases and characteristics",
+          "sesiones": [
+            11,
+            14,
+            16
+          ],
+          "evidencia": "partición/consistencia + escenario de servicio",
+          "nivel": "transferido"
+        },
+        {
+          "objetivo": "Cosmos DB APIs at recognition level",
+          "sesiones": [
+            11,
+            16
+          ],
+          "evidencia": "micro-preguntas DP-900",
+          "nivel": "reconocido"
+        }
+      ]
+    },
+    {
+      "dominio": "Analytics workload on Azure",
+      "peso": "25–30%",
+      "objetivos": [
+        {
+          "objetivo": "data ingestion and processing",
+          "sesiones": [
+            12,
+            13,
+            14
+          ],
+          "evidencia": "ETL/ELT + carga BigQuery + transformación",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "analytical data stores and data warehouses",
+          "sesiones": [
+            12,
+            13
+          ],
+          "evidencia": "grano + hechos/dimensiones + warehouse cloud",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "star schema, facts, dimensions and measures",
+          "sesiones": [
+            12,
+            13,
+            15
+          ],
+          "evidencia": "modelo estrella + validación de medidas",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "batch vs streaming",
+          "sesiones": [
+            12,
+            16
+          ],
+          "evidencia": "clasificación de escenarios",
+          "nivel": "aprendido"
+        },
+        {
+          "objetivo": "Microsoft Fabric and Azure Databricks",
+          "sesiones": [
+            12,
+            14,
+            16
+          ],
+          "evidencia": "transferencia de arquitectura",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "real-time analytics services at recognition level",
+          "sesiones": [
+            12,
+            16
+          ],
+          "evidencia": "escenarios de streaming/tiempo real",
+          "nivel": "reconocido"
+        },
+        {
+          "objetivo": "Power BI",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "capa de consumo/visualización",
+          "nivel": "reconocido"
+        }
+      ]
+    }
+  ]
+}

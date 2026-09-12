@@ -1,0 +1,63 @@
+/* UX v4 · una tarea principal por pantalla */
+body.ux-v4{background:radial-gradient(circle at 62% -12%,#15365f 0,transparent 30%),var(--bg)}
+.ux-v4 .shell{grid-template-columns:248px minmax(0,1fr)}
+.ux-v4 .main{width:100%;max-width:1120px;margin:0 auto;padding:28px clamp(22px,4vw,58px) 52px}
+.ux-v4 .rail{background:#081321f2}
+.ux-v4 .lesson-head{grid-template-columns:minmax(0,1fr);gap:8px}
+.ux-v4 .lesson-head h1{max-width:820px}
+.ux-v4 .lead{max-width:760px}
+.ux-v4 .source-link{width:max-content;margin-top:3px;color:#8aa4bd;text-decoration:underline;text-decoration-color:#385069;text-underline-offset:3px}
+.ux-v4 .source-link:hover{color:var(--cyan)}
+.ux-v4 .content{max-width:900px;padding:22px 0 10px}
+.ux-v4 .explain{font-size:17px;line-height:1.68}
+.ux-v4 .visual{margin-top:22px;background:linear-gradient(180deg,#10243a,#0b192a);box-shadow:0 14px 42px #0209143b}
+.ux-v4 .live{letter-spacing:.04em}
+.ux-v4 .navrow{max-width:900px;padding-top:18px;border-top:1px solid var(--line)}
+.ux-v4 .top-practice{border:1px solid #31506d;background:#10243a;color:#e9f7ff;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap}
+.ux-v4 .top-practice:hover{border-color:#55c7ed;background:#14304b}
+.step-primary-actions{max-width:900px;margin:14px 0 24px;padding:15px 16px;border:1px solid #29445f;border-radius:15px;background:linear-gradient(135deg,#0d1d30,#10263d);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.step-primary-actions .action-copy b{display:block;font-size:13px;color:#fff}.step-primary-actions .action-copy span{display:block;margin-top:2px;color:#9fb4ca;font-size:11px}
+.step-primary-actions button{flex:0 0 auto;border:0;border-radius:11px;padding:10px 14px;background:linear-gradient(135deg,#159dca,#4a69e4);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 8px 22px #06162b66}
+.step-primary-actions.secondary button{background:#122940;border:1px solid #37617f;box-shadow:none}
+/* El laboratorio deja de competir permanentemente con la lección. */
+.ux-v4 .studio{display:block;position:fixed;z-index:90;top:64px;right:0;bottom:0;width:min(520px,calc(100vw - 40px));height:auto;overflow:auto;border-left:1px solid #35516e;background:#081422f7;padding:18px 18px 34px;box-shadow:-22px 0 70px #01071399;transform:translateX(104%);transition:transform .22s ease;overscroll-behavior:contain}
+.ux-v4 .studio.ux-open{transform:translateX(0)}
+.studio-backdrop{position:fixed;z-index:80;inset:64px 0 0;background:#02071199;backdrop-filter:blur(2px)}
+.studio-backdrop[hidden]{display:none}
+.studio-close{position:sticky;float:right;top:0;z-index:2;width:34px;height:34px;border:1px solid #38536f;border-radius:10px;background:#10243a;color:#dceafa;font-size:21px;line-height:1;cursor:pointer}
+.ux-v4 .studio-head{padding-right:44px}.ux-v4 .studio h3{font-size:18px;margin-top:2px}
+.ux-v4 .engine{margin-top:12px}
+.ux-v4 textarea{min-height:220px;font-size:14px;line-height:1.6}
+.ux-v4 .coach button[hidden],.ux-v4 .checks[hidden]{display:none!important}
+.ux-v4 .coach{margin-top:10px}.ux-v4 .coach button{min-height:36px;font-size:11px}
+.ux-v4 .feedback{font-size:12px;line-height:1.45}
+.ux-v4 .result{max-height:330px}
+.ux-v4 .mastery{opacity:.85}
+/* Menos señalización técnica en el recorrido. */
+.ux-v4 .step-copy small{line-height:1.25}.ux-v4 .step-kind{opacity:.7}
+@media(max-width:1120px){
+  .ux-v4 .shell{grid-template-columns:220px minmax(0,1fr)}
+  .ux-v4 .studio{grid-column:auto;position:fixed;height:auto;border-top:0;padding:18px}
+}
+@media(max-width:760px){
+  body.ux-v4{padding-bottom:64px}
+  .ux-v4 .main{max-width:none;padding:16px 15px 30px}
+  .ux-v4 .content{padding-top:14px}
+  .ux-v4 .explain{font-size:15px;line-height:1.62}
+  .ux-v4 .source-link{font-size:10px}
+  .ux-v4 .top-practice{display:none}
+  .step-primary-actions{margin:10px 0 18px;display:block;padding:13px}
+  .step-primary-actions button{width:100%;margin-top:10px;min-height:44px}
+  .ux-v4 .studio{display:none;position:fixed;z-index:55;top:100px;left:0;right:0;bottom:62px;width:auto;transform:none;border:0;padding:14px;background:#081422}
+  .ux-v4 .studio.mobile-on{display:block}
+  .ux-v4 .studio.ux-open{display:block}
+  .studio-backdrop{display:none!important}
+  .studio-close{display:none}
+  .ux-v4 .mobile-tabs{display:grid}
+  .ux-v4 .mobile-dock{grid-template-columns:1fr 1.35fr 1fr}
+  .ux-v4 #dockHint{display:none}
+  .ux-v4 .mobile-dock.has-hint{grid-template-columns:1fr 1fr 1.25fr 1fr}
+  .ux-v4 .mobile-dock.has-hint #dockHint{display:block}
+  .ux-v4 textarea{min-height:205px}
+}
+@media(prefers-reduced-motion:reduce){.ux-v4 .studio{transition:none}}

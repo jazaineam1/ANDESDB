@@ -1,0 +1,48 @@
+pedido_id,fecha,mesa_numero,mesero_nombre,linea_id,plato_nombre,cantidad,precio_unitario
+1,2026-09-04,1,Marta Quintero,1,Ajiaco santafereño,2,26000
+1,2026-09-04,1,Marta Quintero,2,Limonada de coco,4,9000
+2,2026-09-04,3,Andrés Poveda,3,Bandeja paisa,1,34000
+2,2026-09-04,3,Andrés Poveda,4,Arepa de choclo,2,7500
+3,2026-09-04,2,Marta Quintero,5,Ajiaco santafereño,1,26000
+4,2026-09-05,3,Andrés Poveda,6,Sancocho de gallina,3,30000
+4,2026-09-05,4,Andrés Poveda,6,Sancocho de gallina,3,30000
+4,2026-09-05,3,Andrés Poveda,7,Sobrebarriga al horno,2,36000
+4,2026-09-05,4,Andrés Poveda,7,Sobrebarriga al horno,2,36000
+4,2026-09-05,3,Andrés Poveda,8,Postre de natas,2,11000
+4,2026-09-05,4,Andrés Poveda,8,Postre de natas,2,11000
+7,2026-08-27,1,Marta Quintero,11,Pollo sudado,2,27000
+7,2026-08-27,1,Marta Quintero,12,Jugo de lulo,3,7000
+8,2026-08-27,3,Andrés Poveda,13,Bandeja paisa,1,34000
+8,2026-08-27,3,Andrés Poveda,14,Patacones con hogao,2,10000
+9,2026-08-27,5,Luisa Cárdenas,15,Cazuela de mariscos,1,42000
+9,2026-08-27,5,Luisa Cárdenas,16,Café colombiano,4,6000
+10,2026-08-28,2,Marta Quintero,17,Empanadas de pipián,3,8500
+10,2026-08-28,2,Marta Quintero,18,Chocolate santafereño,2,8500
+11,2026-08-28,4,Andrés Poveda,19,Ajiaco santafereño,2,28000
+11,2026-08-28,4,Andrés Poveda,20,Limonada de coco,2,9000
+12,2026-08-28,5,Luisa Cárdenas,21,Lomo al trapo,1,48000
+12,2026-08-28,5,Luisa Cárdenas,22,Ensalada campesina,1,18000
+13,2026-08-31,1,Marta Quintero,23,Sancocho de gallina,2,30000
+13,2026-08-31,1,Marta Quintero,24,Sopa de guineo,2,16000
+14,2026-08-31,3,Andrés Poveda,25,Trucha al ajillo,1,39000
+14,2026-08-31,3,Andrés Poveda,26,Arepa de choclo,2,7500
+15,2026-08-31,2,Marta Quintero,27,Pan de bono recién horneado,4,5000
+15,2026-08-31,2,Marta Quintero,28,Café colombiano,4,6000
+16,2026-09-01,2,Marta Quintero,29,Ajiaco santafereño,3,28000
+16,2026-09-01,2,Marta Quintero,30,Empanadas de pipián,3,8500
+17,2026-09-01,4,Andrés Poveda,31,Sobrebarriga al horno,1,36000
+17,2026-09-01,4,Andrés Poveda,32,Postre de natas,2,11000
+18,2026-09-01,5,Luisa Cárdenas,33,Bandeja paisa,2,34000
+18,2026-09-01,5,Luisa Cárdenas,34,Jugo de lulo,2,7000
+19,2026-09-02,1,Marta Quintero,35,Pollo sudado,2,27000
+19,2026-09-02,1,Marta Quintero,36,Avena casera,2,7500
+20,2026-09-02,3,Andrés Poveda,37,Sancocho de gallina,1,30000
+20,2026-09-02,3,Andrés Poveda,38,Brevas con arequipe,1,12000
+21,2026-09-02,4,Andrés Poveda,39,Oblea bogotana,2,9000
+21,2026-09-02,4,Andrés Poveda,40,Chocolate santafereño,2,8500
+22,2026-09-03,2,Marta Quintero,41,Ajiaco santafereño,1,28000
+22,2026-09-03,2,Marta Quintero,42,Limonada de coco,1,9000
+23,2026-09-03,4,Andrés Poveda,43,Cazuela de mariscos,1,42000
+23,2026-09-03,4,Andrés Poveda,44,Ensalada campesina,1,18000
+24,2026-09-03,5,Luisa Cárdenas,45,Patacones con hogao,3,10000
+24,2026-09-03,5,Luisa Cárdenas,46,Café colombiano,3,6000

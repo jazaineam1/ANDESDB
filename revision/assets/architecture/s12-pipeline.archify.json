@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Restaurante ABC: de las fuentes a la decision",
+    "output": "s12-pipeline.html",
+    "viewBox": [1080, 640],
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "full-pipeline", "label": "El recorrido completo", "focus": ["postgres", "firestore", "etl", "warehouse", "lab", "dashboard"], "note": "En un pipeline completo, las dos fuentes entrarian por el mismo ETL hacia una bodega con esquema fijo; hoy fact_venta solo trae el lado de PostgreSQL." },
+      { "id": "sources", "label": "Las dos fuentes", "focus": ["postgres", "firestore"], "note": "PostgreSQL guarda tablas (Sesion 9); Firestore guarda documentos (Sesion 11). Mismo plato, dos formas distintas de guardarlo -- no la venta en si." },
+      { "id": "destination", "label": "A donde llega", "focus": ["warehouse", "lab", "dashboard"], "note": "fact_venta y sus dimensiones alimentan el laboratorio de hoy, y mas adelante un dashboard real." }
+    ]
+  },
+  "stages": [
+    { "label": "Fuentes operacionales" },
+    { "label": "Procesamiento: ETL" },
+    { "label": "Almacenamiento: OLAP" },
+    { "label": "Presentacion: OLAP" }
+  ],
+  "nodes": [
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "OLTP, Sesion 9", "stage": 0, "row": 0, "tag": "OLTP" },
+    { "id": "firestore", "type": "database", "label": "Firestore", "sublabel": "documentos, S11", "stage": 0, "row": 2, "tag": "documentos" },
+    { "id": "etl", "type": "backend", "label": "ETL", "sublabel": "transforma aqui", "stage": 1, "row": 1, "tag": "transforma" },
+    { "id": "warehouse", "type": "database", "label": "fact_venta", "sublabel": "OLAP, warehouse", "stage": 2, "row": 1, "tag": "warehouse, OLAP" },
+    { "id": "lab", "type": "frontend", "label": "Laboratorio", "sublabel": "consulta OLAP", "stage": 3, "row": 0, "tag": "consulta OLAP" },
+    { "id": "dashboard", "type": "external", "label": "Dashboard", "sublabel": "OLAP, manana", "stage": 3, "row": 2, "tag": "OLAP futuro" }
+  ],
+  "flows": [
+    { "from": "postgres", "to": "etl", "label": "tablas", "classification": "SQL", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "firestore", "to": "etl", "label": "docs", "classification": "consultas", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "etl", "to": "warehouse", "label": "carga", "classification": "grano declarado", "variant": "emphasis", "route": "straight" },
+    { "from": "warehouse", "to": "lab", "label": "consulta", "classification": "SQL conocido", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "warehouse", "to": "dashboard", "label": "manana", "classification": "fuera de alcance hoy", "variant": "dashed", "route": "vertical-channel" }
+  ],
+  "cards": [
+    { "dot": "amber", "title": "Dos fuentes, un mismo Ajiaco", "items": ["PostgreSQL: una fila con columnas fijas", "Firestore: un documento con campos que no todos comparten", "En un pipeline completo, el ETL homogeneizaría las dos", "Hoy fact_venta.csv solo trae el lado de PostgreSQL"] },
+    { "dot": "emerald", "title": "Lo que construyes hoy", "items": ["fact_venta nace de linea_pedido filtrando estado='cerrado'", "Tres dimensiones: dim_plato, dim_mesero, dim_fecha", "Corre local, en DuckDB-Wasm, sin cuenta ni credito"] },
+    { "dot": "rose", "title": "Lo que no se construye hoy", "items": ["El dashboard de Power BI se nombra, no se opera", "BigQuery real llega en la Sesion 13", "Databricks y Fabric se nombran para el DP-900, solamente"] },
+    { "dot": "violet", "title": "OLTP, OLAP y bodega, sin confundirlos", "items": ["OLTP es solo PostgreSQL: transacciones, muchas escrituras pequenas", "OLAP ocurre donde se agrega y suma: fact_venta, el laboratorio, el dashboard", "fact_venta es una tabla de hechos dentro de la bodega (warehouse) de este flujo, no la bodega misma", "Aqui no hay data lake: ese camino se queda en la diapositiva 'Lago o bodega', como alternativa"] }
+  ]
+}

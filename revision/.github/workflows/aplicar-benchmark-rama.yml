@@ -1,0 +1,60 @@
+name: Validar curación pedagógica en rama
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - mejoras-benchmark-pedagogico
+    paths:
+      - 'Presentaciones/**'
+      - 'assets/learning/**'
+      - 'docs/**'
+      - 'Plantillas/**'
+      - 'tools/**'
+      - '.github/workflows/aplicar-benchmark-rama.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curacion-pedagogica-rama
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar rama
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Traer main para comparar sesiones maduras
+        run: git fetch origin main
+
+      - name: Validar manifiesto general del curso
+        run: python tools/validar_curso.py
+
+      - name: Validar curación pedagógica y regresiones
+        run: python tools/validar-cierre-benchmark.py
+
+      - name: Validar hilo conductor
+        run: python tools/validar-hilo-conductor.py
+
+      - name: Confirmar que no cambió el estilo visual compartido
+        run: |
+          if ! git diff --quiet origin/main -- '*.css' 'tools/estilo-portada.css'; then
+            echo 'ERROR: la rama modifica archivos de estilo CSS compartidos'
+            git diff --stat origin/main -- '*.css' 'tools/estilo-portada.css'
+            exit 1
+          fi
+          echo 'OK: no hay cambios en CSS compartido respecto de main'
+
+      - name: Confirmar CI de solo lectura
+        run: |
+          if ! git diff --quiet; then
+            echo 'ERROR: la validación modificó archivos; CI debe ser solo lectura'
+            git diff --stat
+            exit 1
+          fi
+          echo 'OK: CI valida, no reescribe contenido'

@@ -1,0 +1,1 @@
+-- Pruebas independientes: conteos, totales, casos que deben fallar

@@ -1,0 +1,1 @@
+-- Consultas que responden las preguntas del caso
