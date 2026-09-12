@@ -53,23 +53,15 @@ def section(text: str, heading: str) -> str:
 
 
 def validate_instructor_guides() -> None:
-    """Impide volver a guías de apariencia institucional pero contenido clonado."""
     required_headings = [
-        "Pregunta central",
-        "Hilo conductor",
-        "Error esperable principal",
-        "Dónde probablemente se atascan",
-        "No avanzar hasta que…",
-        "Evidencia mínima",
-        "Si vas 15 minutos atrasado",
-        "Si vas 15 minutos adelantado",
-        "Intervención docente",
-        "Regla de cierre",
+        "Pregunta central", "Hilo conductor", "Error esperable principal",
+        "Dónde probablemente se atascan", "No avanzar hasta que…", "Evidencia mínima",
+        "Si vas 15 minutos atrasado", "Si vas 15 minutos adelantado",
+        "Intervención docente", "Regla de cierre",
     ]
     seen_questions: set[str] = set()
     seen_stuck: set[str] = set()
     seen_interventions: set[str] = set()
-
     for n in range(1, 17):
         rel = f"docs/instructor/S{n:02d}.md"
         guide = read(rel)
@@ -79,7 +71,6 @@ def validate_instructor_guides() -> None:
                 err(f"Guía S{n:02d}: falta sección sustantiva {heading!r}")
         if len(guide) < 1100:
             err(f"Guía S{n:02d}: demasiado breve para ser una guía útil ({len(guide)} caracteres)")
-
         question = section(guide, "Pregunta central").casefold()
         stuck = section(guide, "Dónde probablemente se atascan").casefold()
         intervention = section(guide, "Intervención docente").casefold()
@@ -101,24 +92,14 @@ def validate_final_dataset() -> None:
     if not cases_path.exists() or not events_path.exists() or not evidence_path.exists():
         err("S15: falta al menos uno de los tres archivos de datos")
         return
-
     with cases_path.open(encoding="utf-8", newline="") as fh:
         cases = list(csv.DictReader(fh))
     with events_path.open(encoding="utf-8", newline="") as fh:
         events = list(csv.DictReader(fh))
     evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-
-    expected = {
-        "casos": 12,
-        "eventos": 24,
-        "cerrados": 4,
-        "alta": 5,
-        "alta_cerrado": 2,
-        "evidencias": 4,
-    }
+    expected = {"casos": 12, "eventos": 24, "cerrados": 4, "alta": 5, "alta_cerrado": 2, "evidencias": 4}
     actual = {
-        "casos": len(cases),
-        "eventos": len(events),
+        "casos": len(cases), "eventos": len(events),
         "cerrados": sum(r["estado"] == "Cerrado" for r in cases),
         "alta": sum(r["prioridad"] == "Alta" for r in cases),
         "alta_cerrado": sum(r["prioridad"] == "Alta" and r["estado"] == "Cerrado" for r in cases),
@@ -127,15 +108,27 @@ def validate_final_dataset() -> None:
     for key, value in expected.items():
         if actual[key] != value:
             err(f"S15 datos: {key}={actual[key]}, esperado={value}")
-
     case_ids = {r["caso_id"] for r in cases}
     orphan_events = [r["evento_id"] for r in events if r["caso_id"] not in case_ids]
     if orphan_events:
         err(f"S15 datos: eventos huérfanos {orphan_events}")
 
 
+def validate_course_s13(course: dict) -> None:
+    sessions = [s for m in course.get("modulos", []) for s in m.get("sesiones", [])]
+    s13 = next((s for s in sessions if s.get("n") == 13), None)
+    if not s13:
+        err("curso.json: falta S13")
+        return
+    if s13.get("duracionUtil") != 165:
+        err(f"curso.json S13: duración debe ser 165, no {s13.get('duracionUtil')!r}")
+    resources = " ".join(str(r.get("href", "")) for r in s13.get("recursos", []))
+    for token in ["paths/420", "562865", "562975"]:
+        if token not in resources:
+            err(f"curso.json S13: falta recurso M5C2 {token}")
+
+
 def main() -> int:
-    # Las sesiones maduras no se auto-reescriben en esta rama.
     for path in [
         "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
         "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
@@ -151,11 +144,7 @@ def main() -> int:
         same_as_main(path)
 
     s1 = read("Presentaciones/M1/sesion-1-diagnostico.html")
-    require(s1, [
-        "Cinco preguntas que repetiremos en S16", "Dato no es valor", "Archivo vs base",
-        "DBA", "Data engineer", "Data analyst", "dvdrental.db",
-        'href="sesion-1-diagnostico.html"'
-    ], "S1")
+    require(s1, ["Cinco preguntas que repetiremos en S16", "Dato no es valor", "Archivo vs base", "DBA", "Data engineer", "Data analyst", "dvdrental.db", 'href="sesion-1-diagnostico.html"'], "S1")
     forbid(s1, ["sesion-12-fundamentos-data-warehouse.html"], "S1 descarga")
 
     s7 = read("Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html")
@@ -163,39 +152,25 @@ def main() -> int:
 
     s13 = read("Presentaciones/M5/sesion-13-laboratorio-bigquery.html")
     require(s13, [
-        "Particionar", "PARTITION BY", "partition pruning", "Clusterización", "CLUSTER BY",
-        "bytes", "Creating Date-Partitioned Tables in BigQuery",
-        "Performance and Cost Optimization with BigQuery", "9", "4",
+        "BigQuery Sandbox", "PARTITION BY", "partition pruning", "Clusterización", "CLUSTER BY", "bytes",
+        "paths/420", "562865", "562975", "575654", "9", "4",
+        "modificar o retirar la especificación de clustering",
+        "Una tabla no particionada no se convierte directamente en particionada",
         'href="sesion-13-laboratorio-bigquery.html"', "learning-core.js"
     ], "S13")
-    forbid(s13, ["fact_venta.csv · 44 filas"], "S13 no debe repetir S12 como tema central")
+    forbid(s13, ["fact_venta.csv · 44 filas", "Ni partición ni clusterización se agregan después"], "S13 residuos")
 
     s14 = read("Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html")
-    require(s14, [
-        "ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet",
-        "Laboratorio 1", "Taller proyecto integrador", "Lab 2",
-        "548383", "562904", "575654",
-        "Azure Blob Storage", "Azure Cosmos DB",
-        'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js"
-    ], "S14")
+    require(s14, ["ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet", "Laboratorio 1", "Taller proyecto integrador", "Lab 2", "548383", "562904", "575654", "Azure Blob Storage", "Azure Cosmos DB", 'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js"], "S14")
 
     validate_final_dataset()
     read("Plantillas/proyecto-final/criterios.md")
     s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
-    require(s15, [
-        "Atención de incidentes urbanos", "casos cerrados", "Code ownership",
-        "Pruebas negativas", "90 s por equipo", 'href="sesion-15-desafio-final.html"',
-        "learning-core.js"
-    ], "S15")
+    require(s15, ["Atención de incidentes urbanos", "casos cerrados", "Code ownership", "Pruebas negativas", "90 s por equipo", 'href="sesion-15-desafio-final.html"', "learning-core.js"], "S15")
     forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
-    require(s16, [
-        "cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
-        "Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8",
-        "Escenarios 9–11", "Escenarios 12–13", "Clasifica el error",
-        'href="sesion-16-cierre-dp900.html"'
-    ], "S16")
+    require(s16, ["cinco preguntas de S1", "25–30%", "20–25%", "15–20%", "Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8", "Escenarios 9–11", "Escenarios 12–13", "Clasifica el error", 'href="sesion-16-cierre-dp900.html"'], "S16")
     forbid(s16, ["sesion-12-fundamentos-data-warehouse.html", 'data-title="Mapa del curso"'], "S16")
 
     course = json.loads(read("tools/curso.json") or "{}")
@@ -207,7 +182,7 @@ def main() -> int:
         for key in ["fecha", "duracionUtil", "modo", "titulo", "href", "tags"]:
             if not s1_manifest.get(key):
                 err(f"curso.json S1: falta {key}")
-
+    validate_course_s13(course)
     validate_instructor_guides()
 
     if ERRORS:
@@ -216,7 +191,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ sesiones maduras protegidas, sesiones nuevas sustantivas, datos reproducibles y guías docentes específicas")
+    print("  ✓ sesiones maduras protegidas, S13 alineada a M5C2, datos reproducibles y guías específicas")
     return 0
 
 
