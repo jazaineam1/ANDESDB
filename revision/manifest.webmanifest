@@ -1,9 +1,9 @@
 {
   "id": "./",
-  "name": "Diseño y Gestión de Bases de Datos con SQL",
+  "name": "ANDESDB · Plataforma de aprendizaje",
   "short_name": "ANDESDB",
-  "description": "Curso interactivo de Diseño y Gestión de Bases de Datos con SQL · Universidad de los Andes · Colsubsidio",
-  "start_url": "./?source=pwa",
+  "description": "Portal de cursos, laboratorios, lecturas y progreso ANDESDB",
+  "start_url": "./portal.html?source=pwa",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -12,41 +12,14 @@
   "categories": ["education", "productivity"],
   "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "assets/icons/andesdb-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/icons/andesdb-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/icons/andesdb-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "assets/andesdb-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
+    {"src":"assets/icons/andesdb-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"assets/icons/andesdb-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"assets/icons/andesdb-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"},
+    {"src":"assets/andesdb-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
   ],
   "shortcuts": [
-    {
-      "name": "Inicio del curso",
-      "short_name": "Inicio",
-      "url": "./?source=shortcut"
-    },
-    {
-      "name": "Sesión 6 · Reglas de negocio",
-      "short_name": "Sesión 6",
-      "url": "./Presentaciones/M3/sesion-6-reglas-de-negocio.html?source=shortcut"
-    }
+    {"name":"Portal de aprendizaje","short_name":"Portal","url":"./portal.html?source=shortcut"},
+    {"name":"Curso ANDESDB","short_name":"Curso","url":"./index.html?course=andesdb&source=shortcut"},
+    {"name":"Centro de aprendizaje","short_name":"Recursos","url":"./learning-hub.html?source=shortcut"}
   ]
 }
