@@ -7,6 +7,8 @@ on:
       - mejoras-benchmark-pedagogico
     paths:
       - 'tools/aplicar-mejoras-benchmark.py'
+      - 'tools/cerrar-auditoria-benchmark.py'
+      - 'tools/validar-cierre-benchmark.py'
       - '.github/workflows/aplicar-benchmark-rama.yml'
 
 permissions:
@@ -26,13 +28,16 @@ jobs:
           ref: mejoras-benchmark-pedagogico
           fetch-depth: 0
 
-      - name: Ejecutar transformador pedagógico una sola vez
+      - name: Ejecutar benchmark base una sola vez
         run: |
           if [ -f docs/BENCHMARK-PEDAGOGICO-APLICADO.md ]; then
-            echo 'Benchmark ya aplicado; no se duplican checkpoints ni diapositivas.'
+            echo 'Benchmark base ya aplicado; no se duplican checkpoints.'
           else
             python tools/aplicar-mejoras-benchmark.py
           fi
+
+      - name: Cerrar todos los hallazgos de aceptación
+        run: python tools/cerrar-auditoria-benchmark.py
 
       - name: Corregir identificador visual de nuevas sesiones
         run: |
@@ -77,11 +82,27 @@ jobs:
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Comprobar sintaxis Python
-        run: python -m py_compile tools/aplicar-mejoras-benchmark.py
+      - name: Comprobar sintaxis de herramientas
+        run: |
+          python -m py_compile tools/aplicar-mejoras-benchmark.py
+          python -m py_compile tools/cerrar-auditoria-benchmark.py
+          python -m py_compile tools/validar-cierre-benchmark.py
 
       - name: Validar curso existente
         run: python tools/validar_curso.py
+
+      - name: Validar cierre semántico del benchmark
+        run: python tools/validar-cierre-benchmark.py
+
+      - name: Confirmar que no cambió el estilo visual
+        run: |
+          git fetch origin main
+          if ! git diff --quiet origin/main -- '*.css' 'tools/estilo-portada.css'; then
+            echo 'ERROR: la rama modifica archivos de estilo CSS'
+            git diff --stat origin/main -- '*.css' 'tools/estilo-portada.css'
+            exit 1
+          fi
+          echo 'OK: no hay cambios en CSS respecto de main'
 
       - name: Publicar cambios solo en la rama
         run: |
@@ -92,6 +113,6 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add README.md tools/curso.json assets/learning docs Presentaciones service-worker.js .claude .codex
-          git commit -m 'Ajustar identificadores sin alterar el estilo visual'
+          git add README.md tools/curso.json tools/validar_curso.py assets/learning docs Presentaciones Plantillas service-worker.js .claude .codex
+          git commit -m 'Cerrar auditoría pedagógica completa sin cambiar estilo'
           git push origin HEAD:mejoras-benchmark-pedagogico
