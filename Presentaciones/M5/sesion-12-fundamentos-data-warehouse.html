@@ -3596,7 +3596,15 @@ ORDER BY ingreso_dia DESC;</code></pre>Si tu consulta corrió y el número más 
         <div class="brand"><span>Cierre</span><span>Del OLTP al modelo estrella</span></div>
       </section>
 
-      <section class="slide mid" data-title="Salida">
+      
+<section class="slide dense" data-title="Núcleo y referencia">
+<div class="ey">Control de carga cognitiva</div><h2>Lo obligatorio termina antes del catálogo de servicios</h2><div class="g2"><div class="card"><h3>Núcleo</h3><p>dolor operacional → OLTP/OLAP → warehouse → ETL/ELT → grano → hechos/dimensiones → medidas → estrella → laboratorio → batch/streaming.</p></div><div class="card blue"><h3>Referencia / extensión</h3><p>hecho acumulativo, tabla detallada Azure y comparación Azure–Google Cloud.</p></div></div><div class="warn"><b>Si el grupo no puede declarar el grano, no avances a memorizar productos cloud.</b></div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 12 · Fundamentos de data warehouse</span></div></section>
+<section class="slide dense" data-title="Reasoning Check · 368.000">
+<div class="ey">🔍 Reasoning Check</div><h2>Las dos consultas ejecutan. Solo una responde la pregunta correcta.</h2><div class="g2"><div class="card"><h3>Resultado A</h3><p class="quote">$368.000</p></div><div class="card blue"><h3>Resultado B</h3><p class="quote">$184.000</p></div></div><div class="ctx">Identifica el grano, encuentra dónde se multiplican filas y explica por qué <code>DISTINCT</code> puede ocultar el síntoma sin corregir el razonamiento.</div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 12 · Fundamentos de data warehouse</span></div></section>
+
+<section class="slide mid" data-title="Salida">
         <div class="break">
           <div class="ey">Salida</div>
           <h2>Selecciona una opción en el chat antes de irte</h2>

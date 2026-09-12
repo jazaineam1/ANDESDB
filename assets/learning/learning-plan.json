@@ -25,18 +25,6 @@
       "dp900": [
         {
           "dominio": "Core data concepts",
-          "pregunta": "Una aplicación registra cientos de alquileres individuales durante el día. ¿Qué tipo de carga representa principalmente?",
-          "opciones": [
-            "OLAP",
-            "OLTP",
-            "Data lake",
-            "Procesamiento por lotes"
-          ],
-          "correcta": 1,
-          "explicacion": "OLTP está orientado a muchas transacciones pequeñas y frecuentes que sostienen la operación."
-        },
-        {
-          "dominio": "Core data concepts",
           "pregunta": "Un archivo JSON con campos y estructuras anidadas se clasifica normalmente como:",
           "opciones": [
             "Dato estructurado exclusivamente",
@@ -46,6 +34,18 @@
           ],
           "correcta": 1,
           "explicacion": "JSON tiene estructura y claves, pero no exige el esquema tabular rígido de una tabla relacional."
+        },
+        {
+          "dominio": "Relational data on Azure",
+          "pregunta": "Una columna tiene DEFAULT abierto. ¿Qué afirmación es correcta?",
+          "opciones": [
+            "DEFAULT impide guardar cualquier otro valor",
+            "DEFAULT propone un valor cuando no se especifica; no sustituye una restricción",
+            "DEFAULT crea automáticamente una clave primaria",
+            "DEFAULT normaliza la tabla"
+          ],
+          "correcta": 1,
+          "explicacion": "DEFAULT define un valor por omisión; CHECK, FK, NOT NULL u otras restricciones son las que pueden impedir estados inválidos."
         }
       ],
       "solucion": {
@@ -56,10 +56,10 @@
         "minutos": 10,
         "instrucciones": "Ejecuta las consultas del Taller 1 y clasifica cada hallazgo como restricción, permiso, patrón o hipótesis — recordando que el hecho es un patrón y su explicación una hipótesis. Después, en la propia presentación, marca con un clic cuáles de las doce frases del Restaurante ABC son reglas de negocio y cuáles no.",
         "criterios": [
-          "clasifica los 4 hallazgos del Taller 1 separando el hecho de su explicación",
-          "marca las 12 frases y entiende por qué falló las que falló",
-          "distingue una regla de una lista de campos, un deseo o un dato",
-          "lleva al chat una regla y una pregunta pendiente"
+          "clasifica observación vs explicación",
+          "asigna certeza y evidencia",
+          "redacta regla comprobable",
+          "deja pregunta pendiente"
         ]
       }
     },
@@ -165,7 +165,7 @@
       "titulo": "Supabase paso a paso + DDL PostgreSQL",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Entrar y orientarse en Supabase paso a paso; usar SQL Editor y Table Editor; distinguir PK/FK de API keys; detectar 1FN, 2FN y 3FN con el Restaurante ABC; y construir con DDL el núcleo PLATO, MESA, PEDIDO y LINEA_PEDIDO.",
+      "objetivo": "Orientarse en Supabase y convertir el modelo de S8 en tablas PostgreSQL que hagan cumplir reglas con PK, FK, NOT NULL, CHECK y DEFAULT.",
       "servicio_real": {
         "requerido": true,
         "nombre": "PostgreSQL en Supabase",
@@ -201,15 +201,15 @@
         "modo": "manual"
       },
       "actividad": {
-        "titulo": "Supabase paso a paso + formas normales suaves + DDL",
-        "minutos": 61,
-        "instrucciones": "Trabaja en grupo. Primero ubica SQL Editor y Table Editor. Luego predice y comprueba tres problemas del Restaurante ABC: una celda con lista para 1FN, datos de pedido y plato mezclados para 2FN, y puestos de MESA guardados dentro de PEDIDO para 3FN. Finalmente construye y prueba el núcleo DDL: PLATO, PEDIDO y LINEA_PEDIDO; MESA queda identificada como la fuente única de capacidad.",
+        "titulo": "Del modelo a schema.sql + tests.sql",
+        "minutos": 60,
+        "instrucciones": "Construye PLATO, PEDIDO y LINEA_PEDIDO; luego escribe pruebas que deban funcionar y pruebas que deban fallar.",
         "criterios": [
-          "detecta el problema de 1FN mediante una consulta de negocio",
-          "explica qué atributo depende de una parte de una clave compuesta en 2FN",
-          "detecta una dependencia transitiva visible en 3FN",
-          "reconstruye información con JOIN después de separar tablas",
-          "crea y prueba PK, FK, NOT NULL, CHECK y DEFAULT en PLATO, PEDIDO y LINEA_PEDIDO; y justifica por qué los puestos pertenecen a MESA"
+          "preflight Supabase",
+          "PK/FK coherentes",
+          "NOT NULL/CHECK/DEFAULT defendibles",
+          "dos pruebas negativas",
+          "explica por qué ejecutar no demuestra integridad"
         ]
       }
     },
@@ -256,10 +256,11 @@
         "minutos": 75,
         "instrucciones": "Resuelve varios casos de negocio. Para cada uno decide relacional, documentos u otra alternativa; identifica el patrón de acceso, consistencia requerida y cómo evolucionará el esquema.",
         "criterios": [
-          "decisión explícita",
-          "2 argumentos técnicos",
-          "1 riesgo",
-          "no usar 'NoSQL porque escala' como única justificación"
+          "patrón de acceso",
+          "consistencia requerida",
+          "forma/evolución del dato",
+          "costo o riesgo",
+          "reconoce cuándo falta información"
         ]
       }
     },
@@ -268,7 +269,7 @@
       "titulo": "Documentos de verdad: Firebase y MongoDB Atlas",
       "duracion_util": 165,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Modelar documentos reales en Firestore (o MongoDB Atlas), usar el carrito que se convierte en venta para ver un documento efímero convertirse en una fila relacional real, y decidir entre embeber y referenciar.",
+      "objetivo": "Modelar documentos reales, persistir temporalmente el estado mutable del carrito y convertir la confirmación en un hecho relacional auditable; decidir entre embeber y referenciar.",
       "nucleo": {
         "titulo": "El carrito que se convirtió en venta",
         "minutos": 45,
@@ -392,7 +393,8 @@
           "trabaja en BigQuery real",
           "resuelve consultas núcleo",
           "valida resultados",
-          "documenta un aprendizaje"
+          "documenta un aprendizaje",
+          "observa y explica bytes/datos procesados en al menos una consulta"
         ]
       },
       "reto": {
@@ -403,7 +405,7 @@
       "servicio_real": {
         "requerido": true,
         "nombre": "Google BigQuery",
-        "fallback": "DuckDB-Wasm con el mismo dataset si una cuenta queda bloqueada. El docente debe mostrar BigQuery real y luego mapear conceptos a Azure."
+        "fallback": "Primero BigQuery Sandbox para mantener BigQuery real sin tarjeta ni cuenta de facturación; DuckDB-Wasm queda como contingencia final."
       },
       "dp900": [
         {
@@ -510,7 +512,8 @@
           "transformación",
           "consultas",
           "validación",
-          "decisión explicada"
+          "decisión explicada",
+          "defensa oral"
         ]
       },
       "reto": {
@@ -546,7 +549,15 @@
       ],
       "solucion": {
         "modo": "manual"
-      }
+      },
+      "artefactos": [
+        "decisiones.md",
+        "modelo.png",
+        "schema.sql",
+        "queries.sql",
+        "validaciones.sql",
+        "arquitectura.md"
+      ]
     },
     "16": {
       "fecha": "2026-09-22",
@@ -604,7 +615,8 @@
           "identifica dominio débil",
           "define siguiente paso de estudio"
         ]
-      }
+      },
+      "evidencia_prepost": "Repite las cinco preguntas diagnósticas de S1 antes de consultar apuntes y compara la calidad de las explicaciones."
     }
   }
 }

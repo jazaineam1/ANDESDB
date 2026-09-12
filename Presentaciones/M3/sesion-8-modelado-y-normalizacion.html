@@ -79,6 +79,11 @@ SELECT p.pedido_id, t.total
 FROM pedido p
 JOIN totales t ON t.pedido_id = p.pedido_id;</code></pre><div class="checkpoint mt"><strong>No basta con que ejecute:</strong> revisa que no multiplique filas y que cada pedido conserve su total esperado.</div><div class="brand"><span>Reconstrucción</span><span>Prueba de normalización</span></div></section>
 
+
+<section class="slide dense" data-title="Supuesto mesero–mesa">
+<div class="ey">Precisión del modelo</div><h2>Una cardinalidad solo es correcta bajo un supuesto explícito</h2><div class="ctx"><b>Supuesto:</b> cada mesa tiene un único mesero asignado durante el período modelado.</div><div class="g2"><div class="card"><h3>Con ese supuesto</h3><p><code>mesa.mesero_id</code> basta.</p></div><div class="card blue"><h3>Si cambia por turno</h3><p>aparece <code>asignacion_mesa_mesero</code> con vigencia/turno.</p></div></div><div class="hintbox"><strong>Transferencia:</strong> aplica 1FN–3FN a un mini-caso distinto del restaurante explicando primero la anomalía.</div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 8 · Modelado y normalización</span></div></section>
+
 <section class="slide yellow dense" data-title="Cierre"><div class="ey">Cierre · punto de salida</div><h2>Lo que debe quedar listo para S9</h2><ul class="checks"><li>Sabes completar el modelo completo antes de hacer zoom.</li><li>Reconoces todas las entidades principales y las asociativas.</li><li>Sabes leer cardinalidades en ambos sentidos.</li><li>Entiendes por qué <code>linea_pedido</code>, <code>receta</code> y <code>pedido_mesa</code> aparecen.</li><li>Puedes explicar 1FN, dependencia, 2FN, 3FN y reconstrucción.</li><li>Sabes que S9 convierte una decisión de modelo en DDL PostgreSQL.</li></ul><div class="brand"><span>Cierre</span><span>Modelo completo → zoom → PostgreSQL</span></div></section>
 
 <div class="progress"><div class="bar" id="bar"></div></div></main>

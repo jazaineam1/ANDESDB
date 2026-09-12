@@ -20,12 +20,12 @@ ANDESDB no es únicamente una colección de presentaciones. El repositorio funci
 |---|---|---|
 | 1 | Valor y ecosistema de datos | Problema, actores, decisiones y valor de los datos. |
 | 2–5 | SQL | `SELECT`, filtros, agregaciones, `JOIN`, CTE, control del nivel de agregación y construcción de tablas. |
-| 6 | Reglas de negocio | Evidencia, restricciones, permisos, patrones e hipótesis; introducción a OLTP/OLAP, lake, warehouse y ETL/ELT. |
+| 6 | Reglas de negocio | Evidencia, restricciones, permisos, patrones e hipótesis; el camino analítico se reserva para S12. |
 | 7 | De las reglas al modelo | Entidades, atributos, relaciones, cardinalidades y primer modelo del Restaurante ABC. |
 | 8 | Normalización | Dependencias, anomalías, 1FN, 2FN y 3FN. |
 | 9 | DDL + Azure SQL | `CREATE TABLE`, PK, FK, `NOT NULL`, `UNIQUE`, `CHECK` y comparación de opciones Azure SQL. |
 | 10 | SQL o NoSQL | Decisión de arquitectura según relaciones, consistencia y patrones de acceso. |
-| 11 | Firestore + Cosmos DB | Documentos, partición y servicios NoSQL reales. |
+| 11 | Firestore + MongoDB Atlas; Cosmos DB como puente conceptual DP-900 | Documentos, partición y servicios NoSQL reales. |
 | 12 | Data warehouse | Grano, hechos, dimensiones, modelo estrella, batch y streaming. |
 | 13 | BigQuery | Laboratorio real de warehouse/SQL en cloud. |
 | 14 | Datos anidados y analítica | BigQuery semiestructurado y transferencia conceptual hacia el ecosistema analítico de Azure. |

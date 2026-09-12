@@ -13,11 +13,21 @@
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "diferenciacionTecnicaSesiones": [11, 12, 13, 14, 15],
+    "diferenciacionTecnicaSesiones": [
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
-    "sesionesAutonomas": [7, 10, 13],
+    "sesionesAutonomas": [
+      7,
+      10,
+      13
+    ],
     "trabajoAutonomoMin": 60,
     "publicacionSolucionesAutonomas": "20:00 America/Bogota"
   },
@@ -63,6 +73,10 @@
           "txt": "📊 Introducción al curso",
           "download": true,
           "href": "Presentaciones/M1/M1C1%20V5%20-%20Introduccion%20al%20Curso.pptx"
+        },
+        {
+          "txt": "🧭 Diagnóstico de entrada y roles de datos",
+          "href": "Presentaciones/M1/sesion-1-diagnostico.html"
         }
       ],
       "sesiones": []
@@ -94,7 +108,14 @@
           "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
+          "tags": [
+            "SELECT",
+            "DISTINCT",
+            "COUNT",
+            "WHERE",
+            "ORDER BY",
+            "LIMIT"
+          ],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -109,7 +130,13 @@
           "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
+          "tags": [
+            "BETWEEN",
+            "IN",
+            "LIKE",
+            "GROUP BY",
+            "HAVING"
+          ],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -184,15 +211,15 @@
           "modo": "guiada",
           "titulo": "Reglas de negocio",
           "estado": "completado",
-          "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. Introduce OLTP/OLAP y el mapa de plataformas de datos.",
+          "desc": "Leer lo que una base implementa, distinguir certeza de suposición y levantar reglas de un caso nuevo. El camino analítico se reserva para la sesión 12.",
           "href": "Presentaciones/M3/sesion-6-reglas-de-negocio.html",
           "tags": [
             "reglas de negocio",
-            "OLTP",
-            "OLAP",
-            "data lake",
-            "data warehouse",
-            "ETL / ELT"
+            "evidencia",
+            "restricciones",
+            "permisos",
+            "patrones",
+            "hipótesis"
           ],
           "recursos": [
             {
@@ -262,26 +289,17 @@
           "modo": "guiada_con_servicio_real",
           "titulo": "SQL para creación de tablas",
           "estado": "completado",
-          "desc": "Convertir el modelo del Restaurante ABC en PostgreSQL real: diagnosticar 1FN, 2FN y 3FN, construir PLATO, MESA, PEDIDO y LINEA_PEDIDO, y comprobar que las restricciones hacen cumplir reglas reales.",
+          "desc": "Convertir el modelo del Restaurante ABC en PostgreSQL real y demostrar con pruebas positivas y negativas que las restricciones protegen reglas.",
           "tags": [
-            "tipos de datos",
-            "INTEGER",
-            "VARCHAR",
-            "restricciones",
+            "PostgreSQL",
+            "Supabase",
+            "CREATE TABLE",
             "PRIMARY KEY",
             "FOREIGN KEY",
+            "NOT NULL",
             "CHECK",
-            "1FN",
-            "2FN",
-            "3FN",
-            "CREATE TABLE",
-            "INSERT",
-            "UPDATE",
-            "DELETE",
-            "DROP",
-            "ALTER",
-            "Supabase",
-            "PostgreSQL"
+            "DEFAULT",
+            "pruebas"
           ],
           "href": "Presentaciones/M3/sesion-9-ddl-supabase.html",
           "recursos": [
@@ -411,7 +429,14 @@
           "titulo": "Laboratorio BigQuery",
           "estado": "pendiente",
           "desc": "Briefing corto y laboratorio autónomo sobre Google BigQuery real. DuckDB-Wasm es fallback, nunca sustituto del servicio cloud.",
-          "tags": ["BigQuery", "cloud", "warehouse", "SQL", "workshop"]
+          "tags": [
+            "BigQuery",
+            "cloud",
+            "warehouse",
+            "SQL",
+            "workshop"
+          ],
+          "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html"
         },
         {
           "n": 14,
@@ -428,7 +453,8 @@
             "BigQuery",
             "Power BI",
             "Azure analytics"
-          ]
+          ],
+          "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html"
         }
       ]
     },
@@ -454,7 +480,8 @@
             "modelado",
             "validación",
             "arquitectura"
-          ]
+          ],
+          "href": "Presentaciones/M6/sesion-15-desafio-final.html"
         },
         {
           "n": 16,
@@ -464,7 +491,13 @@
           "titulo": "Cierre + preparación DP-900",
           "estado": "pendiente",
           "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.",
-          "tags": ["DP-900", "cierre", "retrieval practice", "plan de estudio"]
+          "tags": [
+            "DP-900",
+            "cierre",
+            "retrieval practice",
+            "plan de estudio"
+          ],
+          "href": "Presentaciones/M6/sesion-16-cierre-dp900.html"
         }
       ]
     }

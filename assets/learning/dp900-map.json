@@ -1,0 +1,141 @@
+{
+  "version": "2026-07-21",
+  "regla": "concepto → evidencia → reconocimiento del servicio",
+  "dominios": [
+    {
+      "dominio": "Core data concepts",
+      "peso": "25–30%",
+      "objetivos": [
+        {
+          "objetivo": "structured/semi/unstructured",
+          "sesiones": [
+            1,
+            11,
+            14
+          ],
+          "evidencia": "clasificación + JSON/Parquet"
+        },
+        {
+          "objetivo": "transactional vs analytical",
+          "sesiones": [
+            9,
+            12
+          ],
+          "evidencia": "OLTP vs estrella"
+        },
+        {
+          "objetivo": "data roles",
+          "sesiones": [
+            1,
+            16
+          ],
+          "evidencia": "pre/post"
+        }
+      ]
+    },
+    {
+      "dominio": "Relational data on Azure",
+      "peso": "20–25%",
+      "objetivos": [
+        {
+          "objetivo": "relational concepts and normalization",
+          "sesiones": [
+            7,
+            8,
+            9
+          ],
+          "evidencia": "modelo + schema.sql"
+        },
+        {
+          "objetivo": "SQL and database objects",
+          "sesiones": [
+            2,
+            3,
+            4,
+            5,
+            9
+          ],
+          "evidencia": "queries + constraints"
+        },
+        {
+          "objetivo": "Azure SQL / OSS recognition",
+          "sesiones": [
+            12,
+            16
+          ],
+          "evidencia": "escenarios"
+        }
+      ]
+    },
+    {
+      "dominio": "Non-relational data on Azure",
+      "peso": "15–20%",
+      "objetivos": [
+        {
+          "objetivo": "document/key-value use cases",
+          "sesiones": [
+            10,
+            11
+          ],
+          "evidencia": "decisión + Firestore"
+        },
+        {
+          "objetivo": "Cosmos DB",
+          "sesiones": [
+            11,
+            14,
+            16
+          ],
+          "evidencia": "escenarios"
+        },
+        {
+          "objetivo": "Blob/Files/Table Storage",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "mapa por caso"
+        }
+      ]
+    },
+    {
+      "dominio": "Analytics workload on Azure",
+      "peso": "25–30%",
+      "objetivos": [
+        {
+          "objetivo": "analytical stores and star schemas",
+          "sesiones": [
+            12,
+            13
+          ],
+          "evidencia": "estrella + BigQuery"
+        },
+        {
+          "objetivo": "batch vs streaming",
+          "sesiones": [
+            12,
+            16
+          ],
+          "evidencia": "escenarios"
+        },
+        {
+          "objetivo": "Fabric / Databricks",
+          "sesiones": [
+            12,
+            14,
+            16
+          ],
+          "evidencia": "mapa"
+        },
+        {
+          "objetivo": "Power BI",
+          "sesiones": [
+            14,
+            16
+          ],
+          "evidencia": "capa consumo"
+        }
+      ]
+    }
+  ]
+}

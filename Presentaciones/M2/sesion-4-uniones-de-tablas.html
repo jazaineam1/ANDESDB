@@ -1118,7 +1118,7 @@ WHERE r.rental_id IS NULL;</pre></button>
 UNION
 SELECT COUNT(*) FROM rental;</pre></button>
 </div>
-<button class="verify">Verificar</button><div class="fb"></div></div>
+<button class="verify">Verificar</button><div class="fb" aria-live="polite"></div></div>
 <div class="brand"><span>Bloque 5 · Encadenar</span><span>Buscar ausencias: LEFT + IS NULL</span></div>
 </section>
 <section class="slide xdense mid" data-title="Desafío integrador"><div class="ey">Desaf&iacute;o integrador &middot; 12 minutos</div>
@@ -1163,6 +1163,18 @@ LIMIT    5;</pre>
 <p class="small" style="margin-top:.7em">De los cuatro, el que vas a escribir el 90&nbsp;% de las veces es <code>LEFT JOIN</code>. <code>RIGHT</code> y <code>FULL OUTER</code> hay que <em>reconocerlos</em> m&aacute;s que escribirlos.</p></div></div>
 <div class="brand"><span>Resumen</span><span>Solo cambia una de las cinco preguntas</span></div>
 </section>
+
+<section class="slide dense" data-title="NULL después de LEFT JOIN">
+<div class="ey">Concepto difícil · 8 minutos</div><h2>Que falte una coincidencia también es información</h2><div class="g2"><div><pre><code>SELECT f.title, i.inventory_id
+FROM film AS f
+LEFT JOIN inventory AS i
+  ON f.film_id = i.film_id
+WHERE i.inventory_id IS NULL;</code></pre></div><div class="card"><h3>Predice</h3><p>¿Qué películas aparecerán?</p><div class="warn"><b>No uses:</b> <code>= NULL</code>. Usa <code>IS NULL</code> / <code>IS NOT NULL</code>.</div></div></div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 4 · Uniones de tablas</span></div></section>
+<section class="slide dense" data-title="Reasoning Check · JOIN">
+<div class="ey">🔍 Reasoning Check</div><h2>La consulta corre. ¿El resultado tiene el grano que esperabas?</h2><div class="ctx">Esperabas una fila por película. Después de unir <code>film → inventory → rental</code> aparecen miles de filas.</div><div class="g2"><div class="card"><h3>No respondas con DISTINCT</h3><p>Explica qué representa ahora una fila y por qué una película puede repetirse.</p></div><div class="card blue"><h3>Criterio</h3><p>Distingues duplicados de datos de una multiplicación legítima por cambio de grano.</p></div></div>
+<div class="brand"><span>ANDESDB · mejora benchmark</span><span>Sesión 4 · Uniones de tablas</span></div></section>
+
 <section class="slide yellow dense mid" data-title="Cierre"><div class="ey">Cierre &middot; 6 minutos</div>
 <h2>Ya puedes responder preguntas de verdad</h2>
 <div class="g2">
