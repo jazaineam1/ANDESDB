@@ -19,7 +19,7 @@ La carpeta `revision/Presentaciones/` funciona como entorno de comparación fren
 
 ## Presentaciones conservadas deliberadamente
 
-- S1: se conserva la versión de 14 diapositivas ya existente en `revision`, más completa que el benchmark temprano.
+- S1: se conserva la versión completa de 15 secciones visibles ya existente en `revision`, más completa que el benchmark temprano.
 - S7: ya coincide con la versión benchmark mejorada.
 - S9: se conserva la versión visual y guiada de Supabase para principiantes; el benchmark puro acortaba demasiado el onboarding. Se mantiene `tutorial-supabase.html` como apoyo.
 - S12: se conserva la versión actual por ahora para evitar reintroducir referencias históricas inconsistentes hacia S6; requiere una edición quirúrgica posterior si se quiere incorporar su Reasoning Check sin perder el hilo actualizado.
