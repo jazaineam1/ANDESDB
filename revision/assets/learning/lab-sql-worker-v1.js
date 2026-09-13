@@ -30,7 +30,6 @@ function diagnose(got,expected,sql,reference){
   }
   if(sameRowCount)ok.push(`La cantidad de filas coincide (${expected.values.length}).`);
   else issues.push(`Filas: tu consulta devuelve ${got.values.length}; el objetivo devuelve ${expected.values.length}. Revisa filtros, agrupación y/o límite.`);
-  if(sameRowsAnyOrder&&!JSON.stringify(got.values)===JSON.stringify(expected.values))issues.push('Los datos son los correctos, pero están en otro orden. Revisa ORDER BY y los criterios de desempate.');
   if(sameRowsAnyOrder&&JSON.stringify(got.values)!==JSON.stringify(expected.values))issues.push('El conjunto de filas es correcto, pero el orden no. Revisa ORDER BY y, si hay empates, el segundo criterio de orden.');
   if(sameColumns&&sameRowCount&&!sameRowsAnyOrder){
     let mismatch=null;
