@@ -49,6 +49,14 @@ jobs:
       - name: Auditar panel docente, archivado y UX institucional
         run: python revision/tools/auditar_teacher_dashboard.py
 
+      - name: Proteger acceso automático por correo
+        run: |
+          set -euo pipefail
+          grep -q 'email-access-v1.js' revision/assets/learning/lms-platform.js || { echo '::error::El portal debe cargar el runtime de acceso por correo.'; exit 1; }
+          grep -q 'exchange_supabase' revision/assets/learning/email-access-v1.js || { echo '::error::El enlace de correo debe intercambiarse por una sesión LMS.'; exit 1; }
+          grep -q 'history.replaceState' revision/assets/learning/email-access-v1.js || { echo '::error::El token del correo debe retirarse de la URL antes de continuar.'; exit 1; }
+          grep -q 'email-access-v1.js' revision/service-worker.js || { echo '::error::La PWA debe incluir el runtime de acceso por correo.'; exit 1; }
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
@@ -64,6 +72,7 @@ jobs:
           node --check revision/assets/learning/interactive-nav.js
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/portal-ux-v2.js
+          node --check revision/assets/learning/email-access-v1.js
           node --check revision/assets/learning/course-story-ui.js
           node --check revision/assets/learning/course-data.js
           node --check revision/assets/learning/uniandes-skin-v1.js
