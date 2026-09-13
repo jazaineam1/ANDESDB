@@ -10,8 +10,8 @@ const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement(
   try{await window.__ANDES_LAB_PATCH_READY__}catch(_){ }
   await load('assets/learning/lab-progress-reliability-v2.js?v=20260913-rel2');
   try{await window.__ANDES_LAB_RELIABILITY_READY__}catch(_){ }
-  await load('assets/learning/lab-sql-engine-v1.js?v=20260913-mobile2');
-  await load('assets/learning/lab-runtime-v7.js?v=20260913-mobile2');
+  await load('assets/learning/lab-sql-engine-v1.js?v=20260913-feedback1');
+  await load('assets/learning/lab-runtime-v7.js?v=20260913-feedback1');
   await load('assets/learning/lab-context-output-v2.js?v=20260913-context2');
   await load('assets/learning/lab-sql-scaffold-v2.js?v=20260913-mobile3');
   await load('assets/learning/lab-finish-v1.js?v=20260912-finish1');
