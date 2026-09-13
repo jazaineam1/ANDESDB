@@ -11,7 +11,7 @@ const load=name=>new Promise((resolve,reject)=>{const src=new URL(name,dir).href
   await load('presentation-story-v2-patch.js?v=20260912-story2');
   await load('presentation-story-v3-polish.js?v=20260912-story3');
   await load('access-gate.js?v=20260912-lite2');
-  await load('resource-dock-a11y.js?v=20260913-mobile2');
+  await load('resource-dock-a11y.js?v=20260913-mobile3');
   await load('analytics-config.js?v=20260912-ga4a');
   await load('analytics.js?v=20260912-ga4a');
   await load('presentation-telemetry.js?v=20260912-lite1');
