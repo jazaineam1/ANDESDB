@@ -81,6 +81,18 @@ function installPersistence(api){
   new MutationObserver(()=>setTimeout(()=>restore(api),0)).observe(target,{childList:true,subtree:true});
   setTimeout(()=>restore(api),60);
 }
+function installFastProgress(api){
+  if(api.__labFastProgressV6||typeof api.dashboard!=='function')return;api.__labFastProgressV6=true;
+  const original=api.dashboard.bind(api),endpoint='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-progress';
+  let inflight=null,last=null,lastAt=0;
+  api.dashboard=function(scope='me',fresh=false){
+    if(scope!=='me'||fresh!==true||!/\/lab\.html$/i.test(location.pathname))return original(scope,fresh);
+    if(last&&Date.now()-lastAt<700)return Promise.resolve(last);
+    if(inflight)return inflight;
+    inflight=(async()=>{const a=safeJSON(localStorage.getItem(AUTH)||'null',null);if(!a?.token)return original(scope,fresh);const c=new AbortController(),timer=setTimeout(()=>c.abort(),8000);try{const r=await fetch(endpoint,{method:'GET',headers:{Authorization:'Bearer '+a.token},signal:c.signal,cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);last=await r.json();lastAt=Date.now();return last}catch(e){console.warn('ANDESDB: progreso ligero no disponible; uso respaldo completo',e);return original(scope,fresh)}finally{clearTimeout(timer);inflight=null}})();
+    return inflight;
+  };
+}
 function installOptimisticComplete(api){
   if(api.__labOptimisticV6||typeof api.complete!=='function')return;api.__labOptimisticV6=true;
   const original=api.complete.bind(api);
@@ -101,6 +113,6 @@ function installOptimisticComplete(api){
 window.__ANDES_LAB_PATCH_READY__=(async()=>{
   const started=Date.now();while(!window.ANDES_LMS&&Date.now()-started<12000)await new Promise(r=>setTimeout(r,30));
   const api=window.ANDES_LMS;if(!api)return false;
-  installOptimisticComplete(api);installPersistence(api);return true;
+  installFastProgress(api);installOptimisticComplete(api);installPersistence(api);return true;
 })();
 })();
