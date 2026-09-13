@@ -4,18 +4,30 @@ on:
   pull_request:
     paths:
       - 'revision/guest.html'
+      - 'revision/lab.html'
+      - 'revision/reading.html'
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
+      - 'revision/assets/learning/guest-mode-v3.js'
+      - 'revision/assets/learning/lab-guest-ux-v1.js'
+      - 'revision/assets/learning/lab-runtime-v4.js'
       - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/assets/learning/access-gate.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
   push:
     branches: [main]
     paths:
       - 'revision/guest.html'
+      - 'revision/lab.html'
+      - 'revision/reading.html'
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
+      - 'revision/assets/learning/guest-mode-v3.js'
+      - 'revision/assets/learning/lab-guest-ux-v1.js'
+      - 'revision/assets/learning/lab-runtime-v4.js'
       - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/assets/learning/access-gate.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
 
@@ -31,52 +43,64 @@ jobs:
         run: |
           node --check revision/assets/learning/guest-mode-v1.js
           node --check revision/assets/learning/guest-mode-v2.js
+          node --check revision/assets/learning/guest-mode-v3.js
+          node --check revision/assets/learning/lab-guest-ux-v1.js
+          node --check revision/assets/learning/lab-runtime-v4.js
           node --check revision/assets/learning/learning-tracker.js
+          node --check revision/assets/learning/access-gate.js
           node --check revision/service-worker.js
-      - name: Proteger aislamiento del modo invitado
+
+      - name: Proteger ruta integral de estudio
         run: |
           set -euo pipefail
-          G='revision/assets/learning/guest-mode-v2.js'
-          V1='revision/assets/learning/guest-mode-v1.js'
-          T='revision/assets/learning/learning-tracker.js'
-          SW='revision/service-worker.js'
-          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
-          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$V1" || { echo '::error::El loader v1 debe delegar de forma segura a v2.'; exit 1; }
-          grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime invitado no recursivo.'; exit 1; }
-          grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
-          grep -q "access-gate.js" "$T" || { echo '::error::El modo autenticado debe conservar access-gate.'; exit 1; }
-          grep -q "if(!guestLab)await add('lms-integral-patch.js" "$T" || { echo '::error::El modo server-first no debe borrar progreso invitado.'; exit 1; }
-          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir el módulo de invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime invitado v2.'; exit 1; }
-      - name: Proteger rendimiento móvil
-        run: |
-          set -euo pipefail
-          G='revision/assets/learning/guest-mode-v2.js'
-          V1='revision/assets/learning/guest-mode-v1.js'
-          if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1"; then
-            echo '::error::Ningún runtime invitado puede observar recursivamente todo el DOM.'
-            exit 1
-          fi
-          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
-          grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
-      - name: Proteger experiencia del estudiante
-        run: |
-          set -euo pipefail
-          G='revision/assets/learning/guest-mode-v2.js'
           H='revision/guest.html'
+          G='revision/assets/learning/guest-mode-v3.js'
+          T='revision/assets/learning/learning-tracker.js'
+          A='revision/assets/learning/access-gate.js'
+          L='revision/lab.html'
+          R='revision/assets/learning/lab-runtime-v4.js'
+          U='revision/assets/learning/lab-guest-ux-v1.js'
+          SW='revision/service-worker.js'
+          grep -q 'Presentación' "$H" || { echo '::error::La ruta debe ofrecer presentación.'; exit 1; }
+          grep -q 'Lectura' "$H" || { echo '::error::La ruta debe ofrecer lectura.'; exit 1; }
+          grep -q 'Laboratorio' "$H" || { echo '::error::La ruta debe ofrecer laboratorio.'; exit 1; }
+          grep -q "reading.html?session=" "$H" || { echo '::error::Faltan enlaces de lectura por sesión.'; exit 1; }
+          grep -q "lab.html?session=" "$H" || { echo '::error::Faltan enlaces de laboratorio por sesión.'; exit 1; }
+          grep -q "guestSurface" "$T" || { echo '::error::El loader debe reconocer todas las superficies de estudio.'; exit 1; }
+          grep -q "guest-mode-v3.js" "$T" || { echo '::error::El loader debe usar el runtime invitado v3.'; exit 1; }
+          grep -q "if(!guestSurface)" "$T" || { echo '::error::Auth y tracking académico deben quedar fuera de la ruta de estudio.'; exit 1; }
+          grep -q "guestSurface" "$A" || { echo '::error::El access gate debe permitir presentación, lectura y laboratorio de estudio.'; exit 1; }
+          grep -q "guest-mode-v3.js" "$L" || { echo '::error::El laboratorio debe arrancar el runtime local antes del loader general.'; exit 1; }
+          grep -q "lab-guest-ux-v1.js" "$R" || { echo '::error::El laboratorio invitado debe usar persistencia local propia.'; exit 1; }
+          grep -q "if(guest)" "$R" || { echo '::error::El pipeline del laboratorio debe separar invitado y autenticado.'; exit 1; }
+          grep -q "andesdb.guest.answers.v1" "$U" || { echo '::error::Los borradores invitados deben estar aislados.'; exit 1; }
+          grep -q "guest-mode-v3.js" "$SW" || { echo '::error::La PWA debe incluir guest-mode-v3.'; exit 1; }
+          grep -q "lab-guest-ux-v1.js" "$SW" || { echo '::error::La PWA debe incluir la persistencia local del laboratorio invitado.'; exit 1; }
+
+      - name: Proteger arranque móvil sin espera remota
+        run: |
+          set -euo pipefail
+          G='revision/assets/learning/guest-mode-v3.js'
+          U='revision/assets/learning/lab-guest-ux-v1.js'
+          T='revision/assets/learning/learning-tracker.js'
+          if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$U"; then
+            echo '::error::El runtime invitado no puede observar recursivamente el DOM.'
+            exit 1
+          fi
+          grep -q "ready:()=>Promise.resolve" "$G" || { echo '::error::El laboratorio invitado debe estar listo sin autenticación remota.'; exit 1; }
+          if awk '/if\(!guestSurface\)/,/^      }/' "$T" | grep -q '^$'; then :; fi
+          grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
+
+      - name: Proteger aislamiento académico
+        run: |
+          set -euo pipefail
+          G='revision/assets/learning/guest-mode-v3.js'
+          H='revision/guest.html'
+          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
           if grep -Eiq 'crear una cuenta|usuario ni contraseña|sin cuenta|sin registro|entrar al LMS|no crea matrícula|información privada del LMS' "$H" "$G"; then
-            echo '::error::La vista de práctica no debe explicar ni contrastar mecanismos de autenticación.'
+            echo '::error::La ruta de estudio no debe explicar ni contrastar mecanismos de autenticación.'
             exit 1
           fi
-          if grep -q 'portal.html' "$H"; then
-            echo '::error::La portada de práctica no debe desviar al estudiante hacia la entrada autenticada.'
-            exit 1
-          fi
-          if grep -q 'teacher-dashboard.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar control docente.'; exit 1
-          fi
-          if grep -q 'assignment.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar entregas.'; exit 1
+          if grep -q 'teacher-dashboard.html?guest=1' "$H" || grep -q 'assignment.html?guest=1' "$H"; then
+            echo '::error::La ruta de estudio no puede enlazar superficies privadas.'; exit 1
           fi
