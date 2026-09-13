@@ -13,12 +13,17 @@ const css=document.createElement('style');css.id='andes-lms-ux-v1';css.textConte
 `;document.head.appendChild(css);
 
 function ensurePanelFooter(){
- const panel=$('#andes-learning-overlay .al-panel');if(!panel||panel.querySelector('.al-sticky-foot'))return;
+ const panel=$('#andes-learning-overlay .al-panel');if(!panel||panel.querySelector('.al-sticky-foot'))return false;
  const foot=document.createElement('div');foot.className='al-sticky-foot';foot.innerHTML='<a href="portal.html">Inicio</a><a href="learning-hub.html">Curso</a><button type="button">Cerrar sesión</button>';
  foot.querySelector('button').onclick=async()=>{const b=foot.querySelector('button');b.disabled=true;b.textContent='Saliendo…';try{await window.ANDES_LMS?.logout?.()}finally{location.replace('portal.html')}};
- panel.appendChild(foot);
+ panel.appendChild(foot);return true;
 }
-function watchPanel(){ensurePanelFooter();const host=$('#andes-learning-overlay');if(!host)return;new MutationObserver(ensurePanelFooter).observe(host,{childList:true,subtree:true})}
+function watchPanel(){
+ if(ensurePanelFooter())return;
+ const host=$('#andes-learning-overlay');
+ if(host){new MutationObserver(ensurePanelFooter).observe(host,{childList:true,subtree:true});return}
+ let n=0;const timer=setInterval(()=>{n++;const h=$('#andes-learning-overlay');if(h){clearInterval(timer);ensurePanelFooter();new MutationObserver(ensurePanelFooter).observe(h,{childList:true,subtree:true})}else if(n>=20)clearInterval(timer)},250);
+}
 
 async function installLabSide(){
  if(!/\/lab\.html$/i.test(location.pathname)||document.getElementById('andes-lab-side'))return;
@@ -32,5 +37,4 @@ async function installLabSide(){
 }
 function boot(){watchPanel();installLabSide();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0),{once:true});else setTimeout(boot,0);
-setTimeout(watchPanel,900);
 })();
