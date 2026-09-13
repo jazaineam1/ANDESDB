@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.ANDES_COURSE?.version==='2.2.4')return;
+if(window.ANDES_COURSE?.version==='2.2.5')return;
 const script=document.currentScript||[...document.scripts].find(s=>/course-data\.js(?:\?|$)/.test(s.src));
 const ROOT=script?new URL('../../',script.src):new URL('./',location.href);
 const DIR=script?new URL('./',script.src):new URL('assets/learning/',location.href);
@@ -30,7 +30,8 @@ function current(){return session(manifest?.sesionActual)||sessions.find(s=>s.es
 function today(){return sessions.find(s=>s.estado==='hoy')||null}
 function icsText(){const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ANDESDB//LMS//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:ANDESDB · Grupo ${GROUP}`,'X-WR-TIMEZONE:America/Bogota'];for(const s of sessions.filter(x=>x.fecha)){const d=String(s.fecha).replaceAll('-','');const start=`${d}T180000`;const mins=Number(s.duracionUtil||165),endDate=new Date(`${s.fecha}T18:00:00-05:00`);endDate.setMinutes(endDate.getMinutes()+mins);const pad=n=>String(n).padStart(2,'0'),end=`${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;lines.push('BEGIN:VEVENT',`UID:andesdb-s${s.n}-${s.fecha}@jazaineam1.github.io`,`DTSTAMP:${stamp}`,`DTSTART;TZID=America/Bogota:${start}`,`DTEND;TZID=America/Bogota:${end}`,`SUMMARY:${esc(`ANDESDB · Grupo ${GROUP} · S${s.n} · ${s.titulo}`)}`,`DESCRIPTION:${esc(`${s.desc||''}\nConexión Zoom: ${ZOOM}`)}`,`LOCATION:${esc('Zoom · Grupo '+GROUP)}`,`URL:${ZOOM}`,'END:VEVENT')}lines.push('END:VCALENDAR');return lines.join('\r\n')}
 function downloadCalendar(){const blob=new Blob([icsText()],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ANDESDB-Grupo-39-calendario.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},0)}
-window.ANDES_COURSE={version:'2.2.4',ROOT,STORY,GROUP,ZOOM,ready:()=>readyPromise,refresh,get manifest(){return manifest},get sessions(){return sessions},get modules(){return modules},session,search,upcoming,current,today,icsText,downloadCalendar};
+window.ANDES_COURSE={version:'2.2.5',ROOT,STORY,GROUP,ZOOM,ready:()=>readyPromise,refresh,get manifest(){return manifest},get sessions(){return sessions},get modules(){return modules},session,search,upcoming,current,today,icsText,downloadCalendar};
+if(!document.querySelector('script[data-andes-theme]')){const t=document.createElement('script');t.src=new URL('theme-v1.js?v=20260913-theme1',DIR).href;t.dataset.andesTheme='1';t.defer=true;document.head.appendChild(t)}
 if(!document.querySelector('script[data-course-live-ui]')){const l=document.createElement('script');l.src=new URL('course-live-ui.js?v=20260913-g39b',DIR).href;l.dataset.courseLiveUi='1';l.defer=true;document.head.appendChild(l)}
 if(/\/learning-hub\.html$/i.test(location.pathname)&&!document.querySelector('script[data-course-story-ui]')){const s=document.createElement('script');s.src=new URL('course-story-ui.js?v=20260913-story2',DIR).href;s.dataset.courseStoryUi='1';s.defer=true;document.head.appendChild(s)}
 })();
