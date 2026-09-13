@@ -30,6 +30,7 @@ PRE-PUSH ANDESDB: OK
 - S6 no lleva Ruta/Núcleo/Reto.
 - Diferenciación técnica principalmente en S9, S11, S12, S13, S14 y S15.
 - Los servicios cloud reales son obligatorios donde el plan los declara; el fallback local no los reemplaza.
+- **El minutaje, cronogramas por diapositiva y productos de microactividad son guía docente, no contenido visible para el estudiante.** En S13–S16 no muestres etiquetas como `3 min`, `5 min`, `67–92 min`, `90 s`, ni bloques `✍️ actividad / ✅ Producto` dentro de la presentación. El profesor regula el ritmo según el grupo; conserva esa orientación en `docs/instructor/`.
 - No muestres banners/modales para instalar la PWA.
 - El material heredado puede permanecer en GitHub, pero no debe enlazarse como material vigente hasta reconstruirlo.
 
