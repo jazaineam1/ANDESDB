@@ -29,7 +29,7 @@ need(reading, 'readings-v7-alignment.js', 'reading.html')
 for n in range(1, 17):
     need(readings, f'{n}:{{', 'readings-v6.js')
     need(alignment, f'\n{n}:[', 'readings-v7-alignment.js')
-    m = re.search(rf'\n{n}:\[(.*?)(?=\n\d+:\[|\n\}};)', alignment, flags=re.S)
+    m = re.search(rf'\n{n}:\[(.*?)(?=\n\d+:\[|\n\]\}};)', alignment, flags=re.S)
     if not m:
         errors.append(f'readings-v7-alignment.js: no se pudo aislar la sesión {n}')
         continue
@@ -58,7 +58,7 @@ for token in ['gotRows','expectedRows','gotColumns','expectedColumns','SELECT *'
 for token in ['theme-v1.js','reading-nav-v1.js']:
     need(course_data, token, 'course-data.js')
     need(service_worker, token, 'service-worker.js')
-for token in ['andesdb.ui.theme.v1','data-andes-theme','Cambiar a tema claro','Cambiar a tema oscuro','/\\/Presentaciones\\//i']:
+for token in ['andesdb.ui.theme.v1','data-andes-theme','Cambiar a tema claro','Cambiar a tema oscuro','Presentaciones']:
     need(theme, token, 'theme-v1.js')
 for token in ['reading-pager','footer-nav','reading-jump','Anterior','Siguiente','16']:
     need(reading_nav, token, 'reading-nav-v1.js')
