@@ -1,0 +1,66 @@
+(()=>{
+'use strict';
+if(window.__ANDES_PRESENTATION_STORY_V2__)return;window.__ANDES_PRESENTATION_STORY_V2__=true;
+
+const SESSION_ANSWERS={
+1:'Un dato crea valor cuando adquiere contexto, responde una pregunta y cambia una decisión; por eso importa cómo se captura, almacena y transforma.',
+2:'Le preguntamos a una base expresando qué columnas y filas necesitamos y en qué orden: SELECT/FROM construyen la consulta y WHERE, ORDER BY y LIMIT afinan la respuesta.',
+3:'Dejamos de inspeccionar filas cuando combinamos filtros con agregaciones y agrupaciones para convertir muchos registros en una respuesta de negocio.',
+4:'Cuando la respuesta está repartida, unimos tablas por claves; el JOIN no solo añade columnas: también puede cambiar cuántas filas existen y qué representa cada una.',
+5:'Controlamos el resultado definiendo primero la tabla objetivo y su grano; después construimos intermedios, agregamos cuando corresponde y recién entonces unimos.',
+6:'Lo observado no basta para afirmar una regla: distinguimos observación, patrón, hipótesis y regla confirmada según la evidencia disponible.',
+7:'Convertimos reglas confirmadas en entidades, atributos, relaciones, cardinalidades y opcionalidades; lo no confirmado permanece explícitamente como duda.',
+8:'Evitamos anomalías identificando dependencias, descomponiendo donde hace falta y comprobando que la información pueda reconstruirse sin perder significado.',
+9:'La base impide estados inválidos cuando las reglas del negocio se traducen en tipos y restricciones como PK, FK, CHECK, NOT NULL y UNIQUE y se prueban con casos válidos e inválidos.',
+10:'La representación se decide por patrón de acceso, consistencia, forma y evolución del dato, y costo/riesgo; “NoSQL porque escala” nunca basta como argumento.',
+11:'En documentos elegimos embed o reference según qué se lee junto y qué cambia de forma compartida, y además definimos fuente de verdad y qué ocurre ante fallos parciales.',
+12:'Operar y analizar requieren diseños distintos: la analítica necesita un grano explícito, hechos y dimensiones coherentes para no contar ni sumar dos veces.',
+13:'Una consulta correcta también debe ser eficiente: partición, clustering y filtros adecuados reducen los bytes leídos sin cambiar la respuesta de negocio.',
+14:'Cuando el dato contiene jerarquía, primero razonamos sobre su significado y cardinalidad; ARRAY/STRUCT representan esa forma y UNNEST puede multiplicar filas.',
+15:'Resolver sin receta significa justificar el modelo, las reglas, las consultas, las pruebas y la arquitectura, validar resultados y poder adaptar la solución ante un requisito nuevo.',
+16:'El razonamiento se transfiere entre plataformas: primero identificamos carga, forma, acceso, consistencia y propósito; después elegimos la familia y finalmente el servicio.'
+};
+const NEXT_QUESTION={
+1:'¿Cómo le pregunto a una base sin abrirla fila por fila?',
+2:'¿Cómo dejo de mirar filas y obtengo respuestas resumidas?',
+3:'¿Qué hago cuando una respuesta necesita datos de más de una tabla?',
+4:'¿Cómo controlo exactamente qué representa cada fila del resultado?',
+5:'¿Lo que observo en los datos es realmente una regla del negocio?',
+6:'¿Cómo convierto esas reglas en una estructura defendible?',
+7:'¿Cómo evito que esa estructura repita datos y produzca anomalías?',
+8:'¿Cómo hago que la base rechace estados inválidos?',
+9:'¿Cuándo otra representación resulta más natural que la relacional?',
+10:'¿Qué implica realmente vivir dentro de un modelo documental?',
+11:'¿Cómo analizo meses o años de hechos confiables sin dañar la operación?',
+12:'¿Cómo hago que una consulta correcta además lea menos?',
+13:'¿Qué cambia cuando una fila contiene listas y estructuras anidadas?',
+14:'¿Puedo resolver un problema nuevo sin una receta paso a paso?',
+15:'¿Puedo reconocer el mismo razonamiento bajo nombres de otra plataforma?',
+16:'¿Qué criterio conservaré cuando cambien las herramientas?'
+};
+const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function sessionNumber(){const m=(location.pathname+' '+document.title).match(/sesion[-_\s]*(\d{1,2})/i)||document.title.match(/Sesión\s*(\d{1,2})/i);return m?Number(m[1]):0}
+function css(){if(document.getElementById('andes-story-v2-css'))return;const s=document.createElement('style');s.id='andes-story-v2-css';s.textContent=`
+.story-resolution{margin:.72em 0 0;padding:.74em .9em;border-left:.34em solid #16a34a;border-radius:.55em;background:#ecfdf3;color:#14532d;font-size:.72em;max-width:78ch}.dark .story-resolution{background:#ffffff12;color:#effff4;border-left-color:#86efac}.story-resolution b{font-weight:900}.story-resolution .open{display:block;margin-top:.45em;color:#475467}.dark .story-resolution .open{color:#d0d5dd}.story-explicit-answer{margin:.45em 0 0;padding:.58em .78em;border-left:.3em solid #16a34a;border-radius:.48em;background:#f0fdf4;color:#166534;font-size:.68em;max-width:78ch}.dark .story-explicit-answer{background:#ffffff10;color:#dcfce7}.story-explicit-answer b{font-weight:900}.story-badges [data-story-redundant="1"]{display:none!important}
+`;
+document.head.appendChild(s)}
+function slides(){return [...document.querySelectorAll('.slide')]}
+function closingSlide(){const all=slides();return [...all].reverse().find(x=>/cierre|salida|que te llevas|evidencia final|plan individual|defensa/i.test(fold((x.dataset.title||'')+' '+(x.querySelector('h1,h2')?.textContent||''))))||all.at(-1)}
+function addSessionClosure(n){const slide=closingSlide();if(!slide||slide.querySelector('.story-resolution')||!SESSION_ANSWERS[n])return;const box=document.createElement('div');box.className='story-resolution';box.dataset.storyAnswer='session';box.innerHTML=`<b>Respuesta de la sesión:</b> ${SESSION_ANSWERS[n]}<span class="open"><b>Esto deja abierta la siguiente pregunta:</b> ${NEXT_QUESTION[n]||'¿Cómo transfiero lo aprendido a un problema nuevo?'}</span>`;(slide.querySelector('h2')||slide.querySelector('h1'))?.insertAdjacentElement('afterend',box)}
+function addAnswer(afterEl,html){if(!afterEl||afterEl.nextElementSibling?.classList?.contains('story-explicit-answer'))return;const d=document.createElement('div');d.className='story-explicit-answer';d.dataset.storyAnswer='explicit';d.innerHTML=html;afterEl.insertAdjacentElement('afterend',d)}
+function answerInjectedPrompts(n){
+ if(n===1){const q=document.querySelector('[data-story-rolecase]');addAnswer(q,'<b>Respuesta que debe quedar:</b> el DBA pregunta por integridad, permisos y disponibilidad; el data engineer por origen, flujo y transformación; el analista por definición de la métrica, filtro y decisión que debe soportar.')}
+ if(n===4){document.querySelectorAll('[data-story-grain]').forEach(q=>addAnswer(q,'<b>Respuesta:</b> antes del JOIN cada fila representa el grano de la tabla de partida; después representa una coincidencia del JOIN. Si una fila de cliente encuentra ocho pagos, el cliente aparece ocho veces y el grano cambió.'))}
+ if(n===10){const q=document.querySelector('[data-story-s10]');addAnswer(q,'<b>Respuesta:</b> con “50 millones” y <code>session_id</code> todavía no basta. Primero hay que aclarar patrón de acceso, consistencia requerida, forma/evolución y costo/riesgo; solo después se nombra la familia tecnológica.')}
+ if(n===13){const q=document.querySelector('[data-story-s13]');addAnswer(q,'<b>Respuesta:</b> si ambas consultas son igualmente correctas, la que lee 220 MB es preferible porque logra la misma respuesta con mucho menos trabajo y costo. La sesión explica cómo conseguirlo.')}
+ if(n===14){const q=document.querySelector('[data-story-s14]');addAnswer(q,'<b>Respuesta:</b> mantener las líneas dentro del pedido hace natural leer el pedido completo como una unidad. La contrapartida aparece cuando esos datos deben cambiar o compartirse de forma independiente.')}
+}
+function markQuestionContracts(n){slides().forEach((slide,idx)=>{const candidates=[...slide.querySelectorAll('h1,h2,.lead,.qt,.story-question,.story-note')].filter(el=>/[?¿]/.test(el.textContent||''));if(!candidates.length)return;const hasInteractive=!!slide.querySelector('.q[data-answer],.verify,.fb[aria-live]');const hasExplicit=!!slide.querySelector('.story-explicit-answer,[data-story-answer],details summary');candidates.forEach(el=>{if(el.closest('.q')&&hasInteractive)el.dataset.storyAnswerContract='feedback';else if(hasExplicit)el.dataset.storyAnswerContract='same-slide';else if(idx===0)el.dataset.storyAnswerContract='session-close';else if(slide===closingSlide())el.dataset.storyAnswerContract='session-close';else el.dataset.storyAnswerContract='sequence'});slide.dataset.storyQuestionCount=String(candidates.length)})}
+function declutterRoleBadges(){let previous='';slides().forEach(slide=>{const role=[...slide.querySelectorAll('.story-badges .story-chip')].find(x=>!x.classList.contains('level'));if(!role)return;const now=(role.textContent||'').trim();if(now&&now===previous)role.dataset.storyRedundant='1';else delete role.dataset.storyRedundant;if(now)previous=now})}
+function addS3ProblemFirst(){const prompts=[[/between/i,'¿Cómo expresas “entre 90 y 120” sin repetir dos comparaciones?','<code>BETWEEN</code> expresa un intervalo inclusivo y hace visible que el problema es un rango.'],[/\bin\b|varios valores/i,'¿Cómo evitas encadenar muchos <code>OR</code> para una misma columna?','<code>IN</code> expresa pertenencia a un conjunto de valores.'],[/like/i,'¿Cómo buscarías títulos que contienen LOVE sin conocer el texto completo?','<code>LIKE</code> con comodines expresa el patrón; <code>%LOVE%</code> busca LOVE en cualquier posición.'],[/group by|agreg/i,'¿Cómo obtienes una fila por grupo en vez de una fila por registro?','Una función agregada resume y <code>GROUP BY</code> define el nivel al que quieres una fila.'],[/having/i,'¿Cómo filtras grupos después de haber agregado?','<code>WHERE</code> filtra filas antes de agrupar; <code>HAVING</code> filtra los grupos resultantes.']];slides().forEach(slide=>{const t=fold((slide.dataset.title||'')+' '+(slide.querySelector('h2')?.textContent||''));for(const [rx,q,a] of prompts){if(!rx.test(t)||slide.querySelector('[data-story-s3-problem]'))continue;const d=document.createElement('div');d.dataset.storyS3Problem='1';d.className='story-question';d.innerHTML=`<b>Antes de la sintaxis:</b> ${q}`;slide.querySelector('h2')?.insertAdjacentElement('afterend',d);addAnswer(d,`<b>Respuesta después de predecir:</b> ${a}`);break}})}
+function addS6EvidenceFirst(){const slide=slides().find(x=>/restric|permiso|patron|regla/i.test(fold((x.dataset.title||'')+' '+(x.querySelector('h2')?.textContent||''))));if(!slide||slide.querySelector('[data-story-s6-evidence]'))return;const d=document.createElement('div');d.dataset.storyS6Evidence='1';d.className='story-question';d.innerHTML='<b>Comprométete antes de clasificar:</b> “Nunca vimos que ocurriera X”. ¿Eso demuestra que X está prohibido?';slide.querySelector('h2')?.insertAdjacentElement('afterend',d);addAnswer(d,'<b>Respuesta:</b> no. La ausencia observada puede ser evidencia o patrón, pero no prueba una restricción del negocio. Una regla fuerte necesita evidencia normativa, de esquema o confirmación explícita.')}
+function addS7Counterexample(){const slide=slides().find(x=>/entidad|sustantivo/i.test(fold((x.dataset.title||'')+' '+(x.querySelector('h2')?.textContent||''))));if(!slide||slide.querySelector('[data-story-s7-entity]'))return;const d=document.createElement('div');d.dataset.storyS7Entity='1';d.className='story-question';d.innerHTML='<b>Contraejemplo:</b> aparecen “fecha”, “precio”, “cliente” y “pedido” como sustantivos. ¿Los cuatro deberían convertirse en tablas?';slide.querySelector('h2')?.insertAdjacentElement('afterend',d);addAnswer(d,'<b>Respuesta:</b> no. Un sustantivo solo propone un candidato. Una entidad necesita identidad propia, atributos o relaciones relevantes y una existencia que el negocio necesite distinguir.')}
+function addS11Decision(){const slide=slides().find(x=>/embed|reference|document/i.test(fold((x.dataset.title||'')+' '+(x.querySelector('h2')?.textContent||''))));if(!slide||slide.querySelector('[data-story-s11-decision]'))return;const d=document.createElement('div');d.dataset.storyS11Decision='1';d.className='story-question';d.innerHTML='<b>Decisión antes de la receta:</b> ¿qué cosas se leen juntas y cuáles cambian de forma compartida?';slide.querySelector('h2')?.insertAdjacentElement('afterend',d);addAnswer(d,'<b>Respuesta:</b> lo que se lee y cambia como una unidad favorece <em>embed</em>; lo compartido por muchos documentos y actualizado de manera independiente favorece <em>reference</em>. La decisión depende del patrón real de acceso y cambio.')}
+function run(){const n=sessionNumber();if(!n||!document.querySelector('.slide'))return;css();addSessionClosure(n);answerInjectedPrompts(n);if(n===3)addS3ProblemFirst();if(n===6)addS6EvidenceFirst();if(n===7)addS7Counterexample();if(n===11)addS11Decision();markQuestionContracts(n);declutterRoleBadges()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run,0),{once:true});else setTimeout(run,0);
+})();
