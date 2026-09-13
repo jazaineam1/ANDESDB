@@ -1,9 +1,9 @@
-const VERSION='andesdb-lms-20260912-v36';
+const VERSION='andesdb-lms-20260912-v37';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './portal.html','./access.html','./learning-hub.html','./lab.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
   './assets/andesdb-icon.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png',
-  './assets/learning/course-data.js','./assets/learning/lms-platform.js','./assets/learning/readings-v5.js','./assets/learning/access-gate.js','./assets/learning/resource-dock-a11y.js','./assets/learning/learning-tracker.js','./assets/learning/analytics-config.js','./assets/learning/analytics.js',
+  './assets/learning/course-data.js','./assets/learning/lms-platform.js','./assets/learning/lms-ux-v1.js','./assets/learning/readings-v5.js','./assets/learning/access-gate.js','./assets/learning/resource-dock-a11y.js','./assets/learning/learning-tracker.js','./assets/learning/analytics-config.js','./assets/learning/analytics.js',
   './assets/learning/interactive-nav.js','./assets/learning/presentation-text-fixes.js','./assets/learning/presentation-telemetry.js','./assets/learning/presentation-resume.js',
   './assets/learning/lab-content-v4.js','./assets/learning/lab-content-v4-patch.js','./assets/learning/lab-capstone-patch.js','./assets/learning/lab-runtime-v4.js','./assets/learning/lab-runtime-v5.js'
 ];
@@ -17,7 +17,7 @@ self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='G
   const original=/\/Presentaciones\/M\d+\/__original__\/[^/]+\.html$/i.test(url.pathname);
   const doc=req.mode==='navigate'||/\.html?$/i.test(url.pathname);
   const manifest=/\/tools\/curso\.json$/i.test(url.pathname);
-  const critical=/\/assets\/learning\/(?:interactive-nav|access-gate|resource-dock-a11y|presentation-text-fixes|presentation-telemetry|presentation-resume|lab-runtime-v4|lab-runtime-v5|lab-capstone-patch)\.js$/i.test(url.pathname);
+  const critical=/\/assets\/learning\/(?:interactive-nav|access-gate|resource-dock-a11y|presentation-text-fixes|presentation-telemetry|presentation-resume|lab-runtime-v4|lab-runtime-v5|lab-capstone-patch|lms-platform|lms-ux-v1|learning-tracker)\.js$/i.test(url.pathname);
   const runtime=/\/assets\/learning\/[^/]+\.(?:js|json)$/i.test(url.pathname);
   const staticAsset=/\.(?:js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
   if(original){event.respondWith(cacheFirst(req));return}
