@@ -7,6 +7,8 @@ on:
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/assets/learning/learning-core.js'
+      - 'revision/assets/learning/interactive-nav.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
   push:
@@ -16,6 +18,8 @@ on:
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/assets/learning/learning-core.js'
+      - 'revision/assets/learning/interactive-nav.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
 
@@ -32,6 +36,8 @@ jobs:
           node --check revision/assets/learning/guest-mode-v1.js
           node --check revision/assets/learning/guest-mode-v2.js
           node --check revision/assets/learning/learning-tracker.js
+          node --check revision/assets/learning/learning-core.js
+          node --check revision/assets/learning/interactive-nav.js
           node --check revision/service-worker.js
       - name: Proteger aislamiento del modo invitado
         run: |
@@ -39,44 +45,53 @@ jobs:
           G='revision/assets/learning/guest-mode-v2.js'
           V1='revision/assets/learning/guest-mode-v1.js'
           T='revision/assets/learning/learning-tracker.js'
+          C='revision/assets/learning/learning-core.js'
+          N='revision/assets/learning/interactive-nav.js'
           SW='revision/service-worker.js'
-          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
-          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
+          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso debe usar almacenamiento separado.'; exit 1; }
+          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::La ruta abierta debe bloquear la cola académica autenticada.'; exit 1; }
           grep -q "guest-mode-v2.js" "$V1" || { echo '::error::El loader v1 debe delegar de forma segura a v2.'; exit 1; }
-          grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime invitado no recursivo.'; exit 1; }
-          grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
-          grep -q "access-gate.js" "$T" || { echo '::error::El modo autenticado debe conservar access-gate.'; exit 1; }
-          grep -q "if(!guestLab)await add('lms-integral-patch.js" "$T" || { echo '::error::El modo server-first no debe borrar progreso invitado.'; exit 1; }
-          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir el módulo de invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime invitado v2.'; exit 1; }
+          grep -q "guestSurface" "$T" || { echo '::error::El loader debe reconocer presentación, lectura y laboratorio.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime no recursivo.'; exit 1; }
+          grep -q "if(!guestSurface){" "$T" || { echo '::error::Los módulos autenticados deben quedar fuera de la ruta abierta.'; exit 1; }
+          grep -q "if(!guestSurface)await add('lms-integral-patch.js" "$T" || { echo '::error::La capa server-first no debe tocar el progreso local.'; exit 1; }
+          grep -q "__ANDES_ACCESS_GATE_V4__=true" "$T" || { echo '::error::La lectura debe poder neutralizar el gate estático antes de que cargue.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$C" || { echo '::error::learning-core debe montar la navegación abierta en presentaciones.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$N" || { echo '::error::interactive-nav debe montar la navegación abierta en presentaciones.'; exit 1; }
+          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir la ruta de estudio.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime de la ruta.'; exit 1; }
+      - name: Proteger experiencia integral
+        run: |
+          set -euo pipefail
+          H='revision/guest.html'
+          G='revision/assets/learning/guest-mode-v2.js'
+          grep -q '▣ Presentación' "$H" || { echo '::error::Cada sesión debe ofrecer presentación.'; exit 1; }
+          grep -q '▤ Lectura' "$H" || { echo '::error::Cada sesión debe ofrecer lectura.'; exit 1; }
+          grep -q '✓ Laboratorio' "$H" || { echo '::error::Cada sesión debe ofrecer laboratorio.'; exit 1; }
+          grep -q 'reading.html?session=' "$H" || { echo '::error::Falta enlace de lectura por sesión.'; exit 1; }
+          grep -q 'lab.html?session=' "$H" || { echo '::error::Falta enlace de laboratorio por sesión.'; exit 1; }
+          grep -q 'presentationHref' "$G" || { echo '::error::La navegación interna debe poder volver a la presentación.'; exit 1; }
+          grep -q 'readingHref' "$G" || { echo '::error::La navegación interna debe poder ir a la lectura.'; exit 1; }
+          grep -q 'labHref' "$G" || { echo '::error::La navegación interna debe poder ir al laboratorio.'; exit 1; }
+          grep -q 'guest-study-dock' "$G" || { echo '::error::Las presentaciones deben tener navegación hacia lectura y laboratorio.'; exit 1; }
+          if grep -Eiq 'crear una cuenta|usuario ni contraseña|sin cuenta|sin registro|entrar al LMS|no crea matrícula|información privada del LMS' "$H" "$G"; then
+            echo '::error::La vista del estudiante no debe explicar ni contrastar mecanismos de autenticación.'
+            exit 1
+          fi
+          if grep -q 'teacher-dashboard.html?guest=1' "$H"; then
+            echo '::error::La ruta abierta no puede enlazar control docente.'; exit 1
+          fi
+          if grep -q 'assignment.html?guest=1' "$H"; then
+            echo '::error::La ruta abierta no puede enlazar entregas.'; exit 1
+          fi
       - name: Proteger rendimiento móvil
         run: |
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
           V1='revision/assets/learning/guest-mode-v1.js'
           if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1"; then
-            echo '::error::Ningún runtime invitado puede observar recursivamente todo el DOM.'
+            echo '::error::Ningún runtime abierto puede observar recursivamente todo el DOM.'
             exit 1
           fi
-          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
+          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::La ruta debe iniciar sin esperar autenticación remota.'; exit 1; }
           grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
-      - name: Proteger experiencia del estudiante
-        run: |
-          set -euo pipefail
-          G='revision/assets/learning/guest-mode-v2.js'
-          H='revision/guest.html'
-          if grep -Eiq 'crear una cuenta|usuario ni contraseña|sin cuenta|sin registro|entrar al LMS|no crea matrícula|información privada del LMS' "$H" "$G"; then
-            echo '::error::La vista de práctica no debe explicar ni contrastar mecanismos de autenticación.'
-            exit 1
-          fi
-          if grep -q 'portal.html' "$H"; then
-            echo '::error::La portada de práctica no debe desviar al estudiante hacia la entrada autenticada.'
-            exit 1
-          fi
-          if grep -q 'teacher-dashboard.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar control docente.'; exit 1
-          fi
-          if grep -q 'assignment.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar entregas.'; exit 1
-          fi
