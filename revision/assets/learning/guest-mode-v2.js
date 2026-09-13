@@ -1,86 +1,46 @@
 (()=>{
 'use strict';
 if(window.__ANDES_GUEST_MODE_V2__)return;
-const params=new URLSearchParams(location.search);
-const enabled=params.get('guest')==='1'&&/\/lab\.html$/i.test(location.pathname);
+const params=new URLSearchParams(location.search),path=location.pathname;
+const isLab=/\/lab\.html$/i.test(path),isReading=/\/reading\.html$/i.test(path),isPresentation=/\/Presentaciones\//i.test(path);
+const enabled=params.get('guest')==='1'&&(isLab||isReading||isPresentation);
 if(!enabled)return;
-window.__ANDES_GUEST_MODE_V2__=true;
-window.ANDES_GUEST_MODE=true;
+window.__ANDES_GUEST_MODE_V2__=true;window.ANDES_GUEST_MODE=true;
 const STORE='andesdb.guest.local.v1',PENDING='andesdb.lms.pending.v3',RELIABLE='andesdb.lab.reliable.v1.anonymous';
-const read=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{"completed":{}}')}catch{return {completed:{}}}};
+const read=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{"completed":{},"visited":{}}')}catch{return {completed:{},visited:{}}}};
 const write=x=>{try{localStorage.setItem(STORE,JSON.stringify(x))}catch(_){}};
 const completed=()=>read().completed||{};
 const remember=(code,score=1)=>{if(!code)return;const x=read();x.completed||={};x.completed[String(code)]={at:new Date().toISOString(),score:Number(score||1)};write(x);dispatchEvent(new CustomEvent('andesdb:guest-progress',{detail:{activity_code:String(code),score:Number(score||1)}}))};
 const has=code=>Boolean(completed()[String(code)]);
 const activityProgress=()=>Object.entries(completed()).map(([activity_code,v])=>({activity_code,status:'completed',score:Number(v?.score||1),completed_at:v?.at||null}));
+const surface=isPresentation?'presentation':isReading?'reading':'lab';
+function currentSession(){const q=Number(params.get('session'));if(Number.isInteger(q)&&q>=1&&q<=16)return q;const m=(path+' '+document.title).match(/sesion[-_\s]*(\d{1,2})/i);return m?Number(m[1]):null}
+function markVisited(){const n=currentSession();if(!n)return;const x=read();x.visited||={};x.visited[String(n)]||={};if(!x.visited[String(n)][surface]){x.visited[String(n)][surface]=new Date().toISOString();write(x)}}
 
-try{
-  const nativeSet=Storage.prototype.setItem;
-  if(!Storage.prototype.__andesGuestPatched){
-    Object.defineProperty(Storage.prototype,'__andesGuestPatched',{value:true,configurable:true});
-    Storage.prototype.setItem=function(key,value){
-      if(window.ANDES_GUEST_MODE&&this===localStorage&&String(key)===PENDING)return;
-      return nativeSet.call(this,key,value);
-    };
-  }
-}catch(_){ }
+try{const nativeSet=Storage.prototype.setItem;if(!Storage.prototype.__andesGuestPatched){Object.defineProperty(Storage.prototype,'__andesGuestPatched',{value:true,configurable:true});Storage.prototype.setItem=function(key,value){if(window.ANDES_GUEST_MODE&&this===localStorage&&String(key)===PENDING)return;return nativeSet.call(this,key,value)}}}catch(_){ }
+function patchLms(api){if(!api||api.__guestModeV2)return api;api.__guestModeV2=true;api.localCompleted=code=>has(code);api.complete=(activity,score=1)=>{remember(activity,score);return Promise.resolve(true)};api.attempt=()=>Promise.resolve(false);api.fail=()=>Promise.resolve(false);api.hint=()=>Promise.resolve(false);api.track=()=>Promise.resolve(false);api.dashboard=async()=>({activity_progress:activityProgress(),guest:true});api.me=()=>null;api.ready=()=>Promise.resolve({guest:true,role:'guest'});return api}
+try{let current=window.ANDES_LMS;if(current)patchLms(current);const d=Object.getOwnPropertyDescriptor(window,'ANDES_LMS');if(!d||d.configurable)Object.defineProperty(window,'ANDES_LMS',{configurable:true,enumerable:true,get(){return current},set(v){current=patchLms(v)}})}catch(_){let tries=0;const t=setInterval(()=>{tries++;if(window.ANDES_LMS){patchLms(window.ANDES_LMS);clearInterval(t)}else if(tries>100)clearInterval(t)},25)}
 
-function patchLms(api){
-  if(!api||api.__guestModeV2)return api;
-  api.__guestModeV2=true;
-  api.localCompleted=code=>has(code);
-  api.complete=(activity,score=1)=>{remember(activity,score);return Promise.resolve(true)};
-  api.attempt=()=>Promise.resolve(false);
-  api.fail=()=>Promise.resolve(false);
-  api.hint=()=>Promise.resolve(false);
-  api.track=()=>Promise.resolve(false);
-  api.dashboard=async()=>({activity_progress:activityProgress(),guest:true});
-  api.me=()=>null;
-  api.ready=()=>Promise.resolve({guest:true,role:'guest'});
-  return api;
-}
-
-try{
-  let current=window.ANDES_LMS;
-  if(current)patchLms(current);
-  const d=Object.getOwnPropertyDescriptor(window,'ANDES_LMS');
-  if(!d||d.configurable){
-    Object.defineProperty(window,'ANDES_LMS',{configurable:true,enumerable:true,get(){return current},set(v){current=patchLms(v)}});
-  }
-}catch(_){
-  let tries=0;
-  const t=setInterval(()=>{tries++;if(window.ANDES_LMS){patchLms(window.ANDES_LMS);clearInterval(t)}else if(tries>100)clearInterval(t)},25);
-}
-
-function guestUrl(){return new URL('guest.html',location.href).href}
+function guestUrl(){return new URL('guest.html',document.baseURI||location.href).href}
+function rootUrl(rel){try{return new URL(rel,new URL('../../',document.currentScript?.src||new URL('assets/learning/',guestUrl()).href)).href}catch{return rel}}
+function addGuest(href){try{const u=new URL(href,location.href);if(u.origin===location.origin&&(u.pathname.includes('/Presentaciones/')||/\/(?:lab|reading)\.html$/i.test(u.pathname)))u.searchParams.set('guest','1');return u.href}catch{return href}}
+function presentationHref(n){const s=window.ANDES_COURSE?.session?.(n);return s?.href?addGuest(rootUrl(s.href)):guestUrl()}
+function readingHref(n){return addGuest(rootUrl(`reading.html?session=${n}`))}
+function labHref(n){return addGuest(rootUrl(`lab.html?session=${n}`))}
+function routeMarkup(n,compact=false){if(!n)return '';const p=presentationHref(n),r=readingHref(n),l=labHref(n);return `<div class="guest-route-title">S${n} · Ruta de la sesión</div><div class="guest-route-links"><a class="${surface==='presentation'?'active':''}" href="${p}">▣ Presentación</a><a class="${surface==='reading'?'active':''}" href="${r}">▤ Lectura</a><a class="${surface==='lab'?'active':''}" href="${l}">✓ Laboratorio</a>${compact?'':`<a class="guest-route-home" href="${guestUrl()}">Todas las sesiones</a>`}</div>`}
 function setHref(el,url){if(el&&el.getAttribute('href')!==url)el.setAttribute('href',url)}
-function decorate(){
-  if(!document.body)return;
-  document.body.classList.add('guest-mode');
-  const url=guestUrl();
-  const logout=document.getElementById('logout-top');
-  if(logout&&!logout.dataset.guestExit){logout.dataset.guestExit='1';logout.textContent='Salir';logout.onclick=e=>{e.preventDefault();location.assign(url)}}
-  document.querySelectorAll('.brand,.crumb a,.side-link,.mobile-nav a').forEach(a=>setHref(a,url));
-  const back=document.getElementById('back-pres');if(back){setHref(back,url);if(back.textContent!=='▤ Laboratorios')back.textContent='▤ Laboratorios'}
-  const hub=document.getElementById('hub-link');if(hub){setHref(hub,url);if(hub.textContent!=='Volver a laboratorios →')hub.textContent='Volver a laboratorios →'}
-  const legend=document.querySelector('.sync-legend');
-  if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span>'}
-  if(!document.getElementById('guest-mode-note')){
-    const host=document.querySelector('.compact-head .wrap');
-    if(host){
-      const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);
-      box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem(RELIABLE);location.reload()}}
-    }
-  }
-}
+function rewriteNavigation(){const home=guestUrl();document.querySelectorAll('a[href]').forEach(a=>{let u;try{u=new URL(a.getAttribute('href'),location.href)}catch{return}if(u.origin!==location.origin)return;if(/\/(?:portal|learning-hub|calendar)\.html$/i.test(u.pathname)){setHref(a,home);return}if(u.pathname.includes('/Presentaciones/')||/\/(?:lab|reading)\.html$/i.test(u.pathname))setHref(a,addGuest(u.href))});const logout=document.getElementById('logout-top');if(logout&&!logout.dataset.guestExit){logout.dataset.guestExit='1';logout.textContent='Volver';logout.onclick=e=>{e.preventDefault();location.assign(home)}}}
+function installLabRoute(){if(!isLab)return;const host=document.querySelector('.compact-head .wrap');if(!host||document.getElementById('guest-session-route'))return;const box=document.createElement('div');box.id='guest-session-route';box.innerHTML=routeMarkup(currentSession(),true);host.appendChild(box);const legend=document.querySelector('.sync-legend');if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span>'}}
+function installReadingRoute(){if(!isReading||document.getElementById('guest-session-route'))return;const hero=document.querySelector('#app .hero');if(!hero)return;const box=document.createElement('div');box.id='guest-session-route';box.className='reading-route';box.innerHTML=routeMarkup(currentSession(),false);hero.insertAdjacentElement('afterend',box)}
+function installPresentationDock(){if(!isPresentation||document.getElementById('guest-study-dock'))return;const n=currentSession();if(!n)return;const dock=document.createElement('div');dock.id='guest-study-dock';dock.innerHTML=`<button type="button" class="guest-dock-open" aria-expanded="false">☰ <span>Ruta S${n}</span></button><div class="guest-dock-panel">${routeMarkup(n,false)}</div>`;document.body.appendChild(dock);const b=dock.querySelector('.guest-dock-open');b.onclick=e=>{e.stopPropagation();const open=dock.classList.toggle('open');b.setAttribute('aria-expanded',String(open))};document.addEventListener('click',e=>{if(dock.classList.contains('open')&&!dock.contains(e.target)){dock.classList.remove('open');b.setAttribute('aria-expanded','false')}},{passive:true})}
+function decorate(){if(!document.body)return;document.body.classList.add('guest-mode');markVisited();rewriteNavigation();installLabRoute();installReadingRoute();installPresentationDock()}
 
+document.addEventListener('click',e=>{const a=e.target.closest?.('a[href]');if(!a)return;let u;try{u=new URL(a.href,location.href)}catch{return}if(u.origin!==location.origin)return;if(u.pathname.includes('/Presentaciones/')||/\/(?:lab|reading)\.html$/i.test(u.pathname)){u.searchParams.set('guest','1');if(a.href!==u.href)a.href=u.href}},true);
 const style=document.createElement('style');style.id='guest-mode-v2-style';style.textContent=`
-#guest-mode-note{margin-top:10px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid #dfd7a7;background:#fffbea;border-radius:10px;color:#3d3300;font-size:.78rem}#guest-mode-note b{font-size:.8rem}#guest-mode-note span{color:#675c35}#guest-mode-note button{border:1px solid #cabf88;background:#fff;color:#554800;border-radius:8px;padding:7px 9px;font-weight:800;cursor:pointer}.guest-mode .sync-pending{display:none!important}.guest-mode .logout{background:#ffffff12}@media(max-width:700px){#guest-mode-note{grid-template-columns:1fr}#guest-mode-note button{justify-self:start}}html[data-andes-theme="dark"] #guest-mode-note,html[data-theme="dark"] #guest-mode-note{background:#25220f;border-color:#57501d;color:#ffe784}html[data-andes-theme="dark"] #guest-mode-note span,html[data-theme="dark"] #guest-mode-note span{color:#e4dcae}html[data-andes-theme="dark"] #guest-mode-note button,html[data-theme="dark"] #guest-mode-note button{background:#111827;color:#fff;border-color:#5d6470}`;document.head.appendChild(style);
+#guest-session-route{margin-top:10px;padding:11px 12px;border:1px solid #d8dee8;background:#fff;border-radius:10px;color:#17202a;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.reading-route{margin:12px 0!important}.guest-route-title{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#667085;margin-bottom:7px}.guest-route-links{display:flex;gap:7px;flex-wrap:wrap}.guest-route-links a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 10px;border:1px solid #d0d5dd;border-radius:8px;background:#f8fafc;color:#344054;text-decoration:none;font-size:.75rem;font-weight:850}.guest-route-links a.active{background:#101828;color:#fff;border-color:#101828}.guest-route-links a.guest-route-home{margin-left:auto;background:#fff}#guest-study-dock{position:fixed;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147483400;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}#guest-study-dock .guest-dock-open{border:1px solid #ffffff35;background:#101828f4;color:#fff;border-radius:999px;padding:11px 14px;box-shadow:0 9px 28px #0004;font:850 12px/1 system-ui;cursor:pointer}#guest-study-dock .guest-dock-panel{display:none;position:absolute;right:0;bottom:48px;width:min(360px,calc(100vw - 24px));background:#fff;color:#17202a;border:1px solid #d8dee8;border-radius:14px;box-shadow:0 24px 70px #0005;padding:12px}#guest-study-dock.open .guest-dock-panel{display:block}#guest-study-dock .guest-route-links{display:grid;grid-template-columns:1fr}#guest-study-dock .guest-route-links a.guest-route-home{margin-left:0}.guest-mode .sync-pending{display:none!important}@media(max-width:700px){.guest-route-links{display:grid;grid-template-columns:1fr 1fr 1fr}.guest-route-links a.guest-route-home{grid-column:1/-1;margin-left:0}#guest-study-dock{right:10px;bottom:calc(70px + env(safe-area-inset-bottom))}#guest-study-dock .guest-dock-panel{position:fixed;left:10px;right:10px;bottom:calc(120px + env(safe-area-inset-bottom));width:auto}.reading-route .guest-route-links{grid-template-columns:1fr}}
+html[data-andes-theme="dark"] #guest-session-route,html[data-theme="dark"] #guest-session-route{background:#111c2d;border-color:#32435b;color:#f8fafc}html[data-andes-theme="dark"] .guest-route-title,html[data-theme="dark"] .guest-route-title{color:#b6c2d2}html[data-andes-theme="dark"] .guest-route-links a,html[data-theme="dark"] .guest-route-links a{background:#17243a;border-color:#3a4a61;color:#e8edf5}html[data-andes-theme="dark"] .guest-route-links a.active,html[data-theme="dark"] .guest-route-links a.active{background:#ffd600;color:#2f2800;border-color:#ffd600}`;document.head.appendChild(style);
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{decorate();requestAnimationFrame(decorate);setTimeout(decorate,350)},{once:true});
-else{decorate();requestAnimationFrame(decorate);setTimeout(decorate,350)}
-addEventListener('pageshow',decorate,{passive:true});
-addEventListener('andesdb:lab-task-rendered',decorate,{passive:true});
-
-let atries=0;const at=setInterval(()=>{atries++;if(window.ANDES_ANALYTICS){window.ANDES_ANALYTICS.event('guest_lab_opened',{source:'guest_module'});clearInterval(at)}else if(atries>40)clearInterval(at)},250);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{decorate();requestAnimationFrame(decorate);setTimeout(decorate,350)},{once:true});else{decorate();requestAnimationFrame(decorate);setTimeout(decorate,350)}
+addEventListener('pageshow',decorate,{passive:true});addEventListener('andesdb:course-ready',decorate,{passive:true});addEventListener('andesdb:course-updated',decorate,{passive:true});addEventListener('andesdb:lab-task-rendered',decorate,{passive:true});
+let atries=0;const at=setInterval(()=>{atries++;if(window.ANDES_ANALYTICS){window.ANDES_ANALYTICS.event('guest_surface_opened',{source:'study_route',surface,session_number:currentSession()||0});clearInterval(at)}else if(atries>40)clearInterval(at)},250);
 })();
