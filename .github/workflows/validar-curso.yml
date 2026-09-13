@@ -58,6 +58,7 @@ jobs:
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/portal-ux-v2.js
           node --check revision/assets/learning/course-story-ui.js
+          node --check revision/assets/learning/readings-v6.js
           node --check revision/assets/learning/lab-content-s13-s16-alignment-v1.js
           node --check revision/assets/learning/lab-context-output-v1.js
           node --check revision/assets/learning/lab-runtime-v4.js
