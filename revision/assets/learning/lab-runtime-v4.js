@@ -3,6 +3,7 @@
 const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
 (async()=>{try{
   await load('assets/learning/lab-capstone-patch.js?v=20260912-cap1');
+  await load('assets/learning/lab-content-s13-s16-alignment-v1.js?v=20260913-align1');
   await load('assets/learning/lab-mcq-v1.js?v=20260912-mcq1');
   await load('assets/learning/lab-ux-v6-patch.js?v=20260912-ux6');
   try{await window.__ANDES_LAB_PATCH_READY__}catch(_){ }
