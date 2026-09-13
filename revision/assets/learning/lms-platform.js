@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.ANDES_PLATFORM?.version==='2.2.3')return;
+if(window.ANDES_PLATFORM?.version==='2.2.4')return;
 const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-platform',STORE='andesdb.lms.auth.v1',CACHE_PREFIX='andesdb.platform.bootstrap.v2.',CACHE_TTL=45000;
 let bootstrapCache=null,bootstrapOwner='';
 const auth=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}};
@@ -39,6 +39,9 @@ async function setUserActive(user_id,active){return call('user_set_active',{user
 async function revokeUserSessions(user_id){return call('user_revoke_sessions',{user_id})}
 async function issueCertificate(user_id){return call('issue_certificate',{user_id})}
 async function verifyCertificate(code){return call('verify_certificate',{code})}
-window.ANDES_PLATFORM={version:'2.2.3',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
-if(/\/revision\/portal\.html$/i.test(location.pathname)&&!document.querySelector('script[data-portal-ux-v2]')){const s=document.createElement('script');s.src=new URL('portal-ux-v2.js?v=20260913-ux2',document.currentScript?.src||location.href).href;s.dataset.portalUxV2='1';s.defer=true;document.head.appendChild(s)}
+window.ANDES_PLATFORM={version:'2.2.4',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
+if(/\/revision\/portal\.html$/i.test(location.pathname)){
+  if(!document.querySelector('script[data-email-access-v1]')){const e=document.createElement('script');e.src=new URL('email-access-v1.js?v=20260913-mail1',document.currentScript?.src||location.href).href;e.dataset.emailAccessV1='1';e.async=false;document.head.appendChild(e)}
+  if(!document.querySelector('script[data-portal-ux-v2]')){const s=document.createElement('script');s.src=new URL('portal-ux-v2.js?v=20260913-ux2',document.currentScript?.src||location.href).href;s.dataset.portalUxV2='1';s.defer=true;document.head.appendChild(s)}
+}
 })();
