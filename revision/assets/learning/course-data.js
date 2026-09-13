@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.ANDES_COURSE?.version==='2.2.7')return;
+if(window.ANDES_COURSE?.version==='2.2.8')return;
 const script=document.currentScript||[...document.scripts].find(s=>/course-data\.js(?:\?|$)/.test(s.src));
 const ROOT=script?new URL('../../',script.src):new URL('./',location.href);
 const DIR=script?new URL('./',script.src):new URL('assets/learning/',location.href);
@@ -26,12 +26,21 @@ function current(){return session(manifest?.sesionActual)||sessions.find(s=>s.es
 function today(){return sessions.find(s=>s.estado==='hoy')||null}
 function icsText(){const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ANDESDB//LMS//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:ANDESDB · Grupo ${GROUP}`,'X-WR-TIMEZONE:America/Bogota'];for(const s of sessions.filter(x=>x.fecha)){const d=String(s.fecha).replaceAll('-','');const start=`${d}T180000`;const mins=Number(s.duracionUtil||165),endDate=new Date(`${s.fecha}T18:00:00-05:00`);endDate.setMinutes(endDate.getMinutes()+mins);const pad=n=>String(n).padStart(2,'0'),end=`${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;lines.push('BEGIN:VEVENT',`UID:andesdb-s${s.n}-${s.fecha}@jazaineam1.github.io`,`DTSTAMP:${stamp}`,`DTSTART;TZID=America/Bogota:${start}`,`DTEND;TZID=America/Bogota:${end}`,`SUMMARY:${esc(`ANDESDB · Grupo ${GROUP} · S${s.n} · ${s.titulo}`)}`,`DESCRIPTION:${esc(`${s.desc||''}\nConexión Zoom: ${ZOOM}`)}`,`LOCATION:${esc('Zoom · Grupo '+GROUP)}`,`URL:${ZOOM}`,'END:VEVENT')}lines.push('END:VCALENDAR');return lines.join('\r\n')}
 function downloadCalendar(){const blob=new Blob([icsText()],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ANDESDB-Grupo-39-calendario.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},0)}
-window.ANDES_COURSE={version:'2.2.7',ROOT,STORY,GROUP,ZOOM,ready:()=>readyPromise,refresh,get manifest(){return manifest},get sessions(){return sessions},get modules(){return modules},session,search,upcoming,current,today,icsText,downloadCalendar};
+window.ANDES_COURSE={version:'2.2.8',ROOT,STORY,GROUP,ZOOM,ready:()=>readyPromise,refresh,get manifest(){return manifest},get sessions(){return sessions},get modules(){return modules},session,search,upcoming,current,today,icsText,downloadCalendar};
 function add(src,dataAttr){if(document.querySelector(`script[${dataAttr}]`))return;const x=document.createElement('script');x.src=new URL(src,DIR).href;x.setAttribute(dataAttr,'1');x.defer=true;document.head.appendChild(x)}
-add('theme-v1.js?v=20260913-theme1','data-andes-theme');
-if(!/\/Presentaciones\//i.test(location.pathname))add('uniandes-skin-v1.js?v=20260913-skin1','data-andes-institutional-skin');
+function loadAnalytics(){
+  if(/\/Presentaciones\//i.test(location.pathname)||window.ANDES_ANALYTICS||document.querySelector('script[data-andes-ga4-runtime]'))return;
+  const loadRuntime=()=>{if(window.ANDES_ANALYTICS||document.querySelector('script[data-andes-ga4-runtime]'))return;const a=document.createElement('script');a.src=new URL('analytics.js?v=20260913-ga5',DIR).href;a.dataset.andesGa4Runtime='1';a.async=false;document.head.appendChild(a)};
+  if(window.ANDES_ANALYTICS_CONFIG){loadRuntime();return}
+  const existing=document.querySelector('script[data-andes-ga4-config]');
+  if(existing){existing.addEventListener('load',loadRuntime,{once:true});return}
+  const c=document.createElement('script');c.src=new URL('analytics-config.js?v=20260913-ga5',DIR).href;c.dataset.andesGa4Config='1';c.async=false;c.addEventListener('load',loadRuntime,{once:true});document.head.appendChild(c)
+}
+add('theme-v1.js?v=20260913-theme2','data-andes-theme');
+if(!/\/Presentaciones\//i.test(location.pathname))add('uniandes-skin-v1.js?v=20260913-skin2','data-andes-institutional-skin');
 if(/\/reading\.html$/i.test(location.pathname))add('reading-nav-v1.js?v=20260913-nav1','data-reading-nav');
 if(/\/teacher-dashboard\.html$/i.test(location.pathname))add('teacher-dashboard-ux-v2.js?v=20260913-teacher2','data-teacher-dashboard-ux');
 add('course-live-ui.js?v=20260913-g39b','data-course-live-ui');
 if(/\/learning-hub\.html$/i.test(location.pathname))add('course-story-ui.js?v=20260913-story2','data-course-story-ui');
+loadAnalytics();
 })();
