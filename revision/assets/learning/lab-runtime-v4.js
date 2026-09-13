@@ -5,6 +5,7 @@ const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement(
 (async()=>{try{
   const guest=window.ANDES_GUEST_MODE||new URLSearchParams(location.search).get('guest')==='1';
   if(guest&&!window.__ANDES_GUEST_MODE_V2__)await load('assets/learning/guest-mode-v2.js?v=20260913-route2');
+  if(guest)await load('assets/learning/lab-guest-api-compat-v1.js?v=20260913-render1');
   await load('assets/learning/lab-capstone-patch.js?v=20260912-cap1');
   await load('assets/learning/lab-content-s13-s16-alignment-v1.js?v=20260913-align1');
   await load('assets/learning/lab-curriculum-v1.js?v=20260913-curr1');
@@ -20,7 +21,7 @@ const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement(
     try{await window.__ANDES_LAB_RELIABILITY_READY__}catch(_){ }
   }
   await load('assets/learning/lab-sql-engine-v1.js?v=20260913-feedback1');
-  await load('assets/learning/lab-runtime-v7.js?v=20260913-feedback1');
+  await load('assets/learning/lab-runtime-v7.js?v=20260913-render1');
   await load('assets/learning/lab-context-output-v2.js?v=20260913-context2');
   await load('assets/learning/lab-sql-scaffold-v2.js?v=20260913-mobile3');
   await load('assets/learning/lab-finish-v1.js?v=20260912-finish1');
