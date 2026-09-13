@@ -1,10 +1,10 @@
-const VERSION='andesdb-lms-20260912-v33';
+const VERSION='andesdb-lms-20260912-v34';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './portal.html','./learning-hub.html','./reading.html','./calendar.html','./assignment.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
   './assets/andesdb-icon.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png',
   './assets/learning/course-data.js','./assets/learning/lms-platform.js','./assets/learning/readings-v5.js','./assets/learning/access-gate.js','./assets/learning/learning-tracker.js','./assets/learning/analytics-config.js','./assets/learning/analytics.js',
-  './assets/learning/interactive-nav.js','./assets/learning/presentation-telemetry.js','./assets/learning/presentation-resume.js'
+  './assets/learning/interactive-nav.js','./assets/learning/interactive-tools.js','./assets/learning/presentation-telemetry.js','./assets/learning/presentation-resume.js'
 ];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CORE);await Promise.allSettled(ESSENTIAL.map(async rel=>{try{const url=new URL(rel,self.location.href),r=await fetch(url,{cache:'reload'});if(r.ok)await cache.put(url,r.clone())}catch(_){}}));await self.skipWaiting()})())});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('andesdb-')&&![CORE,RUNTIME].includes(k)).map(k=>caches.delete(k)));try{if(self.registration.navigationPreload)await self.registration.navigationPreload.enable()}catch(_){}await self.clients.claim()})())});
@@ -16,7 +16,7 @@ self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='G
   const original=/\/Presentaciones\/M\d+\/__original__\/[^/]+\.html$/i.test(url.pathname);
   const doc=req.mode==='navigate'||/\.html?$/i.test(url.pathname);
   const manifest=/\/tools\/curso\.json$/i.test(url.pathname);
-  const critical=/\/assets\/learning\/(?:interactive-nav|access-gate|presentation-telemetry|presentation-resume)\.js$/i.test(url.pathname);
+  const critical=/\/assets\/learning\/(?:interactive-nav|interactive-tools|access-gate|presentation-telemetry|presentation-resume)\.js$/i.test(url.pathname);
   const runtime=/\/assets\/learning\/[^/]+\.(?:js|json)$/i.test(url.pathname);
   const staticAsset=/\.(?:js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
   if(original){event.respondWith(cacheFirst(req));return}
