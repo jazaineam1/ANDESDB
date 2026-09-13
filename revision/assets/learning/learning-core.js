@@ -4,7 +4,7 @@
   if (!current) return;
   const dir = new URL('./', current.src);
   const load = (src) => {
-    if ([...document.scripts].some(s => s.src && new URL(s.src, location.href).href === src)) return;
+    if ([...document.scripts].some(s => s.src && new URL(s.src, location.href).href.split('?')[0] === src.split('?')[0])) return;
     const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el);
   };
   const isPresentation = /\/Presentaciones\//i.test(location.pathname) || !!document.querySelector('.slide');
@@ -22,5 +22,9 @@
       load(new URL('presentation-material-alignment-v1.js?v=20260913-align2', dir).href);
     }
     if(/sesion[-_\s]*15/i.test(location.pathname+' '+document.title))load(new URL('presentation-story-s15-patch.js?v=20260912-story1', dir).href);
+    /* Presentaciones directas (como S15) reciben la misma navegación de Recursos
+       que las presentaciones wrapper. Los guards internos evitan duplicados. */
+    load(new URL('access-gate.js?v=20260913-lite3', dir).href);
+    load(new URL('resource-dock-a11y.js?v=20260913-mobile4', dir).href);
   }
 })();
