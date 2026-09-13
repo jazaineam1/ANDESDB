@@ -10,6 +10,7 @@ const load=name=>new Promise((resolve,reject)=>{const src=new URL(name,dir).href
   await load('presentation-story-v1.js?v=20260912-story1');
   await load('presentation-story-v2-patch.js?v=20260912-story2');
   await load('presentation-story-v3-polish.js?v=20260912-story3');
+  if(/sesion[-_\s]*1[3-6]/i.test(location.pathname+' '+document.title))await load('presentation-study-cleanup-v1.js?v=20260913-study1');
   await load('access-gate.js?v=20260912-lite2');
   await load('resource-dock-a11y.js?v=20260913-mobile3');
   await load('analytics-config.js?v=20260912-ga4a');
