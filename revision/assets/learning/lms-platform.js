@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.ANDES_PLATFORM?.version==='2.2.2')return;
+if(window.ANDES_PLATFORM?.version==='2.2.3')return;
 const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-platform',STORE='andesdb.lms.auth.v1',CACHE_PREFIX='andesdb.platform.bootstrap.v2.',CACHE_TTL=45000;
 let bootstrapCache=null,bootstrapOwner='';
 const auth=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}};
@@ -22,7 +22,13 @@ async function saveBookmark(data){const x=await call('bookmark_save',data);inval
 async function deleteBookmark(id){const x=await call('bookmark_delete',{id});invalidate();return x}
 async function submitAssignment(data){const x=await call('submit_assignment',data,15000);invalidate();return x}
 async function submissionUrl(submission_id){return call('submission_url',{submission_id})}
-async function teacherOverview(){return call('teacher_overview',{},12000)}
+async function teacherOverview(){
+  const x=await call('teacher_overview',{},12000);
+  const assignments=(x.assignments||[]).filter(a=>a?.active!==false);
+  const activeIds=new Set(assignments.map(a=>String(a.id)));
+  const submissions=(x.submissions||[]).filter(s=>activeIds.has(String(s.assignment_id)));
+  return {...x,assignments,submissions};
+}
 async function userDetail(user_id){return call('user_detail',{user_id},10000)}
 async function createAnnouncement(data){const x=await call('announcement_create',data);invalidate();return x}
 async function deleteAnnouncement(id){const x=await call('announcement_delete',{id});invalidate();return x}
@@ -33,6 +39,6 @@ async function setUserActive(user_id,active){return call('user_set_active',{user
 async function revokeUserSessions(user_id){return call('user_revoke_sessions',{user_id})}
 async function issueCertificate(user_id){return call('issue_certificate',{user_id})}
 async function verifyCertificate(code){return call('verify_certificate',{code})}
-window.ANDES_PLATFORM={version:'2.2.2',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
+window.ANDES_PLATFORM={version:'2.2.3',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
 if(/\/revision\/portal\.html$/i.test(location.pathname)&&!document.querySelector('script[data-portal-ux-v2]')){const s=document.createElement('script');s.src=new URL('portal-ux-v2.js?v=20260913-ux2',document.currentScript?.src||location.href).href;s.dataset.portalUxV2='1';s.defer=true;document.head.appendChild(s)}
 })();
