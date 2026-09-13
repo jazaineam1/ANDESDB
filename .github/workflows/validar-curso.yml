@@ -43,6 +43,9 @@ jobs:
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
 
+      - name: Auditar lecturas y feedback del laboratorio
+        run: python revision/tools/auditar_lecturas_feedback.py
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
@@ -60,6 +63,7 @@ jobs:
           node --check revision/assets/learning/portal-ux-v2.js
           node --check revision/assets/learning/course-story-ui.js
           node --check revision/assets/learning/readings-v6.js
+          node --check revision/assets/learning/readings-v7-alignment.js
           node --check revision/assets/learning/lab-content-s13-s16-alignment-v1.js
           node --check revision/assets/learning/lab-runtime-v4.js
           node --check revision/assets/learning/lab-runtime-v7.js
