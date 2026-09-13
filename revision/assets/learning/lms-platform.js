@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.ANDES_PLATFORM?.version==='2.2.0')return;
+if(window.ANDES_PLATFORM?.version==='2.2.1')return;
 const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-platform',STORE='andesdb.lms.auth.v1',CACHE_PREFIX='andesdb.platform.bootstrap.v2.',CACHE_TTL=45000;
 let bootstrapCache=null,bootstrapOwner='';
 const auth=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}};
@@ -25,7 +25,13 @@ if(!window.__ANDES_AUTH_FETCH_RESILIENCE__){
     if(action!=='login'&&action!=='me')return nativeFetch(input,init);
     const timeout=action==='login'?15000:10000;
     const run=async()=>{const c=new AbortController(),timer=setTimeout(()=>c.abort(),timeout);try{return await nativeFetch(input,{...init,signal:c.signal})}finally{clearTimeout(timer)}};
-    try{return await run()}catch(e){if(action==='me'&&e?.name!=='AbortError'){await sleep(300);return run()}throw e}
+    try{return await run()}catch(first){
+      if(action==='me'&&first?.name!=='AbortError'){
+        try{await sleep(300);return await run()}catch(second){throw second}
+      }
+      if(action==='login'&&first?.name!=='AbortError')throw new Error('No pudimos conectar con el servidor. Revisa la red y vuelve a pulsar Entrar; tu cuenta y progreso no se pierden.');
+      throw first;
+    }
   };
 }
 
@@ -49,5 +55,5 @@ async function setUserActive(user_id,active){return call('user_set_active',{user
 async function revokeUserSessions(user_id){return call('user_revoke_sessions',{user_id})}
 async function issueCertificate(user_id){return call('issue_certificate',{user_id})}
 async function verifyCertificate(code){return call('verify_certificate',{code})}
-window.ANDES_PLATFORM={version:'2.2.0',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
+window.ANDES_PLATFORM={version:'2.2.1',call,bootstrap,refreshBootstrap,invalidate,readAnnouncement,saveBookmark,deleteBookmark,submitAssignment,submissionUrl,teacherOverview,userDetail,createAnnouncement,deleteAnnouncement,createAssignment,archiveAssignment,reviewSubmission,setUserActive,revokeUserSessions,issueCertificate,verifyCertificate};
 })();
