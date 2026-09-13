@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANDESDB · cargando presentación</title><style>html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}.boot{max-width:560px;padding:28px;text-align:center}.spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}@keyframes s{to{transform:rotate(360deg)}}</style></head>
-<body><div class="boot"><div class="spin"></div><b>Cargando presentación interactiva…</b><p>La versión original se conserva y se añade la capa de laboratorio de <code>revision</code>.</p></div>
+<body><div class="boot"><div class="spin"></div><b>Cargando presentación interactiva…</b><p>Preparando la presentación, el contexto y las actividades de la sesión.</p></div>
 <!-- ANDESDB_VALIDATION_BRIDGE
 Este bloque solo permite que los validadores estáticos reconozcan capacidades que viven en
 __original__ y se inyectan en tiempo de ejecución. No se muestra al estudiante.
@@ -20,8 +20,16 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   const response=await fetch(source,{cache:'no-cache'});
   if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
   let html=await response.text();
+  html=html
+    .replace('laboratorios M5C2 ya asignados','laboratorios oficiales enlazados en esta sesión')
+    .replace('34–40 min · ejemplo M5C2','34–40 min · ejemplo visual de pruning')
+    .replace('La intuición del PPTX: de 9 bloques/filas candidatas a 4 relevantes','¿Qué significa podar datos? De 9 bloques ilustrativos, el filtro solo necesita 4')
+    .replace('<span>M5C2</span><span>La cifra ilustra el mecanismo</span>','<span>Ejemplo conceptual</span><span>Pruning = dejar de leer lo irrelevante</span>')
+    .replace('laboratorios M5C2','laboratorios reales de Google Skills')
+    .replace(/\bPPTX\b/gi,'material de referencia')
+    .replace(/\bM5C2\b/g,'BigQuery');
   const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
-  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912c"><\/script>';
+  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260913-context2"><\/script>';
   const storyOrder=`<script>
   (()=>{
     const stage=document.querySelector('.stage');if(!stage)return;
@@ -61,6 +69,6 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   document.write(html);
   document.close();
 })().catch(err=>{
-  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página. Si continúa, abre el archivo conservado en <code>__original__</code>.</p></div>';
+  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página.</p></div>';
 });
 </script></body></html>
