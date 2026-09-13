@@ -4,6 +4,15 @@ if(window.__ANDES_ACCESS_GATE_V4__||window.self!==window.top)return;window.__AND
 if(/\/portal\.html$/i.test(location.pathname))return;
 const script=document.currentScript||[...document.scripts].find(s=>/access-gate\.js(?:\?|$)/.test(s.src));if(!script)return;
 const ROOT=new URL('../../',script.src),AUTH_API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-auth';
+const guestRequested=new URLSearchParams(location.search).get('guest')==='1';
+const guestSurface=guestRequested&&(/\/lab\.html$/i.test(location.pathname)||/\/reading\.html$/i.test(location.pathname)||/\/Presentaciones\//i.test(location.pathname));
+if(guestSurface){
+  window.ANDES_GUEST_MODE=true;
+  if(!window.__ANDES_GUEST_MODE_V3__&&!document.querySelector('script[data-andes-guest-v3]')){
+    const g=document.createElement('script');g.src=new URL('guest-mode-v3.js?v=20260913-guest3',new URL('./',script.src)).href;g.async=false;g.dataset.andesGuestV3='1';document.head.appendChild(g);
+  }
+  return;
+}
 const STORE='andesdb.lms.auth.v1',COOKIE='andesdb_lms_session',COOKIE_PATH=ROOT.pathname,COOKIE_AGE=34560000;
 const next=location.pathname+location.search+location.hash;
 const readLocal=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}};
@@ -15,13 +24,11 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const isPresentation=/\/Presentaciones\//i.test(location.pathname);
 function currentSession(){const q=Number(new URLSearchParams(location.search).get('session'));if(Number.isInteger(q)&&q>=1&&q<=16)return q;const m=(location.pathname+' '+document.title).match(/sesion[-_\s]*(\d{1,2})/i);return m?Number(m[1]):null}
 
-/* Mantener la navegación interna en la misma pestaña evita perder contexto o sesión. */
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||a.hasAttribute('download')||a.target==='_blank')return;let u;try{u=new URL(a.href,location.href)}catch{return}if(u.origin!==location.origin||!u.pathname.startsWith(ROOT.pathname))return;e.preventDefault();location.assign(u.href)},true);
 
 const st=document.createElement('style');st.id='andes-access-v4-css';st.textContent=`
 #andes-access-gate{position:fixed;inset:0;z-index:2147483646;background:#101828f5;color:#fff;display:grid;place-items:center;padding:18px;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
 #andes-access-gate .ag-card{width:min(500px,94vw);background:#fff;color:#17202a;border-radius:18px;padding:24px;box-shadow:0 30px 100px #0008}#andes-access-gate h1{margin:.25rem 0 .55rem;font-size:1.65rem}#andes-access-gate p{color:#667085;line-height:1.5}.ag-ey{font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8a7300}.ag-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.ag-btn{border:0;border-radius:10px;padding:10px 13px;background:#175cd3;color:#fff;text-decoration:none;font-weight:850;cursor:pointer}.ag-btn.alt{background:#eef2f6;color:#17202a}.ag-note{margin-top:14px;border-left:4px solid #f79009;background:#fffaeb;border-radius:8px;padding:9px;font-size:.8rem;color:#7a2e0e}
-/* En presentaciones revision dejamos UNA sola navegación externa al deck. */
 #andes-toolkit-btn,#andes-session-lab-btn,#andes-learning-btn,#andes-role-access-v2,#andes-pres-tools{display:none!important}
 #andes-resource-dock{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483500;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
 #andes-resource-dock .rd-open{border:1px solid #ffffff35;background:#101828f4;color:#fff;border-radius:999px;padding:11px 14px;box-shadow:0 9px 28px #0004;font:850 12px/1 system-ui;cursor:pointer;display:flex;align-items:center;gap:7px}
@@ -61,7 +68,6 @@ async function verify(token,ms=3500){
 async function boot(){
   const local=readLocal();
   if(local?.token&&local?.user){
-    /* Prioridad UX: no bloquear la presentación por una validación de red. */
     unlock(local.user,local.token);
     setTimeout(async()=>{if(document.visibilityState==='hidden')return;const v=await verify(local.token);if(v.ok){writeLocal({...local,...v.data,token:local.token,user:v.data.user});currentUser=v.data.user;renderResources();return}if(v.definitive){writeLocal(null);clearCookie();locked('Tu sesión ya no es válida. Inicia sesión nuevamente para continuar.')}},150);
     return;
