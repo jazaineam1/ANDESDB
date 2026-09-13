@@ -1,7 +1,7 @@
-const VERSION='andesdb-lms-20260912-v35';
+const VERSION='andesdb-lms-20260912-v36';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
-  './portal.html','./learning-hub.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
+  './portal.html','./access.html','./learning-hub.html','./lab.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
   './assets/andesdb-icon.svg','./assets/icons/andesdb-192.png','./assets/icons/andesdb-512.png',
   './assets/learning/course-data.js','./assets/learning/lms-platform.js','./assets/learning/readings-v5.js','./assets/learning/access-gate.js','./assets/learning/resource-dock-a11y.js','./assets/learning/learning-tracker.js','./assets/learning/analytics-config.js','./assets/learning/analytics.js',
   './assets/learning/interactive-nav.js','./assets/learning/presentation-text-fixes.js','./assets/learning/presentation-telemetry.js','./assets/learning/presentation-resume.js',
