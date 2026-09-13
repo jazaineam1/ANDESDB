@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'revision/guest.html'
-      - 'revision/assets/learning/guest-mode-v1.js'
+      - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
@@ -12,7 +12,7 @@ on:
     branches: [main]
     paths:
       - 'revision/guest.html'
-      - 'revision/assets/learning/guest-mode-v1.js'
+      - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
@@ -27,23 +27,34 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validar JavaScript
         run: |
-          node --check revision/assets/learning/guest-mode-v1.js
+          node --check revision/assets/learning/guest-mode-v2.js
           node --check revision/assets/learning/learning-tracker.js
           node --check revision/service-worker.js
       - name: Proteger aislamiento del modo invitado
         run: |
           set -euo pipefail
-          G='revision/assets/learning/guest-mode-v1.js'
+          G='revision/assets/learning/guest-mode-v2.js'
           T='revision/assets/learning/learning-tracker.js'
           SW='revision/service-worker.js'
           grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
           grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
           grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime invitado no recursivo.'; exit 1; }
           grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
           grep -q "access-gate.js" "$T" || { echo '::error::El modo autenticado debe conservar access-gate.'; exit 1; }
           grep -q "if(!guestLab)await add('lms-integral-patch.js" "$T" || { echo '::error::El modo server-first no debe borrar progreso invitado.'; exit 1; }
           grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir el módulo de invitados.'; exit 1; }
-          grep -q "guest-mode-v1.js" "$SW" || { echo '::error::La PWA debe incluir el runtime de invitados.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime invitado v2.'; exit 1; }
+      - name: Proteger rendimiento móvil
+        run: |
+          set -euo pipefail
+          G='revision/assets/learning/guest-mode-v2.js'
+          if grep -q 'MutationObserver' "$G"; then
+            echo '::error::El modo invitado no debe observar recursivamente todo el DOM.'
+            exit 1
+          fi
+          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
+          grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
       - name: Proteger límites de seguridad
         run: |
           set -euo pipefail
