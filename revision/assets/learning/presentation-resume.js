@@ -2,8 +2,21 @@
 'use strict';
 if(window.__ANDES_PRESENTATION_RESUME__)return;window.__ANDES_PRESENTATION_RESUME__=true;
 const target=Number(new URLSearchParams(location.search).get('slide'));if(!Number.isInteger(target)||target<1)return;
-function current(){const slides=[...document.querySelectorAll('.slide')];let i=slides.findIndex(x=>x.classList.contains('active'));if(i>=0)return i+1;const r=[...document.querySelectorAll('.reveal .slides section')],j=r.findIndex(x=>x.classList.contains('present'));return j>=0?j+1:null}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function current(){const a=document.querySelector('.slide.active');if(a){const slides=[...document.querySelectorAll('.slide')];const i=slides.indexOf(a);if(i>=0)return i+1}const p=document.querySelector('.reveal .slides section.present');if(p){const slides=[...document.querySelectorAll('.reveal .slides section')];const i=slides.indexOf(p);if(i>=0)return i+1}const t=document.querySelector('#count,[data-slide-count],.slide-number')?.textContent||'',m=t.match(/(\d+)\s*(?:\/|of)/i);return m?Number(m[1]):null}
 function cleanup(){const u=new URL(location.href);u.searchParams.delete('slide');history.replaceState(null,'',u.pathname+(u.searchParams.toString()?'?'+u.searchParams.toString():'')+u.hash)}
-async function tryResume(){if(window.Reveal?.slide){window.Reveal.slide(target-1);cleanup();return true}let c=current();if(c==null)return false;if(c===target){cleanup();return true}const key=target>c?'ArrowRight':'ArrowLeft',steps=Math.min(80,Math.abs(target-c));for(let i=0;i<steps;i++){document.dispatchEvent(new KeyboardEvent('keydown',{key,code:key,bubbles:true}));window.dispatchEvent(new KeyboardEvent('keydown',{key,code:key,bubbles:true}));await new Promise(r=>setTimeout(r,25));const now=current();if(now===target){cleanup();return true}if(now!=null)c=now}const selector=target>c?'button[aria-label*="Siguiente" i],button[title*="Siguiente" i],.next,#next':'button[aria-label*="Anterior" i],button[title*="Anterior" i],.prev,#prev';for(let i=0;i<steps;i++){const b=document.querySelector(selector);if(!b)break;b.click();await new Promise(r=>setTimeout(r,30));if(current()===target){cleanup();return true}}return false}
-let tries=0;const timer=setInterval(async()=>{if(await tryResume()||++tries>40)clearInterval(timer)},100);
+async function waitReady(){for(let i=0;i<40;i++){if(current()!=null||typeof window.go==='function'||window.Reveal?.slide)return true;await sleep(75)}return false}
+async function resume(){if(!await waitReady())return;
+  if(window.Reveal?.slide){window.Reveal.slide(target-1);await sleep(80);if(current()===target)cleanup();return}
+  if(typeof window.go==='function'){try{window.go(target-1);await sleep(60);if(current()===target){cleanup();return}}catch(_){}}
+  let c=current();if(c==null)return;if(c===target){cleanup();return}
+  const forward=target>c,selector=forward?'#next,.next,button[aria-label*="Siguiente" i],button[title*="Siguiente" i]':'#prev,.prev,button[aria-label*="Anterior" i],button[title*="Anterior" i]';
+  const max=Math.min(40,Math.abs(target-c));
+  for(let i=0;i<max;i++){
+    const b=document.querySelector(selector);if(!b)break;b.click();await sleep(70);
+    c=current();if(c===target){cleanup();return}
+    if((forward&&c>target)||(!forward&&c<target))break;
+  }
+}
+resume().catch(()=>{});
 })();
