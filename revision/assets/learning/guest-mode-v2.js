@@ -61,15 +61,15 @@ function decorate(){
   const logout=document.getElementById('logout-top');
   if(logout&&!logout.dataset.guestExit){logout.dataset.guestExit='1';logout.textContent='Salir';logout.onclick=e=>{e.preventDefault();location.assign(url)}}
   document.querySelectorAll('.brand,.crumb a,.side-link,.mobile-nav a').forEach(a=>setHref(a,url));
-  const back=document.getElementById('back-pres');if(back){setHref(back,url);if(back.textContent!=='▤ Módulo de invitados')back.textContent='▤ Módulo de invitados'}
-  const hub=document.getElementById('hub-link');if(hub){setHref(hub,url);if(hub.textContent!=='Volver al módulo de invitados →')hub.textContent='Volver al módulo de invitados →'}
+  const back=document.getElementById('back-pres');if(back){setHref(back,url);if(back.textContent!=='▤ Laboratorios')back.textContent='▤ Laboratorios'}
+  const hub=document.getElementById('hub-link');if(hub){setHref(hub,url);if(hub.textContent!=='Volver a laboratorios →')hub.textContent='Volver a laboratorios →'}
   const legend=document.querySelector('.sync-legend');
-  if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span><span>Sin cuenta</span>'}
+  if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span>'}
   if(!document.getElementById('guest-mode-note')){
     const host=document.querySelector('.compact-head .wrap');
     if(host){
-      const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Modo invitado</b><span>No necesitas usuario ni contraseña. Tu avance se guarda solo en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);
-      box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso invitado guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem(RELIABLE);location.reload()}}
+      const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);
+      box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem(RELIABLE);location.reload()}}
     }
   }
 }

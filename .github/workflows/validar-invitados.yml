@@ -61,13 +61,22 @@ jobs:
           fi
           grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
           grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
-      - name: Proteger límites de seguridad
+      - name: Proteger experiencia del estudiante
         run: |
           set -euo pipefail
-          grep -q 'No crea matrícula' revision/guest.html || { echo '::error::El módulo debe explicar que no crea matrícula.'; exit 1; }
-          if grep -q 'teacher-dashboard.html?guest=1' revision/guest.html; then
+          G='revision/assets/learning/guest-mode-v2.js'
+          H='revision/guest.html'
+          if grep -Eiq 'crear una cuenta|usuario ni contraseña|sin cuenta|sin registro|entrar al LMS|no crea matrícula|información privada del LMS' "$H" "$G"; then
+            echo '::error::La vista de práctica no debe explicar ni contrastar mecanismos de autenticación.'
+            exit 1
+          fi
+          if grep -q 'portal.html' "$H"; then
+            echo '::error::La portada de práctica no debe desviar al estudiante hacia la entrada autenticada.'
+            exit 1
+          fi
+          if grep -q 'teacher-dashboard.html?guest=1' "$H"; then
             echo '::error::El módulo invitado no puede enlazar control docente.'; exit 1
           fi
-          if grep -q 'assignment.html?guest=1' revision/guest.html; then
+          if grep -q 'assignment.html?guest=1' "$H"; then
             echo '::error::El módulo invitado no puede enlazar entregas.'; exit 1
           fi
