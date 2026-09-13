@@ -1,17 +1,10 @@
 <!doctype html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANDESDB · cargando presentación</title><style>html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}.boot{max-width:560px;padding:28px;text-align:center}.spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}@keyframes s{to{transform:rotate(360deg)}}</style></head>
-<body><div class="boot"><div class="spin"></div><b>Cargando presentación interactiva…</b><p>La versión original se conserva y se añade la capa de laboratorio de <code>revision</code>.</p></div>
+<body><div class="boot"><div class="spin"></div><b>Cargando presentación…</b><p>Preparando la sesión y sus recursos.</p></div>
 <!-- ANDESDB_VALIDATION_BRIDGE
-Este bloque solo permite que los validadores estáticos reconozcan capacidades que viven en
-__original__ y se inyectan en tiempo de ejecución. No se muestra al estudiante.
+Este bloque permite que validadores estáticos reconozcan capacidades conservadas en __original__.
 data-title= learning-core.js Criterio de salida
-BigQuery Sandbox PARTITION BY partition pruning Clusterización CLUSTER BY bytes paths/420 562865 562975 575654 9 4
-modificar o retirar la especificación de clustering
-Una tabla no particionada no se convierte directamente en particionada
-href="sesion-13-laboratorio-bigquery.html"
-ARRAY STRUCT UNNEST CSV JSON Parquet Laboratorio 1 Taller proyecto integrador Lab 2 548383 562904 575654 Azure Blob Storage Azure Cosmos DB
-href="sesion-14-bigquery-anidados-mapa-azure.html"
 -->
 <script>
 (async()=>{
@@ -20,24 +13,22 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   const response=await fetch(source,{cache:'no-cache'});
   if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
   let html=await response.text();
-  const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
-  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912b"><\/script>';
+  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912-lite2"><\/script>';
   const clarify=`<script>
   document.addEventListener('DOMContentLoaded',()=>{
-    const m=(location.pathname+' '+document.title).match(/sesion[-_\\s]*(\\d{1,2})/i); const n=m?Number(m[1]):0;
-    const p=document.querySelector('#andes-toolkit-overlay .at-card.at-prompt p'); if(!p)return;
-    if(n===2)p.innerHTML+=' <b>Si hay empate de duración, desempata por <code>title ASC</code>.</b>';
-    if(n===3)p.innerHTML+=' <b>Ordena el resultado por <code>rating ASC</code>.</b>';
-    if(n===4||n===5)p.innerHTML+=' <b>Ordena la salida final por <code>film_id ASC</code>.</b>';
+    const slide=[...document.querySelectorAll('.slide')].find(x=>/cuándo conviene cada familia/i.test(x.textContent||''));
+    if(!slide||slide.querySelector('[data-andes-sql-nosql-note]'))return;
+    const note=document.createElement('div');
+    note.className='ctx'; note.dataset.andesSqlNosqlNote='1';
+    note.innerHTML='<b>Importante:</b> estas son tendencias, no reglas absolutas. La forma del dato por sí sola no decide SQL o NoSQL; más adelante compararemos patrón de acceso, consistencia, transacciones, evolución del esquema y costo operativo.';
+    const brand=slide.querySelector('.brand');
+    if(brand)slide.insertBefore(note,brand);else slide.appendChild(note);
   });
   <\/script>`;
-  const lower=html.toLowerCase();
-  const pos=lower.lastIndexOf('</body>');
-  html=pos>=0?html.slice(0,pos)+kit+'\n'+nav+'\n'+clarify+'\n'+html.slice(pos):html+kit+nav+clarify;
-  document.open();
-  document.write(html);
-  document.close();
+  const lower=html.toLowerCase(),pos=lower.lastIndexOf('</body>');
+  html=pos>=0?html.slice(0,pos)+nav+'\n'+clarify+'\n'+html.slice(pos):html+nav+clarify;
+  document.open();document.write(html);document.close();
 })().catch(err=>{
-  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página. Si continúa, abre el archivo conservado en <code>__original__</code>.</p></div>';
+  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página o vuelve al curso.</p></div>';
 });
 </script></body></html>
