@@ -11,18 +11,21 @@
   (async()=>{
     try{
       const isPresentation=/\/Presentaciones\//i.test(location.pathname);
-      const guestLab=/\/lab\.html$/i.test(location.pathname)&&new URLSearchParams(location.search).get('guest')==='1';
-      if(guestLab)await add('guest-mode-v2.js?v=20260913-guest2');
+      const isReading=/\/reading\.html$/i.test(location.pathname);
+      const isLab=/\/lab\.html$/i.test(location.pathname);
+      const guestRequested=new URLSearchParams(location.search).get('guest')==='1';
+      const guestSurface=guestRequested&&(isPresentation||isReading||isLab);
+      if(guestSurface&&!window.__ANDES_GUEST_MODE_V3__)await add('guest-mode-v3.js?v=20260913-guest3');
       if(isPresentation&&!window.__ANDES_PRESENTATION_PERFORMANCE__)await add('presentation-performance.js?v=20260912-perf2');
       if(!window.ANDES_COURSE)await add('course-data.js?v=20260912-perf1');
       try{await window.ANDES_COURSE?.ready?.()}catch(_){ }
-      if(!guestLab&&!window.ANDES_PLATFORM)await add('lms-platform.js?v=20260912-net2');
-      if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
-      if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912-perf2');
-      if(!guestLab)await add('lms-integral-patch.js?v=20260912-lms2');
-      if(/\/lab\.html$/i.test(location.pathname)&&!guestLab)await add('lab-resume.js?v=20260912-lms2');
-      if(isPresentation)await add('presentation-resume.js?v=20260912-perf2');
-      if(!guestLab){
+      if(!guestSurface){
+        if(!window.ANDES_PLATFORM)await add('lms-platform.js?v=20260912-net2');
+        if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
+        if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912-perf2');
+        await add('lms-integral-patch.js?v=20260912-lms2');
+        if(isLab)await add('lab-resume.js?v=20260912-lms2');
+        if(isPresentation)await add('presentation-resume.js?v=20260912-perf2');
         await add('role-nav-v2.js?v=20260912-mobile2');
         await add('access-gate.js?v=20260912-mobile2');
         await add('lms-ux-v1.js?v=20260912-side1');
@@ -34,5 +37,5 @@
       if(!window.ANDES_ANALYTICS_CONFIG)await add('analytics-config.js?v=20260912-ga4a',false);
       if(!window.ANDES_ANALYTICS)await add('analytics.js?v=20260912-ga4a',false);
     }catch(_){ }
-  },1000);
+  },700);
 })();
