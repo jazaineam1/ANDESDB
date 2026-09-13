@@ -1,4 +1,4 @@
-const VERSION='andesdb-lms-20260913-v74';
+const VERSION='andesdb-lms-20260913-v75';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './portal.html','./access.html','./learning-hub.html','./guest.html','./lab.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
@@ -7,12 +7,7 @@ const ESSENTIAL=[
   './assets/learning/learning-core.js','./assets/learning/interactive-nav.js','./assets/learning/presentation-text-fixes.js','./assets/learning/presentation-story-v1.js','./assets/learning/presentation-story-v2-patch.js','./assets/learning/presentation-story-v3-polish.js','./assets/learning/presentation-story-s15-patch.js','./assets/learning/presentation-pacing-cleanup-v1.js','./assets/learning/presentation-material-alignment-v1.js','./assets/learning/presentation-telemetry.js','./assets/learning/presentation-resume.js',
   './assets/learning/lab-content-v4.js','./assets/learning/lab-content-v4-patch.js','./assets/learning/lab-content-s13-s16-alignment-v1.js','./assets/learning/lab-curriculum-v1.js','./assets/learning/lab-capstone-patch.js','./assets/learning/lab-mcq-v1.js','./assets/learning/lab-hints-v2.js','./assets/learning/lab-ux-v7.js','./assets/learning/lab-progress-reliability-v2.js','./assets/learning/lab-runtime-v4.js','./assets/learning/lab-runtime-v7.js','./assets/learning/lab-context-output-v2.js','./assets/learning/lab-sql-engine-v1.js','./assets/learning/lab-sql-worker-v1.js','./assets/learning/lab-sql-scaffold-v2.js','./assets/learning/lab-finish-v1.js','./assets/learning/lab-theme-v1.js'
 ];
-async function precacheBatched(cache,items,batchSize=4){
-  for(let i=0;i<items.length;i+=batchSize){
-    const batch=items.slice(i,i+batchSize);
-    await Promise.allSettled(batch.map(async rel=>{try{const url=new URL(rel,self.location.href),r=await fetch(url,{cache:'reload'});if(r.ok)await cache.put(url,r.clone())}catch(_){}}));
-  }
-}
+async function precacheBatched(cache,items,batchSize=4){for(let i=0;i<items.length;i+=batchSize){const batch=items.slice(i,i+batchSize);await Promise.allSettled(batch.map(async rel=>{try{const url=new URL(rel,self.location.href),r=await fetch(url,{cache:'reload'});if(r.ok)await cache.put(url,r.clone())}catch(_){}}))}}
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CORE);await precacheBatched(cache,ESSENTIAL,4);await self.skipWaiting()})())});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('andesdb-')&&![CORE,RUNTIME].includes(k)).map(k=>caches.delete(k)));try{if(self.registration.navigationPreload)await self.registration.navigationPreload.enable()}catch(_){}await self.clients.claim()})())});
 function allowed(url){return url.origin===self.location.origin&&url.pathname.startsWith(BASE)&&!/\.(pptx|docx|zip)$/i.test(url.pathname)}

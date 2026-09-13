@@ -27,12 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Validar JavaScript
         run: |
           node --check revision/assets/learning/guest-mode-v1.js
           node --check revision/assets/learning/guest-mode-v2.js
           node --check revision/assets/learning/learning-tracker.js
           node --check revision/service-worker.js
+
       - name: Proteger aislamiento del modo invitado
         run: |
           set -euo pipefail
@@ -40,27 +42,44 @@ jobs:
           V1='revision/assets/learning/guest-mode-v1.js'
           T='revision/assets/learning/learning-tracker.js'
           SW='revision/service-worker.js'
-          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
-          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
+          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso debe usar almacenamiento separado.'; exit 1; }
+          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::La ruta pública debe bloquear la cola académica autenticada.'; exit 1; }
           grep -q "guest-mode-v2.js" "$V1" || { echo '::error::El loader v1 debe delegar de forma segura a v2.'; exit 1; }
-          grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime invitado no recursivo.'; exit 1; }
-          grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
+          grep -q "guestSurface" "$T" || { echo '::error::El loader debe reconocer la ruta pública integral.'; exit 1; }
+          grep -q "reading\\.html" "$T" || { echo '::error::La lectura debe estar incluida en la ruta pública.'; exit 1; }
+          grep -q "Presentaciones" "$T" || { echo '::error::Las presentaciones deben estar incluidas en la ruta pública.'; exit 1; }
+          grep -q "window.__ANDES_ACCESS_GATE_V4__=true" "$T" || { echo '::error::La ruta pública debe evitar el gate solo en superficies permitidas.'; exit 1; }
           grep -q "access-gate.js" "$T" || { echo '::error::El modo autenticado debe conservar access-gate.'; exit 1; }
-          grep -q "if(!guestLab)await add('lms-integral-patch.js" "$T" || { echo '::error::El modo server-first no debe borrar progreso invitado.'; exit 1; }
-          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir el módulo de invitados.'; exit 1; }
-          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime invitado v2.'; exit 1; }
+          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir la ruta de estudio.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$SW" || { echo '::error::La PWA debe incluir el runtime de estudio.'; exit 1; }
+
+      - name: Proteger la ruta integral por sesión
+        run: |
+          set -euo pipefail
+          H='revision/guest.html'
+          G='revision/assets/learning/guest-mode-v2.js'
+          grep -q '>Presentación<' "$H" || { echo '::error::Cada sesión debe ofrecer presentación.'; exit 1; }
+          grep -q '>Lectura<' "$H" || { echo '::error::Cada sesión debe ofrecer lectura.'; exit 1; }
+          grep -q '>Laboratorio<' "$H" || { echo '::error::Cada sesión debe ofrecer laboratorio.'; exit 1; }
+          grep -q "reading.html?session=" "$H" || { echo '::error::La portada debe construir enlaces a lecturas.'; exit 1; }
+          grep -q "lab.html?session=" "$H" || { echo '::error::La portada debe construir enlaces a laboratorios.'; exit 1; }
+          grep -q "Ruta de estudio" "$G" || { echo '::error::Las tres superficies deben permitir moverse dentro de la sesión.'; exit 1; }
+          grep -q "presentationUrl" "$G" || { echo '::error::El runtime debe enlazar de regreso a la presentación.'; exit 1; }
+          grep -q "readingUrl" "$G" || { echo '::error::El runtime debe enlazar a la lectura.'; exit 1; }
+          grep -q "labUrl" "$G" || { echo '::error::El runtime debe enlazar al laboratorio.'; exit 1; }
+
       - name: Proteger rendimiento móvil
         run: |
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
           V1='revision/assets/learning/guest-mode-v1.js'
           if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1"; then
-            echo '::error::Ningún runtime invitado puede observar recursivamente todo el DOM.'
+            echo '::error::Ningún runtime público puede observar recursivamente todo el DOM.'
             exit 1
           fi
-          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
+          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::La práctica debe iniciar sin esperar autenticación remota.'; exit 1; }
           grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
+
       - name: Proteger experiencia del estudiante
         run: |
           set -euo pipefail
@@ -71,12 +90,10 @@ jobs:
             exit 1
           fi
           if grep -q 'portal.html' "$H"; then
-            echo '::error::La portada de práctica no debe desviar al estudiante hacia la entrada autenticada.'
+            echo '::error::La ruta de estudio no debe desviar al estudiante hacia la entrada autenticada.'
             exit 1
           fi
-          if grep -q 'teacher-dashboard.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar control docente.'; exit 1
-          fi
-          if grep -q 'assignment.html?guest=1' "$H"; then
-            echo '::error::El módulo invitado no puede enlazar entregas.'; exit 1
+          if grep -q 'teacher-dashboard.html?guest=1' "$H" || grep -q 'assignment.html?guest=1' "$H"; then
+            echo '::error::La ruta pública no puede enlazar superficies privadas.'
+            exit 1
           fi
