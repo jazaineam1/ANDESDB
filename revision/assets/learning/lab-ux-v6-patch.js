@@ -13,6 +13,7 @@ const loadStore=()=>safeJSON(localStorage.getItem(key())||'{}',{})||{};
 const saveStore=x=>{try{localStorage.setItem(key(),JSON.stringify(x))}catch(_){}};
 const practice=()=>{const m=document.getElementById('task-num')?.textContent?.match(/Práctica\s+(\d+)/i);return m?Number(m[1]):Number(document.querySelector('.steps .current')?.dataset?.step||1)};
 const trim=v=>String(v??'').slice(0,6000);
+let persistTimer=0,persistPending=false,lastPersistSignature='';
 function snapshot(i=practice()){
   const task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];
   if(!task)return null;
@@ -21,9 +22,27 @@ function snapshot(i=practice()){
   if(task.type==='order')return {kind:'order',values:[...document.querySelectorAll('.order-row span')].map(x=>trim(x.textContent))};
   return {kind:'text',value:trim(document.getElementById('text-answer')?.value||'')};
 }
-function put(i,slot,snap){if(!session||!i||!snap)return;const all=loadStore(),e=all[i]||{};e[slot]=snap;e.updated_at=new Date().toISOString();all[i]=e;saveStore(all)}
-const saveDraft=()=>{const i=practice(),snap=snapshot(i);if(snap)put(i,'draft',snap)};
-const saveCorrect=()=>{const i=practice(),snap=snapshot(i);if(snap){put(i,'correct',snap);put(i,'draft',snap)}return snap};
+function put(i,slot,snap){
+  if(!session||!i||!snap)return;
+  const all=loadStore(),e=all[i]||{};
+  e[slot]=snap;e.updated_at=new Date().toISOString();all[i]=e;
+  const signature=JSON.stringify(all);
+  if(signature===lastPersistSignature)return;
+  saveStore(all);lastPersistSignature=signature;
+}
+function persistDraftNow(){
+  clearTimeout(persistTimer);persistTimer=0;
+  if(!persistPending)return;
+  persistPending=false;
+  const i=practice(),snap=snapshot(i);if(snap)put(i,'draft',snap);
+  window.dispatchEvent(new CustomEvent('andesdb:lab-draft-saved',{detail:{session,practice:i}}));
+}
+function scheduleDraftSave(delay=700){
+  persistPending=true;clearTimeout(persistTimer);
+  persistTimer=setTimeout(persistDraftNow,delay);
+}
+const saveDraft=()=>{scheduleDraftSave(700)};
+const saveCorrect=()=>{persistDraftNow();const i=practice(),snap=snapshot(i);if(snap){put(i,'correct',snap);put(i,'draft',snap)}return snap};
 function preferred(i,api){const e=loadStore()[i],done=Boolean(api?.localCompleted?.(codeFor(i))||remoteCompleted.has(codeFor(i)));if(e)return (done&&e.correct)||e.draft||e.correct||null;if(done){const task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];if(task?.type==='classify'&&Array.isArray(task.answers))return {kind:'classify',values:[...task.answers]};if(task?.type==='order'&&Array.isArray(task.answer))return {kind:'order',values:[...task.answer]}}return null}
 function fire(el,type){try{el.dispatchEvent(new Event(type,{bubbles:true}))}catch(_){}}
 const tick=()=>new Promise(r=>setTimeout(r,0));
@@ -43,7 +62,7 @@ async function restoreOrder(saved){
   }
 }
 function ensureStyle(){if(document.getElementById('andes-lab-ux6-style'))return;const s=document.createElement('style');s.id='andes-lab-ux6-style';s.textContent=`
-.mcq-row{display:block!important}.mcq-prompt{display:block;font-weight:850;margin-bottom:9px}.mcq-native{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}.mcq-options{display:grid;gap:8px}.mcq-option{display:grid;grid-template-columns:22px minmax(0,1fr);gap:9px;align-items:start;border:1px solid #d9e0e8;border-radius:10px;padding:10px 11px;background:#fff;cursor:pointer}.mcq-option:has(input:checked){border-color:#175cd3;box-shadow:0 0 0 3px #dbe7ff;background:#f8fbff}.mcq-option input{margin-top:3px;width:17px;height:17px}.answer-saved{margin-top:8px;font-size:.72rem;color:#166534;font-weight:750}`;document.head.appendChild(s)}
+.mcq-row{display:block!important}.mcq-prompt{display:block;font-weight:850;margin-bottom:9px}.mcq-native{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}.mcq-options{display:grid;gap:8px}.mcq-option{display:grid;grid-template-columns:22px minmax(0,1fr);gap:9px;align-items:start;border:1px solid #d9e0e8;border-radius:10px;padding:10px 11px;background:#fff;cursor:pointer}.mcq-option:has(input:checked){border-color:#175cd3;box-shadow:0 0 0 3px #dbe7ff;background:#f8fbff}.mcq-option input{margin-top:3px;width:17px;height:17px}.answer-saved{margin-top:8px;font-size:.72rem;color:#166534;font-weight:750}.lab-editing .mobile-nav{display:none!important}.lab-editing main{padding-bottom:28px!important}`;document.head.appendChild(s)}
 function enhanceMCQ(i){
   const task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];if(!task?.mcq)return;
   const select=document.querySelector('[data-classify="0"]');if(!select||select.dataset.mcqEnhanced==='1')return;
@@ -52,7 +71,7 @@ function enhanceMCQ(i){
   const row=document.createElement('div');row.className='classify-row mcq-row';
   const prompt=document.createElement('span');prompt.className='mcq-prompt';prompt.textContent=old.querySelector('span')?.textContent||'Selecciona una opción';row.appendChild(prompt);row.appendChild(select);
   const opts=document.createElement('div');opts.className='mcq-options';opts.setAttribute('role','radiogroup');
-  [...select.options].filter(o=>o.value).forEach((o,k)=>{const lab=document.createElement('label');lab.className='mcq-option';const radio=document.createElement('input');radio.type='radio';radio.name=`mcq-s${session}-p${i}`;radio.value=o.value;radio.checked=select.value===o.value;radio.addEventListener('change',()=>{if(radio.checked){select.value=radio.value;fire(select,'change');saveDraft()}});const text=document.createElement('span');text.textContent=o.textContent;lab.append(radio,text);opts.appendChild(lab)});row.appendChild(opts);old.replaceWith(row);
+  [...select.options].filter(o=>o.value).forEach(o=>{const lab=document.createElement('label');lab.className='mcq-option';const radio=document.createElement('input');radio.type='radio';radio.name=`mcq-s${session}-p${i}`;radio.value=o.value;radio.checked=select.value===o.value;radio.addEventListener('change',()=>{if(radio.checked){select.value=radio.value;fire(select,'change');scheduleDraftSave(250)}});const text=document.createElement('span');text.textContent=o.textContent;lab.append(radio,text);opts.appendChild(lab)});row.appendChild(opts);old.replaceWith(row);
 }
 let restoring=false,lastSignature='';
 async function restore(api){
@@ -74,11 +93,15 @@ async function restore(api){
   }finally{restoring=false}
 }
 function installPersistence(api){
-  document.addEventListener('input',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))saveDraft()},true);
-  document.addEventListener('change',e=>{if(e.target?.matches?.('[data-classify]'))saveDraft()},true);
-  document.addEventListener('click',e=>{if(e.target?.closest?.('[data-up],[data-down]'))setTimeout(saveDraft,20)},true);
-  const target=document.getElementById('practice')||document.body;
-  new MutationObserver(()=>setTimeout(()=>restore(api),0)).observe(target,{childList:true,subtree:true});
+  document.addEventListener('input',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))scheduleDraftSave(700)},true);
+  document.addEventListener('change',e=>{if(e.target?.matches?.('[data-classify]'))scheduleDraftSave(250)},true);
+  document.addEventListener('click',e=>{if(e.target?.closest?.('[data-up],[data-down]'))scheduleDraftSave(180)},true);
+  document.addEventListener('focusin',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))document.body.classList.add('lab-editing')},true);
+  document.addEventListener('focusout',e=>{if(e.target?.matches?.('#sql-editor,#text-answer')){persistDraftNow();setTimeout(()=>{if(!document.activeElement?.matches?.('#sql-editor,#text-answer'))document.body.classList.remove('lab-editing')},80)}},true);
+  addEventListener('pagehide',persistDraftNow);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistDraftNow()});
+  addEventListener('andesdb:lab-task-will-change',persistDraftNow);
+  addEventListener('andesdb:lab-task-rendered',()=>restore(api));
   setTimeout(()=>restore(api),60);
 }
 function installFastProgress(api){
@@ -101,8 +124,6 @@ function installOptimisticComplete(api){
     const enriched={...meta,answer:answer||undefined,answer_saved:true,ux:'lab-v6'};
     let p;
     try{p=original(activity,score,enriched,s)}catch(e){console.warn('ANDESDB: no se pudo iniciar sincronización',e);return Promise.resolve(false)}
-    /* localComplete ocurre de forma síncrona dentro de learning-tracker-v3 antes del primer await.
-       El laboratorio puede pintar el avance inmediatamente y la red continúa en segundo plano. */
     Promise.resolve(p).then(()=>{
       window.dispatchEvent(new CustomEvent('andesdb:answer-synced',{detail:{session,practice:i,activity}}));
       setTimeout(()=>window.dispatchEvent(new Event('online')),120);
@@ -113,6 +134,6 @@ function installOptimisticComplete(api){
 window.__ANDES_LAB_PATCH_READY__=(async()=>{
   const started=Date.now();while(!window.ANDES_LMS&&Date.now()-started<12000)await new Promise(r=>setTimeout(r,30));
   const api=window.ANDES_LMS;if(!api)return false;
-  installFastProgress(api);installOptimisticComplete(api);installPersistence(api);return true;
+  ensureStyle();installFastProgress(api);installOptimisticComplete(api);installPersistence(api);return true;
 })();
 })();
