@@ -21,7 +21,22 @@
   a.addEventListener('click',e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){e.preventDefault();location.assign(a.href)}});
   const st=document.createElement('style');st.textContent=`#andes-session-lab-btn{position:fixed;right:12px;top:58px;z-index:2147481750;background:#0f1b28f2;color:#fff;text-decoration:none;border:1px solid #ffffff55;border-radius:999px;padding:10px 13px;font:850 12px/1 system-ui;box-shadow:0 8px 24px #0004;backdrop-filter:blur(8px)}#andes-toolkit-btn{display:none!important}@media(max-width:760px){#andes-session-lab-btn{top:auto;bottom:58px;right:10px}}`;document.head.appendChild(st);document.body.appendChild(a);
   function hideLegacy(){const old=document.getElementById('andes-toolkit-btn');if(old){old.style.display='none';old.setAttribute('aria-hidden','true')}}
-  async function refresh(){hideLegacy();const api=window.ANDES_LMS;if(!api)return false;let n=codes.filter(c=>api.localCompleted?.(c)).length;try{const u=await api.ready();if(u){const d=await api.dashboard('me',true),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));n=codes.filter(c=>ap.get(c)?.status==='completed').length;}}catch{}a.textContent=`🧪 Laboratorio S${session} · ${n}/10`;return true;}
-  addEventListener('andesdb:challenge-completed',refresh);addEventListener('storage',refresh);
-  let tries=0;const timer=setInterval(async()=>{hideLegacy();if(await refresh()||++tries>30)clearInterval(timer)},350);
+  function localCount(){const api=window.ANDES_LMS;return api?codes.filter(c=>api.localCompleted?.(c)).length:0}
+  function paint(n){a.textContent=`🧪 Laboratorio S${session} · ${Math.max(0,Math.min(10,Number(n)||0))}/10`}
+  hideLegacy();paint(localCount());
+  let busy=false,lastRemoteAt=0,debounce=null;
+  async function refreshRemote(force=false){
+    const api=window.ANDES_LMS;if(!api||busy)return false;
+    const now=Date.now();if(!force&&now-lastRemoteAt<1800){paint(localCount());return true}
+    busy=true;
+    try{
+      const u=await api.ready();if(!u){paint(localCount());return true}
+      const d=await api.dashboard('me',false),ap=new Map((d.activity_progress||[]).map(x=>[x.activity_code,x]));
+      paint(codes.filter(c=>ap.get(c)?.status==='completed'||api.localCompleted?.(c)).length);lastRemoteAt=Date.now();return true;
+    }catch{paint(localCount());return false}finally{busy=false}
+  }
+  function scheduleRemote(delay=500){clearTimeout(debounce);debounce=setTimeout(()=>refreshRemote(false),delay)}
+  addEventListener('andesdb:challenge-completed',()=>{paint(localCount());scheduleRemote(700)});
+  addEventListener('storage',e=>{if(!e.key||e.key==='andesdb.lms.local.v1'){paint(localCount());scheduleRemote(900)}});
+  (async()=>{for(let i=0;i<50&&!window.ANDES_LMS;i++)await new Promise(r=>setTimeout(r,80));hideLegacy();paint(localCount());if(window.ANDES_LMS)await refreshRemote(false)})();
 })();
