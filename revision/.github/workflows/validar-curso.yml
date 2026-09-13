@@ -39,9 +39,13 @@ jobs:
       - name: Validar estructura, pedagogía y recursos
         run: python tools/validar_curso.py
 
+      - name: Auditar preguntas y contratos de respuesta
+        run: python tools/auditar_preguntas.py
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
+          node --check assets/learning/presentation-story-v2-patch.js
           node --check assets/pwa-install.js
           node --check service-worker.js
           node --check Presentaciones/M3/sql-lab-s6.js
