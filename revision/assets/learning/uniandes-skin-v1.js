@@ -32,7 +32,7 @@ html[data-andes-theme="dark"] .ey,html[data-andes-theme="dark"] .eyebrow,html[da
 .card{padding:clamp(16px,2.4vw,24px)!important}
 .item{box-shadow:none!important}
 .muted,.lead,.card p,.topic span,.field small{color:var(--andes-muted)!important}
-.tabs{gap:18px!important;border-bottom:1px solid var(--andes-line);padding:0 0 0!important;margin-bottom:18px;scrollbar-width:none}
+.tabs{gap:18px!important;border-bottom:1px solid var(--andes-line);padding:0!important;margin-bottom:18px;scrollbar-width:none}
 .tab{background:transparent!important;border:0!important;border-radius:0!important;color:var(--andes-muted)!important;padding:13px 2px 11px!important;position:relative;font-weight:850!important}
 .tab.active{color:var(--andes-ink)!important;background:transparent!important}
 .tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:4px;background:var(--andes-gold)}
@@ -52,10 +52,11 @@ textarea{min-height:auto}
 .tablewrap{border-color:var(--andes-line)!important;border-radius:6px!important;background:var(--andes-paper)!important}
 table{color:var(--andes-ink)!important}th{background:var(--andes-soft)!important;color:var(--andes-muted)!important;border-color:var(--andes-line)!important}td{border-color:var(--andes-line)!important}
 .pill{border-radius:3px!important;background:var(--andes-soft)!important;color:var(--andes-ink)!important}
-.status,.notice{border-radius:5px!important}
+.status,.notice,.riskbox,.credentials{border-radius:5px!important;border-left:1px solid var(--andes-line)!important;border-right:1px solid var(--andes-line)!important;border-top:1px solid var(--andes-line)!important;border-bottom:1px solid var(--andes-line)!important}
 .mobile-nav{background:var(--andes-paper)!important;border-color:var(--andes-line)!important;box-shadow:0 -4px 16px rgba(0,0,0,.08)!important}
 .mobile-nav a{color:var(--andes-muted)!important}.mobile-nav a.active{color:var(--andes-ink)!important;position:relative}.mobile-nav a.active::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;background:var(--andes-gold)}
 @media(max-width:680px){.wrap,.page{width:min(100% - 28px,1260px)!important}.head h1,.hero h1{font-size:2.15rem!important}.card{padding:16px!important}.tabs{gap:14px!important}.tab{padding-top:11px!important}}
 `;
 if(!document.getElementById('andes-uniandes-skin')){const s=document.createElement('style');s.id='andes-uniandes-skin';s.textContent=css;document.head.appendChild(s)}
+if(!document.querySelector('script[data-andes-session-controls]')){const x=document.createElement('script');x.src=new URL('session-controls-v1.js?v=20260913-session1',document.currentScript?.src||location.href).href;x.dataset.andesSessionControls='1';x.defer=true;document.head.appendChild(x)}
 })();
