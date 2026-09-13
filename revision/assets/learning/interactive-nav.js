@@ -8,6 +8,7 @@ const load=name=>new Promise((resolve,reject)=>{const src=new URL(name,dir).href
   await load('course-data.js?v=20260912-state2');
   await load('presentation-text-fixes.js?v=20260912-qa1');
   await load('access-gate.js?v=20260912-lite2');
+  await load('resource-dock-a11y.js?v=20260912-a11y1');
   await load('analytics-config.js?v=20260912-ga4a');
   await load('analytics.js?v=20260912-ga4a');
   await load('presentation-telemetry.js?v=20260912-lite1');
