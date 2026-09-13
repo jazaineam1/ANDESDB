@@ -3,15 +3,21 @@
 const style=document.createElement('style');style.textContent='.feedback{white-space:pre-line;line-height:1.55}.feedback.bad{border-left:4px solid #b42318}.feedback.ok{border-left:4px solid #16794b}';document.head.appendChild(style);
 const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
 (async()=>{try{
+  const guest=window.ANDES_GUEST_MODE||new URLSearchParams(location.search).get('guest')==='1';
   await load('assets/learning/lab-capstone-patch.js?v=20260912-cap1');
   await load('assets/learning/lab-content-s13-s16-alignment-v1.js?v=20260913-align1');
   await load('assets/learning/lab-curriculum-v1.js?v=20260913-curr1');
   await load('assets/learning/lab-mcq-v1.js?v=20260912-mcq1');
   await load('assets/learning/lab-hints-v2.js?v=20260913-hints2');
-  await load('assets/learning/lab-ux-v7.js?v=20260913-ux7');
-  try{await window.__ANDES_LAB_PATCH_READY__}catch(_){ }
-  await load('assets/learning/lab-progress-reliability-v2.js?v=20260913-rel2');
-  try{await window.__ANDES_LAB_RELIABILITY_READY__}catch(_){ }
+  if(guest){
+    await load('assets/learning/lab-guest-ux-v1.js?v=20260913-guest1');
+    try{await window.__ANDES_LAB_GUEST_UX_READY__}catch(_){ }
+  }else{
+    await load('assets/learning/lab-ux-v7.js?v=20260913-ux7');
+    try{await window.__ANDES_LAB_PATCH_READY__}catch(_){ }
+    await load('assets/learning/lab-progress-reliability-v2.js?v=20260913-rel2');
+    try{await window.__ANDES_LAB_RELIABILITY_READY__}catch(_){ }
+  }
   await load('assets/learning/lab-sql-engine-v1.js?v=20260913-feedback1');
   await load('assets/learning/lab-runtime-v7.js?v=20260913-feedback1');
   await load('assets/learning/lab-context-output-v2.js?v=20260913-context2');
