@@ -1,5 +1,7 @@
 (() => {
   'use strict';
+  if (window.__ANDES_GA4_LMS_V5__) return;
+  window.__ANDES_GA4_LMS_V5__ = true;
 
   const cfg = window.ANDES_ANALYTICS_CONFIG || {};
   const id = String(cfg.ga4MeasurementId || '').trim();
@@ -62,13 +64,24 @@
     if (p.endsWith('/portal.html')) return 'portal';
     if (p.endsWith('/learning-hub.html')) return 'course';
     if (p.endsWith('/lab.html')) return 'lab';
+    if (p.endsWith('/reading.html')) return 'reading';
+    if (p.endsWith('/calendar.html')) return 'calendar';
+    if (p.endsWith('/assignment.html')) return 'assignment';
+    if (p.endsWith('/capstone.html')) return 'capstone';
     if (p.includes('/presentaciones/')) return 'presentation';
     if (p.endsWith('/teacher-dashboard.html')) return 'teacher_dashboard';
-    if (p.endsWith('/access.html')) return 'access_compat';
+    if (p.endsWith('/verify.html')) return 'certificate_verify';
+    if (p.endsWith('/access.html')) return 'access';
     if (p.endsWith('/index.html') || /\/revision\/?$/.test(p)) return 'revision_home';
     return 'other';
   };
-  const safeLocation = () => location.origin + location.pathname;
+  const safePagePath = () => {
+    const s = sessionNumber();
+    const type = pageType();
+    if (s && ['lab','reading'].includes(type)) return `${location.pathname}?session=${s}`;
+    return location.pathname;
+  };
+  const safeLocation = () => location.origin + safePagePath();
   const safeReferrer = () => {
     if (!document.referrer) return '';
     try {
@@ -76,10 +89,18 @@
       return u.origin + u.pathname;
     } catch { return ''; }
   };
+  const contentKey = () => {
+    const type = pageType();
+    const s = sessionNumber();
+    if (s && ['lab','reading','presentation'].includes(type)) return `${type}_s${s}`;
+    return type;
+  };
+  const theme = () => document.documentElement.dataset.andesTheme || (matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light');
   const context = () => {
     const out = {
       course_code: 'andesdb',
       page_type: pageType(),
+      content_key: contentKey(),
       actor_type: actorType()
     };
     const s = sessionNumber();
@@ -106,7 +127,8 @@
     event,
     enabled: () => !!(cfg.enabled && VALID_ID),
     measurementId: () => VALID_ID ? id : null,
-    context
+    context,
+    safePagePath
   };
 
   if (!cfg.enabled || !VALID_ID) return;
@@ -114,11 +136,13 @@
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
 
-  const loader = document.createElement('script');
-  loader.async = true;
-  loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-  loader.referrerPolicy = 'strict-origin-when-cross-origin';
-  document.head.appendChild(loader);
+  if (!document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${CSS.escape(id)}"]`)) {
+    const loader = document.createElement('script');
+    loader.async = true;
+    loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+    loader.referrerPolicy = 'strict-origin-when-cross-origin';
+    document.head.appendChild(loader);
+  }
 
   window.gtag('js', new Date());
   window.gtag('config', id, {
@@ -133,19 +157,89 @@
 
   if (cfg.sendPageViews !== false) {
     event('page_view', {
-      page_path: location.pathname,
+      page_path: safePagePath(),
       page_title: document.title
     });
   }
+
+  event('content_view', {
+    content_kind: pageType(),
+    current_theme: theme()
+  });
 
   const openedEvent = {
     portal: 'portal_opened',
     course: 'course_opened',
     lab: 'lab_opened',
+    reading: 'reading_opened',
+    calendar: 'calendar_opened',
+    assignment: 'assignment_opened',
+    capstone: 'capstone_opened',
     presentation: 'presentation_opened',
-    teacher_dashboard: 'teacher_dashboard_opened'
+    teacher_dashboard: 'teacher_dashboard_opened',
+    certificate_verify: 'certificate_verify_opened',
+    access: 'access_opened'
   }[pageType()];
   if (openedEvent) event(openedEvent);
+
+  // Profundidad de lectura: hitos una sola vez por carga de página.
+  const scrollMilestones = new Set();
+  let scrollQueued = false;
+  function measureScroll() {
+    scrollQueued = false;
+    const root = document.documentElement;
+    const max = Math.max(0, root.scrollHeight - innerHeight);
+    if (max <= 40) return;
+    const pct = Math.max(0, Math.min(100, Math.round((scrollY / max) * 100)));
+    for (const mark of [25, 50, 75, 90]) {
+      if (pct >= mark && !scrollMilestones.has(mark)) {
+        scrollMilestones.add(mark);
+        event('scroll_depth', { depth_percent: mark });
+      }
+    }
+  }
+  addEventListener('scroll', () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(measureScroll);
+  }, { passive: true });
+
+  // Tiempo activo: solo suma mientras la pestaña está visible.
+  let visibleSince = document.visibilityState === 'visible' ? performance.now() : null;
+  let activeMs = 0;
+  const timeMilestones = new Set();
+  function activeSeconds() {
+    const running = visibleSince == null ? 0 : performance.now() - visibleSince;
+    return Math.floor((activeMs + running) / 1000);
+  }
+  function emitTimeMilestones() {
+    const seconds = activeSeconds();
+    for (const mark of [30, 120, 300, 600]) {
+      if (seconds >= mark && !timeMilestones.has(mark)) {
+        timeMilestones.add(mark);
+        event('engaged_time_milestone', { engaged_seconds: mark });
+      }
+    }
+  }
+  const engagementTimer = setInterval(emitTimeMilestones, 5000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && visibleSince != null) {
+      activeMs += performance.now() - visibleSince;
+      visibleSince = null;
+      emitTimeMilestones();
+    } else if (document.visibilityState === 'visible' && visibleSince == null) {
+      visibleSince = performance.now();
+    }
+  });
+  addEventListener('pagehide', () => {
+    emitTimeMilestones();
+    clearInterval(engagementTimer);
+  });
+
+  addEventListener('andesdb:theme-changed', ev => {
+    if (!ev?.detail?.theme) return;
+    event('theme_changed', { current_theme: ev.detail.theme });
+  });
 
   function mirror(name, activityCode, metadata, session) {
     const gaName = MIRROR.get(name);
@@ -226,14 +320,27 @@
     if (!a) return;
     let u;
     try { u = new URL(a.href, location.href); } catch { return; }
-    if (u.origin !== location.origin || !u.pathname.includes('/ANDESDB/revision/')) return;
+    if (!/^https?:$/i.test(u.protocol)) return;
+    if (u.origin !== location.origin) {
+      event('outbound_click', {
+        link_domain: u.hostname,
+        link_purpose: /zoom\.us$/i.test(u.hostname) ? 'class_meeting' : 'external_resource'
+      });
+      return;
+    }
+    if (!u.pathname.includes('/ANDESDB/revision/')) return;
     let destination = 'other';
     const p = u.pathname.toLowerCase();
     if (p.endsWith('/learning-hub.html')) destination = 'course';
     else if (p.endsWith('/lab.html')) destination = 'lab';
+    else if (p.endsWith('/reading.html')) destination = 'reading';
     else if (p.includes('/presentaciones/')) destination = 'presentation';
     else if (p.endsWith('/portal.html')) destination = 'portal';
     else if (p.endsWith('/teacher-dashboard.html')) destination = 'teacher_dashboard';
-    event('navigation_click', { destination_type: destination });
+    const targetSession = Number(u.searchParams.get('session') || (u.pathname.match(/sesion-(\d+)/i) || [])[1] || 0);
+    event('navigation_click', {
+      destination_type: destination,
+      target_session_number: targetSession >= 1 && targetSession <= 16 ? targetSession : undefined
+    });
   }, { capture: true, passive: true });
 })();
