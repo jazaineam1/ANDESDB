@@ -7,6 +7,8 @@ const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement(
   await load('assets/learning/lab-mcq-v1.js?v=20260912-mcq1');
   await load('assets/learning/lab-ux-v6-patch.js?v=20260912-ux6');
   try{await window.__ANDES_LAB_PATCH_READY__}catch(_){ }
+  await load('assets/learning/lab-progress-reliability-v1.js?v=20260913-rel1');
+  try{await window.__ANDES_LAB_RELIABILITY_READY__}catch(_){ }
   await load('assets/learning/lab-runtime-v5.js?v=20260912-assessment3');
   await load('assets/learning/lab-context-output-v1.js?v=20260913-context1');
   await load('assets/learning/lab-sql-scaffold-v1.js?v=20260913-sql1');
