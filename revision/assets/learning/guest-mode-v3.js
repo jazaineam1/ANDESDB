@@ -9,6 +9,8 @@ const enabled=params.get('guest')==='1'&&(isLab||isReading||isPresentation);
 if(!enabled)return;
 window.__ANDES_GUEST_MODE_V3__=true;
 window.ANDES_GUEST_MODE=true;
+const currentScript=document.currentScript||[...document.scripts].find(s=>/guest-mode-v3\.js(?:\?|$)/.test(s.src));
+const ROOT=currentScript?.src?new URL('../../',currentScript.src):new URL('/ANDESDB/revision/',location.origin);
 
 const STORE='andesdb.guest.local.v1';
 const PRIMARY={1:'s1-diagnostico',2:'sql-s2',3:'sql-s3',4:'sql-s4',5:'sql-s5',6:'s6-reglas-evidencia',7:'erd-s7',8:'erd-s8',9:'s9-constraints',10:'decision-s10',11:'s11-documentos',12:'warehouse-s12',13:'bigquery-s13',14:'unnest-s14',15:'s15-integrador',16:'s16-dp900'};
@@ -27,24 +29,17 @@ function remember(code,score=1){if(!code)return;const x=read();x.completed||={};
 const has=code=>Boolean(completed()[String(code)]);
 const activityProgress=()=>Object.entries(completed()).map(([activity_code,v])=>({activity_code,status:'completed',score:Number(v?.score||1),completed_at:v?.at||null}));
 
-/* Runtime local deliberadamente mínimo: el modo de estudio no inicializa auth,
-   heartbeat, colas académicas ni paneles del LMS. Esto evita esperas de red y
-   mantiene el laboratorio utilizable incluso si existe una sesión LMS previa. */
 const guestApi={
-  version:'guest-3.0.0',
-  __guestModeV3:true,
-  ready:()=>Promise.resolve({guest:true,role:'guest'}),
-  user:()=>null,
-  localCompleted:code=>has(code),
-  complete:(activity,score=1)=>{remember(activity,score);return Promise.resolve(true)},
+  version:'guest-3.0.0',__guestModeV3:true,
+  ready:()=>Promise.resolve({guest:true,role:'guest'}),user:()=>null,
+  localCompleted:code=>has(code),complete:(activity,score=1)=>{remember(activity,score);return Promise.resolve(true)},
   attempt:()=>Promise.resolve(false),hint:()=>Promise.resolve(false),fail:()=>Promise.resolve(false),track:()=>Promise.resolve(false),
-  dashboard:async()=>({activity_progress:activityProgress(),guest:true}),
-  currentSession,currentActivity:()=>PRIMARY[currentSession()]||null,
+  dashboard:async()=>({activity_progress:activityProgress(),guest:true}),currentSession,currentActivity:()=>PRIMARY[currentSession()]||null,
   open:async()=>false,logout:async()=>false
 };
 try{window.ANDES_LMS=guestApi}catch(_){ }
 
-function rootUrl(path='guest.html'){return new URL(path,location.href)}
+const rootUrl=(path='guest.html')=>new URL(path,ROOT);
 function routeHome(n=currentSession()){const u=rootUrl('guest.html');if(n)u.hash=`s${n}`;return u.href}
 function guestify(href){
   try{const u=new URL(href,location.href);if(u.origin!==location.origin)return u.href;
@@ -55,9 +50,9 @@ function guestify(href){
 }
 function sessionHref(kind,n=currentSession()){
   if(!n)return routeHome();
-  if(kind==='reading')return guestify(new URL(`reading.html?session=${n}`,location.href).href);
-  if(kind==='lab')return guestify(new URL(`lab.html?session=${n}`,location.href).href);
-  const course=window.ANDES_COURSE?.session?.(n);return course?.href?guestify(new URL(course.href,rootUrl('./')).href):routeHome(n);
+  if(kind==='reading')return guestify(rootUrl(`reading.html?session=${n}`).href);
+  if(kind==='lab')return guestify(rootUrl(`lab.html?session=${n}`).href);
+  const course=window.ANDES_COURSE?.session?.(n);return course?.href?guestify(rootUrl(course.href).href):routeHome(n);
 }
 function setHref(el,url){if(el&&url&&el.getAttribute('href')!==url)el.setAttribute('href',url)}
 function ensureStyle(){if(document.getElementById('andes-guest-v3-style'))return;const s=document.createElement('style');s.id='andes-guest-v3-style';s.textContent=`
@@ -80,7 +75,7 @@ function decorateLab(){
   const hub=document.getElementById('hub-link');if(hub){setHref(hub,home);hub.textContent='Volver a la ruta de esta sesión →'}
   const mobile=[...document.querySelectorAll('.mobile-nav a')];if(mobile[0]){setHref(mobile[0],home);mobile[0].innerHTML='⌂<br>Ruta'}if(mobile[1]){setHref(mobile[1],reading);mobile[1].innerHTML='▤<br>Lectura'}if(mobile[2]){setHref(mobile[2],location.href);mobile[2].innerHTML='✓<br>Laboratorio'}
   const legend=document.querySelector('.sync-legend');if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span>'}
-  if(!document.getElementById('guest-mode-note')){const host=document.querySelector('.compact-head .wrap');if(host){const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem('andesdb.lab.reliable.v1.guest');location.reload()}}}}
+  if(!document.getElementById('guest-mode-note')){const host=document.querySelector('.compact-head .wrap');if(host){const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem('andesdb.guest.answers.v1.s'+n);location.reload()}}}}
 }
 function decorateGeneral(){
   const n=currentSession(),home=routeHome(n);document.querySelectorAll('a[href]').forEach(a=>{if(a.hasAttribute('download')||a.target==='_blank')return;let u;try{u=new URL(a.href,location.href)}catch{return}if(u.origin!==location.origin)return;if(/\/portal\.html$|\/learning-hub\.html$/i.test(u.pathname)){setHref(a,home);return}if(/\/reading\.html$|\/lab\.html$|\/Presentaciones\//i.test(u.pathname))setHref(a,guestify(u.href))});
@@ -88,8 +83,6 @@ function decorateGeneral(){
 }
 function decorate(){if(!document.body)return;document.body.classList.add('guest-mode');ensureStyle();if(isLab)decorateLab();else decorateGeneral()}
 
-/* Captura de navegación interna para conservar guest=1 incluso en enlaces creados
-   después por las presentaciones o la lectura, sin observar todo el DOM. */
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||a.hasAttribute('download')||a.target==='_blank')return;let u;try{u=new URL(a.href,location.href)}catch{return}if(u.origin!==location.origin)return;if(/\/portal\.html$|\/learning-hub\.html$/i.test(u.pathname)){e.preventDefault();location.assign(routeHome());return}if(/\/reading\.html$|\/lab\.html$|\/Presentaciones\//i.test(u.pathname)&&u.searchParams.get('guest')!=='1'){u.searchParams.set('guest','1');e.preventDefault();location.assign(u.href)}},true);
 
 markVisited();
