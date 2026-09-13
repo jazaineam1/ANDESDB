@@ -12,6 +12,7 @@ on:
       - 'Scripts/**'
       - 'manifest.webmanifest'
       - 'service-worker.js'
+      - 'revision/**'
       - '.gitignore'
       - 'AGENTS.md'
       - 'CLAUDE.md'
@@ -39,12 +40,19 @@ jobs:
       - name: Validar estructura, pedagogía y recursos
         run: python tools/validar_curso.py
 
+      - name: Auditar historia pregunta-respuesta de revision
+        run: python revision/tools/auditar_preguntas.py
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
           node --check assets/pwa-install.js
           node --check service-worker.js
           node --check Presentaciones/M3/sql-lab-s6.js
+          node --check revision/assets/learning/presentation-story-v2-patch.js
+          node --check revision/assets/learning/interactive-nav.js
+          node --check revision/assets/learning/learning-core.js
+          node --check revision/service-worker.js
           if [ -f assets/learning/analytics-fallback-link.js ]; then
             node --check assets/learning/analytics-fallback-link.js
           fi
