@@ -9,4 +9,5 @@
   };
   load(new URL('learning-core-base.js?v=20260912-lms', dir).href);
   load(new URL('learning-tracker.js?v=20260912-lms', dir).href);
+  if(document.querySelector('.slide')) load(new URL('presentation-story-v1.js?v=20260912-story1', dir).href);
 })();
