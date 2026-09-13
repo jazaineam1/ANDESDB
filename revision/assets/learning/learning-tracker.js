@@ -13,7 +13,7 @@
       const isPresentation=/\/Presentaciones\//i.test(location.pathname);
       const params=new URLSearchParams(location.search);
       const guestSurface=params.get('guest')==='1'&&(isPresentation||/\/(?:lab|reading)\.html$/i.test(location.pathname));
-      if(guestSurface)await add('guest-mode-v2.js?v=20260913-guest3');
+      if(guestSurface){window.__ANDES_ACCESS_GATE_V4__=true;await add('guest-mode-v2.js?v=20260913-guest3')}
       if(isPresentation&&!window.__ANDES_PRESENTATION_PERFORMANCE__)await add('presentation-performance.js?v=20260912-perf2');
       if(!window.ANDES_COURSE)await add('course-data.js?v=20260912-perf1');
       try{await window.ANDES_COURSE?.ready?.()}catch(_){ }
