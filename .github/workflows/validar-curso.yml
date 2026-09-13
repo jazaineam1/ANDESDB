@@ -52,6 +52,7 @@ jobs:
           node --check revision/assets/learning/presentation-story-v2-patch.js
           node --check revision/assets/learning/presentation-story-v3-polish.js
           node --check revision/assets/learning/presentation-story-s15-patch.js
+          node --check revision/assets/learning/presentation-selfcontained-v1.js
           node --check revision/assets/learning/interactive-nav.js
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/lab-runtime-v4.js
