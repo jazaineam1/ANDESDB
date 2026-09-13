@@ -17,23 +17,12 @@ const completed=()=>read().completed||{};
 const remember=(code,score=1)=>{if(!code)return;const x=read();x.completed||={};x.completed[String(code)]={at:new Date().toISOString(),score:Number(score||1)};write(x);dispatchEvent(new CustomEvent('andesdb:guest-progress',{detail:{activity_code:String(code),score:Number(score||1)}}))};
 const has=code=>Boolean(completed()[String(code)]);
 const activityProgress=()=>Object.entries(completed()).map(([activity_code,v])=>({activity_code,status:'completed',score:Number(v?.score||1),completed_at:v?.at||null}));
-function currentSession(){
-  const q=Number(params.get('session'));if(Number.isInteger(q)&&q>=1&&q<=16)return q;
-  const m=(location.pathname+' '+document.title).match(/sesion[-_\s]*(\d{1,2})/i);return m?Number(m[1]):null;
-}
+function currentSession(){const q=Number(params.get('session'));if(Number.isInteger(q)&&q>=1&&q<=16)return q;const m=(location.pathname+' '+document.title).match(/sesion[-_\s]*(\d{1,2})/i);return m?Number(m[1]):null}
 function markVisit(){const n=currentSession();if(!n)return;const x=read();x.visited||={};x.visited[`${kind}:${n}`]={at:new Date().toISOString()};x.last={session:n,kind,at:new Date().toISOString()};write(x)}
-
-try{
-  const nativeSet=Storage.prototype.setItem;
-  if(!Storage.prototype.__andesGuestPatched){
-    Object.defineProperty(Storage.prototype,'__andesGuestPatched',{value:true,configurable:true});
-    Storage.prototype.setItem=function(key,value){if(window.ANDES_GUEST_MODE&&this===localStorage&&String(key)===PENDING)return;return nativeSet.call(this,key,value)};
-  }
-}catch(_){ }
 
 function patchLms(api){
   if(!api||api.__guestModeV2)return api;
-  api.__guestModeV2=true;
+  api.__guestModeV2=true;api.version=api.version||'guest-2.1.0';
   api.localCompleted=code=>has(code);
   api.complete=(activity,score=1)=>{remember(activity,score);return Promise.resolve(true)};
   api.attempt=()=>Promise.resolve(false);api.fail=()=>Promise.resolve(false);api.hint=()=>Promise.resolve(false);api.track=()=>Promise.resolve(false);
@@ -41,10 +30,11 @@ function patchLms(api){
   return api;
 }
 try{
-  let current=window.ANDES_LMS;if(current)patchLms(current);
+  let current=patchLms(window.ANDES_LMS||{version:'guest-2.1.0'});
   const d=Object.getOwnPropertyDescriptor(window,'ANDES_LMS');
-  if(!d||d.configurable)Object.defineProperty(window,'ANDES_LMS',{configurable:true,enumerable:true,get(){return current},set(v){current=patchLms(v)}});
-}catch(_){ }
+  if(!d||d.configurable){Object.defineProperty(window,'ANDES_LMS',{configurable:true,enumerable:true,get(){return current},set(v){current=patchLms(v||{version:'guest-2.1.0'})}})}
+  else window.ANDES_LMS=current;
+}catch(_){window.ANDES_LMS=patchLms({version:'guest-2.1.0'})}
 
 const hubUrl=()=>new URL('guest.html',ROOT).href;
 function guestify(url){try{const u=new URL(url,ROOT);if(u.origin===location.origin)u.searchParams.set('guest','1');return u.href}catch{return url}}
@@ -56,11 +46,7 @@ function setHref(el,url){if(el&&el.getAttribute('href')!==url)el.setAttribute('h
 function installRoute(){
   const n=currentSession();if(!n||!document.body)return;
   let dock=document.getElementById('andes-study-route');
-  if(!dock){
-    dock=document.createElement('div');dock.id='andes-study-route';dock.innerHTML='<button class="sr-open" type="button" aria-expanded="false">☰ Ruta</button><div class="sr-panel" role="dialog" aria-label="Ruta de estudio"></div>';document.body.appendChild(dock);
-    const b=dock.querySelector('.sr-open');b.onclick=e=>{e.stopPropagation();const open=dock.classList.toggle('open');b.setAttribute('aria-expanded',String(open))};
-    document.addEventListener('click',e=>{if(dock.classList.contains('open')&&!dock.contains(e.target)){dock.classList.remove('open');b.setAttribute('aria-expanded','false')}},{passive:true});
-  }
+  if(!dock){dock=document.createElement('div');dock.id='andes-study-route';dock.innerHTML='<button class="sr-open" type="button" aria-expanded="false">☰ Ruta</button><div class="sr-panel" role="dialog" aria-label="Ruta de estudio"></div>';document.body.appendChild(dock);const b=dock.querySelector('.sr-open');b.onclick=e=>{e.stopPropagation();const open=dock.classList.toggle('open');b.setAttribute('aria-expanded',String(open))};document.addEventListener('click',e=>{if(dock.classList.contains('open')&&!dock.contains(e.target)){dock.classList.remove('open');b.setAttribute('aria-expanded','false')}},{passive:true})}
   const p=presentationUrl(n),r=readingUrl(n),l=labUrl(n);
   dock.querySelector('.sr-panel').innerHTML=`<div class="sr-head"><b>S${n} · Ruta de estudio</b><span>Presentación, lectura y práctica de la misma sesión.</span></div><a class="sr-link ${kind==='presentation'?'current':''}" href="${p}"><span>▣</span><span><b>Presentación</b><small>Recorre los conceptos y ejemplos de clase</small></span></a><a class="sr-link ${kind==='reading'?'current':''}" href="${r}"><span>▤</span><span><b>Lectura</b><small>Reconstruye, explica y amplía lo trabajado</small></span></a><a class="sr-link ${kind==='lab'?'current':''}" href="${l}"><span>✓</span><span><b>Laboratorio</b><small>Comprueba lo aprendido con 10 prácticas</small></span></a><div class="sr-sep"></div><a class="sr-link" href="${hubUrl()}"><span>←</span><span><b>Sesiones disponibles</b><small>Volver a la ruta completa</small></span></a>`;
 }
@@ -77,7 +63,7 @@ function decorate(){
   const legend=document.querySelector('.sync-legend');if(legend&&!legend.dataset.guestDecorated){legend.dataset.guestDecorated='1';legend.innerHTML='<span class="sync-ok">✓ Guardado en este dispositivo</span>'}
   if(isLab&&!document.getElementById('guest-mode-note')){
     const host=document.querySelector('.compact-head .wrap');
-    if(host){const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem(RELIABLE);location.reload()}}}
+    if(host){const box=document.createElement('div');box.id='guest-mode-note';box.innerHTML='<b>Tu progreso</b><span>El avance se guarda en este navegador.</span><button type="button" id="guest-reset">Reiniciar mi progreso</button>';host.appendChild(box);box.querySelector('#guest-reset').onclick=()=>{if(confirm('¿Quieres borrar el progreso guardado en este dispositivo?')){localStorage.removeItem(STORE);localStorage.removeItem(RELIABLE);localStorage.removeItem(`andesdb.guest.answers.v1.s${currentSession()||0}`);location.reload()}}}
   }
   installRoute();
 }

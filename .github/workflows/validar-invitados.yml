@@ -6,6 +6,8 @@ on:
       - 'revision/guest.html'
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
+      - 'revision/assets/learning/lab-guest-ux-v1.js'
+      - 'revision/assets/learning/lab-runtime-v4.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
@@ -15,6 +17,8 @@ on:
       - 'revision/guest.html'
       - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
+      - 'revision/assets/learning/lab-guest-ux-v1.js'
+      - 'revision/assets/learning/lab-runtime-v4.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
       - '.github/workflows/validar-invitados.yml'
@@ -32,6 +36,8 @@ jobs:
         run: |
           node --check revision/assets/learning/guest-mode-v1.js
           node --check revision/assets/learning/guest-mode-v2.js
+          node --check revision/assets/learning/lab-guest-ux-v1.js
+          node --check revision/assets/learning/lab-runtime-v4.js
           node --check revision/assets/learning/learning-tracker.js
           node --check revision/service-worker.js
 
@@ -40,6 +46,8 @@ jobs:
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
           V1='revision/assets/learning/guest-mode-v1.js'
+          U='revision/assets/learning/lab-guest-ux-v1.js'
+          R='revision/assets/learning/lab-runtime-v4.js'
           T='revision/assets/learning/learning-tracker.js'
           SW='revision/service-worker.js'
           grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso debe usar almacenamiento separado.'; exit 1; }
@@ -68,16 +76,31 @@ jobs:
           grep -q "readingUrl" "$G" || { echo '::error::El runtime debe enlazar a la lectura.'; exit 1; }
           grep -q "labUrl" "$G" || { echo '::error::El runtime debe enlazar al laboratorio.'; exit 1; }
 
+      - name: Proteger arranque local del laboratorio
+        run: |
+          set -euo pipefail
+          G='revision/assets/learning/guest-mode-v2.js'
+          U='revision/assets/learning/lab-guest-ux-v1.js'
+          R='revision/assets/learning/lab-runtime-v4.js'
+          SW='revision/service-worker.js'
+          grep -q "window.ANDES_LMS||{version:'guest-2.1.0'}" "$G" || { echo '::error::El runtime debe crear ANDES_LMS inmediatamente; no puede esperar otro loader.'; exit 1; }
+          grep -q "ready=()=>Promise.resolve" "$G" || { echo '::error::El modo invitado debe resolver ready de forma local.'; exit 1; }
+          grep -q "if(guest)" "$R" || { echo '::error::El loader del laboratorio debe separar invitado y autenticado.'; exit 1; }
+          grep -q "lab-guest-ux-v1.js" "$R" || { echo '::error::El invitado debe usar la persistencia local ligera.'; exit 1; }
+          grep -q "lab-progress-reliability-v2.js" "$R" || { echo '::error::El modo autenticado debe conservar reconciliación fiable.'; exit 1; }
+          grep -q "andesdb.guest.answers.v1" "$U" || { echo '::error::Los borradores del invitado deben estar aislados del LMS.'; exit 1; }
+          grep -q "lab-guest-ux-v1.js" "$SW" || { echo '::error::La PWA debe precachear el runtime local del laboratorio.'; exit 1; }
+
       - name: Proteger rendimiento móvil
         run: |
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
           V1='revision/assets/learning/guest-mode-v1.js'
-          if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1"; then
+          U='revision/assets/learning/lab-guest-ux-v1.js'
+          if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1" || grep -q 'MutationObserver' "$U"; then
             echo '::error::Ningún runtime público puede observar recursivamente todo el DOM.'
             exit 1
           fi
-          grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::La práctica debe iniciar sin esperar autenticación remota.'; exit 1; }
           grep -q "precacheBatched" revision/service-worker.js || { echo '::error::El service worker debe precargar recursos en lotes.'; exit 1; }
 
       - name: Proteger experiencia del estudiante

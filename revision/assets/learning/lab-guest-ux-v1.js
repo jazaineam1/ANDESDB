@@ -1,0 +1,19 @@
+(()=>{
+'use strict';
+if(window.__ANDES_LAB_GUEST_UX_V1__)return;window.__ANDES_LAB_GUEST_UX_V1__=true;
+const session=Number(new URLSearchParams(location.search).get('session'))||0;
+const KEY=`andesdb.guest.answers.v1.s${session}`;
+const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}};
+let state=read(),timer=null,restoring=false;
+const write=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(_){}};
+const practice=()=>{const m=document.getElementById('task-num')?.textContent?.match(/Práctica\s+(\d+)/i);return m?Number(m[1]):Number(document.querySelector('.steps .current')?.dataset?.step||1)};
+function snapshot(){const i=practice(),task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];if(!task)return null;if(task.type==='sql')return {kind:'sql',value:String(document.getElementById('sql-editor')?.value||'').slice(0,6000)};if(task.type==='classify')return {kind:'classify',values:[...document.querySelectorAll('[data-classify]')].map(x=>String(x.value||'').slice(0,1000))};if(task.type==='order')return {kind:'order',values:[...document.querySelectorAll('.order-row span')].map(x=>String(x.textContent||'').slice(0,1000))};return {kind:'text',value:String(document.getElementById('text-answer')?.value||'').slice(0,6000)}}
+function save(immediate=false){if(restoring)return;const i=practice(),snap=snapshot();if(!i||!snap)return;state[i]={draft:snap,updated_at:new Date().toISOString()};clearTimeout(timer);if(immediate)write();else timer=setTimeout(write,650)}
+const fire=(el,type)=>{try{el.dispatchEvent(new Event(type,{bubbles:true}))}catch(_){}};
+async function restoreOrder(values){if(!Array.isArray(values))return;for(let target=0;target<values.length;target++){let guard=0;while(guard++<20){const rows=[...document.querySelectorAll('.order-row')];if(!rows.length)return;const current=rows.map(r=>r.querySelector('span')?.textContent||'');const at=current.indexOf(values[target]);if(at<0||at===target)break;if(at>target)rows[at].querySelector('[data-up]')?.click();else rows[at].querySelector('[data-down]')?.click();await new Promise(r=>setTimeout(r,0))}}}
+async function restore(){const i=practice(),saved=state?.[i]?.draft,task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];if(!saved||!task)return;restoring=true;try{if(task.type==='sql'&&saved.kind==='sql'){const e=document.getElementById('sql-editor');if(e){e.value=saved.value||'';fire(e,'input')}}else if(task.type==='classify'&&saved.kind==='classify'){[...document.querySelectorAll('[data-classify]')].forEach((e,k)=>{if(saved.values?.[k]!=null){e.value=saved.values[k];fire(e,'change')}})}else if(task.type==='order'&&saved.kind==='order')await restoreOrder(saved.values);else if(saved.kind==='text'){const e=document.getElementById('text-answer');if(e){e.value=saved.value||'';fire(e,'input')}}}finally{restoring=false}}
+document.addEventListener('input',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))save(false)},true);document.addEventListener('change',e=>{if(e.target?.matches?.('[data-classify]'))save(false)},true);document.addEventListener('click',e=>{if(e.target?.closest?.('[data-up],[data-down]'))setTimeout(()=>save(false),20)},true);
+document.addEventListener('focusin',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))document.body.classList.add('lab-editing')},true);document.addEventListener('focusout',e=>{if(e.target?.matches?.('#sql-editor,#text-answer'))setTimeout(()=>{if(!document.activeElement?.matches?.('#sql-editor,#text-answer')){document.body.classList.remove('lab-editing');save(true)}},50)},true);
+addEventListener('andesdb:lab-task-rendered',()=>setTimeout(restore,0),{passive:true});addEventListener('pagehide',()=>{clearTimeout(timer);write()},{once:true});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){clearTimeout(timer);write()}});
+window.__ANDES_LAB_GUEST_UX_READY__=Promise.resolve(true);
+})();
