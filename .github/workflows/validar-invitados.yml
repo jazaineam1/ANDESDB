@@ -1,0 +1,56 @@
+name: Validar módulo de invitados
+
+on:
+  pull_request:
+    paths:
+      - 'revision/guest.html'
+      - 'revision/assets/learning/guest-mode-v1.js'
+      - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/service-worker.js'
+      - '.github/workflows/validar-invitados.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'revision/guest.html'
+      - 'revision/assets/learning/guest-mode-v1.js'
+      - 'revision/assets/learning/learning-tracker.js'
+      - 'revision/service-worker.js'
+      - '.github/workflows/validar-invitados.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  guest-mode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar JavaScript
+        run: |
+          node --check revision/assets/learning/guest-mode-v1.js
+          node --check revision/assets/learning/learning-tracker.js
+          node --check revision/service-worker.js
+      - name: Proteger aislamiento del modo invitado
+        run: |
+          set -euo pipefail
+          G='revision/assets/learning/guest-mode-v1.js'
+          T='revision/assets/learning/learning-tracker.js'
+          SW='revision/service-worker.js'
+          grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
+          grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
+          grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
+          grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
+          grep -q "access-gate.js" "$T" || { echo '::error::El modo autenticado debe conservar access-gate.'; exit 1; }
+          grep -q "if(!guestLab)await add('lms-integral-patch.js" "$T" || { echo '::error::El modo server-first no debe borrar progreso invitado.'; exit 1; }
+          grep -q "guest.html" "$SW" || { echo '::error::La PWA debe incluir el módulo de invitados.'; exit 1; }
+          grep -q "guest-mode-v1.js" "$SW" || { echo '::error::La PWA debe incluir el runtime de invitados.'; exit 1; }
+      - name: Proteger límites de seguridad
+        run: |
+          set -euo pipefail
+          grep -q 'No crea matrícula' revision/guest.html || { echo '::error::El módulo debe explicar que no crea matrícula.'; exit 1; }
+          if grep -q 'teacher-dashboard.html?guest=1' revision/guest.html; then
+            echo '::error::El módulo invitado no puede enlazar control docente.'; exit 1
+          fi
+          if grep -q 'assignment.html?guest=1' revision/guest.html; then
+            echo '::error::El módulo invitado no puede enlazar entregas.'; exit 1
+          fi
