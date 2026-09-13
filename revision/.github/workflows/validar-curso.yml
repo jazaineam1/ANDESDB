@@ -46,6 +46,12 @@ jobs:
         run: |
           node --check assets/learning/learning-core.js
           node --check assets/learning/presentation-story-v2-patch.js
+          node --check assets/learning/presentation-story-v3-polish.js
+          node --check assets/learning/presentation-story-s15-patch.js
+          node --check assets/learning/interactive-nav.js
+          node --check assets/learning/lab-runtime-v4.js
+          node --check assets/learning/lab-finish-v1.js
+          node --check Presentaciones/M3/sql-lab-s9.js
           node --check assets/pwa-install.js
           node --check service-worker.js
           node --check Presentaciones/M3/sql-lab-s6.js
