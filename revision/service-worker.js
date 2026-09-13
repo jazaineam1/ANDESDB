@@ -1,4 +1,4 @@
-const VERSION='andesdb-lms-20260913-v48';
+const VERSION='andesdb-lms-20260913-v49';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './portal.html','./access.html','./learning-hub.html','./lab.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
