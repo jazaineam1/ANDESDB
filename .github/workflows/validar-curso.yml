@@ -70,6 +70,23 @@ jobs:
             echo '::error::No reintroducir borde lateral de color en tarjetas docentes.'; exit 1
           fi
 
+      - name: Mantener el minutaje fuera de las diapositivas del estudiante
+        run: |
+          set -euo pipefail
+          CORE='revision/assets/learning/learning-core.js'
+          CLEAN='revision/assets/learning/presentation-pacing-cleanup-v1.js'
+          S16='revision/Presentaciones/M6/sesion-16-cierre-dp900.html'
+          grep -q 'presentation-pacing-cleanup-v1.js' "$CORE" || { echo '::error::S13-S16 deben cargar la limpieza de ritmo flexible.'; exit 1; }
+          grep -q 'presentation-pacing-cleanup-v1.js' "$S16" || { echo '::error::S16 debe aplicar la misma limpieza de ritmo que S13-S15.'; exit 1; }
+          grep -q 'sc-activity' "$CLEAN" || { echo '::error::La limpieza debe retirar la capa actividad/producto heredada.'; exit 1; }
+          grep -q 'sc-note-open' "$CLEAN" || { echo '::error::La guía docente N no debe quedar expuesta en la proyección.'; exit 1; }
+          if grep -q 'presentation-selfcontained-v1.js' "$CORE"; then
+            echo '::error::No reactivar la capa selfcontained que inyecta minutajes y productos en S13-S16.'; exit 1
+          fi
+          if grep -q 'presentation-selfcontained-v1.js' "$S16"; then
+            echo '::error::S16 no debe inyectar la capa selfcontained visible.'; exit 1
+          fi
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
@@ -81,6 +98,7 @@ jobs:
           node --check revision/assets/learning/presentation-story-s15-patch.js
           node --check revision/assets/learning/presentation-selfcontained-v1.js
           node --check revision/assets/learning/presentation-study-cleanup-v1.js
+          node --check revision/assets/learning/presentation-pacing-cleanup-v1.js
           node --check revision/assets/learning/presentation-material-alignment-v1.js
           node --check revision/assets/learning/interactive-nav.js
           node --check revision/assets/learning/learning-core.js
