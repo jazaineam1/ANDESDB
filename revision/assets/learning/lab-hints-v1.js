@@ -5,52 +5,13 @@ const PRIMARY={1:'s1-diagnostico',2:'sql-s2',3:'sql-s3',4:'sql-s4',5:'sql-s5',6:
 const session=Number(new URLSearchParams(location.search).get('session'))||0;
 const codeFor=i=>i===10?PRIMARY[session]:`s${session}-r${i}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function sqlStructure(t){
-  const ref=String(t?.reference||'');
-  const clauses=[];
-  [['WITH',/\bWITH\b/i],['JOIN',/\bJOIN\b/i],['WHERE',/\bWHERE\b/i],['GROUP BY',/\bGROUP\s+BY\b/i],['HAVING',/\bHAVING\b/i],['ORDER BY',/\bORDER\s+BY\b/i],['LIMIT',/\bLIMIT\b/i]].forEach(([name,re])=>{if(re.test(ref))clauses.push(name)});
-  return clauses.length?`Piensa la consulta por bloques. Para este reto te sirven: SELECT / FROM${clauses.length?' / '+clauses.join(' / '):''}. No copies una solución completa: arma cada bloque desde la consigna.`:'Empieza por SELECT y FROM; después agrega únicamente las cláusulas que exige la pregunta.';
-}
-function defaultHints(t){
-  if(t.type==='sql')return [
-    'Antes de escribir SQL, identifica qué debe representar una fila del resultado y qué columnas exactas pide la consigna.',
-    sqlStructure(t)
-  ];
-  if(t.type==='classify')return [
-    'Lee cada opción por el criterio conceptual que está evaluando, no por una palabra aislada. Descarta primero las opciones que contradicen la definición central.',
-    t.explain?`Recuerda esta idea sin usarla como respuesta directa: ${t.explain}`:'Compara cada caso con la definición trabajada en la presentación y decide qué criterio realmente lo distingue.'
-  ];
-  if(t.type==='order')return [
-    'Busca primero qué paso necesariamente debe ocurrir antes de los demás; después identifica cuál depende de ese resultado.',
-    t.explain?`Usa esta relación causal como guía: ${t.explain}`:'Ordena por dependencia: problema → evidencia/datos → diseño/acción → validación.'
-  ];
-  return [
-    'Divide la consigna en dos o tres ideas obligatorias y verifica que tu respuesta mencione cada una de forma explícita.',
-    t.explain?`La respuesta debe reflejar esta idea central: ${t.explain}`:'Explica el porqué de tu decisión y conéctalo con una regla, evidencia o criterio del caso.'
-  ];
-}
-function prepare(){
-  const S=window.ANDES_LAB_CONTENT?.sessions;if(!S)return false;
-  for(const s of Object.values(S))for(const t of (s.tasks||[])){
-    const current=Array.isArray(t.hints)?t.hints.filter(Boolean):[];
-    const fallback=defaultHints(t);
-    if(!current.length)t.hints=fallback;
-    else if(current.length===1)t.hints=[current[0],fallback.find(x=>x!==current[0])||fallback[0]];
-  }
-  return true;
-}
+function sqlStructure(t){const ref=String(t?.reference||''),clauses=[];[['WITH',/\bWITH\b/i],['JOIN',/\bJOIN\b/i],['WHERE',/\bWHERE\b/i],['GROUP BY',/\bGROUP\s+BY\b/i],['HAVING',/\bHAVING\b/i],['ORDER BY',/\bORDER\s+BY\b/i],['LIMIT',/\bLIMIT\b/i]].forEach(([name,re])=>{if(re.test(ref))clauses.push(name)});return clauses.length?`Piensa la consulta por bloques. Para este reto te sirven: SELECT / FROM / ${clauses.join(' / ')}. No copies una solución completa: arma cada bloque desde la consigna.`:'Empieza por SELECT y FROM; después agrega únicamente las cláusulas que exige la pregunta.'}
+function defaultHints(t){if(t.type==='sql')return['Antes de escribir SQL, identifica qué debe representar una fila del resultado y qué columnas exactas pide la consigna.',sqlStructure(t)];if(t.type==='classify')return['Lee cada opción por el criterio conceptual que está evaluando, no por una palabra aislada. Descarta primero las opciones que contradicen la definición central.',t.explain?`Recuerda esta idea sin usarla como respuesta directa: ${t.explain}`:'Compara cada caso con la definición trabajada.'];if(t.type==='order')return['Busca primero qué paso necesariamente debe ocurrir antes de los demás; después identifica cuál depende de ese resultado.',t.explain?`Usa esta relación causal como guía: ${t.explain}`:'Ordena por dependencia: problema → evidencia/datos → diseño/acción → validación.'];return['Divide la consigna en dos o tres ideas obligatorias y verifica que tu respuesta mencione cada una de forma explícita.',t.explain?`La respuesta debe reflejar esta idea central: ${t.explain}`:'Explica el porqué de tu decisión y conéctalo con una regla, evidencia o criterio del caso.']}
+function prepare(){const S=window.ANDES_LAB_CONTENT?.sessions;if(!S)return false;for(const s of Object.values(S))for(const t of(s.tasks||[])){const current=Array.isArray(t.hints)?t.hints.filter(Boolean):[],fallback=defaultHints(t);if(!current.length)t.hints=fallback;else if(current.length===1)t.hints=[current[0],fallback.find(x=>x!==current[0])||fallback[0]]}return true}
 function currentIndex(){const m=(document.getElementById('task-num')?.textContent||'').match(/Práctica\s+(\d+)/i);return m?Number(m[1]):Number(document.querySelector('[data-step].current')?.dataset.step||1)}
 function currentTask(){return window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[currentIndex()-1]||null}
 function showHint(text,n,total){const e=document.getElementById('feedback');if(!e)return;e.className='feedback ok';e.innerHTML=`<b>Pista ${n} de ${total}</b> · ${esc(text)}`;e.tabIndex=-1;e.focus({preventScroll:true})}
-function inject(){
-  prepare();
-  const t=currentTask(),root=document.getElementById('task');if(!t||!root||!Array.isArray(t.hints)||!t.hints.length)return;
-  if(root.querySelector('#hint-btn,#lab-generic-hint-btn'))return;
-  const actions=root.querySelector('.actions');if(!actions)return;
-  const b=document.createElement('button');b.type='button';b.id='lab-generic-hint-btn';b.className='btn alt';b.textContent='💡 Pista';b.dataset.n='0';
-  b.addEventListener('click',async()=>{const k=Number(b.dataset.n||0),at=Math.min(k,t.hints.length-1);showHint(t.hints[at],at+1,t.hints.length);b.dataset.n=String(Math.min(k+1,t.hints.length-1));try{await window.ANDES_LMS?.hint?.(codeFor(currentIndex()),{source:'lab-hints-v1',hint_number:at+1},session)}catch(_){}});
-  actions.appendChild(b);
-}
-function boot(){prepare();const target=document.getElementById('practice')||document.body;new MutationObserver(()=>setTimeout(inject,0)).observe(target,{childList:true,subtree:true});setTimeout(inject,80)}
+function inject(){prepare();const t=currentTask(),root=document.getElementById('task');if(!t||!root||!Array.isArray(t.hints)||!t.hints.length)return;if(root.querySelector('#hint-btn,#lab-generic-hint-btn'))return;const actions=root.querySelector('.actions');if(!actions)return;const b=document.createElement('button');b.type='button';b.id='lab-generic-hint-btn';b.className='btn alt';b.textContent='💡 Pista';b.dataset.n='0';b.addEventListener('click',()=>{const k=Number(b.dataset.n||0),at=Math.min(k,t.hints.length-1);showHint(t.hints[at],at+1,t.hints.length);b.dataset.n=String(Math.min(k+1,t.hints.length-1));Promise.resolve(window.ANDES_LMS?.hint?.(codeFor(currentIndex()),{source:'lab-hints-v1',hint_number:at+1},session)).catch(()=>{})});actions.appendChild(b)}
+function boot(){prepare();inject();addEventListener('andesdb:lab-task-rendered',inject)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
