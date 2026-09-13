@@ -7,6 +7,8 @@ function installMobileCollisionGuard(dock){
     const style=document.createElement('style');
     style.id='andes-resource-mobile-css';
     style.textContent=`
+/* El laboratorio ya está dentro de Recursos: evitamos un segundo botón flotante. */
+#andes-practice-btn{display:none!important}
 @media(max-width:760px){
   #andes-resource-dock{right:10px!important;bottom:calc(var(--andes-dock-clearance,82px) + env(safe-area-inset-bottom))!important}
   #andes-resource-dock .rd-panel{left:10px!important;right:10px!important;bottom:calc(var(--andes-dock-clearance,82px) + 54px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:min(58vh,520px)!important}
