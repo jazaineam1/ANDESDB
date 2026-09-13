@@ -11,18 +11,19 @@
   (async()=>{
     try{
       const isPresentation=/\/Presentaciones\//i.test(location.pathname);
-      const guestLab=/\/lab\.html$/i.test(location.pathname)&&new URLSearchParams(location.search).get('guest')==='1';
-      if(guestLab)await add('guest-mode-v2.js?v=20260913-guest2');
+      const params=new URLSearchParams(location.search);
+      const guestSurface=params.get('guest')==='1'&&(isPresentation||/\/(?:lab|reading)\.html$/i.test(location.pathname));
+      if(guestSurface)await add('guest-mode-v2.js?v=20260913-guest3');
       if(isPresentation&&!window.__ANDES_PRESENTATION_PERFORMANCE__)await add('presentation-performance.js?v=20260912-perf2');
       if(!window.ANDES_COURSE)await add('course-data.js?v=20260912-perf1');
       try{await window.ANDES_COURSE?.ready?.()}catch(_){ }
-      if(!guestLab&&!window.ANDES_PLATFORM)await add('lms-platform.js?v=20260912-net2');
+      if(!guestSurface&&!window.ANDES_PLATFORM)await add('lms-platform.js?v=20260912-net2');
       if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
       if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912-perf2');
-      if(!guestLab)await add('lms-integral-patch.js?v=20260912-lms2');
-      if(/\/lab\.html$/i.test(location.pathname)&&!guestLab)await add('lab-resume.js?v=20260912-lms2');
+      if(!guestSurface)await add('lms-integral-patch.js?v=20260912-lms2');
+      if(/\/lab\.html$/i.test(location.pathname)&&!guestSurface)await add('lab-resume.js?v=20260912-lms2');
       if(isPresentation)await add('presentation-resume.js?v=20260912-perf2');
-      if(!guestLab){
+      if(!guestSurface){
         await add('role-nav-v2.js?v=20260912-mobile2');
         await add('access-gate.js?v=20260912-mobile2');
         await add('lms-ux-v1.js?v=20260912-side1');
