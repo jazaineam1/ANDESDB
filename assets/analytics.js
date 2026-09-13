@@ -1,5 +1,7 @@
 (() => {
   'use strict';
+  if (window.__ANDES_PUBLIC_GA4_V4__) return;
+  window.__ANDES_PUBLIC_GA4_V4__ = true;
 
   const cfg = window.ANDES_PUBLIC_ANALYTICS_CONFIG || {};
   const id = String(cfg.ga4MeasurementId || '').trim();
@@ -36,6 +38,8 @@
   const sessionMatch = path.match(/sesion-(\d+)/i);
   const moduleCode = moduleMatch ? moduleMatch[1].toUpperCase() : null;
   const sessionNumber = sessionMatch ? Number(sessionMatch[1]) : null;
+  const pageType = isPresentation ? 'public_presentation' : isHome ? 'public_home' : 'public_page';
+  const contentKey = isPresentation && sessionNumber ? `presentation_s${sessionNumber}` : isHome ? 'home' : safeText(path.replace(/^\/ANDESDB\/?/i, '').replace(/\.html$/i, '').replace(/[^a-z0-9/_-]+/gi, '_') || 'home');
   const safeLocation = () => location.origin + location.pathname;
   const safeReferrer = () => {
     if (!document.referrer) return '';
@@ -49,14 +53,15 @@
     if (!cfg.enabled || !VALID_ID || typeof window.gtag !== 'function') return false;
     const eventName = safeText(name).replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 40);
     if (!/^[a-zA-Z]/.test(eventName)) return false;
-    window.gtag('event', eventName, safeParams({ site_layer: 'public', ...params }));
+    window.gtag('event', eventName, safeParams({ site_layer: 'public', page_type: pageType, content_key: contentKey, ...params }));
     return true;
   }
 
   window.ANDES_PUBLIC_ANALYTICS = {
     event,
     enabled: () => !!(cfg.enabled && VALID_ID),
-    measurementId: () => VALID_ID ? id : null
+    measurementId: () => VALID_ID ? id : null,
+    context: () => ({ site_layer: 'public', page_type: pageType, content_key: contentKey, session_number: sessionNumber, module_code: moduleCode })
   };
 
   if (!cfg.enabled || !VALID_ID) return;
@@ -64,11 +69,13 @@
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
 
-  const loader = document.createElement('script');
-  loader.async = true;
-  loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-  loader.referrerPolicy = 'strict-origin-when-cross-origin';
-  document.head.appendChild(loader);
+  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+    const loader = document.createElement('script');
+    loader.async = true;
+    loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+    loader.referrerPolicy = 'strict-origin-when-cross-origin';
+    document.head.appendChild(loader);
+  }
 
   window.gtag('js', new Date());
   window.gtag('config', id, {
@@ -85,11 +92,66 @@
     event('page_view', {
       page_path: location.pathname,
       page_title: document.title,
-      page_type: isPresentation ? 'public_presentation' : isHome ? 'public_home' : 'public_other'
+      session_number: sessionNumber,
+      module_code: moduleCode
     });
   }
 
+  event('content_view', {
+    session_number: sessionNumber,
+    module_code: moduleCode,
+    content_kind: isPresentation ? 'presentation' : isHome ? 'home' : 'page'
+  });
+
   if (isHome) event('public_home_opened');
+
+  // Hitos de profundidad para saber si una página realmente se consumió.
+  const scrollMilestones = new Set();
+  let scrollQueued = false;
+  function measureScroll() {
+    scrollQueued = false;
+    const root = document.documentElement;
+    const max = Math.max(0, root.scrollHeight - innerHeight);
+    if (max <= 40) return;
+    const pct = Math.max(0, Math.min(100, Math.round((scrollY / max) * 100)));
+    for (const mark of [25, 50, 75, 90]) {
+      if (pct >= mark && !scrollMilestones.has(mark)) {
+        scrollMilestones.add(mark);
+        event('scroll_depth', { depth_percent: mark, session_number: sessionNumber, module_code: moduleCode });
+      }
+    }
+  }
+  addEventListener('scroll', () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(measureScroll);
+  }, { passive: true });
+
+  // Hitos de tiempo visible, sin identificar al estudiante.
+  let visibleSince = document.visibilityState === 'visible' ? performance.now() : null;
+  let activeMs = 0;
+  const timeMilestones = new Set();
+  function activeSeconds() {
+    const running = visibleSince == null ? 0 : performance.now() - visibleSince;
+    return Math.floor((activeMs + running) / 1000);
+  }
+  function emitTimeMilestones() {
+    const seconds = activeSeconds();
+    for (const mark of [30, 120, 300, 600]) {
+      if (seconds >= mark && !timeMilestones.has(mark)) {
+        timeMilestones.add(mark);
+        event('engaged_time_milestone', { engaged_seconds: mark, session_number: sessionNumber, module_code: moduleCode });
+      }
+    }
+  }
+  const engagementTimer = setInterval(emitTimeMilestones, 5000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && visibleSince != null) {
+      activeMs += performance.now() - visibleSince;
+      visibleSince = null;
+      emitTimeMilestones();
+    } else if (document.visibilityState === 'visible' && visibleSince == null) visibleSince = performance.now();
+  });
 
   if (cfg.trackOutboundLinks !== false) {
     document.addEventListener('click', ev => {
@@ -99,15 +161,25 @@
       try { u = new URL(a.href, location.href); } catch { return; }
       if (!/^https?:$/i.test(u.protocol)) return;
       if (u.origin !== location.origin) {
-        event('outbound_click', { link_domain: u.hostname });
+        event('outbound_click', {
+          link_domain: u.hostname,
+          link_purpose: /zoom\.us$/i.test(u.hostname) ? 'class_meeting' : 'external_resource',
+          session_number: sessionNumber,
+          module_code: moduleCode
+        });
       } else if (/\/Presentaciones\/M\d+\/sesion-\d+/i.test(u.pathname)) {
         const sm = u.pathname.match(/sesion-(\d+)/i);
         event('presentation_link_click', { target_session_number: sm ? Number(sm[1]) : undefined });
+      } else if (u.pathname.startsWith('/ANDESDB/')) {
+        event('internal_navigation', { destination_kind: /\/revision\//i.test(u.pathname) ? 'lms' : 'public' });
       }
     }, { capture: true, passive: true });
   }
 
-  if (!isPresentation || cfg.trackSlides === false) return;
+  if (!isPresentation || cfg.trackSlides === false) {
+    addEventListener('pagehide', () => { emitTimeMilestones(); clearInterval(engagementTimer); });
+    return;
+  }
 
   const slides = [...document.querySelectorAll('.slide')];
   const slideCount = slides.length;
@@ -225,6 +297,8 @@
   });
 
   addEventListener('pagehide', () => {
+    emitTimeMilestones();
+    clearInterval(engagementTimer);
     flushSlide('pagehide');
     event('presentation_exit', {
       session_number: sessionNumber,
