@@ -1,5 +1,6 @@
 (()=>{
 'use strict';
+const style=document.createElement('style');style.textContent='.feedback{white-space:pre-line;line-height:1.55}.feedback.bad{border-left:4px solid #b42318}.feedback.ok{border-left:4px solid #16794b}';document.head.appendChild(style);
 const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
 (async()=>{try{
   await load('assets/learning/lab-capstone-patch.js?v=20260912-cap1');
