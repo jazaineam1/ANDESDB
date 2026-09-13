@@ -54,7 +54,6 @@ jobs:
           node --check revision/assets/learning/presentation-story-s15-patch.js
           node --check revision/assets/learning/presentation-selfcontained-v1.js
           node --check revision/assets/learning/presentation-material-alignment-v1.js
-          node --check revision/assets/learning/presentation-bookmark-v1.js
           node --check revision/assets/learning/interactive-nav.js
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/portal-ux-v2.js
