@@ -2,6 +2,7 @@
   'use strict';
   if(window.__ANDES_ROLE_NAV_V2__) return;
   window.__ANDES_ROLE_NAV_V2__=true;
+  if(/\/Presentaciones\//i.test(location.pathname)) return;
   const script=document.currentScript||[...document.scripts].find(s=>/role-nav-v2\.js(?:\?|$)/.test(s.src));
   const ROOT=script?new URL('../../',script.src):new URL('./',location.href);
   const PORTAL=new URL('portal.html',ROOT).href;
