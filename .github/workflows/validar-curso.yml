@@ -46,6 +46,9 @@ jobs:
       - name: Auditar lecturas y feedback del laboratorio
         run: python revision/tools/auditar_lecturas_feedback.py
 
+      - name: Auditar correspondencia presentación y laboratorio
+        run: node revision/tools/auditar_laboratorios_curriculo.mjs
+
       - name: Auditar panel docente, archivado y UX institucional
         run: python revision/tools/auditar_teacher_dashboard.py
 
@@ -113,6 +116,7 @@ jobs:
           node --check revision/assets/learning/readings-v6.js
           node --check revision/assets/learning/readings-v7-alignment.js
           node --check revision/assets/learning/lab-content-s13-s16-alignment-v1.js
+          node --check revision/assets/learning/lab-curriculum-v1.js
           node --check revision/assets/learning/lab-runtime-v4.js
           node --check revision/assets/learning/lab-runtime-v7.js
           node --check revision/assets/learning/lab-sql-engine-v1.js
@@ -133,6 +137,16 @@ jobs:
           if [ -f assets/learning/analytics-fallback-link.js ]; then
             node --check assets/learning/analytics-fallback-link.js
           fi
+
+      - name: Proteger alineación curricular del laboratorio
+        run: |
+          set -euo pipefail
+          LOADER='revision/assets/learning/lab-runtime-v4.js'
+          CURRICULUM='revision/assets/learning/lab-curriculum-v1.js'
+          SW='revision/service-worker.js'
+          grep -q 'lab-curriculum-v1.js' "$LOADER" || { echo '::error::El runtime debe aplicar la alineación curricular antes de renderizar.'; exit 1; }
+          grep -q 'lab-curriculum-v1.js' "$SW" || { echo '::error::La PWA debe publicar la alineación curricular.'; exit 1; }
+          grep -q 'BETWEEN, IN y LIKE aparecen únicamente como anticipo de S3' "$CURRICULUM" || { echo '::error::Debe quedar documentada la frontera S2→S3.'; exit 1; }
 
       - name: Proteger rendimiento móvil del laboratorio SQL
         run: |
