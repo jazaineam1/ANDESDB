@@ -13,6 +13,26 @@ data-title= learning-core.js Criterio de salida
   const response=await fetch(source,{cache:'no-cache'});
   if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
   let html=await response.text();
+  const storyOrder=`<script>
+  (()=>{
+    const stage=document.querySelector('.stage');if(!stage)return;
+    const fold=s=>String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+    const all=[...stage.querySelectorAll(':scope > .slide')];
+    const byTitle=rx=>all.filter(s=>rx.test(fold(s.dataset.title||s.querySelector('h1,h2')?.textContent||'')));
+    /* S1 ya dejó la memoria necesaria: evitamos una recapitulación duplicada. */
+    byTitle(/^recap s1$/).forEach(s=>s.remove());
+    const current=[...stage.querySelectorAll(':scope > .slide')];
+    const closing=[...current].reverse().find(s=>/cierre|salida|que te llevas/.test(fold(s.dataset.title||s.querySelector('h1,h2')?.textContent||'')))||current.at(-1);
+    const appendix=/aclaracion|excel: lo bueno|donde brillan|cuando conviene cada familia|motores|por que sqlite|instal|abrir la base|si algo falla|la interfaz/;
+    current.filter(s=>s!==closing&&appendix.test(fold(s.dataset.title||s.querySelector('h1,h2')?.textContent||''))).forEach(s=>{
+      s.dataset.storyOptional='appendix';
+      const ey=s.querySelector('.ey');if(ey&&!/^APÉNDICE/i.test(ey.textContent||''))ey.textContent='APÉNDICE / PRECLASE · '+ey.textContent;
+      stage.insertBefore(s,closing);
+    });
+    const agenda=[...stage.querySelectorAll(':scope > .slide')].find(s=>/agenda/.test(fold(s.dataset.title||'')));
+    if(agenda){const h=agenda.querySelector('h2');if(h)h.textContent='Al final responderás cuatro preguntas con SQL';const old=agenda.querySelector('.story-s2-goal');if(!old){const p=document.createElement('p');p.className='ctx story-s2-goal';p.innerHTML='<b>Producto antes que temario:</b> la primera consulta debe ejecutarse en los primeros 25–30 minutos. Los bloques marcados como apéndice quedan disponibles para consulta o preflight.';h?.insertAdjacentElement('afterend',p)}}
+  })();
+  <\/script>`;
   const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912-lite2"><\/script>';
   const clarify=`<script>
   document.addEventListener('DOMContentLoaded',()=>{
@@ -25,6 +45,8 @@ data-title= learning-core.js Criterio de salida
     if(brand)slide.insertBefore(note,brand);else slide.appendChild(note);
   });
   <\/script>`;
+  const mainPos=html.toLowerCase().lastIndexOf('</main>');
+  if(mainPos>=0)html=html.slice(0,mainPos)+storyOrder+'\n'+html.slice(mainPos);else html+=storyOrder;
   const lower=html.toLowerCase(),pos=lower.lastIndexOf('</body>');
   html=pos>=0?html.slice(0,pos)+nav+'\n'+clarify+'\n'+html.slice(pos):html+nav+clarify;
   document.open();document.write(html);document.close();
