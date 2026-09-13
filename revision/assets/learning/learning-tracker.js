@@ -19,7 +19,7 @@
       if(!guestLab&&!window.ANDES_PLATFORM)await add('lms-platform.js?v=20260912-net2');
       if(!window.__ANDES_HEARTBEAT_POLICY__)await add('heartbeat-policy.js?v=20260912a');
       if(!window.ANDES_LMS?.version?.startsWith('3.'))await add('learning-tracker-v3.js?v=20260912-perf2');
-      await add('lms-integral-patch.js?v=20260912-lms2');
+      if(!guestLab)await add('lms-integral-patch.js?v=20260912-lms2');
       if(/\/lab\.html$/i.test(location.pathname)&&!guestLab)await add('lab-resume.js?v=20260912-lms2');
       if(isPresentation)await add('presentation-resume.js?v=20260912-perf2');
       if(!guestLab){
