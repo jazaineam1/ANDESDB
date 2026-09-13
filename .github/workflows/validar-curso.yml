@@ -57,6 +57,19 @@ jobs:
           grep -q 'history.replaceState' revision/assets/learning/email-access-v1.js || { echo '::error::El token del correo debe retirarse de la URL antes de continuar.'; exit 1; }
           grep -q 'email-access-v1.js' revision/service-worker.js || { echo '::error::La PWA debe incluir el runtime de acceso por correo.'; exit 1; }
 
+      - name: Proteger salida visible y estilo institucional
+        run: |
+          set -euo pipefail
+          grep -q 'session-controls-v1.js' revision/assets/learning/uniandes-skin-v1.js || { echo '::error::El LMS debe cargar el control global de sesión.'; exit 1; }
+          grep -q "textContent='Salir'" revision/assets/learning/session-controls-v1.js || { echo '::error::El botón Salir debe permanecer visible para usuarios autenticados.'; exit 1; }
+          grep -q 'session-controls-v1.js' revision/service-worker.js || { echo '::error::La PWA debe precachear el control global de sesión.'; exit 1; }
+          if grep -q 'border-left:5px solid #175cd3' revision/assets/learning/portal-ux-v2.js; then
+            echo '::error::No reintroducir el borde lateral azul tipo tarjeta generada por IA.'; exit 1
+          fi
+          if grep -q 'border-left:4px solid var(--andes-gold' revision/assets/learning/teacher-dashboard-ux-v2.js; then
+            echo '::error::No reintroducir borde lateral de color en tarjetas docentes.'; exit 1
+          fi
+
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
@@ -73,6 +86,7 @@ jobs:
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/portal-ux-v2.js
           node --check revision/assets/learning/email-access-v1.js
+          node --check revision/assets/learning/session-controls-v1.js
           node --check revision/assets/learning/course-story-ui.js
           node --check revision/assets/learning/course-data.js
           node --check revision/assets/learning/uniandes-skin-v1.js
