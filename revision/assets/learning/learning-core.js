@@ -7,9 +7,13 @@
     if ([...document.scripts].some(s => s.src && new URL(s.src, location.href).href === src)) return;
     const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el);
   };
-  load(new URL('learning-core-base.js?v=20260912-lms', dir).href);
+  const isPresentation = /\/Presentaciones\//i.test(location.pathname) || !!document.querySelector('.slide');
+  /* En las presentaciones el laboratorio vive en el LMS/Recursos. No montamos
+     la antigua capa flotante “Práctica”, que duplicaba navegación y chocaba
+     con los controles del visor en móvil. */
+  if (!isPresentation) load(new URL('learning-core-base.js?v=20260913-lms2', dir).href);
   load(new URL('learning-tracker.js?v=20260912-lms', dir).href);
-  if(document.querySelector('.slide')){
+  if(isPresentation){
     load(new URL('presentation-story-v1.js?v=20260912-story1', dir).href);
     load(new URL('presentation-story-v2-patch.js?v=20260912-story2', dir).href);
     load(new URL('presentation-story-v3-polish.js?v=20260912-story3', dir).href);
