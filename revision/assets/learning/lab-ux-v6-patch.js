@@ -3,7 +3,7 @@
 if(window.__ANDES_LAB_UX_V6__)return;
 window.__ANDES_LAB_UX_V6__=true;
 const PRIMARY={1:'s1-diagnostico',2:'sql-s2',3:'sql-s3',4:'sql-s4',5:'sql-s5',6:'s6-reglas-evidencia',7:'erd-s7',8:'erd-s8',9:'s9-constraints',10:'decision-s10',11:'s11-documentos',12:'warehouse-s12',13:'bigquery-s13',14:'unnest-s14',15:'s15-integrador',16:'s16-dp900'};
-const AUTH='andesdb.lms.auth.v1',PREFIX='andesdb.lab.answers.v2.';
+const AUTH='andesdb.lms.auth.v1',PREFIX='andesdb.lab.answers.v2.',remoteCompleted=new Set();
 const session=Number(new URLSearchParams(location.search).get('session'))||0;
 const codeFor=i=>i===10?PRIMARY[session]:`s${session}-r${i}`;
 const safeJSON=(s,f)=>{try{return JSON.parse(s)}catch{return f}};
@@ -24,7 +24,7 @@ function snapshot(i=practice()){
 function put(i,slot,snap){if(!session||!i||!snap)return;const all=loadStore(),e=all[i]||{};e[slot]=snap;e.updated_at=new Date().toISOString();all[i]=e;saveStore(all)}
 const saveDraft=()=>{const i=practice(),snap=snapshot(i);if(snap)put(i,'draft',snap)};
 const saveCorrect=()=>{const i=practice(),snap=snapshot(i);if(snap){put(i,'correct',snap);put(i,'draft',snap)}return snap};
-function preferred(i,api){const e=loadStore()[i];if(!e)return null;const done=Boolean(api?.localCompleted?.(codeFor(i)));return (done&&e.correct)||e.draft||e.correct||null}
+function preferred(i,api){const e=loadStore()[i],done=Boolean(api?.localCompleted?.(codeFor(i))||remoteCompleted.has(codeFor(i)));if(e)return (done&&e.correct)||e.draft||e.correct||null;if(done){const task=window.ANDES_LAB_CONTENT?.sessions?.[session]?.tasks?.[i-1];if(task?.type==='classify'&&Array.isArray(task.answers))return {kind:'classify',values:[...task.answers]};if(task?.type==='order'&&Array.isArray(task.answer))return {kind:'order',values:[...task.answer]}}return null}
 function fire(el,type){try{el.dispatchEvent(new Event(type,{bubbles:true}))}catch(_){}}
 const tick=()=>new Promise(r=>setTimeout(r,0));
 async function restoreOrder(saved){
@@ -89,7 +89,7 @@ function installFastProgress(api){
     if(scope!=='me'||fresh!==true||!/\/lab\.html$/i.test(location.pathname))return original(scope,fresh);
     if(last&&Date.now()-lastAt<700)return Promise.resolve(last);
     if(inflight)return inflight;
-    inflight=(async()=>{const a=safeJSON(localStorage.getItem(AUTH)||'null',null);if(!a?.token)return original(scope,fresh);const c=new AbortController(),timer=setTimeout(()=>c.abort(),8000);try{const r=await fetch(endpoint,{method:'GET',headers:{Authorization:'Bearer '+a.token},signal:c.signal,cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);last=await r.json();lastAt=Date.now();return last}catch(e){console.warn('ANDESDB: progreso ligero no disponible; uso respaldo completo',e);return original(scope,fresh)}finally{clearTimeout(timer);inflight=null}})();
+    inflight=(async()=>{const a=safeJSON(localStorage.getItem(AUTH)||'null',null);if(!a?.token)return original(scope,fresh);const absorb=d=>{remoteCompleted.clear();for(const x of (d?.activity_progress||[]))if(x.status==='completed')remoteCompleted.add(String(x.activity_code));lastSignature='';setTimeout(()=>restore(api),0);return d};const c=new AbortController(),timer=setTimeout(()=>c.abort(),8000);try{const r=await fetch(endpoint,{method:'GET',headers:{Authorization:'Bearer '+a.token},signal:c.signal,cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);last=absorb(await r.json());lastAt=Date.now();return last}catch(e){console.warn('ANDESDB: progreso ligero no disponible; uso respaldo completo',e);return absorb(await original(scope,fresh))}finally{clearTimeout(timer);inflight=null}})();
     return inflight;
   };
 }
