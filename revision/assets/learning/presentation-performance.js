@@ -4,12 +4,7 @@ if(window.__ANDES_PRESENTATION_PERFORMANCE__)return;
 if(!/\/ANDESDB\/revision\/Presentaciones\//i.test(location.pathname))return;
 window.__ANDES_PRESENTATION_PERFORMANCE__=true;
 
-/*
- * Las presentaciones cambian varias clases por cada avance. Algunos runtimes LMS
- * observan esas mutaciones para detectar la diapositiva actual. En móviles, una
- * ráfaga de clics puede disparar docenas de callbacks y peticiones simultáneas.
- * Este guard agrupa observers futuros por frame y estabiliza telemetría/red.
- */
+/* Agrupa observadores y red de telemetría para que una ráfaga de navegación no bloquee móvil. */
 const NativeMO=window.MutationObserver;
 if(NativeMO&&!window.__ANDES_NATIVE_MUTATION_OBSERVER__){
   window.__ANDES_NATIVE_MUTATION_OBSERVER__=NativeMO;
@@ -34,34 +29,48 @@ if(NativeMO&&!window.__ANDES_NATIVE_MUTATION_OBSERVER__){
   window.MutationObserver=AndesMutationObserver;
 }
 
+/*
+ * learning-tracker-v3 usa una función track interna, así que envolver ANDES_LMS.track
+ * no basta. Interceptamos únicamente POST slide_viewed y conservamos la última
+ * diapositiva estable. Las diapositivas atravesadas en una ráfaga no cuentan como
+ * lectura pedagógica y, sobre todo, no generan una tormenta de requests.
+ */
+const nativeFetch=window.fetch.bind(window);
+let slideTimer=null,pendingSlideRequest=null,dashboardInflight=null;
+function urlOf(input){try{return typeof input==='string'?input:input?.url||String(input)}catch{return''}}
+function successfulBufferedResponse(){return new Response('{"ok":true,"buffered":true}',{status:200,headers:{'Content-Type':'application/json'}})}
+function flushSlideRequest(){
+  if(!pendingSlideRequest)return;
+  const item=pendingSlideRequest;pendingSlideRequest=null;clearTimeout(slideTimer);slideTimer=null;
+  const init={...(item.init||{}),keepalive:true};
+  nativeFetch(item.input,init).catch(()=>{});
+}
+window.fetch=function(input,init={}){
+  const url=urlOf(input),method=String(init?.method||'GET').toUpperCase();
+  if(method==='POST'&&/\/functions\/v1\/learning-track(?:\?|$)/.test(url)&&typeof init?.body==='string'){
+    try{
+      const body=JSON.parse(init.body);
+      if(body?.event_type==='slide_viewed'){
+        pendingSlideRequest={input,init};
+        clearTimeout(slideTimer);
+        slideTimer=setTimeout(flushSlideRequest,450);
+        return Promise.resolve(successfulBufferedResponse());
+      }
+    }catch(_){ }
+  }
+  if(method==='GET'&&/\/functions\/v1\/learning-dashboard\?[^#]*scope=me/i.test(url)){
+    if(dashboardInflight)return dashboardInflight.then(r=>r.clone());
+    dashboardInflight=nativeFetch(input,init).finally(()=>setTimeout(()=>{dashboardInflight=null},250));
+    return dashboardInflight.then(r=>r.clone());
+  }
+  return nativeFetch(input,init);
+};
+addEventListener('pagehide',flushSlideRequest,{once:true});
+
 function patchLms(){
   const api=window.ANDES_LMS;
   if(!api||api.__presentationPerfPatched)return false;
   api.__presentationPerfPatched=true;
-
-  if(typeof api.track==='function'){
-    const originalTrack=api.track.bind(api);
-    let slideTimer=null,slideArgs=null;
-    api.track=function(eventType,metadata={},overrides={}){
-      if(eventType==='slide_viewed'){
-        slideArgs=[eventType,metadata,overrides];
-        clearTimeout(slideTimer);
-        slideTimer=setTimeout(()=>{
-          const args=slideArgs;slideArgs=null;
-          if(args)originalTrack(...args).catch(()=>{});
-        },420);
-        return Promise.resolve(true);
-      }
-      return originalTrack(eventType,metadata,overrides);
-    };
-    addEventListener('pagehide',()=>{
-      if(!slideArgs)return;
-      clearTimeout(slideTimer);
-      const args=slideArgs;slideArgs=null;
-      originalTrack(...args).catch(()=>{});
-    },{once:true});
-  }
-
   if(typeof api.dashboard==='function'){
     const originalDashboard=api.dashboard.bind(api);
     let inflight=null,lastValue=null,lastAt=0;
@@ -70,17 +79,13 @@ function patchLms(){
       const now=Date.now();
       if(inflight)return inflight;
       if(lastValue&&now-lastAt<1800)return Promise.resolve(lastValue);
-      inflight=Promise.resolve(originalDashboard(scope,fresh)).then(v=>{
-        lastValue=v;lastAt=Date.now();return v;
-      }).finally(()=>{inflight=null});
+      inflight=Promise.resolve(originalDashboard(scope,fresh)).then(v=>{lastValue=v;lastAt=Date.now();return v}).finally(()=>{inflight=null});
       return inflight;
     };
   }
   return true;
 }
-
 if(!patchLms()){
-  let tries=0;
-  const timer=setInterval(()=>{if(patchLms()||++tries>80)clearInterval(timer)},50);
+  let tries=0;const timer=setInterval(()=>{if(patchLms()||++tries>80)clearInterval(timer)},50);
 }
 })();
