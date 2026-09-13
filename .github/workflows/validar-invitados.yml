@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'revision/guest.html'
+      - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
@@ -12,6 +13,7 @@ on:
     branches: [main]
     paths:
       - 'revision/guest.html'
+      - 'revision/assets/learning/guest-mode-v1.js'
       - 'revision/assets/learning/guest-mode-v2.js'
       - 'revision/assets/learning/learning-tracker.js'
       - 'revision/service-worker.js'
@@ -27,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validar JavaScript
         run: |
+          node --check revision/assets/learning/guest-mode-v1.js
           node --check revision/assets/learning/guest-mode-v2.js
           node --check revision/assets/learning/learning-tracker.js
           node --check revision/service-worker.js
@@ -34,10 +37,12 @@ jobs:
         run: |
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
+          V1='revision/assets/learning/guest-mode-v1.js'
           T='revision/assets/learning/learning-tracker.js'
           SW='revision/service-worker.js'
           grep -q "andesdb.guest.local.v1" "$G" || { echo '::error::El progreso invitado debe usar almacenamiento separado.'; exit 1; }
           grep -q "andesdb.lms.pending.v3" "$G" || { echo '::error::El modo invitado debe bloquear la cola académica autenticada.'; exit 1; }
+          grep -q "guest-mode-v2.js" "$V1" || { echo '::error::El loader v1 debe delegar de forma segura a v2.'; exit 1; }
           grep -q "guestLab" "$T" || { echo '::error::El loader debe reconocer laboratorios invitados.'; exit 1; }
           grep -q "guest-mode-v2.js" "$T" || { echo '::error::El loader debe usar el runtime invitado no recursivo.'; exit 1; }
           grep -q "if(!guestLab){" "$T" || { echo '::error::Los módulos autenticados deben quedar detrás de la condición guestLab.'; exit 1; }
@@ -49,8 +54,9 @@ jobs:
         run: |
           set -euo pipefail
           G='revision/assets/learning/guest-mode-v2.js'
-          if grep -q 'MutationObserver' "$G"; then
-            echo '::error::El modo invitado no debe observar recursivamente todo el DOM.'
+          V1='revision/assets/learning/guest-mode-v1.js'
+          if grep -q 'MutationObserver' "$G" || grep -q 'MutationObserver' "$V1"; then
+            echo '::error::Ningún runtime invitado puede observar recursivamente todo el DOM.'
             exit 1
           fi
           grep -q "api.ready=()=>Promise.resolve" "$G" || { echo '::error::El invitado debe iniciar sin esperar autenticación remota.'; exit 1; }
