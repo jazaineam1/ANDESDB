@@ -50,8 +50,9 @@
   </div></main>
 </div>
 <nav class="mobile-nav"><a href="portal.html">⌂<br>Inicio</a><a href="learning-hub.html">▤<br>Curso</a><a class="active" href="learning-hub.html#sesiones">✓<br>Laboratorio</a></nav>
-<script>try{if(localStorage.getItem('andesdb.lab4.migrated')!=='1'){const k='andesdb.lms.local.v1',x=JSON.parse(localStorage.getItem(k)||'{}');if(x&&typeof x==='object'){x.completed={};localStorage.setItem(k,JSON.stringify(x))}localStorage.setItem('andesdb.lab4.migrated','1')}}catch(_){}</script>
-<script src="assets/learning/learning-tracker.js?v=20260912-nav1"></script>
+<script>try{if(new URLSearchParams(location.search).get('guest')!=='1'&&localStorage.getItem('andesdb.lab4.migrated')!=='1'){const k='andesdb.lms.local.v1',x=JSON.parse(localStorage.getItem(k)||'{}');if(x&&typeof x==='object'){x.completed={};localStorage.setItem(k,JSON.stringify(x))}localStorage.setItem('andesdb.lab4.migrated','1')}}catch(_){}</script>
+<script src="assets/learning/guest-mode-v3.js?v=20260913-guest3"></script>
+<script src="assets/learning/learning-tracker.js?v=20260913-guest3"></script>
 <script src="assets/learning/lab-content-v4.js?v=20260912a"></script>
 <script src="assets/learning/lab-content-v4-patch.js?v=20260912b"></script>
 <script src="assets/learning/lab-runtime-v4.js?v=20260913-mobile1"></script>
