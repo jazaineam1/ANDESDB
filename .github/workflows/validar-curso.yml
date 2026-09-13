@@ -81,6 +81,36 @@ jobs:
             node --check assets/learning/analytics-fallback-link.js
           fi
 
+      - name: Proteger rendimiento móvil del laboratorio SQL
+        run: |
+          set -euo pipefail
+          LOADER='revision/assets/learning/lab-runtime-v4.js'
+          RUNTIME='revision/assets/learning/lab-runtime-v7.js'
+          ENGINE='revision/assets/learning/lab-sql-engine-v1.js'
+          WORKER='revision/assets/learning/lab-sql-worker-v1.js'
+          SCAFFOLD='revision/assets/learning/lab-sql-scaffold-v2.js'
+
+          grep -q 'lab-runtime-v7.js' "$LOADER" || { echo '::error::El loader debe activar runtime v7.'; exit 1; }
+          if grep -q 'lab-runtime-v5.js' "$LOADER"; then
+            echo '::error::No se puede reactivar runtime v5 en el laboratorio.'
+            exit 1
+          fi
+          grep -q 'new Worker' "$ENGINE" || { echo '::error::SQL debe ejecutarse mediante Web Worker.'; exit 1; }
+          grep -q 'importScripts' "$WORKER" || { echo '::error::El Worker debe cargar SQL.js fuera del hilo principal.'; exit 1; }
+          if grep -q 'initSqlJs' "$RUNTIME" || grep -q 'new SQL.Database' "$RUNTIME"; then
+            echo '::error::runtime v7 no puede inicializar SQL.js en el hilo de interfaz.'
+            exit 1
+          fi
+          if grep -q 'initSqlJs' "$SCAFFOLD" || grep -q 'new SQL.Database' "$SCAFFOLD"; then
+            echo '::error::El revisor de sintaxis no puede crear un segundo motor SQL.'
+            exit 1
+          fi
+          if grep -q 'warmSQL' "$RUNTIME"; then
+            echo '::error::No se permite precalentar SQL mientras el estudiante puede estar escribiendo.'
+            exit 1
+          fi
+          grep -q 'interactive-widget=resizes-content' revision/lab.html || { echo '::error::Falta manejo explícito del teclado móvil.'; exit 1; }
+
       - name: Comprobar que la portada se puede regenerar
         run: |
           python tools/construir-index.py
