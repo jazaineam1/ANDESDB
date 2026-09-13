@@ -51,6 +51,7 @@ jobs:
           node --check assets/learning/presentation-selfcontained-v1.js
           node --check assets/learning/interactive-nav.js
           node --check assets/learning/lab-runtime-v4.js
+          node --check assets/learning/lab-sql-scaffold-v1.js
           node --check assets/learning/lab-finish-v1.js
           node --check Presentaciones/M3/sql-lab-s9.js
           node --check assets/pwa-install.js
