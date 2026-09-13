@@ -69,9 +69,10 @@ if(S[5]){
 }
 
 /* S11 · la presentación explica “precio congelado” y “referencia viva”, no introduce
-   la palabra snapshot como requisito. Se usa el vocabulario que vio el estudiante. */
+   snapshot como vocabulario pedagógico. Se usa el lenguaje que vio el estudiante. */
 if(S[11]){
  S[11].tasks[4]=C('Copia histórica o referencia viva','Decide cómo conviene conservar cada dato.',['Copia histórica','Referencia viva'],['precio_unitario de una venta ya confirmada','nombre actual de una categoría del catálogo'],['Copia histórica','Referencia viva'],'Lo acordado en una venta no debe cambiar si mañana cambia el catálogo; los datos maestros actuales sí pueden consultarse por referencia.');
+ S[11].tasks[7]=C('Duplicación peligrosa','Clasifica cuándo una copia embebida se vuelve riesgosa.',['Riesgosa','Copia histórica intencional'],['Nombre de producto mutable copiado en miles de documentos vivos','Precio histórico congelado al momento de compra','Dato maestro que cambia con frecuencia duplicado en muchas colecciones','Dirección de envío histórica de una venta cerrada'],['Riesgosa','Copia histórica intencional','Riesgosa','Copia histórica intencional'],'Duplicar datos mutables puede crear inconsistencias; conservar una copia histórica de lo acordado puede ser deliberado.');
 }
 
 /* S12 · surrogate key/SCD no se enseña en esta presentación. Se reemplaza por
@@ -80,5 +81,5 @@ if(S[12]){
  S[12].tasks[6]=C('Batch, streaming u OLTP en vivo','Elige el mecanismo que corresponde mejor a cada necesidad.',['Batch','Streaming','OLTP en vivo'],['cargar las ventas cerradas al warehouse cada madrugada','enviar cada pedido cerrado al pipeline casi en tiempo real','mostrar cuántas mesas están ocupadas ahora mismo'],['Batch','Streaming','OLTP en vivo'],'Batch tolera espera; streaming alimenta continuamente; una pregunta operacional de “ahora mismo” se responde en el OLTP.');
 }
 
-window.ANDES_LAB_CONTENT.version='4.4.0-curriculum';
+window.ANDES_LAB_CONTENT.version='4.4.1-curriculum';
 })();
