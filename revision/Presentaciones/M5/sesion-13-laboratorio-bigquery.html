@@ -21,7 +21,28 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
   if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
   let html=await response.text();
   const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
-  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912b"><\/script>';
+  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260912c"><\/script>';
+  const storyOrder=`<script>
+  (()=>{
+    const stage=document.querySelector('.stage');if(!stage)return;
+    const fold=s=>String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+    const title=s=>fold((s.dataset.title||'')+' '+(s.querySelector('h1,h2')?.textContent||''));
+    const slides=[...stage.querySelectorAll(':scope > .slide')];
+    const closing=[...slides].reverse().find(s=>/cierre|salida/.test(title(s)))||slides.at(-1);
+    const optional=/^ruta de acceso|^preflight|se puede cambiar|practica adicional/;
+    slides.filter(s=>s!==closing&&optional.test(title(s))).forEach(s=>{
+      s.dataset.storyOptional='appendix';
+      const ey=s.querySelector('.ey');if(ey&&!/^APÉNDICE/i.test(ey.textContent||''))ey.textContent='APÉNDICE / PRECLASE · '+ey.textContent;
+      stage.insertBefore(s,closing);
+    });
+    const now=[...stage.querySelectorAll(':scope > .slide')];
+    const lab1=now.find(s=>/laboratorio particion/.test(title(s)));
+    const bytes=now.find(s=>/^bytes procesados|bytes procesados/.test(title(s)));
+    if(lab1&&bytes&&lab1.nextElementSibling!==bytes){lab1.insertAdjacentElement('afterend',bytes)}
+    if(bytes){const ey=bytes.querySelector('.ey');if(ey&&!/evidencia central/i.test(fold(ey.textContent)))ey.textContent='EVIDENCIA CENTRAL · '+ey.textContent;bytes.dataset.storyEvidence='bytes'}
+    const bridge=now.find(s=>/puente s12/.test(title(s)));if(bridge&&!bridge.querySelector('[data-story-s13-contract]')){const note=document.createElement('div');note.dataset.storyS13Contract='1';note.className='checkpoint';note.innerHTML='<b>Contrato de hoy:</b> una consulta no termina cuando devuelve el número correcto. Después del primer laboratorio debes poder mostrar también <b>cuánto leyó</b> y explicar por qué.';bridge.querySelector('h2')?.insertAdjacentElement('afterend',note)}
+  })();
+  <\/script>`;
   const clarify=`<script>
   document.addEventListener('DOMContentLoaded',()=>{
     const m=(location.pathname+' '+document.title).match(/sesion[-_\\s]*(\\d{1,2})/i); const n=m?Number(m[1]):0;
@@ -31,6 +52,8 @@ href="sesion-14-bigquery-anidados-mapa-azure.html"
     if(n===4||n===5)p.innerHTML+=' <b>Ordena la salida final por <code>film_id ASC</code>.</b>';
   });
   <\/script>`;
+  const mainPos=html.toLowerCase().lastIndexOf('</main>');
+  if(mainPos>=0)html=html.slice(0,mainPos)+storyOrder+'\n'+html.slice(mainPos);else html+=storyOrder;
   const lower=html.toLowerCase();
   const pos=lower.lastIndexOf('</body>');
   html=pos>=0?html.slice(0,pos)+kit+'\n'+nav+'\n'+clarify+'\n'+html.slice(pos):html+kit+nav+clarify;
