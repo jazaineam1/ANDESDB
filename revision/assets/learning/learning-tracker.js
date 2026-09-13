@@ -12,7 +12,7 @@
     try{
       const isPresentation=/\/Presentaciones\//i.test(location.pathname);
       const guestLab=/\/lab\.html$/i.test(location.pathname)&&new URLSearchParams(location.search).get('guest')==='1';
-      if(guestLab)await add('guest-mode-v1.js?v=20260913-guest1');
+      if(guestLab)await add('guest-mode-v2.js?v=20260913-guest2');
       if(isPresentation&&!window.__ANDES_PRESENTATION_PERFORMANCE__)await add('presentation-performance.js?v=20260912-perf2');
       if(!window.ANDES_COURSE)await add('course-data.js?v=20260912-perf1');
       try{await window.ANDES_COURSE?.ready?.()}catch(_){ }
