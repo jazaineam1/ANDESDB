@@ -4,15 +4,15 @@ const current=document.currentScript||[...document.scripts].find(s=>/interactive
 const dir=new URL('./',current.src);
 const load=name=>new Promise((resolve,reject)=>{const src=new URL(name,dir).href;if([...document.scripts].some(s=>s.src&&s.src.split('?')[0]===src.split('?')[0])){resolve();return}const el=document.createElement('script');el.src=src;el.async=false;el.onload=resolve;el.onerror=reject;document.head.appendChild(el)});
 (async()=>{try{
-  /* Presentación = visor ligero. El LMS completo vive en Portal/Curso/Lab. */
+  const guestSurface=new URLSearchParams(location.search).get('guest')==='1';
+  if(guestSurface){window.__ANDES_ACCESS_GATE_V4__=true;await load('guest-mode-v2.js?v=20260913-guest3')}
   await load('course-data.js?v=20260912-state2');
   await load('presentation-text-fixes.js?v=20260912-qa1');
   await load('presentation-story-v1.js?v=20260912-story1');
   await load('presentation-story-v2-patch.js?v=20260912-story2');
   await load('presentation-story-v3-polish.js?v=20260912-story3');
   if(/sesion[-_\s]*1[3-6]/i.test(location.pathname+' '+document.title))await load('presentation-study-cleanup-v1.js?v=20260913-study1');
-  await load('access-gate.js?v=20260912-lite2');
-  await load('resource-dock-a11y.js?v=20260913-mobile3');
+  if(!guestSurface){await load('access-gate.js?v=20260912-lite2');await load('resource-dock-a11y.js?v=20260913-mobile3')}
   await load('analytics-config.js?v=20260912-ga4a');
   await load('analytics.js?v=20260912-ga4a');
   await load('presentation-telemetry.js?v=20260912-lite1');
