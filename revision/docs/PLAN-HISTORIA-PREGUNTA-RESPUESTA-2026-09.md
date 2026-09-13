@@ -10,119 +10,98 @@ Toda intervención se evalúa en este orden:
 
 Una pregunta no puede quedar como decoración. Puede responderse en la misma diapositiva, mediante feedback después del intento o en el cierre explícito de la secuencia, pero el estudiante debe poder identificar **cuál fue la respuesta**.
 
-## Clasificación de las ediciones propuestas
+## Clasificación y estado de las ediciones
 
-| Propuesta | Estado | Decisión | Implementación |
-|---|---|---|---|
-| Problema antes que definición | **OBLIGATORIA** | El concepto debe resolver una necesidad ya visible. | Reforzada en la capa narrativa; S3/S6/S7/S10/S11 reciben problema o decisión antes de la receta. |
-| Predicción antes de ejecución | **OBLIGATORIA** | SQL, JOIN, BigQuery y UNNEST deben pedir expectativa antes de observar. | Contrato narrativo activo; S3 incorpora pregunta antes de operador. |
-| Intento antes de solución | **OBLIGATORIA** | La referencia sirve para comparar, no para copiar. | S8 bloquea la referencia hasta declarar intento; S16 mantiene revelado posterior. |
-| Guiado una vez, independiente después | **OBLIGATORIA** | El andamiaje debe disminuir dentro de cada sesión. | Se conserva como criterio de QA; los cierres exigen transferencia. |
-| Dominar / Reconocer / Mapa | **OBLIGATORIA en sesiones cargadas** | No todo lo nombrado tiene el mismo peso. | Activa en S10, S12, S13, S14 y S16. |
-| Caso distinto al cierre | **OBLIGATORIA** | Debe existir evidencia de transferencia. | El runtime explicita la respuesta de la sesión y la siguiente pregunta. |
-| Cada pregunta debe tener respuesta | **OBLIGATORIA** | Pregunta sin cierre = deuda narrativa. | `presentation-story-v2-patch.js` cierra S1–S16 y responde las preguntas narrativas añadidas. |
-| Etiquetar todas las slides con función | **POSIBLE** | Útil, pero puede convertirse en ruido. | Los chips repetidos consecutivos se ocultan; el cambio de función sí queda visible. |
-| S1 · abrir con valor antes de teoría | **OBLIGATORIA** | S1 debe dejar la necesidad de almacenar y preguntar. | Se conserva pregunta central y se responde el incidente de roles por responsabilidades. |
-| S1 · añadir más teoría/herramientas | **NO NECESARIA** | Compite con la historia. | No se añade. |
-| S2 · llegar pronto a la primera consulta | **OBLIGATORIA** | La promesa de S1 debe pagarse pronto. | **Implementado:** el wrapper elimina la recapitulación duplicada, mueve bloques secundarios a apéndice y fija como meta visible ejecutar SQL en 25–30 min. |
-| S2 · eliminar completamente motores/SQLite | **NO NECESARIA** | Son reconocimiento útil. | Se conservan, pero salen del núcleo y pasan a apéndice/preflight. |
-| S2 · eliminar slide “diremos base para todo” | **POSIBLE / recomendada** | Es aclaración oral, no hito narrativo. | Se conserva como referencia, pero se mueve a apéndice. |
-| S2 · fusionar Excel vs BD | **POSIBLE / recomendada** | Reduce tiempo pasivo. | No se destruye contenido: ambas slides salen del núcleo y quedan en apéndice para consulta. |
-| S3 · operador desde una pregunta | **OBLIGATORIA** | BETWEEN/IN/LIKE/GROUP BY/HAVING deben aparecer como respuesta. | Implementado: preguntas problema + respuesta explícita para los bloques detectados. |
-| S3 · exactamente 16 slides | **NO NECESARIA** | El número no es objetivo pedagógico. | No se impone. |
-| S4 · grano antes/después del JOIN | **OBLIGATORIA** | Prepara S5, S8 y S12. | Implementado y la pregunta tiene respuesta explícita. |
-| S4 · RIGHT/FULL al mismo peso que INNER/LEFT | **NO NECESARIA** | Reconocimiento basta. | No se amplía. |
-| S5 · Pensamiento tabular, no “más SQL” | **OBLIGATORIA** | La sesión trata de construir la tabla objetivo. | Implementado en título/capa narrativa. |
-| S5 · conservar “algorítmica de tablas” | **POSIBLE** | Puede quedar como lenguaje propio, subordinado al término transferible. | Conservado como subtítulo. |
-| S6 · evidencia antes de taxonomía | **OBLIGATORIA** | El estudiante debe comprometerse antes de conocer etiquetas. | Implementado: “nunca vimos X” se pregunta y se responde antes de clasificar. |
-| S6 · rehacer toda la sesión | **NO NECESARIA** | Su hilo ya es fuerte. | No se reconstruye. |
-| S7 · regla → estructura trazable | **OBLIGATORIA** | Cada decisión de modelo necesita evidencia. | Se conserva; se añade contraejemplo explícito a “sustantivo = entidad”. |
-| S7 · sustantivo = entidad como regla | **NO NECESARIA / evitar** | Solo sirve como heurística inicial. | Implementado el contraejemplo con respuesta. |
-| S8 · ocultar referencia antes del intento | **OBLIGATORIA** | Es el mayor riesgo de copia. | Implementado. |
-| S8 · anomalía → dependencia → descomposición → reconstrucción | **OBLIGATORIA** | Es la historia correcta de normalización. | Criterio narrativo activo; no se promueve memorización aislada de 1FN/2FN/3FN. |
-| S9 · regla → violación → constraint → reintento | **OBLIGATORIA** | Constraint debe ser respuesta observable. | Implementado en la capa narrativa. |
-| S9 · tutorial largo de Supabase en núcleo | **POSIBLE mover a preflight** | PostgreSQL y reglas son el aprendizaje; botones son operación. | Se conserva como objetivo de edición física, no se elimina el tutorial. |
-| S10 · caso → requisitos → familia | **OBLIGATORIA** | Evita catálogo y “NoSQL porque escala”. | Implementado; la pregunta añadida tiene respuesta explícita. |
-| S10 · catálogo exhaustivo NoSQL | **NO NECESARIA** | Reconocer familias sí, memorizar catálogo no. | No se amplía. |
-| S11 · embed/reference por acceso y cambio | **OBLIGATORIA** | Es la decisión central de documentos. | Implementado: pregunta de decisión + respuesta explícita. |
-| S11 · Mongo/Firestore/Cosmos como tres cursos | **NO NECESARIA** | Una experiencia profunda + transferencia es suficiente. | No se duplica contenido. |
-| S12 · DOMINAR/RECONOCER/MAPA | **OBLIGATORIA** | Reduce sobrecarga. | Implementado. |
-| S12 · 368k vs 184k temprano | **POSIBLE / muy recomendada** | Puede ser el misterio conductor. | El deck ya usa 368k/184k como evidencia del problema; queda pendiente decidir si moverlo aún más temprano mejora la secuencia real. |
-| S12 · añadir más cloud | **NO NECESARIA** | Compite con grano, hechos y dimensiones. | No se añade. |
-| S13 · mismo resultado, bytes distintos | **OBLIGATORIA** | Conecta S12 correctitud → S13 eficiencia. | Implementado y la pregunta tiene respuesta explícita. |
-| S13 · acceso/preflight en núcleo | **POSIBLE mover** | Debe apoyar, no conducir. | Pendiente de edición física. |
-| S14 · significado antes de ARRAY/STRUCT | **OBLIGATORIA** | Primero modelo mental; después sintaxis. | Implementado y con respuesta explícita a la pregunta del pedido. |
-| S14 · ampliar proyecto integrador | **NO NECESARIA** | S15 debe conservar protagonismo. | No se amplía. |
-| S15 · controles progresivos | **OBLIGATORIA** | Los números deben validar, no dar la respuesta. | Implementado. |
-| S15 · arquitectura neutral | **OBLIGATORIA** | No sembrar la “respuesta bonita”. | Implementado. |
-| S15 · requisito sorpresa | **OBLIGATORIA** | Mide adaptación real. | Implementado. |
-| S15 · justificar alternativa descartada | **POSIBLE / recomendada** | Mejora defensa arquitectónica. | Integrado en la orientación narrativa/capstone. |
-| S16 · respuestas después del intento | **OBLIGATORIA** | Evita autoengaño. | Implementado con revelado posterior y confianza. |
-| S16 · escenarios más difíciles | **POSIBLE** | Mejora transferencia, pero después del mecanismo de feedback. | Queda como mejora de contenido, no requisito inmediato. |
-| Blueprint DP-900 como núcleo | **NO NECESARIA** | Es mapa, no historia central. | Se mantiene como MAPA/referencia. |
-| Predice → Ejecuta → Observa → Explica → Corrige → Transfiere | **OBLIGATORIA como gramática** | No obliga a seis slides distintas. | Se usa como criterio transversal. |
-| MCQ ≤ 50% | **OBLIGATORIA** | Evita convertir el laboratorio en quiz. | Se mantiene. |
-| Objetivo MCQ 25–35% | **POSIBLE** | Guía, no cuota. | No se impone automáticamente. |
-| Rankings, troubleshooting y catálogos a apéndice | **POSIBLE** | Solo cuando interrumpen la pregunta de la sesión. | Aplicado en S2; sigue como criterio para S13. |
+| Propuesta | Estado | Estado actual |
+|---|---|---|
+| Problema antes que definición | **OBLIGATORIA** | Implementada transversalmente; reforzada en S3, S6, S7, S10 y S11. |
+| Predicción antes de ejecución | **OBLIGATORIA** | Activa en SQL, JOIN, BigQuery y UNNEST. |
+| Intento antes de solución | **OBLIGATORIA** | S8 bloquea referencia; S15 libera controles después del primer intento; S16 exige confianza antes de revelar. |
+| Guiado → independiente → transferencia | **OBLIGATORIA** | Criterio de autoría y cierre de sesión. |
+| Dominar / Reconocer / Mapa | **OBLIGATORIA en sesiones cargadas** | S10, S12, S13, S14 y S16. |
+| Cada pregunta debe tener respuesta | **OBLIGATORIA** | `presentation-story-v2-patch.js` cierra la pregunta central S1–S16 y las preguntas narrativas añadidas. |
+| Etiquetar cada slide siempre | **POSIBLE** | Se evita sobre-etiquetar: chips consecutivos repetidos se ocultan. |
+| S1 · valor antes de teoría | **OBLIGATORIA** | Implementada; roles se leen como responsabilidades frente a un incidente. |
+| S1 · más teoría/herramientas | **NO NECESARIA** | No añadida. |
+| S2 · primer SQL temprano | **OBLIGATORIA** | Implementada: recap duplicado fuera, secundarios a apéndice y meta visible de SQL en 25–30 min. |
+| S2 · borrar motores/SQLite | **NO NECESARIA** | Se conservan como reconocimiento/preflight. |
+| S2 · aclaraciones/Excel/rankings en núcleo | **POSIBLE mover** | Implementado: salen del camino principal y quedan disponibles en apéndice. |
+| S3 · operador como respuesta a una pregunta | **OBLIGATORIA** | Implementada para BETWEEN, IN, LIKE, GROUP BY y HAVING. |
+| Número exacto de slides | **NO NECESARIA** | No se usa como objetivo pedagógico. |
+| S4 · grano antes/después del JOIN | **OBLIGATORIA** | Implementada y respondida explícitamente. |
+| RIGHT/FULL al mismo peso que INNER/LEFT | **NO NECESARIA** | Reconocimiento. |
+| S5 · pensamiento tabular | **OBLIGATORIA** | Implementada; “algorítmica de tablas” queda como subtítulo propio. |
+| S6 · evidencia antes de taxonomía | **OBLIGATORIA** | Implementada. |
+| Rehacer S6 completa | **NO NECESARIA** | No se reconstruye. |
+| S7 · regla → estructura trazable | **OBLIGATORIA** | Implementada; contraejemplo explícito a “sustantivo = entidad”. |
+| S8 · referencia después del intento | **OBLIGATORIA** | Implementada. |
+| S8 · anomalía → dependencia → descomposición → reconstrucción | **OBLIGATORIA** | Gramática central de normalización. |
+| S9 · regla → violación → constraint → reintento | **OBLIGATORIA** | Implementada. |
+| S9 · tutorial Supabase fuera del núcleo | **POSIBLE / recomendada** | Implementada como preclase/operación y con botón “ya tengo Supabase listo” para saltar al núcleo de reglas y DDL. |
+| S10 · caso → requisitos → familia | **OBLIGATORIA** | Implementada. |
+| Catálogo exhaustivo NoSQL | **NO NECESARIA** | No se amplía. |
+| S11 · embed/reference por acceso y cambio | **OBLIGATORIA** | Implementada. |
+| Tres cursos Firestore/Mongo/Cosmos | **NO NECESARIA** | No se duplica. |
+| S12 · DOMINAR/RECONOCER/MAPA | **OBLIGATORIA** | Implementada. |
+| S12 · 368k vs 184k como misterio temprano | **POSIBLE / muy recomendada** | Implementada: aparece antes de definiciones y se responde después del grano/JOIN. |
+| Más cloud en S12 | **NO NECESARIA** | No se añade. |
+| S13 · mismo resultado, bytes distintos | **OBLIGATORIA** | Implementada. |
+| S13 · preflight/acceso fuera del núcleo | **POSIBLE / recomendada** | Implementada: acceso, preflight y precisión secundaria pasan a apéndice; bytes procesados queda inmediatamente después del primer laboratorio. |
+| S14 · significado antes de ARRAY/STRUCT | **OBLIGATORIA** | Implementada. |
+| S14 · Azure por necesidad, no catálogo | **POSIBLE / recomendada** | Implementada: el mapa queda oculto hasta que el estudiante decida primero por necesidad/familia. |
+| Ampliar proyecto dentro de S14 | **NO NECESARIA** | S15 conserva protagonismo. |
+| S15 · controles progresivos | **OBLIGATORIA** | Implementada de verdad: al inicio solo 12 casos y 24 eventos; los demás controles se liberan después de una primera versión. |
+| S15 · arquitectura neutral | **OBLIGATORIA** | Implementada. |
+| S15 · requisito sorpresa | **OBLIGATORIA** | Implementada: reapertura histórica del caso. |
+| S15 · alternativa descartada | **POSIBLE / recomendada** | Implementada. |
+| S16 · respuestas después del intento | **OBLIGATORIA** | Implementada; exige confianza 1–3 antes de revelar. |
+| S16 · escenarios con distractores | **POSIBLE / recomendada** | Implementada como modo reto: carga → forma → requisito → familia → servicio; después clasifica error y señal ignorada. |
+| Blueprint DP-900 como núcleo | **NO NECESARIA** | Permanece como MAPA. |
+| Predice → Ejecuta → Observa → Explica → Corrige → Transfiere | **OBLIGATORIA como gramática** | Criterio transversal. |
+| MCQ ≤ 50% | **OBLIGATORIA** | Cumplida. |
+| MCQ 25–35% | **POSIBLE como guía, no cuota** | No se fuerza: una cuota no puede desplazar SQL/modelado/explicación de mayor valor. |
 
-## Plan de mejora
+## Cierre del laboratorio
 
-### P0 · coherencia narrativa y respuesta — implementado
+La experiencia de laboratorio ahora tiene un cierre explícito:
 
-- Cierre explícito de la pregunta central en las 16 sesiones.
-- Respuesta explícita para preguntas narrativas añadidas en S1, S4, S10, S13 y S14.
-- Problema → respuesta reforzado en S3, S6, S7 y S11.
-- S8, S15 y S16 conservan intento antes de solución.
-- Los chips pedagógicos repetidos dejan de convertirse en decorado.
-- S2 compacta el núcleo: el contenido operativo/secundario queda disponible sin retrasar el primer SQL.
+- en la práctica 10 aparece **Finalizar laboratorio ✓**;
+- permanece deshabilitado hasta tener 10/10;
+- al completar la décima práctica la barra y el botón dan feedback visual;
+- se muestra una animación accesible de finalización con check y confeti CSS;
+- el mensaje distingue **todo sincronizado** de **avance guardado con sincronización pendiente**;
+- quedan disponibles **Volver al curso** y **Seguir revisando**;
+- la celebración automática ocurre una vez por usuario/sesión, pero el botón permite volver a abrir el cierre;
+- `prefers-reduced-motion` elimina las animaciones para quien lo necesite.
 
-### P1 · edición física restante
+La finalización no depende de que la red termine primero: 10/10 puede reconocerse con progreso local y luego actualizar el estado de sincronización.
 
-- **S9:** separar tutorial Supabase del núcleo conceptual si en clase sigue consumiendo tiempo de constraints.
-- **S12:** observar con cronómetro si 368k/184k debe aparecer todavía antes; moverlo solo si mejora el misterio, no por cumplir una plantilla.
-- **S13:** sacar acceso/preflight del centro y acercar bytes procesados al primer laboratorio.
-- **S16:** elevar dificultad de algunos escenarios solo después de conservar intento → feedback → clasificación del error.
+## QA de autoría
 
-### P2 · QA de autoría — implementado como gate
-
-Antes de aceptar una slide nueva, responder:
+Antes de aceptar una slide nueva:
 
 1. ¿Qué pregunta o necesidad abre?
 2. ¿Dónde obtiene el estudiante la respuesta?
 3. ¿Qué pregunta deja abierta para justificar lo siguiente?
 
-`tools/auditar_preguntas.py` comprueba el contrato narrativo y el workflow principal lo ejecuta junto con la validación de JavaScript.
+`tools/auditar_preguntas.py` revisa el contrato narrativo. El workflow principal valida además sintaxis de las capas de historia, S15, S9, runtime y cierre del laboratorio.
 
-## Implementación realizada
+## Reevaluación tras aplicar las mejoras posibles
 
-Se agregó `assets/learning/presentation-story-v2-patch.js` y se carga después de la capa narrativa existente. La nueva capa:
-
-- añade **Respuesta de la sesión** en S1–S16;
-- explicita la pregunta que abre la sesión siguiente;
-- responde las preguntas narrativas añadidas en S1, S4, S10, S13 y S14;
-- convierte bloques de S3 en problema → respuesta;
-- añade evidencia antes de taxonomía en S6;
-- añade el contraejemplo “sustantivo ≠ entidad” en S7;
-- centra S11 en embed/reference;
-- oculta chips pedagógicos consecutivos redundantes;
-- marca el contrato de respuesta en el DOM (`feedback`, `same-slide`, `session-close`, `sequence`).
-
-S2 además modifica su secuencia publicada antes de que inicialicen los controles: elimina la recapitulación duplicada, lleva bloques operativos y de reconocimiento al apéndice y convierte la agenda en una promesa de producto: responder preguntas con SQL y ejecutar la primera consulta en los primeros 25–30 minutos.
-
-El service worker subió a `v41` para evitar que la nueva capa quede atrapada por la caché anterior.
-
-## Reevaluación
-
-| Dimensión | Antes | Después |
+| Dimensión | Antes del rediseño | Estado actual |
 |---|---:|---:|
-| Hilo del curso | 9.7 | **9.8** |
-| Hilo dentro de las presentaciones | 9.5 | **9.75** |
-| Pregunta → respuesta explícita | 8.5 | **9.6** |
-| Problema antes de definición | 9.0 | **9.5** |
-| Esfuerzo antes de solución | 9.3 | **9.6** |
-| Jerarquía cognitiva | 9.3 | **9.6** |
-| Transferencia entre sesiones | 9.4 | **9.7** |
-| Riesgo de sobre-etiquetado | 8.7 | **9.4** |
+| Hilo del curso | 9.1 | **9.8** |
+| Hilo dentro de las presentaciones | 8.9 | **9.8** |
+| Pregunta → respuesta explícita | 8.5 | **9.7** |
+| Problema antes de definición | 9.0 | **9.6** |
+| Esfuerzo antes de solución | 9.3 | **9.7** |
+| Jerarquía cognitiva | 8.6 | **9.6** |
+| Transferencia entre sesiones | 9.2 | **9.8** |
 | S2 · tiempo hasta acción real | 8.2 | **9.4** |
+| S12 · misterio → grano → respuesta | 8.8 | **9.7** |
+| S13 · correctitud → eficiencia observable | 9.0 | **9.7** |
+| S15 · evaluación auténtica | 8.9 | **9.8** |
+| S16 · transferencia y metacognición | 8.9 | **9.7** |
+| Cierre perceptible del laboratorio | 7.5 | **9.8** |
 
-No se declara 10/10: S12 y S13 aún merecen observación/edición física basada en la clase real, y el auditor de preguntas es deliberadamente conservador —verifica el contrato de cierre, no pretende juzgar automáticamente la calidad semántica de cada explicación.
+No se declara 10/10: el siguiente nivel ya no consiste en agregar otra capa, sino en observar clases reales, medir tiempo efectivo por bloque, probar móvil y accesibilidad en dispositivos y ajustar únicamente aquello que la evidencia de uso muestre como fricción.
