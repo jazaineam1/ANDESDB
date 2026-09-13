@@ -56,6 +56,7 @@ jobs:
           node --check revision/assets/learning/interactive-nav.js
           node --check revision/assets/learning/learning-core.js
           node --check revision/assets/learning/lab-runtime-v4.js
+          node --check revision/assets/learning/lab-sql-scaffold-v1.js
           node --check revision/assets/learning/lab-finish-v1.js
           node --check revision/Presentaciones/M3/sql-lab-s9.js
           node --check revision/service-worker.js
