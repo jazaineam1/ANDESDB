@@ -61,6 +61,7 @@ jobs:
           node --check revision/assets/learning/lab-content-s13-s16-alignment-v1.js
           node --check revision/assets/learning/lab-context-output-v1.js
           node --check revision/assets/learning/lab-runtime-v4.js
+          node --check revision/assets/learning/lab-progress-reliability-v1.js
           node --check revision/assets/learning/lab-sql-scaffold-v1.js
           node --check revision/assets/learning/lab-finish-v1.js
           node --check revision/Presentaciones/M3/sql-lab-s9.js
