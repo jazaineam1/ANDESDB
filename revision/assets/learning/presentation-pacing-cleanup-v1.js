@@ -10,25 +10,24 @@ if(session<13||session>16)return;
 
 /*
  * El ritmo pertenece a la guía docente, no a la pantalla del estudiante.
- * Estas etiquetas describen la función pedagógica de cada diapositiva sin
- * convertir el minutaje del profesor en una promesa/contador para el grupo.
+ * Las claves están normalizadas igual que titleOf(): minúsculas y sin tildes.
  */
 const LABELS={
   13:{
     'puente s12 → s13':'Recuperación',
     'ruta de acceso':'Acceso al entorno',
     'preflight':'Preparación del entorno',
-    'partición':'Concepto',
+    'particion':'Concepto',
     '9 vs 4':'Ejemplo visual',
     'sql particionado':'Ejemplo guiado',
-    'laboratorio partición':'Laboratorio BigQuery',
+    'laboratorio particion':'Laboratorio BigQuery',
     'pausa':'Pausa',
-    'clusterización':'Concepto',
+    'clusterizacion':'Concepto',
     'orden del clustering':'Razonamiento',
     'laboratorio clustering':'Laboratorio BigQuery',
     'se puede cambiar':'Precisión técnica',
     'bytes procesados':'Evidencia',
-    'práctica adicional':'Extensión opcional',
+    'practica adicional':'Extensión opcional',
     'checkpoint independiente':'Transferencia',
     'cierre':'Cierre'
   },
@@ -57,11 +56,11 @@ const LABELS={
     'decisiones':'Decisiones',
     'arquitectura':'Arquitectura',
     'pausa':'Pausa',
-    'trabajo autónomo':'Trabajo autónomo',
-    'consultas mínimas':'Consultas',
+    'trabajo autonomo':'Trabajo autónomo',
+    'consultas minimas':'Consultas',
     'pruebas negativas':'Validación',
-    'salida analítica':'Transferencia analítica',
-    'rúbrica':'Criterios de evaluación',
+    'salida analitica':'Transferencia analítica',
+    'rubrica':'Criterios de evaluación',
     'code ownership':'Defensa técnica',
     'defensa':'Defensa',
     'cierre':'Cierre'
@@ -70,8 +69,8 @@ const LABELS={
     'puente s15':'Recuperación',
     'pre/post':'Comparación S1 ↔ S16',
     'blueprint':'Mapa DP-900',
-    'mapa único':'Recuperación espaciada',
-    'cómo responder':'Método',
+    'mapa unico':'Recuperación espaciada',
+    'como responder':'Método',
     'escenarios 1–3':'Conceptos centrales',
     'escenarios 4–6':'Relacional',
     'pausa':'Pausa',
