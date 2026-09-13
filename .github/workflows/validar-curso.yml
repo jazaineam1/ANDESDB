@@ -122,6 +122,7 @@ jobs:
           node --check revision/assets/learning/lab-hints-v2.js
           node --check revision/assets/learning/lab-context-output-v2.js
           node --check revision/assets/learning/lab-sql-scaffold-v2.js
+          node --check revision/assets/learning/lab-theme-v1.js
           node --check revision/assets/learning/lab-context-output-v1.js
           node --check revision/assets/learning/lab-progress-reliability-v1.js
           node --check revision/assets/learning/lab-hints-v1.js
@@ -162,6 +163,19 @@ jobs:
             exit 1
           fi
           grep -q 'interactive-widget=resizes-content' revision/lab.html || { echo '::error::Falta manejo explícito del teclado móvil.'; exit 1; }
+
+      - name: Proteger cursor y contraste del laboratorio
+        run: |
+          set -euo pipefail
+          LOADER='revision/assets/learning/lab-runtime-v4.js'
+          LAB_THEME='revision/assets/learning/lab-theme-v1.js'
+          SW='revision/service-worker.js'
+          grep -q 'lab-theme-v1.js' "$LOADER" || { echo '::error::El laboratorio debe cargar su capa de contraste al final del runtime.'; exit 1; }
+          grep -q 'caret-color:var(--lab-focus)!important' "$LAB_THEME" || { echo '::error::El editor SQL necesita un cursor explícito y visible.'; exit 1; }
+          grep -q 'background:var(--lab-code-bg)!important' "$LAB_THEME" || { echo '::error::El editor SQL no puede heredar el fondo genérico de textarea.'; exit 1; }
+          grep -q -- '--lab-text-soft:#d8e0ea' "$LAB_THEME" || { echo '::error::El tema oscuro debe conservar texto secundario legible.'; exit 1; }
+          grep -q 'border-left:1px solid var(--lab-line)!important' "$LAB_THEME" || { echo '::error::Las tarjetas del laboratorio no deben volver a usar una franja lateral de color.'; exit 1; }
+          grep -q 'lab-theme-v1.js' "$SW" || { echo '::error::La PWA debe precachear la capa de contraste del laboratorio.'; exit 1; }
 
       - name: Comprobar que la portada se puede regenerar
         run: |

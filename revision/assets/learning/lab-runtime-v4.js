@@ -16,5 +16,6 @@ const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement(
   await load('assets/learning/lab-context-output-v2.js?v=20260913-context2');
   await load('assets/learning/lab-sql-scaffold-v2.js?v=20260913-mobile3');
   await load('assets/learning/lab-finish-v1.js?v=20260912-finish1');
+  await load('assets/learning/lab-theme-v1.js?v=20260913-contrast1');
 }catch(err){console.error('ANDESDB lab loader',err);const e=document.getElementById('task');if(e)e.innerHTML='<div style="padding:12px;color:#991b1b">No se pudo cargar el laboratorio. Recarga la página.</div>'}})();
 })();
