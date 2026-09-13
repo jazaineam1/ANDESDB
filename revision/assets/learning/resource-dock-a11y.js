@@ -2,16 +2,23 @@
 'use strict';
 if(window.__ANDES_RESOURCE_DOCK_A11Y__)return;window.__ANDES_RESOURCE_DOCK_A11Y__=true;
 let timer=null,tries=0,resizeBound=false;
+function suppressDuplicatePractice(){
+  document.getElementById('andes-practice-btn')?.remove();
+  document.getElementById('andes-practice-overlay')?.remove();
+}
+suppressDuplicatePractice();
+const duplicateObserver=new MutationObserver(suppressDuplicatePractice);
+duplicateObserver.observe(document.documentElement,{childList:true,subtree:true});
 function installMobileCollisionGuard(dock){
   if(document.getElementById('andes-resource-mobile-css')===null){
     const style=document.createElement('style');
     style.id='andes-resource-mobile-css';
     style.textContent=`
-/* El laboratorio ya está dentro de Recursos: evitamos un segundo botón flotante. */
-#andes-practice-btn{display:none!important}
+/* El laboratorio ya está dentro de Recursos: nunca mostramos un segundo botón flotante. */
+#andes-practice-btn,#andes-practice-overlay{display:none!important}
 @media(max-width:760px){
-  #andes-resource-dock{right:10px!important;bottom:calc(var(--andes-dock-clearance,82px) + env(safe-area-inset-bottom))!important}
-  #andes-resource-dock .rd-panel{left:10px!important;right:10px!important;bottom:calc(var(--andes-dock-clearance,82px) + 54px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:min(58vh,520px)!important}
+  #andes-resource-dock{right:10px!important;bottom:calc(var(--andes-dock-clearance,92px) + env(safe-area-inset-bottom))!important}
+  #andes-resource-dock .rd-panel{left:10px!important;right:10px!important;bottom:calc(var(--andes-dock-clearance,92px) + 54px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:min(58vh,520px)!important}
 }
 @media(max-width:420px){
   #andes-resource-dock .rd-open{padding:10px 12px!important;font-size:11px!important}
@@ -20,15 +27,16 @@ function installMobileCollisionGuard(dock){
     document.head.appendChild(style);
   }
   const position=()=>{
+    suppressDuplicatePractice();
     if(!dock?.isConnected)return;
     if(!matchMedia('(max-width:760px)').matches){dock.style.removeProperty('--andes-dock-clearance');return}
     const vh=window.visualViewport?.height||window.innerHeight;
-    let clearance=10;
+    let clearance=78;
     const controls=[...document.querySelectorAll('.ctlbar')].filter(el=>{
       const cs=getComputedStyle(el);if(cs.display==='none'||cs.visibility==='hidden')return false;
-      const r=el.getBoundingClientRect();return r.height>0&&r.bottom>vh-140&&r.top<vh;
+      const r=el.getBoundingClientRect();return r.height>0&&r.bottom>vh-180&&r.top<vh;
     });
-    for(const el of controls){const r=el.getBoundingClientRect();clearance=Math.max(clearance,Math.ceil(vh-r.top+10))}
+    for(const el of controls){const r=el.getBoundingClientRect();clearance=Math.max(clearance,Math.ceil(vh-r.top+12))}
     dock.style.setProperty('--andes-dock-clearance',`${clearance}px`);
   };
   position();
@@ -40,9 +48,10 @@ function installMobileCollisionGuard(dock){
   }
   const ro='ResizeObserver'in window?new ResizeObserver(position):null;
   document.querySelectorAll('.ctlbar').forEach(el=>ro?.observe(el));
-  setTimeout(position,250);setTimeout(position,900);
+  setTimeout(position,120);setTimeout(position,450);setTimeout(position,1200);
 }
 function install(){
+  suppressDuplicatePractice();
   const dock=document.getElementById('andes-resource-dock');if(!dock)return false;
   const toggle=dock.querySelector('.rd-open'),panel=dock.querySelector('.rd-panel');if(!toggle||!panel)return false;
   installMobileCollisionGuard(dock);
@@ -65,5 +74,5 @@ function install(){
   return true;
 }
 timer=setInterval(()=>{if(install()||++tries>60)clearInterval(timer)},100);
-addEventListener('pagehide',()=>clearInterval(timer),{once:true});
+addEventListener('pagehide',()=>{clearInterval(timer);duplicateObserver.disconnect()},{once:true});
 })();
