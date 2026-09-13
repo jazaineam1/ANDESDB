@@ -1,4 +1,4 @@
-const VERSION='andesdb-lms-20260913-v52';
+const VERSION='andesdb-lms-20260913-v53';
 const CORE=`${VERSION}-core`,RUNTIME=`${VERSION}-runtime`,BASE=new URL('./',self.location.href).pathname;
 const ESSENTIAL=[
   './portal.html','./access.html','./learning-hub.html','./lab.html','./reading.html','./calendar.html','./assignment.html','./capstone.html','./verify.html','./teacher-dashboard.html','./manifest.webmanifest','./tools/curso.json',
@@ -17,7 +17,7 @@ self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='G
   const original=/\/Presentaciones\/M\d+\/__original__\/[^/]+\.html$/i.test(url.pathname);
   const doc=req.mode==='navigate'||/\.html?$/i.test(url.pathname);
   const manifest=/\/tools\/curso\.json$/i.test(url.pathname);
-  const critical=/\/assets\/learning\/(?:learning-core|interactive-nav|access-gate|resource-dock-a11y|presentation-text-fixes|presentation-story-v1|presentation-story-v2-patch|presentation-story-v3-polish|presentation-story-s15-patch|presentation-selfcontained-v1|presentation-material-alignment-v1|course-live-ui|course-story-ui|portal-ux-v2|presentation-telemetry|presentation-resume|lab-runtime-v4|lab-runtime-v5|lab-context-output-v1|lab-content-s13-s16-alignment-v1|lab-sql-scaffold-v1|lab-capstone-patch|lab-mcq-v1|lab-ux-v6-patch|lab-finish-v1|lms-platform|lms-ux-v1|learning-tracker)\.js$/i.test(url.pathname);
+  const critical=/\/assets\/learning\/(?:course-data|learning-core|interactive-nav|access-gate|resource-dock-a11y|presentation-text-fixes|presentation-story-v1|presentation-story-v2-patch|presentation-story-v3-polish|presentation-story-s15-patch|presentation-selfcontained-v1|presentation-material-alignment-v1|course-live-ui|course-story-ui|portal-ux-v2|presentation-telemetry|presentation-resume|lab-runtime-v4|lab-runtime-v5|lab-context-output-v1|lab-content-s13-s16-alignment-v1|lab-sql-scaffold-v1|lab-capstone-patch|lab-mcq-v1|lab-ux-v6-patch|lab-finish-v1|lms-platform|lms-ux-v1|learning-tracker)\.js$/i.test(url.pathname);
   const runtime=/\/assets\/learning\/[^/]+\.(?:js|json)$/i.test(url.pathname);
   const staticAsset=/\.(?:js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
   if(original){event.respondWith(cacheFirst(req));return}
