@@ -5,16 +5,22 @@
   style.textContent = `
     #andes-presentation-timer{position:fixed;right:.8rem;bottom:4.2rem;z-index:120;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff}
     #andes-presentation-timer *{box-sizing:border-box}
-    #andes-presentation-timer .apt-shell{width:min(360px,calc(100vw - 1.6rem));background:rgba(12,20,28,.96);border:1px solid rgba(255,255,255,.18);border-radius:18px;box-shadow:0 14px 38px rgba(0,0,0,.28);overflow:hidden;backdrop-filter:blur(12px)}
+    #andes-presentation-timer .apt-shell{width:min(370px,calc(100vw - 1.6rem));background:rgba(12,20,28,.96);border:1px solid rgba(255,255,255,.18);border-radius:18px;box-shadow:0 14px 38px rgba(0,0,0,.28);overflow:hidden;backdrop-filter:blur(12px)}
     #andes-presentation-timer .apt-head{display:flex;align-items:center;gap:.55rem;padding:.55rem .65rem;background:rgba(255,255,255,.05)}
     #andes-presentation-timer .apt-title{font-size:.76rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#ffd600;margin-right:auto}
     #andes-presentation-timer .apt-display{font-variant-numeric:tabular-nums;font-size:1.12rem;font-weight:900;letter-spacing:.04em;min-width:4.8rem;text-align:center}
     #andes-presentation-timer button{border:0;border-radius:999px;cursor:pointer;font:inherit;font-weight:850}
     #andes-presentation-timer .apt-icon{width:2rem;height:2rem;background:#fff;color:#151515;display:grid;place-items:center;padding:0}
-    #andes-presentation-timer .apt-body{padding:.7rem;display:grid;gap:.62rem}
+    #andes-presentation-timer .apt-body{padding:.7rem;display:grid;gap:.58rem}
     #andes-presentation-timer .apt-presets,#andes-presentation-timer .apt-actions,#andes-presentation-timer .apt-adjust{display:flex;gap:.4rem;flex-wrap:wrap}
     #andes-presentation-timer .apt-presets button{flex:1 1 3rem;background:#263746;color:#fff;padding:.48rem .55rem;border:1px solid rgba(255,255,255,.11)}
     #andes-presentation-timer .apt-presets button:hover,#andes-presentation-timer .apt-presets button.is-selected{background:#36536a;outline:1px solid rgba(255,214,0,.65)}
+    #andes-presentation-timer .apt-custom{display:grid;grid-template-columns:1fr auto;gap:.45rem;align-items:center}
+    #andes-presentation-timer .apt-custom input{min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);background:#0b151d;color:#fff;border-radius:12px;padding:.58rem .72rem;font:inherit;font-weight:800;font-variant-numeric:tabular-nums;outline:none}
+    #andes-presentation-timer .apt-custom input:focus{border-color:#ffd600;box-shadow:0 0 0 2px rgba(255,214,0,.16)}
+    #andes-presentation-timer .apt-custom input::placeholder{color:#91a4b2;font-weight:650}
+    #andes-presentation-timer .apt-custom button{background:#ffd600;color:#352c00;padding:.58rem .85rem}
+    #andes-presentation-timer .apt-custom-help{font-size:.64rem;color:#93a9b9;text-align:center;margin-top:-.18rem}
     #andes-presentation-timer .apt-actions button{flex:1 1 5rem;padding:.55rem .65rem}
     #andes-presentation-timer .apt-primary{background:#ffd600;color:#352c00}
     #andes-presentation-timer .apt-secondary{background:#fff;color:#171717}
@@ -28,7 +34,7 @@
     #andes-presentation-timer.is-done .apt-shell{outline:2px solid #8fd6aa;box-shadow:0 0 0 5px rgba(93,190,130,.12),0 14px 38px rgba(0,0,0,.28)}
     #andes-presentation-timer.is-done .apt-display{color:#a9e6bf}
     #andes-presentation-timer.is-free .apt-display{color:#ffd600;font-size:.95rem}
-    @media(max-width:700px){#andes-presentation-timer{right:.45rem;bottom:4.35rem}#andes-presentation-timer .apt-shell{width:min(330px,calc(100vw - .9rem))}}
+    @media(max-width:700px){#andes-presentation-timer{right:.45rem;bottom:4.35rem}#andes-presentation-timer .apt-shell{width:min(340px,calc(100vw - .9rem))}#andes-presentation-timer .apt-custom-help{font-size:.61rem}}
     @media print{#andes-presentation-timer{display:none!important}}
   `;
   document.head.appendChild(style);
@@ -53,6 +59,11 @@
           <button type="button" data-min="20">20 min</button>
           <button type="button" data-free="1">Libre</button>
         </div>
+        <div class="apt-custom" aria-label="Tiempo personalizado">
+          <input class="apt-custom-input" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="Personalizado · ej. 7:30" aria-label="Escribe un tiempo personalizado">
+          <button class="apt-custom-apply" type="button">Aplicar</button>
+        </div>
+        <div class="apt-custom-help">12 = 12 min · 7:30 = 7 min 30 s · 1:05:00 = 1 h 5 min</div>
         <div class="apt-adjust">
           <button type="button" data-adjust="-300">−5 min</button>
           <button class="apt-more" type="button" data-adjust="300">+5 min</button>
@@ -73,6 +84,8 @@
   const toggleBtn = root.querySelector('.apt-toggle');
   const soundBtn = root.querySelector('.apt-sound');
   const status = root.querySelector('.apt-status');
+  const customInput = root.querySelector('.apt-custom-input');
+  const customApply = root.querySelector('.apt-custom-apply');
   const presetButtons = [...root.querySelectorAll('[data-min], [data-free]')];
 
   let selectedSeconds = 10 * 60;
@@ -86,9 +99,42 @@
 
   const format = (seconds) => {
     const safe = Math.max(0, Math.ceil(seconds));
-    const m = Math.floor(safe / 60);
+    const h = Math.floor(safe / 3600);
+    const m = Math.floor((safe % 3600) / 60);
     const s = safe % 60;
+    if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  const describe = (seconds) => {
+    if (seconds % 60 === 0 && seconds < 3600) return `${seconds / 60} min`;
+    return format(seconds);
+  };
+
+  const parseCustomTime = (raw) => {
+    const value = String(raw || '').trim();
+    if (!value) return null;
+    if (/^\d+$/.test(value)) {
+      const minutes = Number(value);
+      return minutes > 0 ? minutes * 60 : null;
+    }
+    const parts = value.split(':');
+    if (parts.length === 2 && parts.every((part) => /^\d+$/.test(part))) {
+      const minutes = Number(parts[0]);
+      const seconds = Number(parts[1]);
+      if (seconds >= 60) return null;
+      const total = minutes * 60 + seconds;
+      return total > 0 ? total : null;
+    }
+    if (parts.length === 3 && parts.every((part) => /^\d+$/.test(part))) {
+      const hours = Number(parts[0]);
+      const minutes = Number(parts[1]);
+      const seconds = Number(parts[2]);
+      if (minutes >= 60 || seconds >= 60) return null;
+      const total = hours * 3600 + minutes * 60 + seconds;
+      return total > 0 ? total : null;
+    }
+    return null;
   };
 
   const selectButton = (predicate) => {
@@ -130,7 +176,7 @@
     if (!alarmed) {
       alarmed = true;
       beep();
-      status.textContent = 'Tiempo sugerido cumplido. Si el grupo lo necesita, añade 5 min o continúa sin límite.';
+      status.textContent = 'Tiempo sugerido cumplido. Si el grupo lo necesita, añade tiempo o continúa sin límite.';
     }
     render();
   };
@@ -148,15 +194,32 @@
     cancelAnimationFrame(tickId);
   };
 
-  const setMinutes = (minutes) => {
+  const setSeconds = (seconds, label = '') => {
     stopTick();
     freeMode = false;
-    selectedSeconds = Math.max(60, Math.round(minutes * 60));
+    selectedSeconds = Math.max(1, Math.round(seconds));
     remainingSeconds = selectedSeconds;
     alarmed = false;
-    status.textContent = `${minutes} min como referencia. Puedes ampliarlos cuando quieras.`;
-    selectButton((button) => Number(button.dataset.min) === minutes);
+    status.textContent = `${label || describe(selectedSeconds)} como referencia. Puedes cambiarlo cuando quieras.`;
+    selectButton(() => false);
     render();
+  };
+
+  const setMinutes = (minutes) => {
+    setSeconds(minutes * 60, `${minutes} min`);
+    selectButton((button) => Number(button.dataset.min) === minutes);
+  };
+
+  const applyCustomTime = () => {
+    const seconds = parseCustomTime(customInput.value);
+    if (!seconds) {
+      status.textContent = 'Escribe un tiempo válido: 12, 7:30 o 1:05:00.';
+      customInput.focus();
+      return;
+    }
+    setSeconds(seconds, `Personalizado ${format(seconds)}`);
+    customInput.value = format(seconds);
+    status.textContent = `Tiempo personalizado: ${format(seconds)}. Tú decides el ritmo.`;
   };
 
   const setFree = () => {
@@ -172,6 +235,14 @@
     button.addEventListener('click', () => setMinutes(Number(button.dataset.min)));
   });
   root.querySelector('[data-free]').addEventListener('click', setFree);
+  customApply.addEventListener('click', applyCustomTime);
+  customInput.addEventListener('keydown', (event) => {
+    event.stopPropagation();
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyCustomTime();
+    }
+  });
 
   root.querySelectorAll('[data-adjust]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -183,9 +254,10 @@
       if (running) {
         endAt += delta * 1000;
         remainingSeconds = Math.max(0, (endAt - Date.now()) / 1000);
+        selectedSeconds = Math.max(1, selectedSeconds + delta);
       } else {
-        selectedSeconds = Math.max(60, selectedSeconds + delta);
-        remainingSeconds = Math.max(60, remainingSeconds + delta);
+        selectedSeconds = Math.max(1, selectedSeconds + delta);
+        remainingSeconds = Math.max(1, remainingSeconds + delta);
       }
       alarmed = false;
       status.textContent = delta > 0 ? 'Añadimos 5 min: el ritmo del grupo manda.' : 'Reducimos 5 min como referencia.';
