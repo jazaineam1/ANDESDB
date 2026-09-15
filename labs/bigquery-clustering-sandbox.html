@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lab S13 · Clustering en BigQuery Sandbox</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17202a;background:#f4f7f9}
+    body{margin:0}.wrap{max-width:980px;margin:auto;padding:24px}.hero{background:#10212e;color:#fff;border-radius:20px;padding:28px}.hero h1{margin:.2rem 0;font-size:clamp(2rem,5vw,3.6rem)}.hero p{font-size:1.08rem;line-height:1.55}.tag{display:inline-block;background:#ffd600;color:#2d2500;font-weight:900;border-radius:999px;padding:.35rem .7rem}.card{background:#fff;border:1px solid #d9e2e8;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 8px 22px rgba(0,0,0,.04)}h2{margin-top:0}pre{overflow:auto;background:#0c1620;color:#eaf2f7;padding:16px;border-radius:12px;line-height:1.45}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.note{background:#fff8d8;border-left:5px solid #d9a600;padding:14px 16px;border-radius:10px}.ok{background:#eaf8ef;border-left:5px solid #2e8b57;padding:14px 16px;border-radius:10px}.links a{display:inline-block;margin:.25rem .35rem .25rem 0;padding:.65rem .85rem;border-radius:999px;background:#124e78;color:#fff;text-decoration:none;font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.grid{grid-template-columns:1fr}.wrap{padding:14px}.hero{padding:20px}}
+  </style>
+</head>
+<body><main class="wrap">
+  <section class="hero">
+    <span class="tag">Sesión 13 · Plan B público</span>
+    <h1>Clustering en BigQuery Sandbox</h1>
+    <p>Este laboratorio no depende de un enlace interno de Google Skills. Usa BigQuery Sandbox y datos públicos. El objetivo es comparar una tabla sin clustering con la misma tabla organizada por una columna de acceso frecuente.</p>
+    <div class="links"><a href="https://console.cloud.google.com/bigquery" target="_blank" rel="noopener">Abrir BigQuery Studio</a><a href="https://docs.cloud.google.com/bigquery/docs/sandbox?hl=es-419" target="_blank" rel="noopener">Guía oficial Sandbox</a></div>
+  </section>
+
+  <section class="card"><h2>0 · Antes de empezar</h2><p>BigQuery Sandbox funciona sin tarjeta de crédito ni cuenta de facturación y permite consultar datasets públicos. Google aplica límites gratuitos de uso. Si ya tienes un proyecto con facturación, revisa siempre el proyecto activo antes de ejecutar.</p><div class="note"><b>Importante:</b> clustering suele mostrar beneficios más visibles cuando la tabla o partición supera aproximadamente 64 MB. Si la diferencia en bytes es pequeña, eso también es un resultado válido: explica por qué el tamaño importa.</div></section>
+
+  <section class="card"><h2>1 · Comprueba que BigQuery responde</h2><pre><code>SELECT 1 AS listo;</code></pre><p>Si devuelve <code>1</code>, continúa.</p></section>
+
+  <section class="card"><h2>2 · Crea un dataset de trabajo</h2><pre><code>CREATE SCHEMA IF NOT EXISTS s13_bigquery
+OPTIONS(location = 'US');</code></pre><p>El dataset queda en tu proyecto actual. No necesitas escribir manualmente el Project ID.</p></section>
+
+  <section class="card"><h2>3 · Crea una tabla base sin clustering</h2><p>Usaremos preguntas de Stack Overflow de 2024. Conservamos pocas columnas para no almacenar información innecesaria.</p><pre><code>CREATE OR REPLACE TABLE s13_bigquery.posts_base AS
+SELECT
+  id,
+  owner_user_id,
+  creation_date,
+  score
+FROM `bigquery-public-data.stackoverflow.posts_questions`
+WHERE creation_date &gt;= TIMESTAMP('2024-01-01')
+  AND creation_date &lt;  TIMESTAMP('2025-01-01');</code></pre></section>
+
+  <section class="card"><h2>4 · Crea la misma tabla con clustering</h2><pre><code>CREATE OR REPLACE TABLE s13_bigquery.posts_clustered
+CLUSTER BY owner_user_id AS
+SELECT *
+FROM s13_bigquery.posts_base;</code></pre><p>Ahora ambas tablas contienen las mismas filas. La diferencia es la organización física de los bloques.</p></section>
+
+  <section class="card"><h2>5 · Predice antes de ejecutar</h2><div class="grid"><div><b>Consulta A</b><p>Tabla base, sin clustering.</p></div><div><b>Consulta B</b><p>Tabla clusterizada por <code>owner_user_id</code>.</p></div></div><div class="ok"><b>Escribe primero tu hipótesis:</b> “Espero que la tabla clusterizada lea menos porque…”</div></section>
+
+  <section class="card"><h2>6 · Ejecuta la consulta sobre la tabla base</h2><pre><code>SELECT
+  COUNT(*) AS preguntas,
+  AVG(score) AS score_promedio
+FROM s13_bigquery.posts_base
+WHERE owner_user_id BETWEEN 10000 AND 20000;</code></pre><p>Abre <b>Execution details / Job details</b> y registra los bytes procesados.</p></section>
+
+  <section class="card"><h2>7 · Ejecuta exactamente el mismo filtro sobre la tabla clusterizada</h2><pre><code>SELECT
+  COUNT(*) AS preguntas,
+  AVG(score) AS score_promedio
+FROM s13_bigquery.posts_clustered
+WHERE owner_user_id BETWEEN 10000 AND 20000;</code></pre><p>Compara los bytes procesados y los detalles de ejecución con la consulta anterior.</p></section>
+
+  <section class="card"><h2>8 · Cambia el filtro para probar el límite del diseño</h2><p>Ahora consulta una columna que <b>no</b> es la columna de clustering:</p><pre><code>SELECT COUNT(*) AS preguntas
+FROM s13_bigquery.posts_clustered
+WHERE score &gt;= 20;</code></pre><p>Pregunta: ¿esperas el mismo beneficio? ¿Por qué?</p></section>
+
+  <section class="card"><h2>9 · Cierre</h2><p>Completa estas dos frases:</p><ol><li><b>Clustering ayudó más cuando…</b></li><li><b>Clustering no garantiza menor lectura cuando…</b></li></ol><div class="ok"><b>Idea esperada:</b> BigQuery puede hacer <i>block pruning</i> cuando los filtros aprovechan las columnas de clustering. El efecto depende del patrón de consulta y del tamaño/organización de los bloques.</div></section>
+
+  <section class="card"><h2>Enlaces oficiales</h2><div class="links"><a href="https://docs.cloud.google.com/bigquery/docs/clustered-tables?hl=es" target="_blank" rel="noopener">Introducción a clustering</a><a href="https://docs.cloud.google.com/bigquery/docs/querying-clustered-tables" target="_blank" rel="noopener">Consultar tablas clusterizadas</a><a href="https://www.skills.google/course_templates/1304" target="_blank" rel="noopener">Curso 2 en Google Skills</a></div></section>
+</main></body></html>
