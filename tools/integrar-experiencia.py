@@ -5,7 +5,7 @@
 - Todas las sesiones públicas: analítica GA4 agregada y sin PII.
 - S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
-- S13: temporizador flotante para actividades, laboratorios y pausa.
+- S13: temporizador flexible y lenguaje de laboratorio centrado en aprendizaje.
 - S6 conserva únicamente su laboratorio SQL específico.
 - S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
 - S2-S5 se dejan intactas pedagógicamente; solo reciben analítica pública.
@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
 PRESENTATION_TIMER = ROOT / "assets" / "learning" / "presentation-timer.js"
+PRESENTATION_TIMER_VERSION = "20260915b"
 PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
 PUBLIC_ANALYTICS_CONFIG = ROOT / "assets" / "analytics-config.js"
@@ -49,6 +50,75 @@ def remove_learning_script(text: str) -> tuple[str, bool]:
     )
     new = pattern.sub("\n", text)
     return new, new != text
+
+
+def soften_s13_copy(text: str) -> tuple[str, bool]:
+    """Hace que el ritmo de S13 sea orientativo y no punitivo.
+
+    Las actividades conservan objetivos y evidencia, pero explicitan que los
+    tiempos se ajustan al grupo y que un problema de acceso no se interpreta
+    como falta de aprendizaje.
+    """
+    replacements = (
+        (
+            "<h2>Criterio de salida: no basta con que la consulta funcione</h2>",
+            "<h2>Meta de aprendizaje: que funcione y que podamos explicar cómo lee BigQuery</h2>",
+        ),
+        (
+            "<h3>Al terminar debes poder</h3>",
+            "<h3>Al finalizar, la idea es que puedas</h3>",
+        ),
+        (
+            '<div class="checkpoint"><b>Regla:</b> resultado correcto + lectura defendible.</div>',
+            '<div class="checkpoint"><b>Idea guía:</b> resultado correcto + evidencia de lectura. Si algo no sale a la primera, lo usamos para aprender.</div>',
+        ),
+        (
+            "<h2>Prueba el entorno antes de empezar a aprender</h2>",
+            "<h2>Aseguremos el entorno antes de entrar al laboratorio</h2>",
+        ),
+        (
+            '<div class="warn">Si el lab no arranca, usa el enlace al curso padre. Si Google Skills sigue bloqueado, pasa a <b>BigQuery Sandbox</b>; DuckDB-Wasm queda solo como contingencia conceptual.</div>',
+            '<div class="warn">Si el lab no arranca, cambia de ruta: curso padre → <b>BigQuery Sandbox</b> → apoyo del docente. Un problema de acceso no debe dejar a nadie atrás ni convertirse en una carrera contra el reloj.</div>',
+        ),
+        (
+            "<h2>Lab 1 · partición: ejecuta, mide y explica</h2>",
+            "<h2>Lab 1 · partición: explora, mide y explica a tu ritmo</h2>",
+        ),
+        (
+            '<div class="checkpoint"><b>Entrega mínima:</b> consulta + evidencia de bytes + explicación. Una captura sola no demuestra comprensión.</div>',
+            '<div class="checkpoint"><b>Evidencia sugerida:</b> intenta conservar consulta + evidencia de bytes + una explicación breve. Si no alcanzas a terminar, guarda lo logrado y explica hasta dónde llegaste.</div><div class="mini"><b>Ritmo flexible:</b> el temporizador es una referencia docente. Si el grupo necesita más tiempo, se amplía; el objetivo es comprender, no correr.</div>',
+        ),
+        (
+            "<h2>Lab 2 · clustering: observa qué consultas se benefician</h2>",
+            "<h2>Lab 2 · clustering: explora qué consultas se benefician</h2>",
+        ),
+        (
+            '<div class="checkpoint"><b>Pregunta de salida:</b> ¿por qué el mismo clustering no optimiza por igual cualquier filtro?</div>',
+            '<div class="checkpoint"><b>Pregunta para conversar:</b> ¿por qué el mismo clustering no ayuda por igual a cualquier filtro? Si todavía estás probando, comparte tu hipótesis.</div><div class="mini"><b>Ritmo flexible:</b> puedes usar más tiempo o trabajar acompañado. Llegar al razonamiento importa más que terminar primero.</div>',
+        ),
+        (
+            '<div class="ey">Solo si terminaste los dos labs</div>',
+            '<div class="ey">Extensión opcional · solo si el grupo va cómodo</div>',
+        ),
+        (
+            "Es extensión. No sacrifiques la evidencia de los dos laboratorios núcleo por completar una tercera actividad.",
+            "Es una extensión. Si el grupo necesita más tiempo, priorizamos consolidar los dos laboratorios principales y dejamos esta práctica para después.",
+        ),
+        (
+            "<h2>¿Qué debes poder explicar sin mirar la presentación?</h2>",
+            "<h2>¿Qué ideas nos llevamos y podemos seguir practicando?</h2>",
+        ),
+        (
+            '<div class="ey">Cierre · antes de salir</div>',
+            '<div class="ey">Cierre · conectemos las ideas</div>',
+        ),
+    )
+    changed = False
+    for old, new in replacements:
+        if old in text:
+            text = text.replace(old, new)
+            changed = True
+    return text, changed
 
 
 def ensure_public_analytics(text: str, path: Path) -> tuple[str, bool]:
@@ -108,6 +178,10 @@ def process_session(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
     changed = False
 
+    if n == 13:
+        text, softened = soften_s13_copy(text)
+        changed |= softened
+
     # Mantener la diferenciación técnica previa únicamente para S6+.
     if n >= 6:
         if n in TECHNICAL_DIFFERENTIATION:
@@ -125,10 +199,20 @@ def process_session(path: Path) -> bool:
                 text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
                 changed |= ok
 
-        if n == 13 and "presentation-timer.js" not in text:
+        if n == 13:
             src = relative_url(path, PRESENTATION_TIMER)
-            text, ok = inject_before(text, "</body>", f'<script src="{src}?v=20260915"></script>')
-            changed |= ok
+            timer_tag = f'<script src="{src}?v={PRESENTATION_TIMER_VERSION}"></script>'
+            timer_pattern = re.compile(
+                r'<script\s+src=["\'][^"\']*presentation-timer\.js(?:\?[^"\']*)?["\']\s*></script>',
+                re.I,
+            )
+            if timer_pattern.search(text):
+                new_text = timer_pattern.sub(timer_tag, text)
+                changed |= new_text != text
+                text = new_text
+            else:
+                text, ok = inject_before(text, "</body>", timer_tag)
+                changed |= ok
 
     # GA4 público se instala en todas las presentaciones S1-S16.
     text, analytics_changed = ensure_public_analytics(text, path)
