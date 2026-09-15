@@ -9,7 +9,81 @@
   if (!thisScript) return;
   const labUrl = new URL('../../labs/analitica-local.html', new URL('./', thisScript.src)).href;
 
+  const patchS13Labs = () => {
+    if (n !== 13) return;
+
+    const partitionSlide = document.querySelector('.slide[data-title="Laboratorio partición"]');
+    if (partitionSlide && !partitionSlide.dataset.verifiedLab) {
+      const links = partitionSlide.querySelector('.links');
+      if (links) {
+        links.innerHTML = `
+          <a href="https://www.skills.google/focuses/3694?locale=es&parent=catalog" target="_blank" rel="noopener">▶ Abrir Lab 1 verificado · Crea tablas particionadas por fecha en BigQuery (GSP414)</a>
+        `;
+      }
+      const h2 = partitionSlide.querySelector('h2');
+      if (h2) h2.textContent = 'Lab 1 · partición: práctica introductoria y guiada';
+      const checkpoint = partitionSlide.querySelector('.checkpoint');
+      if (checkpoint) {
+        checkpoint.innerHTML = '<b>Por qué este lab:</b> está centrado en partición, compara datos procesados y muestra que <code>LIMIT</code> no reduce por sí solo los bytes leídos. Es el laboratorio recomendado para todo el grupo.';
+      }
+      partitionSlide.dataset.verifiedLab = '1';
+    }
+
+    const clusteringSlide = document.querySelector('.slide[data-title="Laboratorio clustering"]');
+    if (clusteringSlide && !clusteringSlide.dataset.verifiedLab) {
+      const links = clusteringSlide.querySelector('.links');
+      if (links) {
+        links.innerHTML = `
+          <a href="https://www.skills.google/focuses/78061?locale=es&parent=catalog" target="_blank" rel="noopener">▶ Abrir Lab 2 verificado · Performance and Cost Optimization with BigQuery (GSP266)</a>
+        `;
+      }
+      const h2 = clusteringSlide.querySelector('h2');
+      if (h2) h2.textContent = 'Lab 2 · clustering: usa la Task 5 con acompañamiento docente';
+      const list = clusteringSlide.querySelector('ol');
+      if (list) {
+        list.innerHTML = `
+          <li>Inicia el lab con las <b>credenciales temporales</b> que entrega Google Skills.</li>
+          <li>Si el entorno aún no está preparado, sigue las tareas iniciales necesarias; <b>no es obligatorio convertir toda la sesión en el lab completo</b>.</li>
+          <li>Cuando llegues a <b>Task 5 · Improve row filtering and join performance by using clustering</b>, concentra allí el aprendizaje.</li>
+          <li>Compara la consulta original con las tablas clusterizadas por <code>order_id</code> y <code>product_id</code>, y explica qué bloques deja de ser necesario leer.</li>
+        `;
+      }
+      const checkpoint = clusteringSlide.querySelector('.checkpoint');
+      if (checkpoint) {
+        checkpoint.innerHTML = '<b>Foco de S13:</b> Task 5. El lab completo dura alrededor de 1 h 30 min e incluye partición, desnormalización y vistas materializadas; esos temas adicionales no son requisito para demostrar clustering en esta clase.';
+      }
+      const mini = clusteringSlide.querySelector('.mini');
+      if (mini) {
+        mini.innerHTML = '<b>Nivel:</b> Google lo etiqueta como introductorio, pero para este grupo lo usamos como práctica guiada. El objetivo es entender <code>CLUSTER BY</code>, block pruning y la evidencia de bytes, no terminar todas las tareas.';
+      }
+      clusteringSlide.dataset.verifiedLab = '1';
+    }
+
+    const routeSlide = document.querySelector('.slide[data-title="Cómo encontrar los laboratorios"]');
+    if (routeSlide && !routeSlide.dataset.verifiedLabs) {
+      const routes = routeSlide.querySelectorAll('.route');
+      if (routes[0]) {
+        routes[0].innerHTML = `
+          <strong>Lab 1 · Partición · GSP414</strong>
+          <span><b>Crea tablas particionadas por fecha en BigQuery</b> · introductorio y centrado en el concepto de S13.</span>
+          <div class="links"><a href="https://www.skills.google/focuses/3694?locale=es&parent=catalog" target="_blank" rel="noopener">▶ Abrir laboratorio verificado de partición</a></div>
+          <span class="mini">Ruta recomendada para todo el grupo.</span>
+        `;
+      }
+      if (routes[1]) {
+        routes[1].innerHTML = `
+          <strong>Lab 2 · Clustering · GSP266</strong>
+          <span><b>Performance and Cost Optimization with BigQuery</b> · usa específicamente la <b>Task 5</b> para clustering.</span>
+          <div class="links"><a href="https://www.skills.google/focuses/78061?locale=es&parent=catalog" target="_blank" rel="noopener">▶ Abrir laboratorio verificado de clustering</a></div>
+          <span class="mini">Práctica guiada: el lab completo contiene más temas que los necesarios para esta sesión.</span>
+        `;
+      }
+      routeSlide.dataset.verifiedLabs = '1';
+    }
+  };
+
   const inject = () => {
+    patchS13Labs();
     const overlay = document.getElementById('andes-learning-overlay');
     if (!overlay || overlay.querySelector('[data-analytics-fallback-link]')) return false;
     const targets = [...overlay.querySelectorAll('.ap-real')];
@@ -28,8 +102,9 @@
     return true;
   };
 
+  patchS13Labs();
   if (inject()) return;
-  const observer = new MutationObserver(() => { if (inject()) observer.disconnect(); });
+  const observer = new MutationObserver(() => { patchS13Labs(); if (inject()) observer.disconnect(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   setTimeout(() => observer.disconnect(), 10000);
 })();
