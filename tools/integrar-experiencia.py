@@ -5,6 +5,7 @@
 - Todas las sesiones públicas: analítica GA4 agregada y sin PII.
 - S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
+- S13: temporizador flotante para actividades, laboratorios y pausa.
 - S6 conserva únicamente su laboratorio SQL específico.
 - S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
 - S2-S5 se dejan intactas pedagógicamente; solo reciben analítica pública.
@@ -19,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEARNING = ROOT / "assets" / "learning" / "learning-core.js"
+PRESENTATION_TIMER = ROOT / "assets" / "learning" / "presentation-timer.js"
 PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
 PUBLIC_ANALYTICS_CONFIG = ROOT / "assets" / "analytics-config.js"
@@ -122,6 +124,11 @@ def process_session(path: Path) -> bool:
                 src = relative_url(path, ANALYTICS_FALLBACK)
                 text, ok = inject_before(text, "</body>", f'<script src="{src}"></script>')
                 changed |= ok
+
+        if n == 13 and "presentation-timer.js" not in text:
+            src = relative_url(path, PRESENTATION_TIMER)
+            text, ok = inject_before(text, "</body>", f'<script src="{src}?v=20260915"></script>')
+            changed |= ok
 
     # GA4 público se instala en todas las presentaciones S1-S16.
     text, analytics_changed = ensure_public_analytics(text, path)
