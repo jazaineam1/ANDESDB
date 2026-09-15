@@ -5,7 +5,8 @@
 - Todas las sesiones públicas: analítica GA4 agregada y sin PII.
 - S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
-- S13: temporizador flexible y lenguaje de laboratorio centrado en aprendizaje.
+- S13: temporizador flexible, lenguaje centrado en aprendizaje y comparación visual
+  entre partición y clustering.
 - S6 conserva únicamente su laboratorio SQL específico.
 - S7, S8, S10 y S16 no reciben una capa artificial Núcleo/Reto.
 - S2-S5 se dejan intactas pedagógicamente; solo reciben analítica pública.
@@ -131,6 +132,67 @@ def soften_s13_copy(text: str) -> tuple[str, bool]:
     return text, changed
 
 
+def replace_s13_slide(text: str, title: str, replacement: str) -> tuple[str, bool]:
+    pattern = re.compile(
+        rf'<section\b[^>]*data-title="{re.escape(title)}"[^>]*>.*?</section>',
+        re.I | re.S,
+    )
+    new_text, count = pattern.subn(replacement, text, count=1)
+    return new_text, count > 0 and new_text != text
+
+
+def improve_s13_storage_concepts(text: str) -> tuple[str, bool]:
+    """Refuerza la diferencia conceptual y visual entre partition y clustering."""
+    changed = False
+
+    css = """
+.storage-compare{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.75rem 0}
+.storage-card{border:1px solid #d9e2e9;border-radius:16px;padding:.85rem 1rem;background:#fff}
+.storage-card.partition{border-top:5px solid #124e78}.storage-card.cluster{border-top:5px solid #7b4bb7}
+.storage-card h3{margin:.05rem 0 .4rem}.storage-q{font-weight:900;font-size:1.02em;margin:.45rem 0;color:#17202a}
+.storage-chain{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:.8rem 0}
+.storage-step{border:1px solid #dce5ec;border-radius:15px;padding:.75rem;background:#f8fafb;min-height:155px}
+.storage-step strong{display:block;margin-bottom:.35rem}.storage-step .big{font-size:1.2em;font-weight:900;color:#124e78}
+.mini-partitions{display:grid;grid-template-columns:repeat(6,1fr);gap:.22rem;margin:.55rem 0}.mini-partitions span{height:28px;border-radius:5px;background:#dfe5ea}.mini-partitions .keep{background:#9fd0f5;border:1px solid #124e78}
+.mini-blocks{display:grid;grid-template-columns:repeat(8,1fr);gap:.18rem;margin:.55rem 0}.mini-blocks span{height:24px;border-radius:4px;background:#e6e0ef}.mini-blocks .keep{background:#bca3df;border:1px solid #68409b}
+.myth{border-left:5px solid #e0a800;background:#fff9dd;border-radius:10px;padding:.65rem .85rem;margin:.65rem 0}
+@media(max-width:760px){.storage-compare,.storage-chain{grid-template-columns:1fr}.storage-step{min-height:auto}}
+""".strip()
+    if ".storage-compare{" not in text and "</style>" in text:
+        text = text.replace("</style>", css + "\n</style>", 1)
+        changed = True
+
+    partition = '''<section class="slide dense" data-title="Partición"><div class="ey">Concepto 1 · segmentar a gran escala</div><h2>Partition crea fronteras grandes que BigQuery puede descartar completas</h2><p class="lead">Una tabla particionada se divide en <b>segmentos independientes llamados particiones</b>. Si el filtro usa la columna de partición de forma aprovechable, BigQuery puede omitir particiones enteras: <b>partition pruning</b>.</p><div class="mini-partitions" aria-label="Ejemplo visual de particiones"><span></span><span></span><span></span><span></span><span></span><span class="keep"></span><span class="keep"></span><span class="keep"></span><span class="keep"></span><span></span><span></span><span></span></div><div class="checkpoint"><b>Pregunta mental:</b> “¿qué pedazos grandes de la tabla puedo ignorar por completo?”. Si consultas julio, el objetivo es no revisar meses que no pueden aportar filas.</div><div class="myth"><b>No memorices “partition = fecha”.</b> La fecha es muy común porque muchos análisis filtran periodos, pero la decisión nace del patrón de consulta y de las estrategias de partición que admite BigQuery.</div><div class="brand"><span>Partición</span><span>Pruning de particiones completas</span></div></section>'''
+    text, ok = replace_s13_slide(text, "Partición", partition)
+    changed |= ok
+
+    clustering = '''<section class="slide dense" data-title="Clusterización"><div class="ey">Concepto 2 · organizar a escala más fina</div><h2>Clustering no crea otra tabla por partes: organiza los datos en bloques</h2><p class="lead">BigQuery ordena y agrupa físicamente los datos en <b>bloques de almacenamiento</b> usando las columnas de <code>CLUSTER BY</code>. Cuando una consulta filtra esas columnas, puede evitar bloques que no contienen valores relevantes: <b>block pruning</b>.</p><div class="storage-compare"><div class="storage-card partition"><h3>🧱 PARTITION</h3><div class="storage-q">¿Qué segmentos completos puedo excluir?</div><p>Divide la tabla en particiones. Actúa a una escala grande y ayuda a limitar el conjunto inicial de datos.</p></div><div class="storage-card cluster"><h3>🧩 CLUSTERING</h3><div class="storage-q">Dentro de lo que quedó, ¿qué bloques puedo excluir?</div><p>Organiza bloques por columnas de acceso frecuente. Actúa a una escala más fina.</p></div></div><div class="myth"><b>Mito a evitar:</b> “partition es para fechas y clustering para texto”. No. La diferencia central es <b>segmentación vs. organización de bloques</b>; el diseño depende de cómo consultas los datos.</div><div class="brand"><span>Clustering</span><span>Block pruning dentro de la tabla o partición</span></div></section>'''
+    text, ok = replace_s13_slide(text, "Clusterización", clustering)
+    changed |= ok
+
+    together = '''<section class="slide dense" data-title="Cómo trabajan juntos"><div class="ey">La imagen que debes recordar</div><h2>Partition reduce el territorio; clustering reduce los bloques dentro de ese territorio</h2><p class="lead">Supón ventas de 2024–2026, particionadas por <code>fecha</code> y clusterizadas por <code>categoria, cliente_id</code>. Preguntamos por <b>julio de 2026 + Bebidas + cliente 942</b>.</p><div class="storage-chain"><div class="storage-step"><strong>1 · Tabla completa</strong><div class="big">Todo el histórico</div><div class="mini-partitions"><span></span><span></span><span></span><span></span><span></span><span></span></div><p>Sin ayuda del diseño, una gran cantidad de datos puede ser candidata a lectura.</p></div><div class="storage-step"><strong>2 · PARTITION BY fecha</strong><div class="big">Queda julio de 2026</div><div class="mini-partitions"><span></span><span></span><span class="keep"></span><span></span><span></span><span></span></div><p><b>Partition pruning:</b> se descartan las demás particiones.</p></div><div class="storage-step"><strong>3 · CLUSTER BY categoria, cliente_id</strong><div class="big">Quedan bloques relevantes</div><div class="mini-blocks"><span></span><span class="keep"></span><span></span><span></span><span class="keep"></span><span></span><span></span><span></span></div><p><b>Block pruning:</b> dentro de julio se evitan bloques que no ayudan al filtro.</p></div></div><div class="quote"><b>En una frase:</b> partition decide qué compartimentos abrir; clustering ayuda a decidir qué cajas revisar dentro del compartimento.</div><div class="brand"><span>Juntos</span><span>Partición → bloques → menos lectura innecesaria</span></div></section>'''
+    if 'data-title="Cómo trabajan juntos"' not in text:
+        pattern = re.compile(r'(<section\b[^>]*data-title="Clusterización"[^>]*>.*?</section>)', re.I | re.S)
+        new_text, count = pattern.subn(r'\1\n' + together, text, count=1)
+        if count:
+            text = new_text
+            changed = True
+
+    order = '''<section class="slide dense" data-title="Orden del clustering"><div class="ey">El orden de CLUSTER BY sí importa</div><h2>La primera columna del clustering debe reflejar un patrón de acceso muy frecuente</h2><pre><code>CREATE OR REPLACE TABLE curso.ventas_optimizadas
+PARTITION BY fecha
+CLUSTER BY categoria, cliente_id
+AS
+SELECT * FROM curso.ventas;</code></pre><div class="g3"><div class="card blue"><h3>Filtro A</h3><p><code>categoria='Bebidas'</code></p><p>Empieza por la primera columna: buen candidato para aprovechar el clustering.</p></div><div class="card"><h3>Filtro B</h3><p><code>categoria='Bebidas' AND cliente_id=942</code></p><p>Puede aprovechar ambas columnas siguiendo el orden del clustering.</p></div><div class="card"><h3>Filtro C</h3><p><code>cliente_id=942</code></p><p>Puede beneficiarse, pero normalmente menos: se saltó la primera columna del clustering.</p></div></div><div class="checkpoint"><b>Ojo:</b> importa el orden de columnas en <code>CLUSTER BY</code>; no necesitas escribir las condiciones del <code>WHERE</code> en ese mismo orden textual.</div><div class="brand"><span>Clustering</span><span>Orden de diseño ≠ orden textual del WHERE</span></div></section>'''
+    text, ok = replace_s13_slide(text, "Orden del clustering", order)
+    changed |= ok
+
+    decision = '''<section class="slide dense" data-title="Partición, clustering o ambos"><div class="ey">Síntesis de decisión</div><h2>Elige por la pregunta que quieres evitar que BigQuery tenga que leer</h2><table class="decision"><thead><tr><th>Patrón de consulta</th><th>Primero investigaría</th><th>Por qué</th></tr></thead><tbody><tr><td>Consultas repetidas por periodos de fecha</td><td><b>Partición</b></td><td>Permite excluir periodos completos.</td></tr><tr><td>Filtros frecuentes por cliente, categoría, región u otras columnas</td><td><b>Clustering</b></td><td>Permite reducir bloques según esas columnas.</td></tr><tr><td>Primero periodo; luego cliente/categoría</td><td><b>Partición + clustering</b></td><td>Primero elimina particiones y luego bloques dentro de ellas.</td></tr><tr><td>Tabla pequeña o sin patrón estable</td><td><b>Medir primero</b></td><td>La optimización debe responder a un problema real.</td></tr></tbody></table><div class="storage-compare"><div class="storage-card partition"><h3>Partition</h3><p><b>Escala:</b> grande.</p><p><b>Unidad que evita leer:</b> particiones.</p><p><b>Estimación previa:</b> suele ser más predecible después del pruning.</p></div><div class="storage-card cluster"><h3>Clustering</h3><p><b>Escala:</b> fina.</p><p><b>Unidad que evita leer:</b> bloques.</p><p><b>Lectura final:</b> depende de los bloques que realmente se escanean.</p></div></div><div class="quote">No preguntes “¿cuál es mejor?”. Pregunta: <b>¿qué patrón de consulta quiero ayudar y a qué escala puedo descartar datos?</b></div><div class="brand"><span>Decisión</span><span>Segmentar · organizar · medir</span></div></section>'''
+    text, ok = replace_s13_slide(text, "Partición, clustering o ambos", decision)
+    changed |= ok
+
+    return text, changed
+
+
 def ensure_public_analytics(text: str, path: Path) -> tuple[str, bool]:
     changed = False
     cfg_src = relative_url(path, PUBLIC_ANALYTICS_CONFIG)
@@ -190,6 +252,8 @@ def process_session(path: Path) -> bool:
     if n == 13:
         text, softened = soften_s13_copy(text)
         changed |= softened
+        text, concepts_changed = improve_s13_storage_concepts(text)
+        changed |= concepts_changed
 
     if n >= 6:
         if n in TECHNICAL_DIFFERENTIATION:
