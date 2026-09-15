@@ -43,7 +43,6 @@ def inject_before(text: str, marker: str, fragment: str) -> tuple[str, bool]:
 
 
 def remove_learning_script(text: str) -> tuple[str, bool]:
-    """Retira cualquier carga antigua de learning-core.js."""
     pattern = re.compile(
         r"\s*<script\s+[^>]*src=[\"'][^\"']*learning-core\.js(?:\?[^\"']*)?[\"'][^>]*>\s*</script>\s*",
         re.I,
@@ -53,12 +52,7 @@ def remove_learning_script(text: str) -> tuple[str, bool]:
 
 
 def soften_s13_copy(text: str) -> tuple[str, bool]:
-    """Hace que el ritmo de S13 sea orientativo y no punitivo.
-
-    Las actividades conservan objetivos y evidencia, pero explicitan que los
-    tiempos se ajustan al grupo y que un problema de acceso no se interpreta
-    como falta de aprendizaje.
-    """
+    """Hace que el ritmo de S13 sea orientativo y no punitivo."""
     replacements = (
         (
             "<h2>Criterio de salida: no basta con que la consulta funcione</h2>",
@@ -81,8 +75,20 @@ def soften_s13_copy(text: str) -> tuple[str, bool]:
             '<div class="warn">Si el lab no arranca, cambia de ruta: curso padre → <b>BigQuery Sandbox</b> → apoyo del docente. Un problema de acceso no debe dejar a nadie atrás ni convertirse en una carrera contra el reloj.</div>',
         ),
         (
+            '<div class="brand"><span>Preflight</span><span>No avances con un entorno roto</span></div>',
+            '<div class="brand"><span>Preflight</span><span>Si algo falla, cambiamos de ruta</span></div>',
+        ),
+        (
             "<h2>Lab 1 · partición: ejecuta, mide y explica</h2>",
             "<h2>Lab 1 · partición: explora, mide y explica a tu ritmo</h2>",
+        ),
+        (
+            "<li>Completa la actividad oficial.</li>",
+            "<li>Avanza en la actividad oficial hasta donde el tiempo y el acceso lo permitan.</li>",
+        ),
+        (
+            '<li>Registra <b>bytes estimados o procesados</b> en una comparación.</li>',
+            '<li>Cuando la interfaz lo muestre, registra <b>bytes estimados o procesados</b> para comparar.</li>',
         ),
         (
             '<div class="checkpoint"><b>Entrega mínima:</b> consulta + evidencia de bytes + explicación. Una captura sola no demuestra comprensión.</div>',
@@ -91,6 +97,10 @@ def soften_s13_copy(text: str) -> tuple[str, bool]:
         (
             "<h2>Lab 2 · clustering: observa qué consultas se benefician</h2>",
             "<h2>Lab 2 · clustering: explora qué consultas se benefician</h2>",
+        ),
+        (
+            "<li>Compara evidencia de lectura/ejecución.</li>",
+            "<li>Cuando tengas resultados, compara la evidencia de lectura/ejecución disponible.</li>",
         ),
         (
             '<div class="checkpoint"><b>Pregunta de salida:</b> ¿por qué el mismo clustering no optimiza por igual cualquier filtro?</div>',
@@ -155,7 +165,6 @@ def process_index() -> bool:
             text, ok = inject_before(text, "</head>", fragment)
             changed |= ok
 
-    # La portada instala la PWA y pwa-install.js carga la analítica pública.
     text, removed = remove_learning_script(text)
     changed |= removed
 
@@ -182,7 +191,6 @@ def process_session(path: Path) -> bool:
         text, softened = soften_s13_copy(text)
         changed |= softened
 
-    # Mantener la diferenciación técnica previa únicamente para S6+.
     if n >= 6:
         if n in TECHNICAL_DIFFERENTIATION:
             if "learning-core.js" not in text:
@@ -214,7 +222,6 @@ def process_session(path: Path) -> bool:
                 text, ok = inject_before(text, "</body>", timer_tag)
                 changed |= ok
 
-    # GA4 público se instala en todas las presentaciones S1-S16.
     text, analytics_changed = ensure_public_analytics(text, path)
     changed |= analytics_changed
 
