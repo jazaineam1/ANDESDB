@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 12,
+  "sesionActual": 13,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -382,7 +382,7 @@
           "duracionUtil": 165,
           "modo": "guiada",
           "titulo": "Fundamentos de data warehouse",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.",
           "tags": [
             "data warehouse",
@@ -405,26 +405,44 @@
         {
           "n": 13,
           "fecha": "2026-09-15",
-          "duracionUtil": 145,
+          "duracionUtil": 165,
           "modo": "autonomo_guiado_con_servicio_real",
           "trabajoAutonomoMin": 75,
           "titulo": "Laboratorio BigQuery",
-          "estado": "pendiente",
-          "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición y clusterización de tablas, con la ruta de certificado de Google Skills.",
-          "tags": ["BigQuery", "cloud", "warehouse", "particion", "clusterizacion", "SQL", "workshop"],
+          "estado": "hoy",
+          "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición, clusterización, pruning y bytes procesados, con acceso estable desde los cursos de Google Skills.",
+          "tags": ["BigQuery", "PARTITION BY", "clusterización", "pruning", "bytes procesados", "SQL", "workshop"],
           "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
           "recursos": [
             {
               "txt": "🎓 Ruta Beginner: Google Cloud Data Analytics Certificate",
-              "href": "https://www.skills.google/paths/420"
+              "href": "https://www.skills.google/paths/420",
+              "externo": true
             },
             {
-              "txt": "▶ Laboratorio real: partición de tablas en BigQuery",
-              "href": "https://www.skills.google/paths/420/course_templates/1295/labs/562865"
+              "txt": "1️⃣ Curso para el lab de partición: Introduction to Data Analytics in Google Cloud",
+              "href": "https://www.skills.google/course_templates/1295",
+              "externo": true
             },
             {
-              "txt": "▶ Laboratorio real: clusterización de tablas en BigQuery",
-              "href": "https://www.skills.google/paths/420/course_templates/1304/labs/562975"
+              "txt": "▶ Lab directo: partición de tablas en BigQuery",
+              "href": "https://www.skills.google/paths/420/course_templates/1295/labs/562865",
+              "externo": true
+            },
+            {
+              "txt": "2️⃣ Curso para el lab de clustering: Data Management and Storage in the Cloud",
+              "href": "https://www.skills.google/course_templates/1304",
+              "externo": true
+            },
+            {
+              "txt": "▶ Lab directo: clusterización de tablas en BigQuery",
+              "href": "https://www.skills.google/paths/420/course_templates/1304/labs/562975",
+              "externo": true
+            },
+            {
+              "txt": "🛟 BigQuery Sandbox (plan B sin tarjeta)",
+              "href": "https://docs.cloud.google.com/bigquery/docs/sandbox",
+              "externo": true
             }
           ]
         },
