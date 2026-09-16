@@ -1,117 +1,120 @@
-# Sesión 15 · Contrato del Workbench integrador
+# Sesión 15 · Contrato del Workbench v5
 
-La evaluación se realiza en [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html). No es un cuestionario ni una entrega de seis archivos para corrección manual. El estudiante construye una solución dentro de **siete herramientas encadenadas**; cada herramienta produce evidencia verificable y el intento final registra el resultado en el LMS.
+La evaluación se realiza en [`/ANDESDB/evaluador-s15-v5.html`](/ANDESDB/evaluador-s15-v5.html). El objetivo ya no es entregar archivos para corrección manual ni responder un cuestionario. El estudiante construye, prueba, rompe y repara una solución; después enfrenta un cambio de requisitos y datos que el grader verifica en servidor.
 
-La ruta está diseñada para unas **2 horas de trabajo activo orientativo**. El ritmo no es punitivo: se puede volver a una estación, reparar lo que falló y ejecutar de nuevo.
+## Estructura de la nota
 
-## Rúbrica · 100 puntos · 37 checkpoints
+La nota separa dos evidencias distintas:
 
-| Estación | Puntos | Qué produce el estudiante | Cómo se valida |
-|---|---:|---|---|
-| 1. Inspector de datos | 10 | mapa de función de fuentes + claves observadas | 5 checkpoints sobre grano, rol y claves |
-| 2. Modelador ER | 15 | entidades CASO/EVENTO, PK, FK y cardinalidad | 6 checkpoints sobre campos y relación |
-| 3. Flow Builder | 15 | flujo desde fuentes hasta BI | 5 checkpoints sobre capas y conexiones |
-| 4. DDL Lab | 15 | esquema SQL ejecutable | 6 pruebas reales de integridad |
-| 5. SQL Debug Arena | 25 | cinco consultas reparadas | cada consulta corre sobre datos base y variaciones |
-| 6. Star Builder | 10 | grano de hecho, medidas y dimensiones | 5 checkpoints de diseño analítico |
-| 7. Chaos / Change Lab | 10 | la solución completa frente a cambios | 5 pruebas integradas que reutilizan DDL, queries y flujo |
+| Capa | Puntos | Significado |
+|---|---:|---|
+| **Mastery corregible** | **80** | Qué logra después de inspeccionar, probar, recibir feedback y reparar |
+| **Boss Transfer** | **20** | Si puede transferir la solución a datos y requisitos no practicados |
+| **Total** | **100** | Resultado registrado por el grader server-side |
 
-## 1 · Inspector de datos
+Pedir ayudas durante mastery **no descuenta puntos**. El uso de ayudas queda registrado para diagnóstico pedagógico.
 
-El estudiante inspecciona `casos.csv`, `eventos.csv` y `evidencias.json`. La herramienta muestra perfiles de filas, columnas, IDs, vacíos, documentos y tipos de evidencia. Después debe arrastrar cada fuente al rol correcto y ubicar las claves observadas.
+## Mastery · 80 puntos
 
-Se valida:
+| Estación | Puntos | Evidencia |
+|---|---:|---|
+| Inspector de datos | 8 | rol de fuentes y claves inferidos desde los datos |
+| ER Builder | 12 | entidades, atributos mínimos, PK, FK y cardinalidad |
+| Flow Builder | 10 | propiedades del flujo, no coincidencia con un dibujo único |
+| DDL + Mutation Hunter | 15 | constraints ejecutables y capacidad de diseñar pruebas contra mutantes |
+| SQL Debug Arena | 25 | cinco consultas con partial credit y variaciones de entrenamiento |
+| Star Builder | 10 | coherencia entre grano, medidas y dimensiones con follow-through |
 
-- `casos.csv` como snapshot operacional;
-- `eventos.csv` como historia de cambios;
-- `evidencias.json` como evidencia flexible/anidada;
-- `caso_id` como clave de caso;
-- `evento_id` como clave de evento.
+### Inspector
 
-## 2 · Modelador ER drag-and-drop
+Se inspeccionan `casos.csv`, `eventos.csv` y `evidencias.json`. El estudiante clasifica snapshot operacional, historia de cambios y evidencia flexible, e identifica las claves de caso y evento.
 
-Los campos se arrastran a las entidades `CASO` y `EVENTO`. El estudiante marca PK mediante interacción directa, define la FK y establece la cardinalidad.
+### ER Builder
 
-El modelo correcto debe contener:
+El modelo debe poder representar `CASO 1:N EVENTO`, con PK, FK y los campos necesarios para responder las preguntas del reto. El Workbench puede generar un DDL base desde el modelo, pero la integridad final sigue siendo responsabilidad del estudiante.
 
-- `caso(caso_id, fecha_creacion, tipo, prioridad, estado, barrio)`;
-- `evento(evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior)`;
-- PK en `caso.caso_id` y `evento.evento_id`;
-- FK `evento.caso_id → caso.caso_id`;
-- relación `CASO 1:N EVENTO`.
+### Flow Builder por propiedades
 
-El Workbench puede generar un **DDL inicial** desde el modelo construido. Ese DDL todavía debe ser endurecido por el estudiante.
+El grader no exige una única arquitectura canónica. Comprueba propiedades:
 
-## 3 · Flow Builder
+- las fuentes se ubican como fuentes;
+- casos y eventos tienen camino hacia transformación;
+- la evidencia flexible tiene un camino persistente hacia transformación;
+- transformación llega a warehouse y BI;
+- ninguna fuente cruda salta directamente a BI.
 
-El estudiante arrastra nodos a tres capas —fuentes, persistencia operacional y analítica— y crea conexiones nodo a nodo.
+### DDL + Mutation Hunter
 
-El validador busca un flujo funcional:
+El DDL se prueba localmente y se vuelve a probar en servidor. Se verifican duplicados, FK, `NOT NULL`, negativos y evolución legítima del dominio.
 
-- `casos` y `eventos` alimentan un store relacional operacional;
-- `evidencias` alimenta una representación flexible/documental;
-- ambos caminos llegan a transformación;
-- transformación alimenta un warehouse;
-- warehouse alimenta BI;
-- las fuentes crudas no saltan directamente a BI.
+Mutation Hunter evalúa una competencia distinta: detectar qué prueba mínima mata cinco esquemas defectuosos conocidos (sin PK, sin FK, sin `NOT NULL`, sin regla de no-negativos y con un dominio de estado rígido inventado).
 
-## 4 · DDL Lab
+### SQL Debug Arena · partial credit
 
-El SQL se ejecuta localmente con SQL.js. Se realizan seis pruebas de comportamiento:
+Cada una de las cinco consultas vale 5 puntos de mastery. El puntaje se descompone en:
 
-1. la PK de caso rechaza duplicados;
-2. la PK de evento rechaza duplicados;
-3. la FK rechaza eventos huérfanos;
-4. los campos requeridos son `NOT NULL`;
-5. `minutos_desde_anterior < 0` es rechazado;
-6. un estado nuevo llamado `Escalado` puede entrar porque el negocio no declaró un dominio cerrado.
+1. consulta segura y ejecutable;
+2. columnas requeridas;
+3. resultado correcto sobre datos visibles;
+4. comportamiento correcto en una variación de entrenamiento;
+5. comportamiento correcto en otra variación de entrenamiento.
 
-La sexta prueba evita convertir accidentalmente los valores observados hoy en una regla eterna.
+El servidor vuelve a ejecutar las consultas sobre **cuatro escenarios ocultos** distintos de los visibles en el navegador. Las consultas de referencia finales no se publican en el JavaScript del estudiante.
 
-## 5 · SQL Debug Arena
+Las consultas trabajan:
 
-El estudiante no empieza desde una hoja en blanco: recibe **cinco consultas defectuosas** y debe repararlas.
+- prioridad Alta por barrio;
+- último evento temporal;
+- minutos acumulados hasta cierre;
+- protección del grano después de un JOIN 1:N;
+- promedio por caso antes de agregar por tipo.
 
-1. prioridad Alta por barrio;
-2. estado actual frente al último evento real;
-3. minutos acumulados para casos cuyo último evento es Cerrado;
-4. conteos después de un JOIN 1:N sin inflar el grano de caso;
-5. promedio de minutos por caso antes de agregar por tipo.
+### Feedback progresivo
 
-Cada consulta se ejecuta sobre los datos visibles y sobre variaciones automáticas. Una consulta que funciona solo porque los datos actuales tienen determinada forma no aprueba.
+Las ayudas SQL se abren por capas:
 
-## 6 · Star Builder
+- primer pedido: concepto que probablemente está fallando;
+- segundo pedido: contraejemplo mínimo;
+- tercer pedido: bloques tipo Parsons para reconstruir la estrategia.
 
-La misma realidad cambia de propósito: ahora se necesita análisis histórico por fecha, barrio, tipo, prioridad y estado. El estudiante arrastra piezas para construir:
+La ayuda sirve para aprender durante mastery, no para decidir la nota de transferencia.
 
-- grano del hecho = un evento;
-- medidas = conteo de eventos y minutos;
-- dimensiones = fecha, barrio, tipo, prioridad y estado.
+### Star Builder · follow-through
 
-## 7 · Chaos / Change Lab
+El grader acepta más de una decisión inicial si la solución posterior es internamente coherente. Puede trabajarse a grano evento o grano caso, siempre que las medidas sean compatibles con ese grano y las dimensiones requeridas estén disponibles. Un error temprano no borra automáticamente toda la evidencia posterior correcta.
 
-No hay preguntas nuevas. La herramienta reutiliza la solución ya construida y cambia el escenario:
+## Boss Transfer · 20 puntos
 
-- intenta insertar un duplicado;
-- intenta insertar un evento huérfano;
-- introduce el estado `Escalado`;
-- introduce una evidencia nueva tipo `sensor` con atributos adicionales y comprueba que el flujo documental tiene salida hacia analítica;
-- vuelve a ejecutar las cinco consultas sobre un escenario con nuevos casos y eventos.
+El Boss no repite las mismas pruebas del mastery.
 
-Esta estación es la prueba integradora: no puede aprobarse memorizando una opción correcta.
+| Criterio | Puntos |
+|---|---:|
+| El DDL acepta una evolución legítima nueva sin perder integridad | 5 |
+| Las cinco consultas sobreviven a un dataset secreto nuevo | 5 |
+| El flujo incorpora `sensor_events.json` sin atajo directo a BI | 5 |
+| El modelo analítico se adapta a SLA por caso y estado final | 5 |
 
-## Retroalimentación e intentos
+Los datos secretos y las soluciones SQL de referencia viven en el grader server-side, no en la página pública.
 
-El Workbench mantiene un puntaje provisional por estación y un conteo de checkpoints. Al ejecutar el intento final:
+## Seguridad de la calificación
 
-1. recalcula las siete estaciones;
-2. devuelve puntaje y lista de checkpoints pendientes;
-3. guarda el estado del modelo, flujo, diseño estrella, pruebas y código;
-4. registra el intento en el LMS si el estudiante está autenticado;
-5. permite corregir y volver a enviar.
+El navegador puede ejecutar pruebas formativas rápidas, pero **no decide la nota registrada**. Al enviar un intento, el servidor recibe DDL, consultas y estado de los builders, vuelve a ejecutar las pruebas y recalcula mastery y transferencia.
 
-La evidencia relevante no es solo la nota final: también es la evolución entre intentos.
+Un valor enviado desde DevTools como `q3=true` no es aceptado como evidencia suficiente.
 
-## Alcance técnico
+## Analítica docente
 
-El SQL se ejecuta en el navegador con SQL.js, por lo que la clase no depende de 40–50 conexiones concurrentes a un servidor de base de datos. La evaluación es adecuada como actividad formativa y de curso; no debe interpretarse como un sistema antifraude de examen de alta seguridad.
+El panel `s15-analytics.html` permite revisar de forma agregada:
+
+- tasa de éxito por checkpoint en primer intento;
+- tasa de éxito en el mejor intento;
+- mejora entre primer y mejor intento;
+- mediana de intentos;
+- uso medio de ayudas;
+- misconceptions frecuentes.
+
+La intención es usar el autograder también para mejorar la enseñanza, no solo para producir notas.
+
+## Mutation testing del propio autograder
+
+El repositorio incluye mutantes SQL y DDL conocidos. El CI debe demostrar que el grader detecta errores típicos como `MAX(estado)` usado como “último evento”, conteos inflados por JOIN 1:N, promediar filas de eventos en vez de casos, ausencia de FK o dominios rígidos inventados.
