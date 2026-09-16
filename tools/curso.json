@@ -13,11 +13,21 @@
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
     "actividadCadaMin": 15,
-    "diferenciacionTecnicaSesiones": [11, 12, 13, 14, 15],
+    "diferenciacionTecnicaSesiones": [
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
     "servicioRealPrimero": true,
-    "sesionesAutonomas": [7, 10, 13],
+    "sesionesAutonomas": [
+      7,
+      10,
+      13
+    ],
     "trabajoAutonomoMin": 60,
     "publicacionSolucionesAutonomas": "20:00 America/Bogota"
   },
@@ -94,7 +104,14 @@
           "estado": "completado",
           "desc": "Qué es SQL y qué es una base de datos. Los motores que usa la industria. Y tus primeras consultas sobre una base real.",
           "href": "Presentaciones/M2/sesion-2-bases-de-datos-y-primeras-consultas.html",
-          "tags": ["SELECT", "DISTINCT", "COUNT", "WHERE", "ORDER BY", "LIMIT"],
+          "tags": [
+            "SELECT",
+            "DISTINCT",
+            "COUNT",
+            "WHERE",
+            "ORDER BY",
+            "LIMIT"
+          ],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -109,7 +126,13 @@
           "estado": "completado",
           "desc": "Tipos de dato y comillas. Filtros por rango, lista y patrón de texto. Y el salto grande: dejar de listar filas para resumirlas.",
           "href": "Presentaciones/M2/sesion-3-filtros-y-agregaciones.html",
-          "tags": ["BETWEEN", "IN", "LIKE", "GROUP BY", "HAVING"],
+          "tags": [
+            "BETWEEN",
+            "IN",
+            "LIKE",
+            "GROUP BY",
+            "HAVING"
+          ],
           "recursos": [
             {
               "txt": "📄 Las consultas de la clase (archivo de texto)",
@@ -411,7 +434,15 @@
           "titulo": "Laboratorio BigQuery",
           "estado": "completado",
           "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición, clusterización, pruning y bytes procesados, con prácticas verificadas de Google Skills.",
-          "tags": ["BigQuery", "PARTITION BY", "clusterización", "pruning", "bytes procesados", "SQL", "workshop"],
+          "tags": [
+            "BigQuery",
+            "PARTITION BY",
+            "clusterización",
+            "pruning",
+            "bytes procesados",
+            "SQL",
+            "workshop"
+          ],
           "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
           "recursos": [
             {
@@ -478,7 +509,7 @@
       "n": 6,
       "titulo": "Desafío final y consolidación",
       "estado": "pendiente",
-      "desc": "Diagnosticar, modelar, construir, validar y cerrar el recorrido con preparación acumulativa DP-900.",
+      "desc": "Integrar el recorrido en un caso nuevo, demostrar la solución con validación por capas y cerrar con un diagnóstico activo de transferencia hacia DP-900.",
       "recursos": [],
       "sesiones": [
         {
@@ -486,27 +517,68 @@
           "fecha": "2026-09-18",
           "duracionUtil": 165,
           "modo": "autonomo_guiado",
-          "trabajoAutonomoMin": 90,
           "titulo": "Desafío final integrador",
           "estado": "pendiente",
-          "desc": "Resolver un problema completo con datos imperfectos: diagnóstico, modelo, transformación, consultas, validación y decisión.",
+          "desc": "Caso de incidentes urbanos: declarar granos, decidir fuente de verdad y representación, construir un modelo que proteja reglas, responder con SQL, validar por capas y defender las decisiones.",
           "tags": [
             "desafío",
-            "datos sucios",
-            "modelado",
+            "grano",
+            "fuente de verdad",
+            "SQL / NoSQL",
+            "pruebas negativas",
             "validación",
-            "arquitectura"
+            "defensa"
+          ],
+          "href": "Presentaciones/M6/sesion-15-desafio-final.html",
+          "recursos": [
+            {
+              "txt": "🧭 Tablero del desafío final",
+              "href": "capstone.html"
+            },
+            {
+              "txt": "📘 Plantilla y recorrido del proyecto",
+              "href": "Plantillas/proyecto-final/README.md"
+            },
+            {
+              "txt": "✅ Controles y criterios de validación",
+              "href": "Plantillas/proyecto-final/criterios.md"
+            }
           ]
         },
         {
           "n": 16,
           "fecha": "2026-09-22",
-          "duracionUtil": 145,
+          "duracionUtil": 165,
           "modo": "consolidacion",
           "titulo": "Cierre + preparación DP-900",
           "estado": "pendiente",
-          "desc": "Evaluación acumulativa por escenarios, revisión de dominios débiles, rutas de certificación y plan personal para presentar DP-900.",
-          "tags": ["DP-900", "cierre", "retrieval practice", "plan de estudio"]
+          "desc": "Cierre con evidencia S1 → S15 → S16 y diagnóstico interactivo de 16 escenarios, cuatro por dominio DP-900, clasificando errores como concepto, transferencia o lectura para construir un plan de estudio dirigido.",
+          "tags": [
+            "DP-900",
+            "diagnóstico",
+            "C / T / L",
+            "Azure",
+            "transferencia",
+            "plan de estudio"
+          ],
+          "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
+          "recursos": [
+            {
+              "txt": "📘 Guía oficial de estudio DP-900",
+              "href": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
+              "externo": true
+            },
+            {
+              "txt": "🧪 Practice Assessments de Microsoft",
+              "href": "https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications",
+              "externo": true
+            },
+            {
+              "txt": "🎓 Preparación oficial y Exam Sandbox",
+              "href": "https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam",
+              "externo": true
+            }
+          ]
         }
       ]
     }
