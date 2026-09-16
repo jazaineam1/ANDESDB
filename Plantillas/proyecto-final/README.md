@@ -13,7 +13,7 @@ S15 integra lo trabajado desde S2 hasta S14. No es un cuestionario ni una entreg
 5. **Warehouse Builder** — OLTP/OLAP, hecho, dimensiones, batch, streaming y ELT.
 6. **BigQuery Physical** — partition, clustering, pruning y lectura conceptual.
 7. **Nested BigQuery** — ARRAY, STRUCT, UNNEST, JSON y Parquet.
-8. **Boss Transfer** — pedidos omnicanal con un dominio nuevo y pruebas ocultas.
+8. **Boss Transfer** — pedidos omnicanal con dominio nuevo, pruebas ocultas y transferencia por necesidad a Blob/ADLS, Cosmos DB, Fabric/Databricks y Power BI.
 
 ## Nota
 
@@ -21,7 +21,7 @@ S15 integra lo trabajado desde S2 hasta S14. No es un cuestionario ni una entreg
 - transferencia inédita: **20 puntos**;
 - total: **100 puntos**.
 
-La calificación registrada se recalcula en servidor. El navegador sirve como entorno de entrenamiento y feedback; el backend vuelve a ejecutar DDL/SQL y valida el resto de decisiones con reglas independientes.
+La calificación registrada se recalcula en servidor. El navegador sirve como entorno de entrenamiento y feedback; el backend vuelve a ejecutar DDL/SQL y valida el resto de decisiones con reglas independientes. En el Boss, la transferencia Azure se evalúa como **necesidad → familia de servicio**, no como memorización de equivalencias de producto.
 
 ## Datos de entrenamiento
 
