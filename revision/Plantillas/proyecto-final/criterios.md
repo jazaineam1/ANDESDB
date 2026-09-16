@@ -1,67 +1,42 @@
-# Caso final · Atención de incidentes urbanos
+# Sesión 15 · Contrato de evaluación automática
 
-## Archivos y grano observado
+La evaluación se realiza en `evaluador-s15.html`. No se califica un paquete de archivos manualmente. Cada estudiante trabaja sobre las mismas fuentes, recibe retroalimentación inmediata y puede corregir antes de registrar otro intento.
 
-- `casos.csv`: **12 casos**; una fila = un caso reportado y su estado actual.
-- `eventos.csv`: **24 eventos**; una fila = un registro/cambio asociado a un caso.
-- `evidencias.json`: **4 documentos de caso** con arreglos de evidencias semiestructuradas.
+## Rúbrica · 100 puntos
 
-Estos granos son observaciones de los archivos. Las reglas del negocio que no estén demostradas deben quedar marcadas como hipótesis.
+- **20 · Grano y lectura de fuentes.** Cinco decisiones deterministas sobre qué representa cada fuente, cardinalidad y riesgo de multiplicar filas.
+- **25 · DDL e integridad.** Cinco pruebas ejecutadas sobre el esquema: PK, FK, obligatoriedad, minutos no negativos y capacidad de aceptar un estado nuevo no prohibido por el negocio.
+- **35 · SQL y validación.** Cuatro consultas se ejecutan sobre los datos visibles y sobre variaciones automáticas. Se comparan resultados, no una sintaxis específica.
+- **20 · Arquitectura y adaptabilidad.** Cuatro escenarios cerrados obligan a decidir a partir de requisitos de acceso, consistencia, carga y evolución.
 
-## Controles de referencia
+## Fuentes
 
-Estos valores sirven para validar sin revelar una arquitectura ni un SQL únicos:
+- `casos.csv`: una fila = un caso reportado y su estado actual.
+- `eventos.csv`: una fila = un evento/cambio asociado a un caso.
+- `evidencias.json`: un documento = un caso con un arreglo de evidencias.
 
-- casos: **12**
-- eventos: **24**
-- casos cerrados: **4** (`1001`, `1004`, `1006`, `1009`)
-- casos de prioridad Alta: **5**
-- casos Alta y Cerrado: **2**
-- eventos huérfanos esperados: **0**
-- casos con documento de evidencias: **4**
+Los datos base contienen 12 casos, 24 eventos y 4 documentos de evidencias. Esos números sirven para explorar, pero **no bastan para aprobar las consultas**: el evaluador agrega datos en copias internas.
 
-## Cuatro puertas del reto
+## Contrato del DDL
 
-### 1 · Significado
-- Declara el grano de cada fuente.
-- Formula una pregunta de negocio prioritaria.
-- Separa regla confirmada de hipótesis.
+La herramienta solicita dos tablas con nombres y columnas mínimas conocidas:
 
-### 2 · Fuente de verdad y representación
-- Explica cómo conviven `casos.estado` y el historial de `eventos`.
-- Decide qué hacer con `evidencias.json`: relacional, documental o híbrido.
-- Justifica por patrón de acceso, consistencia, evolución y complejidad; no por extensión de archivo o moda.
+- `caso(caso_id INTEGER, fecha_creacion TEXT, tipo TEXT, prioridad TEXT, estado TEXT, barrio TEXT)`
+- `evento(evento_id TEXT, caso_id INTEGER, fecha_evento TEXT, estado TEXT, minutos_desde_anterior INTEGER)`
 
-### 3 · Modelo que protege
-- Propón un modelo relacional para la parte operacional.
-- Justifica PK/FK/NOT NULL/CHECK/UNIQUE cuando correspondan.
-- Incluye una prueba válida y al menos una prueba negativa.
+Reglas confirmadas: identificadores únicos, evento asociado a un caso existente, campos listados obligatorios y minutos no negativos. **No está confirmado** que `Abierto`, `En_proceso` y `Cerrado` sean la lista completa de estados; por eso el evaluador prueba el estado nuevo `Escalado`.
 
-### 4 · Preguntas comprobadas
-- Una consulta con `JOIN` cuyo grano puedas explicar.
-- Una consulta agregada.
-- Una consulta de tiempo o secuencia de eventos.
-- Contrasta los resultados con controles conocidos.
+## Consultas evaluadas
 
-## Escalera de validación
+El evaluador expone `casos_src` y `eventos_src` y pide:
 
-1. estructura y conteos;
-2. referencias y huérfanos;
-3. reglas/controles de negocio;
-4. prueba negativa y constraint responsable;
-5. estabilidad del indicador frente a multiplicación de filas.
+1. prioridad Alta por barrio → `barrio, casos_alta`;
+2. estado actual frente al último evento → `caso_id, estado_actual, ultimo_estado`;
+3. minutos acumulados para casos cuyo último evento es Cerrado → `caso_id, minutos_hasta_cierre`;
+4. control de grano tras unir casos y eventos → `total_casos, total_eventos, casos_alta`.
 
-No uses `DISTINCT` para esconder una multiplicación que no puedes explicar.
+Cada consulta debe seguir siendo correcta cuando aparecen casos/eventos adicionales. No se debe usar un resultado fijo ni ocultar un problema de grano con un número hardcodeado.
 
-## Extensión analítica
+## Retroalimentación e intentos
 
-Cuando el núcleo esté sólido, propón el **grano** de una posible tabla de hechos, medidas y dimensiones para analizar atención histórica. No es obligatorio implementar un warehouse completo.
-
-## Preguntas de negocio sugeridas
-
-- ¿Qué tipos de incidente acumulan más casos abiertos o en proceso?
-- ¿Qué barrios concentran incidentes de prioridad Alta?
-- ¿Cuánto tiempo transcurre hasta el cierre en los casos cerrados?
-- ¿Qué casos tienen evidencias múltiples y cómo las representarías?
-
-No existe una única arquitectura correcta. Sí existen respuestas no defendibles: elegir tecnología solo por volumen o formato, presentar totales sin controlarlos o usar `DISTINCT` para ocultar un problema de grano.
+El botón final vuelve a ejecutar todas las pruebas, entrega puntaje por dimensión y explica cada criterio fallido. Si el estudiante está autenticado en ANDESDB, el intento se registra automáticamente en el LMS con código, desglose y feedback. Puede corregir y volver a intentar; cada intento queda en el historial.

@@ -17,8 +17,7 @@
       11,
       12,
       13,
-      14,
-      15
+      14
     ],
     "progresoLocal": false,
     "dp900TransversalDesde": 6,
@@ -509,38 +508,39 @@
       "n": 6,
       "titulo": "Desafío final y consolidación",
       "estado": "pendiente",
-      "desc": "Integrar el recorrido en un caso nuevo, demostrar la solución con validación por capas y cerrar con un diagnóstico activo de transferencia hacia DP-900.",
+      "desc": "Integrar el recorrido en un caso nuevo mediante una evaluación automática que ejecuta, prueba, retroalimenta y registra intentos; cerrar después con transferencia hacia DP-900.",
       "recursos": [],
       "sesiones": [
         {
           "n": 15,
           "fecha": "2026-09-18",
           "duracionUtil": 165,
-          "modo": "autonomo_guiado",
-          "titulo": "Desafío final integrador",
+          "modo": "evaluacion_automatica_guiada",
+          "titulo": "Desafío final · evaluación automática",
           "estado": "pendiente",
-          "desc": "Caso de incidentes urbanos: declarar granos, decidir fuente de verdad y representación, construir un modelo que proteja reglas, responder con SQL, validar por capas y defender las decisiones.",
+          "desc": "Caso de incidentes urbanos evaluado automáticamente: grano, DDL e integridad, cuatro consultas sometidas a variaciones de datos y decisiones de arquitectura; feedback inmediato y reintentos registrados en el LMS.",
           "tags": [
-            "desafío",
+            "evaluación automática",
             "grano",
-            "fuente de verdad",
-            "SQL / NoSQL",
-            "pruebas negativas",
-            "validación",
-            "defensa"
+            "DDL",
+            "SQL",
+            "pruebas",
+            "variaciones",
+            "feedback",
+            "LMS"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
             {
-              "txt": "🧭 Tablero del desafío final",
+              "txt": "🧪 Evaluador automático S15",
+              "href": "evaluador-s15.html"
+            },
+            {
+              "txt": "🧭 Tablero del desafío",
               "href": "capstone.html"
             },
             {
-              "txt": "📘 Plantilla y recorrido del proyecto",
-              "href": "Plantillas/proyecto-final/README.md"
-            },
-            {
-              "txt": "✅ Controles y criterios de validación",
+              "txt": "✅ Contrato de evaluación",
               "href": "Plantillas/proyecto-final/criterios.md"
             }
           ]

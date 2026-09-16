@@ -4,7 +4,12 @@
     "actividad_cada_min": 15,
     "progreso_persistente": false,
     "diferenciacion_tecnica": true,
-    "diferenciacion_tecnica_sesiones": [11, 12, 13, 14, 15],
+    "diferenciacion_tecnica_sesiones": [
+      11,
+      12,
+      13,
+      14
+    ],
     "dp900_transversal": true,
     "servicio_real_primero": true,
     "fallback_nunca_reemplaza_servicio_real": true,
@@ -21,25 +26,42 @@
         "titulo": "Reconocer una regla antes de modelarla",
         "minutos": 35,
         "instrucciones": "Clasifica hallazgos del esquema y los datos, asigna fuente de evidencia y deja explícita al menos una pregunta que deba volver al negocio.",
-        "criterios": ["separa dato de explicación", "declara fuente", "no convierte patrones en leyes", "deja hipótesis explícitas"]
+        "criterios": [
+          "separa dato de explicación",
+          "declara fuente",
+          "no convierte patrones en leyes",
+          "deja hipótesis explícitas"
+        ]
       },
       "dp900": [
         {
           "dominio": "Core data concepts",
           "pregunta": "Un archivo JSON con claves, objetos y arreglos se clasifica normalmente como:",
-          "opciones": ["Estructurado exclusivamente", "Semiestructurado", "No estructurado", "Relacional por definición"],
+          "opciones": [
+            "Estructurado exclusivamente",
+            "Semiestructurado",
+            "No estructurado",
+            "Relacional por definición"
+          ],
           "correcta": 1,
           "explicacion": "JSON conserva estructura, pero no exige un esquema tabular rígido."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "Una columna tiene DEFAULT 'abierto'. ¿Qué afirmación es correcta?",
-          "opciones": ["Impide cualquier otro valor", "Propone un valor cuando no se especifica; no sustituye una restricción", "Crea una PK", "Normaliza la tabla"],
+          "opciones": [
+            "Impide cualquier otro valor",
+            "Propone un valor cuando no se especifica; no sustituye una restricción",
+            "Crea una PK",
+            "Normaliza la tabla"
+          ],
           "correcta": 1,
           "explicacion": "DEFAULT aporta un valor por omisión; CHECK, FK, NOT NULL u otras restricciones son las que pueden rechazar estados inválidos."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S2–S5 enseñaron a consultar y observar; ahora esa observación se usa como evidencia, no como verdad automática del negocio.",
         "pregunta": "¿Qué puedo afirmar del negocio y con qué grado de certeza?",
@@ -58,25 +80,44 @@
         "titulo": "Del lenguaje del negocio al modelo conceptual",
         "minutos": 75,
         "instrucciones": "Construye el modelo y documenta de qué regla nace cada decisión no obvia; marca como hipótesis las cardinalidades que el negocio aún no confirma.",
-        "criterios": ["entidades justificadas", "relaciones con cardinalidad", "trazabilidad regla→modelo", "dudas explícitas"]
+        "criterios": [
+          "entidades justificadas",
+          "relaciones con cardinalidad",
+          "trazabilidad regla→modelo",
+          "dudas explícitas"
+        ]
       },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué describe mejor una clave foránea?",
-          "opciones": ["Identifica cualquier fila de su propia tabla", "Relaciona una fila con una clave de otra tabla", "Impide siempre NULL", "Sustituye normalización"],
+          "opciones": [
+            "Identifica cualquier fila de su propia tabla",
+            "Relaciona una fila con una clave de otra tabla",
+            "Impide siempre NULL",
+            "Sustituye normalización"
+          ],
           "correcta": 1,
           "explicacion": "La FK expresa integridad referencial entre relaciones."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "Una relación 1:N indica que:",
-          "opciones": ["Una fila del lado 1 puede relacionarse con varias del lado N", "No existen claves", "Ambos lados tienen exactamente una fila", "La tabla debe ser NoSQL"],
+          "opciones": [
+            "Una fila del lado 1 puede relacionarse con varias del lado N",
+            "No existen claves",
+            "Ambos lados tienen exactamente una fila",
+            "La tabla debe ser NoSQL"
+          ],
           "correcta": 0,
           "explicacion": "La cardinalidad describe cuántas ocurrencias pueden participar en la relación."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:15", "zona": "America/Bogota"},
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:15",
+        "zona": "America/Bogota"
+      },
       "hilo": {
         "hereda": "S6 dejó reglas defendibles y dudas explícitas.",
         "pregunta": "¿Qué estructura necesita el modelo para representar esas reglas?",
@@ -94,25 +135,42 @@
         "titulo": "Anomalía → dependencia → descomposición → reconstrucción",
         "minutos": 45,
         "instrucciones": "Parte de una tabla redundante, identifica el fallo que permite, explica la dependencia y descompón hasta 3FN comprobando que la información puede reconstruirse.",
-        "criterios": ["anomalía observable", "dependencia explicada", "1FN/2FN/3FN con propósito", "reconstrucción comprobada"]
+        "criterios": [
+          "anomalía observable",
+          "dependencia explicada",
+          "1FN/2FN/3FN con propósito",
+          "reconstrucción comprobada"
+        ]
       },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "La normalización se usa principalmente para:",
-          "opciones": ["Reducir redundancia problemática y anomalías", "Eliminar SQL", "Acelerar siempre cualquier consulta analítica", "Guardar archivos sin esquema"],
+          "opciones": [
+            "Reducir redundancia problemática y anomalías",
+            "Eliminar SQL",
+            "Acelerar siempre cualquier consulta analítica",
+            "Guardar archivos sin esquema"
+          ],
           "correcta": 0,
           "explicacion": "La normalización controla dependencias y redundancia problemática en modelos relacionales."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Cuál es un objeto típico de una base relacional?",
-          "opciones": ["Tabla", "Bucket exclusivamente", "Notebook exclusivamente", "Cola de mensajes"],
+          "opciones": [
+            "Tabla",
+            "Bucket exclusivamente",
+            "Notebook exclusivamente",
+            "Cola de mensajes"
+          ],
           "correcta": 0,
           "explicacion": "Tablas, vistas e índices son objetos comunes de sistemas relacionales."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S7 produjo un modelo conceptual que debe convertirse en estructura relacional consistente.",
         "pregunta": "¿Cómo reducimos anomalías conservando significado y reglas?",
@@ -135,25 +193,42 @@
         "titulo": "DDL + pruebas positivas y negativas",
         "minutos": 60,
         "instrucciones": "Crea tablas y constraints; luego prueba un caso válido y violaciones de FK, CHECK o NOT NULL y explica cada mensaje.",
-        "criterios": ["PK/FK coherentes", "constraints justificadas", "pruebas negativas", "errores interpretados"]
+        "criterios": [
+          "PK/FK coherentes",
+          "constraints justificadas",
+          "pruebas negativas",
+          "errores interpretados"
+        ]
       },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué sentencia define una tabla nueva?",
-          "opciones": ["SELECT", "CREATE TABLE", "UPDATE", "DELETE"],
+          "opciones": [
+            "SELECT",
+            "CREATE TABLE",
+            "UPDATE",
+            "DELETE"
+          ],
           "correcta": 1,
           "explicacion": "CREATE TABLE es DDL y crea estructura."
         },
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué restricción evita una referencia huérfana?",
-          "opciones": ["CHECK", "DEFAULT", "FOREIGN KEY", "ORDER BY"],
+          "opciones": [
+            "CHECK",
+            "DEFAULT",
+            "FOREIGN KEY",
+            "ORDER BY"
+          ],
           "correcta": 2,
           "explicacion": "FOREIGN KEY exige una referencia válida."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S8 dejó un modelo normalizado y reglas que deben protegerse.",
         "pregunta": "¿Cómo hacemos que PostgreSQL haga cumplir las reglas y cómo lo demostramos?",
@@ -172,25 +247,45 @@
         "titulo": "Arquitecto por requisitos",
         "minutos": 75,
         "instrucciones": "Resuelve casos en los que primero debes preguntar cómo se lee/escribe, qué consistencia se necesita y cómo cambia el esquema antes de escoger tecnología.",
-        "criterios": ["patrón de acceso", "consistencia", "forma/evolución", "costo/riesgo", "reconoce información insuficiente"]
+        "criterios": [
+          "patrón de acceso",
+          "consistencia",
+          "forma/evolución",
+          "costo/riesgo",
+          "reconoce información insuficiente"
+        ]
       },
       "dp900": [
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué escenario favorece naturalmente un modelo documental?",
-          "opciones": ["Objetos anidados con estructura que puede variar y se leen juntos", "Toda relación N:N", "Cualquier sistema grande", "Un cálculo de Excel"],
+          "opciones": [
+            "Objetos anidados con estructura que puede variar y se leen juntos",
+            "Toda relación N:N",
+            "Cualquier sistema grande",
+            "Un cálculo de Excel"
+          ],
           "correcta": 0,
           "explicacion": "El patrón de lectura y la forma/evolución del dato pueden favorecer documentos."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Elegir entre SQL y NoSQL debería empezar por:",
-          "opciones": ["La moda", "Requisitos y patrones de acceso", "El logo del proveedor", "Usar siempre ambos"],
+          "opciones": [
+            "La moda",
+            "Requisitos y patrones de acceso",
+            "El logo del proveedor",
+            "Usar siempre ambos"
+          ],
           "correcta": 1,
           "explicacion": "La tecnología sigue al problema."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:00", "zona": "America/Bogota"},
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:00",
+        "zona": "America/Bogota"
+      },
       "hilo": {
         "hereda": "S9 mostró la fortaleza del relacional cuando necesitamos integridad explícita.",
         "pregunta": "¿Qué evidencia necesito antes de elegir otra representación?",
@@ -208,7 +303,12 @@
         "titulo": "Carrito documental → venta relacional",
         "minutos": 55,
         "instrucciones": "Consulta/crea documentos, aplica filtros, defiende embed/reference y completa un checkout cuya venta confirmada quede localizada en PostgreSQL.",
-        "criterios": ["documentos reales", "filtros", "embed/reference defendido", "fuente de verdad localizada"]
+        "criterios": [
+          "documentos reales",
+          "filtros",
+          "embed/reference defendido",
+          "fuente de verdad localizada"
+        ]
       },
       "reto": {
         "titulo": "Fallo parcial y atomicidad",
@@ -224,19 +324,31 @@
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué servicio Azure debes reconocer para cargas documentales/NoSQL distribuidas globalmente?",
-          "opciones": ["Azure Cosmos DB", "Azure DNS", "Power BI", "Azure Bastion"],
+          "opciones": [
+            "Azure Cosmos DB",
+            "Azure DNS",
+            "Power BI",
+            "Azure Bastion"
+          ],
           "correcta": 0,
           "explicacion": "Cosmos DB es la familia NoSQL distribuida que DP-900 espera reconocer."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Un carrito persistido que todavía cambia antes de confirmar es mejor descrito como:",
-          "opciones": ["Estado mutable del proceso", "Hecho histórico inmutable por definición", "Dimensión temporal", "Backup"],
+          "opciones": [
+            "Estado mutable del proceso",
+            "Hecho histórico inmutable por definición",
+            "Dimensión temporal",
+            "Backup"
+          ],
           "correcta": 0,
           "explicacion": "Persistido no significa inmutable; la confirmación genera el hecho de negocio auditable."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S10 dejó criterios; ahora se prueban con documentos reales y una fuente relacional de verdad.",
         "pregunta": "¿Qué vive embebido/referenciado y cuál sistema manda en cada momento?",
@@ -254,7 +366,13 @@
         "titulo": "Del hecho operacional al modelo estrella",
         "minutos": 70,
         "instrucciones": "Declara el grano, identifica hecho/dimensiones/medidas, consulta el miniwarehouse y valida que los JOIN no multipliquen el ingreso.",
-        "criterios": ["grano explícito", "hecho/dimensiones", "medidas", "control numérico", "explica 368.000 vs 184.000"]
+        "criterios": [
+          "grano explícito",
+          "hecho/dimensiones",
+          "medidas",
+          "control numérico",
+          "explica 368.000 vs 184.000"
+        ]
       },
       "reto": {
         "titulo": "Batch, streaming y transferencia cloud",
@@ -265,19 +383,31 @@
         {
           "dominio": "Core data concepts",
           "pregunta": "¿Qué distingue mejor OLTP de OLAP?",
-          "opciones": ["OLTP prioriza transacciones; OLAP análisis histórico/agregado", "OLAP solo guarda JSON", "OLTP no usa SQL", "Son sinónimos"],
+          "opciones": [
+            "OLTP prioriza transacciones; OLAP análisis histórico/agregado",
+            "OLAP solo guarda JSON",
+            "OLTP no usa SQL",
+            "Son sinónimos"
+          ],
           "correcta": 0,
           "explicacion": "La diferencia central es la naturaleza de la carga."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué diferencia batch de streaming?",
-          "opciones": ["Batch procesa acumulados; streaming eventos conforme llegan", "Streaming siempre usa SQL Server", "Batch no funciona en cloud", "No hay diferencia"],
+          "opciones": [
+            "Batch procesa acumulados; streaming eventos conforme llegan",
+            "Streaming siempre usa SQL Server",
+            "Batch no funciona en cloud",
+            "No hay diferencia"
+          ],
           "correcta": 0,
           "explicacion": "DP-900 distingue procesamiento por lotes y continuo/casi continuo."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S11 terminó con hechos operacionales confiables.",
         "pregunta": "¿Cómo los organizamos para analizar historia sin castigar la operación?",
@@ -296,7 +426,13 @@
         "titulo": "Partición + clusterización en BigQuery real",
         "minutos": 75,
         "instrucciones": "Trabaja en BigQuery real, compara consultas con/sin filtro útil, observa bytes y defiende columnas/orden de clustering a partir del patrón de acceso.",
-        "criterios": ["servicio real", "PARTITION BY", "partition pruning", "CLUSTER BY", "bytes como evidencia"]
+        "criterios": [
+          "servicio real",
+          "PARTITION BY",
+          "partition pruning",
+          "CLUSTER BY",
+          "bytes como evidencia"
+        ]
       },
       "reto": {
         "titulo": "Diseña para una carga nueva",
@@ -312,19 +448,31 @@
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué aprendizaje de BigQuery es transferible a un warehouse cloud en Azure?",
-          "opciones": ["Reducir lectura innecesaria y medir trabajo de consulta", "Administrar DNS", "Diseñar apps móviles", "Configurar biometría"],
+          "opciones": [
+            "Reducir lectura innecesaria y medir trabajo de consulta",
+            "Administrar DNS",
+            "Diseñar apps móviles",
+            "Configurar biometría"
+          ],
           "correcta": 0,
           "explicacion": "El producto cambia; la eficiencia de cargas analíticas y el costo de lectura son conceptos transferibles."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Una consulta con LIMIT 10 sobre una tabla grande necesariamente procesa solo 10 filas físicas.",
-          "opciones": ["Verdadero", "Falso"],
+          "opciones": [
+            "Verdadero",
+            "Falso"
+          ],
           "correcta": 1,
           "explicacion": "LIMIT controla filas devueltas; no garantiza por sí mismo menos bytes leídos."
         }
       ],
-      "solucion": {"modo": "programada", "publicar": "20:00", "zona": "America/Bogota"},
+      "solucion": {
+        "modo": "programada",
+        "publicar": "20:00",
+        "zona": "America/Bogota"
+      },
       "hilo": {
         "hereda": "S12 dejó un modelo analítico correcto; S13 añade eficiencia física observable.",
         "pregunta": "¿Cómo evitamos leer datos que una pregunta no necesita?",
@@ -342,7 +490,13 @@
         "titulo": "ARRAY, STRUCT y UNNEST en BigQuery real",
         "minutos": 100,
         "instrucciones": "Conecta el pedido relacional/documental con una representación analítica anidada; predice el grano antes y después de UNNEST; distingue CSV, JSON y Parquet; realiza de forma guiada GSP416 en BigQuery real y explica con una consulta qué cambió.",
-        "criterios": ["distingue ARRAY y STRUCT", "declara el grano antes y después de UNNEST", "ejecuta al menos una consulta en BigQuery real", "distingue CSV, JSON y Parquet por forma y uso", "relaciona necesidad con almacenamiento, proceso o visualización en Azure"]
+        "criterios": [
+          "distingue ARRAY y STRUCT",
+          "declara el grano antes y después de UNNEST",
+          "ejecuta al menos una consulta en BigQuery real",
+          "distingue CSV, JSON y Parquet por forma y uso",
+          "relaciona necesidad con almacenamiento, proceso o visualización en Azure"
+        ]
       },
       "reto": {
         "titulo": "Doble UNNEST y multiplicación de filas",
@@ -358,19 +512,31 @@
         {
           "dominio": "Core data concepts",
           "pregunta": "¿Qué formato es columnar y suele usarse para analítica eficiente?",
-          "opciones": ["Parquet", "BMP", "WAV", "TXT sin estructura"],
+          "opciones": [
+            "Parquet",
+            "BMP",
+            "WAV",
+            "TXT sin estructura"
+          ],
           "correcta": 0,
           "explicacion": "Parquet es columnar y común en cargas analíticas."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué producto Microsoft se usa principalmente para modelar, visualizar y compartir análisis?",
-          "opciones": ["Power BI", "Azure DNS", "GitHub Issues", "Azure Bastion"],
+          "opciones": [
+            "Power BI",
+            "Azure DNS",
+            "GitHub Issues",
+            "Azure Bastion"
+          ],
           "correcta": 0,
           "explicacion": "Power BI es la herramienta de BI/visualización esperada en el panorama DP-900."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "hilo": {
         "hereda": "S13 optimizó lectura; ahora cambia la forma del dato.",
         "pregunta": "¿Cuándo conviene anidar y cómo cambia el grano al expandir?",
@@ -380,45 +546,64 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final integrador",
+      "titulo": "Desafío final · evaluación automática",
       "duracion_util": 165,
-      "modo": "autonomo_guiado",
-      "trabajo_autonomo_min": 90,
-      "objetivo": "Resolver un caso nuevo de incidentes urbanos sin que herramienta, modelo ni arquitectura estén decididos de antemano.",
-      "nucleo": {
-        "titulo": "Incidentes urbanos · diagnostica, modela, construye y valida",
-        "minutos": 90,
-        "instrucciones": "Usa casos.csv, eventos.csv y evidencias.json; declara granos, modela, construye consultas/pruebas y valida contra controles conocidos.",
-        "criterios": ["granos correctos", "modelo/reglas", "consultas", "controles", "pruebas negativas", "code ownership"]
-      },
-      "reto": {
-        "titulo": "Arquitectura y salida analítica",
-        "minutos": 20,
-        "instrucciones": "Propón la arquitectura mínima defendible y el grano de una posible tabla de hechos; no es obligatorio usar todas las tecnologías."
+      "modo": "evaluacion_automatica_guiada",
+      "objetivo": "Demostrar transferencia con una solución que sobreviva pruebas de integridad, consultas sobre datos variables y decisiones de arquitectura dadas restricciones explícitas.",
+      "evaluacion": {
+        "modo": "automatica",
+        "href": "evaluador-s15.html",
+        "puntaje_total": 100,
+        "reintentos": true,
+        "registro_lms": true,
+        "criterios": [
+          {
+            "titulo": "Grano y lectura de fuentes",
+            "puntos": 20
+          },
+          {
+            "titulo": "DDL e integridad",
+            "puntos": 25
+          },
+          {
+            "titulo": "SQL y validación",
+            "puntos": 35
+          },
+          {
+            "titulo": "Arquitectura y adaptabilidad",
+            "puntos": 20
+          }
+        ]
       },
       "dp900": [
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "Tienes transacciones operacionales y necesitas un tablero histórico pesado. ¿Qué principio es adecuado?",
-          "opciones": ["Separar la carga analítica de la operación", "Ejecutar siempre todo sobre producción", "Eliminar claves", "Convertir todo a texto"],
+          "opciones": [
+            "Separar la carga analítica de la operación",
+            "Ejecutar siempre todo sobre producción",
+            "Eliminar claves",
+            "Convertir todo a texto"
+          ],
           "correcta": 0,
           "explicacion": "Las cargas pueden requerir estructuras/plataformas optimizadas para propósitos distintos."
         },
         {
           "dominio": "Core data concepts",
           "pregunta": "Antes de elegir un datastore, lo primero es comprender:",
-          "opciones": ["Requisitos y patrones de acceso", "El color de la UI", "Qué proveedor anuncia más", "La herramienta ya abierta"],
+          "opciones": [
+            "Requisitos y patrones de acceso",
+            "El color de la UI",
+            "Qué proveedor anuncia más",
+            "La herramienta ya abierta"
+          ],
           "correcta": 0,
           "explicacion": "La arquitectura sigue al problema."
         }
       ],
-      "solucion": {"modo": "manual"},
-      "artefactos": ["decisiones.md", "modelo.png", "schema.sql", "queries.sql", "validaciones.sql", "arquitectura.md"],
-      "hilo": {
-        "hereda": "S1–S14 construyeron el repertorio completo.",
-        "pregunta": "¿Puedo resolver un problema nuevo sin receta y demostrar que mi solución es correcta?",
-        "evidencia": "Seis artefactos + controles + pruebas negativas + defensa oral.",
-        "puente": "S16 convierte desempeño y errores en diagnóstico y plan DP-900."
+      "solucion": {
+        "modo": "automatica",
+        "href": "evaluador-s15.html"
       }
     },
     "16": {
@@ -431,32 +616,54 @@
         "titulo": "Pre/post + 13 escenarios + diagnóstico",
         "minutos": 105,
         "instrucciones": "Repite el pretest S1, resuelve escenarios por los cuatro dominios, clasifica cada error como concepto/transferencia/lectura y crea un plan pequeño por dominio débil.",
-        "criterios": ["compara explicación S1/S16", "responde por requisito", "clasifica errores", "plan con criterio de salida"]
+        "criterios": [
+          "compara explicación S1/S16",
+          "responde por requisito",
+          "clasifica errores",
+          "plan con criterio de salida"
+        ]
       },
       "dp900": [
         {
           "dominio": "Relational data on Azure",
           "pregunta": "¿Qué servicio ofrece alta compatibilidad con una instancia SQL Server administrada como PaaS?",
-          "opciones": ["Azure SQL Managed Instance", "Azure Blob Storage", "Azure Files", "Cosmos DB"],
+          "opciones": [
+            "Azure SQL Managed Instance",
+            "Azure Blob Storage",
+            "Azure Files",
+            "Cosmos DB"
+          ],
           "correcta": 0,
           "explicacion": "Managed Instance ofrece alta compatibilidad con SQL Server dentro de un modelo PaaS administrado."
         },
         {
           "dominio": "Non-relational data on Azure",
           "pregunta": "¿Qué servicio debes reconocer para datos NoSQL globalmente distribuidos y de baja latencia?",
-          "opciones": ["Azure Cosmos DB", "Azure SQL Database exclusivamente", "Power BI", "Azure DNS"],
+          "opciones": [
+            "Azure Cosmos DB",
+            "Azure SQL Database exclusivamente",
+            "Power BI",
+            "Azure DNS"
+          ],
           "correcta": 0,
           "explicacion": "Cosmos DB está orientado a cargas NoSQL distribuidas globalmente."
         },
         {
           "dominio": "Analytics workload on Azure",
           "pregunta": "¿Qué secuencia representa mejor una carga analítica?",
-          "opciones": ["Ingestar/procesar → almacenar para análisis → modelar/visualizar", "DNS → firewall → impresora", "Solo SELECT sobre producción", "Convertir todo a PDF"],
+          "opciones": [
+            "Ingestar/procesar → almacenar para análisis → modelar/visualizar",
+            "DNS → firewall → impresora",
+            "Solo SELECT sobre producción",
+            "Convertir todo a PDF"
+          ],
           "correcta": 0,
           "explicacion": "Una carga analítica combina ingestión/proceso, almacenamiento analítico y consumo/visualización."
         }
       ],
-      "solucion": {"modo": "manual"},
+      "solucion": {
+        "modo": "manual"
+      },
       "evidencia_prepost": "Repite las cinco preguntas de S1 antes de mirar apuntes y compara calidad de explicación, no solo aciertos.",
       "hilo": {
         "hereda": "S15 produjo evidencia auténtica de desempeño.",
@@ -469,12 +676,64 @@
   "hilo_conductor": {
     "pregunta_madre": "¿Cómo convertimos una necesidad de negocio en una solución de datos defendible, comprobable y transferible?",
     "actos": [
-      {"acto": 1, "sesiones": [1], "nombre": "Por qué importan los datos", "pregunta": "¿Qué decisión queremos mejorar y qué papel cumplen los datos?"},
-      {"acto": 2, "sesiones": [2,3,4,5], "nombre": "Responder preguntas con confianza", "pregunta": "¿Cómo obtenemos una respuesta correcta, explicable y validada con SQL?"},
-      {"acto": 3, "sesiones": [6,7,8,9], "nombre": "Diseñar y hacer cumplir el modelo", "pregunta": "¿Cómo pasamos de reglas a una base que proteja esas reglas?"},
-      {"acto": 4, "sesiones": [10,11], "nombre": "Elegir la representación adecuada", "pregunta": "¿Cuándo convienen tablas, documentos o una arquitectura híbrida?"},
-      {"acto": 5, "sesiones": [12,13,14], "nombre": "Separar operación y analítica y llevarla a cloud", "pregunta": "¿Cómo diseñamos para análisis y transferimos el razonamiento entre nubes?"},
-      {"acto": 6, "sesiones": [15,16], "nombre": "Integrar, demostrar y transferir", "pregunta": "¿Podemos resolver el problema completo y diagnosticar lo aprendido?"}
+      {
+        "acto": 1,
+        "sesiones": [
+          1
+        ],
+        "nombre": "Por qué importan los datos",
+        "pregunta": "¿Qué decisión queremos mejorar y qué papel cumplen los datos?"
+      },
+      {
+        "acto": 2,
+        "sesiones": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "nombre": "Responder preguntas con confianza",
+        "pregunta": "¿Cómo obtenemos una respuesta correcta, explicable y validada con SQL?"
+      },
+      {
+        "acto": 3,
+        "sesiones": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "nombre": "Diseñar y hacer cumplir el modelo",
+        "pregunta": "¿Cómo pasamos de reglas a una base que proteja esas reglas?"
+      },
+      {
+        "acto": 4,
+        "sesiones": [
+          10,
+          11
+        ],
+        "nombre": "Elegir la representación adecuada",
+        "pregunta": "¿Cuándo convienen tablas, documentos o una arquitectura híbrida?"
+      },
+      {
+        "acto": 5,
+        "sesiones": [
+          12,
+          13,
+          14
+        ],
+        "nombre": "Separar operación y analítica y llevarla a cloud",
+        "pregunta": "¿Cómo diseñamos para análisis y transferimos el razonamiento entre nubes?"
+      },
+      {
+        "acto": 6,
+        "sesiones": [
+          15,
+          16
+        ],
+        "nombre": "Integrar, demostrar y transferir",
+        "pregunta": "¿Podemos resolver el problema completo y diagnosticar lo aprendido?"
+      }
     ],
     "regla": "hereda → pregunta central → evidencia → limitación/puente siguiente"
   }

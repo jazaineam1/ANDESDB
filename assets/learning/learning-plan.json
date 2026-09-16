@@ -8,8 +8,7 @@
       11,
       12,
       13,
-      14,
-      15
+      14
     ],
     "dp900_transversal": true,
     "servicio_real_primero": true,
@@ -497,28 +496,34 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final integrador",
+      "titulo": "Desafío final · evaluación automática",
       "duracion_util": 165,
-      "modo": "autonomo_guiado",
-      "trabajo_autonomo_min": 90,
-      "objetivo": "Resolver un problema completo tomando decisiones sin que se indique de antemano la herramienta.",
-      "nucleo": {
-        "titulo": "Diagnostica, modela, construye y valida",
-        "minutos": 90,
-        "instrucciones": "Con los datasets sucios del desafío final, identifica problemas, define un modelo, transforma lo necesario, produce consultas/indicadores y documenta cómo comprobaste que tus resultados son defendibles.",
+      "modo": "evaluacion_automatica_guiada",
+      "objetivo": "Demostrar transferencia con una solución que sobreviva pruebas de integridad, consultas sobre datos variables y decisiones de arquitectura dadas restricciones explícitas.",
+      "evaluacion": {
+        "modo": "automatica",
+        "href": "evaluador-s15.html",
+        "puntaje_total": 100,
+        "reintentos": true,
+        "registro_lms": true,
         "criterios": [
-          "diagnóstico",
-          "modelo",
-          "transformación",
-          "consultas",
-          "validación",
-          "decisión explicada"
+          {
+            "titulo": "Grano y lectura de fuentes",
+            "puntos": 20
+          },
+          {
+            "titulo": "DDL e integridad",
+            "puntos": 25
+          },
+          {
+            "titulo": "SQL y validación",
+            "puntos": 35
+          },
+          {
+            "titulo": "Arquitectura y adaptabilidad",
+            "puntos": 20
+          }
         ]
-      },
-      "reto": {
-        "titulo": "Arquitectura de producción",
-        "minutos": 20,
-        "instrucciones": "Dibuja cómo llevarías tu solución de un prototipo a producción: origen, almacenamiento, procesamiento, capa analítica y consumo."
       },
       "dp900": [
         {
@@ -547,7 +552,8 @@
         }
       ],
       "solucion": {
-        "modo": "manual"
+        "modo": "automatica",
+        "href": "evaluador-s15.html"
       }
     },
     "16": {

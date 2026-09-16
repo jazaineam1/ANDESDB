@@ -3,7 +3,7 @@
 
 - index.html: metadatos PWA + instalador visible.
 - Todas las sesiones públicas: analítica GA4 agregada y sin PII.
-- S11, S12, S13, S14 y S15: capa de práctica técnica no persistente.
+- S11, S12, S13 y S14: capa de práctica técnica no persistente.
 - S12-S14: enlace contextual al laboratorio analítico local.
 - S13: temporizador flexible, lenguaje centrado en aprendizaje y comparación visual
   entre partición y clustering.
@@ -27,7 +27,7 @@ PWA_INSTALL = ROOT / "assets" / "pwa-install.js"
 ANALYTICS_FALLBACK = ROOT / "assets" / "learning" / "analytics-fallback-link.js"
 PUBLIC_ANALYTICS_CONFIG = ROOT / "assets" / "analytics-config.js"
 PUBLIC_ANALYTICS = ROOT / "assets" / "analytics.js"
-TECHNICAL_DIFFERENTIATION = {11, 12, 13, 14, 15}
+TECHNICAL_DIFFERENTIATION = {11, 12, 13, 14}
 
 
 def relative_url(from_file: Path, target: Path) -> str:
