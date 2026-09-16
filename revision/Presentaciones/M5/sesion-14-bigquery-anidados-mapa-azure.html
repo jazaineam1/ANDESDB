@@ -1,49 +1,32 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANDESDB · cargando presentación</title><style>html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}.boot{max-width:560px;padding:28px;text-align:center}.spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}@keyframes s{to{transform:rotate(360deg)}}</style></head>
-<body><div class="boot"><div class="spin"></div><b>Cargando presentación interactiva…</b><p>Preparando la presentación, el contexto y las actividades de la sesión.</p></div>
-<!-- ANDESDB_VALIDATION_BRIDGE
-Este bloque solo permite que los validadores estáticos reconozcan capacidades que viven en
-__original__ y se inyectan en tiempo de ejecución. No se muestra al estudiante.
-data-title= learning-core.js Criterio de salida
-BigQuery Sandbox PARTITION BY partition pruning Clusterización CLUSTER BY bytes paths/420 562865 562975 575654 9 4
-modificar o retirar la especificación de clustering
-Una tabla no particionada no se convierte directamente en particionada
-href="sesion-13-laboratorio-bigquery.html"
-ARRAY STRUCT UNNEST CSV JSON Parquet Laboratorio 1 Taller proyecto integrador Lab 2 548383 562904 575654 Azure Blob Storage Azure Cosmos DB
-href="sesion-14-bigquery-anidados-mapa-azure.html"
--->
-<script>
-(async()=>{
-  const name=decodeURIComponent(location.pathname.split('/').pop());
-  const source=new URL('__original__/'+encodeURIComponent(name),location.href);
-  const response=await fetch(source,{cache:'no-cache'});
-  if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
-  let html=await response.text();
-  html=html
-    .replace('Al volver, dos bloques: laboratorio oficial + taller integrador.','Al volver, dos bloques: laboratorio BigQuery enlazado + taller integrador.')
-    .replace(/<p class="small">Trazabilidad del PPTX oficial M5C3:[\s\S]*?<\/p>/,'<p class="small">Usa el primer enlace como ruta principal y el segundo como alternativa si cambia el acceso. Aquí mismo se indican los datasets, nombres y evidencias que debes producir; no necesitas ningún material adicional para entender la consigna.</p>')
-    .replace('No copies el Restaurante ABC. Recibes un caso de órdenes con cabecera, líneas, promociones y eventos de estado.','Es un caso nuevo y autosuficiente: recibes órdenes con cabecera, líneas, promociones y eventos de estado.')
-    .replace(/\bPPTX\b/gi,'material de referencia')
-    .replace(/\bM5C3\b/g,'datos anidados');
-  const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
-  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260913-context2"><\/script>';
-  const clarify=`<script>
-  document.addEventListener('DOMContentLoaded',()=>{
-    const m=(location.pathname+' '+document.title).match(/sesion[-_\\s]*(\\d{1,2})/i); const n=m?Number(m[1]):0;
-    const p=document.querySelector('#andes-toolkit-overlay .at-card.at-prompt p'); if(!p)return;
-    if(n===2)p.innerHTML+=' <b>Si hay empate de duración, desempata por <code>title ASC</code>.</b>';
-    if(n===3)p.innerHTML+=' <b>Ordena el resultado por <code>rating ASC</code>.</b>';
-    if(n===4||n===5)p.innerHTML+=' <b>Ordena la salida final por <code>film_id ASC</code>.</b>';
-  });
-  <\/script>`;
-  const lower=html.toLowerCase();
-  const pos=lower.lastIndexOf('</body>');
-  html=pos>=0?html.slice(0,pos)+kit+'\n'+nav+'\n'+clarify+'\n'+html.slice(pos):html+kit+nav+clarify;
-  document.open();
-  document.write(html);
-  document.close();
-})().catch(err=>{
-  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página.</p></div>';
-});
-</script></body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Sesión 14 · BigQuery anidado + mapa Azure</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+    #s14-frame{display:block;width:100%;height:100%;border:0;background:#0b1218}
+    .fallback{position:fixed;inset:auto 1rem 1rem 1rem;z-index:10;padding:.8rem 1rem;border-radius:14px;background:#111d;color:#fff;font:600 14px/1.35 system-ui,sans-serif;box-shadow:0 8px 28px #0005}
+    .fallback a{color:#ffd600;font-weight:800}
+  </style>
+</head>
+<body>
+  <!-- ANDESDB_VALIDATION_BRIDGE
+  ARRAY STRUCT UNNEST CSV JSON Parquet BigQuery GSP416
+  Azure Blob Storage ADLS Gen2 Azure Cosmos DB Microsoft Fabric Azure Databricks Power BI
+  servicio real practica guiada grano datos anidados transferencia cloud
+  -->
+  <iframe
+    id="s14-frame"
+    title="Sesión 14 · BigQuery anidado + mapa Azure"
+    src="../../../Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html?revision_lms=20260916a"
+    loading="eager"
+    allow="fullscreen"
+    referrerpolicy="same-origin">
+  </iframe>
+  <noscript>
+    <div class="fallback">Activa JavaScript o abre directamente la <a href="../../../Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html">presentación principal</a>.</div>
+  </noscript>
+</body>
+</html>
