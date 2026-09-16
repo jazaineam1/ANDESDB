@@ -3,67 +3,242 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="ANDESDB · Evaluador automático de la Sesión 15">
-<title>ANDESDB · Evaluador automático S15</title>
-<style>
-:root{--ink:#17202a;--muted:#667085;--line:#dfe5ea;--bg:#f5f7f9;--paper:#fff;--dark:#101828;--yellow:#ffd600;--blue:#175cd3;--green:#16794b;--red:#b42318;--orange:#b54708;--r:16px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}.top{position:sticky;top:0;z-index:30;background:#101828;color:#fff;border-bottom:1px solid #ffffff18}.topin,.wrap{width:min(1180px,94vw);margin:auto}.topin{min-height:58px;display:flex;align-items:center;gap:12px}.brand{font-weight:900;color:#fff;text-decoration:none}.top .spacer{flex:1}.top a.alt{color:#dbe5ee;font-size:.82rem}.hero{background:linear-gradient(145deg,#112033,#1c3d59);color:#fff;padding:34px 0}.ey{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);font-weight:900}.hero h1{font-size:clamp(2rem,6vw,4rem);line-height:1;margin:.35rem 0 .65rem;max-width:17ch}.hero p{max-width:78ch;color:#d3dde5;margin:.25rem 0}.rubric{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}.rubric article{background:#ffffff0d;border:1px solid #ffffff1c;border-radius:12px;padding:10px}.rubric b{display:block;font-size:1.35rem;color:#fff}.rubric span{font-size:.74rem;color:#d8e1e8}.wrap{padding:20px 0 90px}.status,.lms{border-radius:12px;padding:10px 12px;margin-bottom:12px;border:1px solid var(--line);background:#fff}.status.ok,.lms.ok{background:#ecfdf3;border-color:#abefc6;color:#05603a}.status.work{background:#eff8ff;border-color:#b2ddff;color:#175cd3}.status.bad{background:#fef3f2;border-color:#fecdca;color:#912018}.status.warn,.lms.warn{background:#fffaeb;border-color:#fedf89;color:#93370d}.lms{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lms span{font-size:.83rem}.lms a{margin-left:auto;color:inherit;font-weight:800}.section{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 8px 28px #10182809;margin:14px 0;overflow:hidden}.sectionHead{padding:16px 18px;border-bottom:1px solid #edf0f3;display:flex;align-items:flex-start;gap:12px}.num{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#101828;color:var(--yellow);font-weight:900}.sectionHead h2{margin:0;font-size:1.2rem}.sectionHead p{margin:.18rem 0 0;color:var(--muted);font-size:.86rem}.sectionBody{padding:17px}.q{border:1px solid #e5e9ee;border-radius:13px;padding:12px;margin:10px 0;background:#fbfcfd}.q>strong{display:block;margin-bottom:8px}.opts{display:grid;gap:6px}.opt{display:flex;align-items:flex-start;gap:8px;border:1px solid #e2e7ec;border-radius:9px;padding:8px 9px;background:#fff;cursor:pointer}.opt:hover{border-color:#98a2b3}.opt input{margin-top:.25em}.contract{background:#eff8ff;border-left:4px solid var(--blue);border-radius:10px;padding:10px 12px;margin:10px 0}.contract ul{margin:.35rem 0;padding-left:1.25rem}.contract code{background:#fff;padding:.1em .3em;border-radius:4px}.editorLabel{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 6px}.editorLabel b{font-size:.88rem}.editorLabel small{color:var(--muted)}textarea{width:100%;min-height:180px;border:2px solid #cfd8e1;border-radius:12px;background:#0e1b27;color:#f2f6f9;padding:12px;font:13px/1.5 Consolas,"Cascadia Mono",monospace;resize:vertical;outline:none}textarea:focus{border-color:#f79009;box-shadow:0 0 0 3px #f7900922}.query{margin:15px 0;padding-top:14px;border-top:1px solid #edf0f3}.query:first-of-type{border-top:0}.query h3{margin:0 0 4px;font-size:1rem}.query p{margin:.25rem 0;color:#475467;font-size:.86rem}.alias{display:inline-block;background:#f2f4f7;border-radius:6px;padding:3px 7px;font:12px Consolas,monospace;margin:.3rem 0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:0;border-radius:10px;background:#101828;color:#fff;padding:10px 14px;font-weight:850;cursor:pointer}.btn:hover{filter:brightness(1.1)}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#e9eef3;color:#17202a}.btn.final{background:#175cd3;font-size:1rem;padding:12px 18px}.feedback{margin-top:12px;border-radius:12px;padding:11px;background:#f8fafc;border:1px solid #e4e7ec}.feedback strong{font-size:1.05rem}.feedback ul{margin:.5rem 0 0;padding-left:1.2rem}.feedback li{margin:.3rem 0}.feedback li.good{color:#05603a}.feedback li.bad{color:#912018}.finalBox{background:#101828;color:#fff;border-radius:var(--r);padding:18px;margin-top:18px}.finalBox h2{margin:.1rem 0 .4rem}.finalBox p{color:#ccd6df;max-width:80ch}.scoreHero{display:flex;align-items:baseline;gap:5px}.scoreHero strong{font-size:4rem;line-height:1;color:var(--yellow)}.scoreHero span{font-size:1.4rem}.scoreHero small{margin-left:10px;color:#c8d3dc}.scoreGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0}.scoreGrid article{background:#ffffff10;border:1px solid #ffffff18;border-radius:11px;padding:10px;text-align:center}.scoreGrid b{display:block;font-size:1.1rem}.scoreGrid span{font-size:.72rem;color:#cbd5df}.feedbackText{white-space:pre-wrap;background:#fff;color:#17202a;border-radius:12px;padding:13px;max-height:360px;overflow:auto;font:13px/1.5 system-ui;margin:10px 0}.small{font-size:.78rem;color:var(--muted)}.dataset{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.dataset a{border:1px solid var(--line);border-radius:999px;padding:6px 10px;text-decoration:none;color:#344054;font-weight:750;font-size:.78rem;background:#fff}.anti{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:10px 12px;color:#9a3412;margin:10px 0}.anti b{display:block}.footerNote{margin-top:16px;color:#667085;font-size:.78rem}@media(max-width:800px){.rubric,.scoreGrid{grid-template-columns:1fr 1fr}.topin{width:94vw}.sectionHead{padding:13px}.sectionBody{padding:13px}textarea{font-size:12px;min-height:150px}.lms a{margin-left:0}.hero{padding:27px 0}}@media(max-width:460px){.rubric,.scoreGrid{grid-template-columns:1fr}.hero h1{font-size:2.35rem}}
-</style>
+<meta name="description" content="ANDESDB · Workbench de evaluación integradora · Sesión 15">
+<title>ANDESDB · S15 Workbench</title>
+<link rel="stylesheet" href="assets/learning/s15-workbench.css?v=s15w3">
 </head>
 <body>
-<header class="top"><div class="topin"><a class="brand" href="index.html">ANDESDB</a><span>Sesión 15</span><span class="spacer"></span><a class="alt" href="Presentaciones/M6/sesion-15-desafio-final.html">← Presentación</a></div></header>
-<section class="hero"><div class="topin"><div><div class="ey">Evaluación automática · S15</div><h1>Demuestra que tu solución funciona</h1><p>No entregas seis archivos para que el profesor los revise uno por uno. Aquí tomas decisiones, escribes SQL, ejecutas pruebas y recibes retroalimentación inmediata. El intento final se registra en el LMS si tienes sesión iniciada.</p><div class="rubric"><article><b>20</b><span>Grano y fuentes</span></article><article><b>25</b><span>DDL e integridad</span></article><article><b>35</b><span>SQL y validación</span></article><article><b>20</b><span>Arquitectura y cambio</span></article></div></div></div></section>
-<main class="wrap">
-<div id="engineStatus" class="status work">Preparando evaluador…</div>
-<div id="lmsStatus" class="lms"></div>
-<div class="dataset"><a href="Plantillas/proyecto-final/Datos/casos.csv" download>casos.csv</a><a href="Plantillas/proyecto-final/Datos/eventos.csv" download>eventos.csv</a><a href="Plantillas/proyecto-final/Datos/evidencias.json" download>evidencias.json</a><span id="dataSummary" class="small"></span></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/ANDESDB/">ANDESDB</a>
+    <div class="top-title"><b>S15 · Workbench integrador</b><span>Reto evaluado · 2 h orientativas</span></div>
+    <div class="top-spacer"></div>
+    <div class="top-score"><span id="livePoints">0</span><small>/100 verificados</small></div>
+    <button class="ghost smallbtn" id="toggleNav" type="button">Misiones</button>
+  </div>
+</header>
 
-<section class="section" id="secConcept">
-<div class="sectionHead"><span class="num">1</span><div><h2>Entiende el grano antes de escribir SQL</h2><p>Cinco decisiones objetivas. Cada una vale 4 puntos.</p></div></div>
-<div class="sectionBody">
-<div class="q"><strong>C1. ¿Qué representa una fila de <code>casos.csv</code>?</strong><div class="opts"><label class="opt"><input type="radio" name="c1" value="caso_snapshot">Un caso reportado y su estado actual.</label><label class="opt"><input type="radio" name="c1" value="evento">Un cambio de estado.</label><label class="opt"><input type="radio" name="c1" value="barrio">Un barrio.</label></div></div>
-<div class="q"><strong>C2. ¿Qué representa una fila de <code>eventos.csv</code>?</strong><div class="opts"><label class="opt"><input type="radio" name="c2" value="evento_cambio">Un evento o cambio asociado a un caso.</label><label class="opt"><input type="radio" name="c2" value="caso">El caso completo.</label><label class="opt"><input type="radio" name="c2" value="agente">Un agente.</label></div></div>
-<div class="q"><strong>C3. Entre caso y eventos, ¿cuál es la cardinalidad observada?</strong><div class="opts"><label class="opt"><input type="radio" name="c3" value="uno_a_muchos">1:N</label><label class="opt"><input type="radio" name="c3" value="uno_a_uno">1:1</label><label class="opt"><input type="radio" name="c3" value="muchos_a_muchos">N:M</label></div></div>
-<div class="q"><strong>C4. Unes casos con eventos y haces <code>COUNT(*)</code>. ¿Cuál es el riesgo?</strong><div class="opts"><label class="opt"><input type="radio" name="c4" value="count_inflado">Contar eventos/filas del JOIN cuando querías contar casos.</label><label class="opt"><input type="radio" name="c4" value="sin_riesgo">Ninguno: COUNT(*) siempre conserva el grano original.</label><label class="opt"><input type="radio" name="c4" value="pierde_texto">Perder columnas de texto.</label></div></div>
-<div class="q"><strong>C5. En <code>evidencias.json</code>, ¿qué estructura observas?</strong><div class="opts"><label class="opt"><input type="radio" name="c5" value="doc_caso_array_evidencias">Un documento por caso con un arreglo de evidencias.</label><label class="opt"><input type="radio" name="c5" value="doc_evidencia">Un documento por cada evidencia.</label><label class="opt"><input type="radio" name="c5" value="tabla_plana">Una tabla plana 1:1.</label></div></div>
-<div class="actions"><button class="btn secondary" id="checkConcepts">Comprobar conceptos</button></div><div id="conceptFeedback" class="feedback" hidden></div>
-</div></section>
-
-<section class="section" id="secDDL">
-<div class="sectionHead"><span class="num">2</span><div><h2>Construye un modelo que proteja reglas confirmadas</h2><p>Tu DDL se ejecuta en una base SQLite aislada. Cinco pruebas, 5 puntos cada una.</p></div></div>
-<div class="sectionBody">
-<div class="contract"><b>Contrato que sí está confirmado</b><ul><li>Tabla <code>caso</code>: <code>caso_id INTEGER</code>, <code>fecha_creacion TEXT</code>, <code>tipo TEXT</code>, <code>prioridad TEXT</code>, <code>estado TEXT</code>, <code>barrio TEXT</code>.</li><li>Tabla <code>evento</code>: <code>evento_id TEXT</code>, <code>caso_id INTEGER</code>, <code>fecha_evento TEXT</code>, <code>estado TEXT</code>, <code>minutos_desde_anterior INTEGER</code>.</li><li>Los identificadores son únicos; un evento debe pertenecer a un caso; los campos listados son obligatorios; los minutos no pueden ser negativos.</li><li><b>No</b> se ha confirmado que los valores observados de <code>estado</code> sean una lista cerrada.</li></ul></div>
-<div class="editorLabel"><b>Tu DDL</b><small>Puedes añadir columnas opcionales, pero no agregues nuevas columnas obligatorias que el contrato no exige.</small></div>
-<textarea id="ddl" spellcheck="false" placeholder="CREATE TABLE caso (...);&#10;&#10;CREATE TABLE evento (...);"></textarea>
-<div class="actions"><button class="btn secondary" id="checkDDL">Ejecutar 5 pruebas de integridad</button></div><div id="ddlFeedback" class="feedback" hidden></div>
-</div></section>
-
-<section class="section" id="secQueries">
-<div class="sectionHead"><span class="num">3</span><div><h2>Responde con SQL que sobreviva a cambios en los datos</h2><p>Cada consulta se ejecuta sobre los datos visibles y sobre variaciones automáticas. Los nombres de las tablas son <code>casos_src</code> y <code>eventos_src</code>.</p></div></div>
-<div class="sectionBody">
-<div class="anti"><b>No hardcodees resultados.</b> El evaluador agrega casos, eventos y un estado nuevo en copias internas. Una consulta correcta debe seguir funcionando.</div>
-<div class="query"><h3>Q1 · Casos de prioridad Alta por barrio · 8 puntos</h3><p>Devuelve una fila por barrio con la cantidad de casos cuya prioridad es <b>Alta</b>.</p><span class="alias">barrio, casos_alta</span><textarea id="q1" spellcheck="false" placeholder="SELECT ... FROM casos_src ..."></textarea></div>
-<div class="query"><h3>Q2 · Estado actual frente al último evento · 9 puntos</h3><p>Para cada caso devuelve su estado actual y el estado del evento más reciente según <code>fecha_evento</code>.</p><span class="alias">caso_id, estado_actual, ultimo_estado</span><textarea id="q2" spellcheck="false" placeholder="WITH ..."></textarea></div>
-<div class="query"><h3>Q3 · Minutos hasta cierre · 9 puntos</h3><p>Para cada caso cuyo <b>último evento</b> sea <code>Cerrado</code>, suma <code>minutos_desde_anterior</code> de todos sus eventos.</p><span class="alias">caso_id, minutos_hasta_cierre</span><textarea id="q3" spellcheck="false" placeholder="WITH ..."></textarea></div>
-<div class="query"><h3>Q4 · Control de grano después del JOIN · 9 puntos</h3><p>Usando casos y eventos, devuelve en una sola fila: número de casos, número de eventos y número de casos de prioridad Alta. Los casos no deben inflarse por tener varios eventos.</p><span class="alias">total_casos, total_eventos, casos_alta</span><textarea id="q4" spellcheck="false" placeholder="SELECT ..."></textarea></div>
-<div class="actions"><button class="btn secondary" id="checkQueries">Ejecutar consultas y variaciones</button></div><div id="queriesFeedback" class="feedback" hidden></div>
-</div></section>
-
-<section class="section" id="secArch">
-<div class="sectionHead"><span class="num">4</span><div><h2>Decide por requisitos, no por nombres de productos</h2><p>Cuatro escenarios deterministas. Cada uno vale 5 puntos.</p></div></div>
-<div class="sectionBody">
-<div class="q"><strong>A1. Operación necesita consultar rápido el estado actual y auditoría necesita toda la historia. ¿Qué diseño responde mejor?</strong><div class="opts"><label class="opt"><input type="radio" name="a1" value="snapshot_historial">Mantener snapshot actual + historial de eventos, con una regla explícita de consistencia.</label><label class="opt"><input type="radio" name="a1" value="solo_snapshot">Guardar solo el estado actual.</label><label class="opt"><input type="radio" name="a1" value="solo_historial">Guardar solo texto libre de eventos y reconstruir todo manualmente.</label></div></div>
-<div class="q"><strong>A2. Las evidencias varían en cantidad y campos, evolucionan con frecuencia y normalmente se leen juntas por caso. ¿Qué representación encaja mejor para esa pieza?</strong><div class="opts"><label class="opt"><input type="radio" name="a2" value="documental">Documental/anidada.</label><label class="opt"><input type="radio" name="a2" value="una_columna">Una sola columna VARCHAR con todo concatenado.</label><label class="opt"><input type="radio" name="a2" value="tabla_por_tipo">Crear una tabla distinta cada vez que aparece un nuevo tipo de evidencia.</label></div></div>
-<div class="q"><strong>A3. Se requieren tableros históricos pesados mientras la operación sigue escribiendo casos. ¿Qué principio aplicas?</strong><div class="opts"><label class="opt"><input type="radio" name="a3" value="separar_analitica">Separar la carga analítica de la operacional y modelarla para consulta histórica.</label><label class="opt"><input type="radio" name="a3" value="todo_oltp">Ejecutar siempre todo sobre la tabla operacional.</label><label class="opt"><input type="radio" name="a3" value="duplicar_sin_grano">Copiar tablas sin definir grano ni controles.</label></div></div>
-<div class="q"><strong>A4. En los archivos ves Abierto, En_proceso y Cerrado, pero el negocio no dijo que sean los únicos estados posibles. ¿Qué haces?</strong><div class="opts"><label class="opt"><input type="radio" name="a4" value="no_cerrar_dominio">No convierto esa observación en un CHECK cerrado; documento el supuesto y dejo evolución.</label><label class="opt"><input type="radio" name="a4" value="check_tres">Creo un CHECK con esos tres valores porque aparecen en el CSV.</label><label class="opt"><input type="radio" name="a4" value="sin_estado">Elimino la columna estado.</label></div></div>
-<div class="actions"><button class="btn secondary" id="checkArch">Comprobar decisiones</button></div><div id="archFeedback" class="feedback" hidden></div>
-</div></section>
-
-<section class="finalBox">
-<div class="ey">Intento final</div><h2>Ejecuta todo y registra la evaluación</h2><p>El botón vuelve a ejecutar DDL, consultas y variaciones; calcula el puntaje completo y, si tu sesión LMS está activa, registra automáticamente el intento con retroalimentación. Puedes corregir y volver a intentar.</p><div class="actions"><button class="btn final" id="submitFinal">Evaluar y registrar intento</button><span id="attemptInfo" class="small" style="align-self:center;color:#c8d3dc"></span><span id="savedAt" class="small" style="align-self:center;color:#c8d3dc"></span></div>
-<div id="reportWrap" hidden><div id="report"></div><div class="actions"><button class="btn secondary" id="copyReport">Copiar retroalimentación</button><button class="btn secondary" id="downloadReport">Descargar resultado JSON</button></div></div>
+<section class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="ey">Assessment lab · construir, romper, reparar</div>
+      <h1>No respondas qué harías. <span>Haz que funcione.</span></h1>
+      <p>Vas a inspeccionar datos, modelar entidades, armar un flujo, escribir DDL, depurar SQL, diseñar un esquema analítico y someter toda la solución a cambios. Cada herramienta produce evidencia automática.</p>
+      <div class="hero-badges">
+        <span>7 estaciones</span><span>≈ 37 checkpoints</span><span>100 puntos</span><span>reintentos con feedback</span>
+      </div>
+    </div>
+    <div class="hero-card">
+      <strong>Ritmo sugerido, no punitivo</strong>
+      <p>La ruta está pensada para unas 2 horas de trabajo activo. Puedes volver atrás, corregir y volver a probar. La nota final usa tu mejor estado verificado en cada dimensión.</p>
+      <div id="lmsStatus" class="lms mini">Comprobando LMS…</div>
+    </div>
+  </div>
 </section>
-<p class="footerNote">El evaluador usa SQL.js localmente: las consultas se ejecutan en tu navegador. Solo el resumen del intento final se envía al LMS cuando estás autenticado.</p>
-</main>
+
+<div class="layout">
+  <aside class="mission-nav" id="missionNav">
+    <div class="nav-head">
+      <b>Ruta de misiones</b>
+      <span id="checkpointCount">0/37 checkpoints</span>
+    </div>
+    <a href="#m1" data-mission="source"><span>1</span><div><b>Inspector</b><small>fuentes + grano</small></div><em>10</em></a>
+    <a href="#m2" data-mission="model"><span>2</span><div><b>Modelador ER</b><small>drag & drop</small></div><em>15</em></a>
+    <a href="#m3" data-mission="flow"><span>3</span><div><b>Flow Builder</b><small>arquitectura</small></div><em>15</em></a>
+    <a href="#m4" data-mission="ddl"><span>4</span><div><b>DDL Lab</b><small>constraints reales</small></div><em>15</em></a>
+    <a href="#m5" data-mission="sql"><span>5</span><div><b>SQL Debug Arena</b><small>5 problemas</small></div><em>25</em></a>
+    <a href="#m6" data-mission="star"><span>6</span><div><b>Star Builder</b><small>salida analítica</small></div><em>10</em></a>
+    <a href="#m7" data-mission="chaos"><span>7</span><div><b>Chaos Lab</b><small>cambio + resiliencia</small></div><em>10</em></a>
+    <div class="nav-actions">
+      <button class="ghost" id="saveDraft" type="button">Guardar borrador</button>
+      <button class="ghost" id="resetDraft" type="button">Reiniciar</button>
+    </div>
+  </aside>
+
+  <main class="workbench">
+    <div id="engineStatus" class="status work">Preparando datos y motor SQL…</div>
+
+    <section class="mission" id="m1" data-mission="source">
+      <header class="mission-head">
+        <div class="mission-num">1</div>
+        <div><div class="ey dark">Descubrimiento · 10 puntos</div><h2>Inspector de datos</h2><p>No te damos el grano en una pregunta de selección múltiple: inspecciona las fuentes y clasifícalas.</p></div>
+        <div class="mission-score"><b id="score-source">0</b><span>/10</span></div>
+      </header>
+      <div class="tool-grid">
+        <div class="tool-card span2">
+          <div class="tool-title"><b>Explorador</b><span>abre cada fuente y mira su perfil</span></div>
+          <div class="data-tabs" id="dataTabs">
+            <button data-dataset="casos" class="active">casos.csv</button>
+            <button data-dataset="eventos">eventos.csv</button>
+            <button data-dataset="evidencias">evidencias.json</button>
+          </div>
+          <div class="profile-strip" id="profileStrip"></div>
+          <div class="table-wrap" id="dataPreview"></div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-title"><b>Mapa de función</b><span>arrastra cada fuente al rol correcto</span></div>
+          <div class="palette source-palette" id="sourcePalette">
+            <div class="drag-card" draggable="true" data-kind="source" data-id="casos">casos.csv</div>
+            <div class="drag-card" draggable="true" data-kind="source" data-id="eventos">eventos.csv</div>
+            <div class="drag-card" draggable="true" data-kind="source" data-id="evidencias">evidencias.json</div>
+          </div>
+          <div class="drop-stack">
+            <div class="dropzone role-zone" data-role="snapshot"><b>Snapshot operacional</b><span>estado actual / una fila por objeto</span></div>
+            <div class="dropzone role-zone" data-role="history"><b>Historia de cambios</b><span>muchas filas por objeto</span></div>
+            <div class="dropzone role-zone" data-role="document"><b>Evidencia flexible</b><span>estructura variable/anidada</span></div>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-title"><b>Claves observadas</b><span>arrastra la clave de cada fuente al slot</span></div>
+          <div class="field-palette key-palette">
+            <button class="chip drag-card" draggable="true" data-kind="key" data-id="caso_id">caso_id</button>
+            <button class="chip drag-card" draggable="true" data-kind="key" data-id="evento_id">evento_id</button>
+            <button class="chip drag-card decoy" draggable="true" data-kind="key" data-id="barrio">barrio</button>
+            <button class="chip drag-card decoy" draggable="true" data-kind="key" data-id="estado">estado</button>
+          </div>
+          <div class="drop-stack">
+            <div class="dropzone key-zone" data-keyslot="casos"><b>Clave de caso</b><span>identifica cada caso</span></div>
+            <div class="dropzone key-zone" data-keyslot="eventos"><b>Clave de evento</b><span>identifica cada evento</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mission-actions"><button class="primary" data-check="source">Validar estación 1</button><div class="feedback" id="fb-source"></div></div>
+    </section>
+
+    <section class="mission" id="m2" data-mission="model">
+      <header class="mission-head">
+        <div class="mission-num">2</div>
+        <div><div class="ey dark">Modelado · 15 puntos</div><h2>Modelador ER drag-and-drop</h2><p>Construye las dos entidades operacionales, marca PK y crea la relación. Después podrás generar un DDL inicial desde lo que modelaste.</p></div>
+        <div class="mission-score"><b id="score-model">0</b><span>/15</span></div>
+      </header>
+      <div class="modeler">
+        <div class="model-palette">
+          <b>Campos disponibles</b>
+          <small>Arrastra a la entidad correcta. Haz clic en un campo ya colocado para marcar/desmarcar PK.</small>
+          <div id="modelPalette" class="field-palette"></div>
+        </div>
+        <div class="entity-board">
+          <article class="entity">
+            <header><b>CASO</b><span>entidad operacional</span></header>
+            <div class="dropzone entity-fields" data-entity="caso"></div>
+          </article>
+          <div class="relation-column">
+            <div class="relation-arrow">1 ⟶ N</div>
+            <div class="dropzone fk-zone" data-fkzone="evento.caso_id"><b>FK</b><span>arrastra aquí <code>evento.caso_id</code> desde EVENTO</span></div>
+            <button class="ghost" id="toggleCardinality" type="button">Cardinalidad: <b id="cardinalityLabel">sin definir</b></button>
+          </div>
+          <article class="entity">
+            <header><b>EVENTO</b><span>historial</span></header>
+            <div class="dropzone entity-fields" data-entity="evento"></div>
+          </article>
+        </div>
+      </div>
+      <div class="model-legend"><span><i class="pkdot"></i> clic = PK</span><span><i class="fkdot"></i> slot central = FK</span><span>doble clic = devolver al palette</span></div>
+      <div class="mission-actions"><button class="primary" data-check="model">Validar modelo</button><button class="secondary" id="generateDDL" type="button">Generar DDL base desde mi modelo</button><div class="feedback" id="fb-model"></div></div>
+    </section>
+
+    <section class="mission" id="m3" data-mission="flow">
+      <header class="mission-head">
+        <div class="mission-num">3</div>
+        <div><div class="ey dark">Arquitectura · 15 puntos</div><h2>Flow Builder</h2><p>Organiza componentes y crea conexiones. No estás escogiendo “SQL o NoSQL”: estás construyendo un flujo que debe servir a operación, evidencia flexible y analítica histórica.</p></div>
+        <div class="mission-score"><b id="score-flow">0</b><span>/15</span></div>
+      </header>
+      <div class="flow-help">Arrastra nodos a las capas. Luego pulsa un nodo origen y después un nodo destino para crear una conexión. Pulsa una conexión para eliminarla.</div>
+      <div class="flow-palette" id="flowPalette"></div>
+      <div class="flow-board" id="flowBoard">
+        <div class="flow-lane dropzone" data-lane="source"><header>1 · Fuentes</header><div class="lane-body"></div></div>
+        <div class="flow-lane dropzone" data-lane="operational"><header>2 · Operación / persistencia</header><div class="lane-body"></div></div>
+        <div class="flow-lane dropzone" data-lane="analytics"><header>3 · Analítica / consumo</header><div class="lane-body"></div></div>
+      </div>
+      <div class="edge-panel"><b>Conexiones</b><div id="edgeList" class="edge-list"></div></div>
+      <div class="mission-actions"><button class="primary" data-check="flow">Validar flujo</button><div class="feedback" id="fb-flow"></div></div>
+    </section>
+
+    <section class="mission" id="m4" data-mission="ddl">
+      <header class="mission-head">
+        <div class="mission-num">4</div>
+        <div><div class="ey dark">Implementación · 15 puntos</div><h2>DDL Lab</h2><p>El modelo visual ya no basta. Haz que SQLite rechace lo que debe rechazar y acepte una evolución legítima.</p></div>
+        <div class="mission-score"><b id="score-ddl">0</b><span>/15</span></div>
+      </header>
+      <div class="split">
+        <div class="tool-card">
+          <div class="tool-title"><b>Editor de esquema</b><span>SQL.js · aislado en tu navegador</span></div>
+          <textarea id="ddl" class="code tall" spellcheck="false" placeholder="Construye o genera tu DDL…"></textarea>
+          <div class="button-row"><button class="primary" id="runDDL" type="button">Ejecutar 6 pruebas</button><button class="secondary" id="loadDDLStarter" type="button">Cargar esqueleto mínimo</button></div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-title"><b>Banco de pruebas</b><span>comportamiento, no apariencia</span></div>
+          <div id="ddlTests" class="test-console"></div>
+        </div>
+      </div>
+      <div class="mission-actions"><div class="feedback" id="fb-ddl"></div></div>
+    </section>
+
+    <section class="mission" id="m5" data-mission="sql">
+      <header class="mission-head">
+        <div class="mission-num">5</div>
+        <div><div class="ey dark">SQL Debug Arena · 25 puntos</div><h2>Cinco consultas rotas. Repáralas.</h2><p>La arena parte de SQL defectuoso deliberadamente. Cada solución se ejecuta sobre el dataset visible y sobre mutaciones. Obtener hoy “el número correcto” no basta.</p></div>
+        <div class="mission-score"><b id="score-sql">0</b><span>/25</span></div>
+      </header>
+      <div class="arena-toolbar">
+        <button class="secondary" id="runAllQueries" type="button">Ejecutar las 5 misiones</button>
+        <span id="variantBadge">3 escenarios automáticos por consulta</span>
+      </div>
+      <div id="sqlTasks"></div>
+      <div class="mission-actions"><div class="feedback" id="fb-sql"></div></div>
+    </section>
+
+    <section class="mission" id="m6" data-mission="star">
+      <header class="mission-head">
+        <div class="mission-num">6</div>
+        <div><div class="ey dark">Analítica · 10 puntos</div><h2>Star Builder</h2><p>La pregunta cambia: queremos evolución histórica y tiempos de atención por fecha, barrio, tipo, prioridad y estado. Construye el grano y separa medidas de dimensiones.</p></div>
+        <div class="mission-score"><b id="score-star">0</b><span>/10</span></div>
+      </header>
+      <div class="star-layout">
+        <div class="star-palette">
+          <b>Piezas</b>
+          <div id="starPalette" class="field-palette"></div>
+        </div>
+        <div class="star-board">
+          <div class="dropzone star-zone fact" data-star="grain"><b>Grano del hecho</b><span>una ficha</span></div>
+          <div class="dropzone star-zone fact" data-star="measure"><b>Medidas</b><span>arrastra medidas aditivas o contables</span></div>
+          <div class="dropzone star-zone dim" data-star="dimension"><b>Dimensiones</b><span>atributos para cortar el análisis</span></div>
+        </div>
+      </div>
+      <div class="mission-actions"><button class="primary" data-check="star">Validar modelo analítico</button><div class="feedback" id="fb-star"></div></div>
+    </section>
+
+    <section class="mission" id="m7" data-mission="chaos">
+      <header class="mission-head">
+        <div class="mission-num">7</div>
+        <div><div class="ey dark">Transferencia · 10 puntos</div><h2>Chaos / Change Lab</h2><p>Ahora la plataforma cambia debajo de ti. El laboratorio reutiliza tu DDL, tus consultas, tu flujo y tu diseño analítico. No hay respuestas nuevas que seleccionar.</p></div>
+        <div class="mission-score"><b id="score-chaos">0</b><span>/10</span></div>
+      </header>
+      <div class="chaos-grid" id="chaosGrid"></div>
+      <div class="mission-actions"><button class="danger" id="runChaos" type="button">⚡ Ejecutar Chaos Lab</button><div class="feedback" id="fb-chaos"></div></div>
+    </section>
+
+    <section class="final-panel" id="final">
+      <div>
+        <div class="ey">Cierre del intento</div>
+        <h2>Registra la evidencia completa</h2>
+        <p>Antes de enviar, el sistema vuelve a validar las siete estaciones. Si hay sesión iniciada en ANDESDB, guarda puntaje, desglose, estado del modelo, flujo, código y checkpoints.</p>
+      </div>
+      <div class="final-score"><strong id="finalScore">0</strong><span>/100</span></div>
+      <div class="score-grid" id="scoreGrid"></div>
+      <div id="finalFeedback" class="final-feedback">Aún no has ejecutado el intento final.</div>
+      <div class="button-row">
+        <button class="final-btn" id="submitFinal" type="button">Evaluar todo y registrar intento</button>
+        <button class="secondary" id="downloadEvidence" type="button">Descargar evidencia JSON</button>
+      </div>
+      <div class="attempts" id="attemptHistory"></div>
+    </section>
+  </main>
+</div>
+
 <script src="assets/vendor/sqljs/sql-wasm.js"></script>
-<script src="assets/learning/s15-autograder.js?v=20260916a"></script>
-</body></html>
+<script src="assets/learning/s15-autograder.js?v=s15w3"></script>
+</body>
+</html>
