@@ -49,6 +49,10 @@ jobs:
       - name: Integrar PWA y experiencia común
         run: python tools/integrar-experiencia.py
 
+      - name: Alinear S15 pública y revisión tras integración
+        run: |
+          cp Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html
+
       - name: Validar sintaxis del Workbench S15
         run: node --check assets/learning/s15-autograder.js
 
