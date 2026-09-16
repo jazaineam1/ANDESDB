@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-auto-515d3ad23567';
+const VERSION = 'andesdb-auto-515d3ad23567-s15';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -15,6 +15,11 @@ const ESSENTIAL = [
   './assets/pwa-install.js',
   './assets/learning/learning-core.js',
   './assets/learning/learning-plan.json',
+  './evaluador-s15.html',
+  './assets/learning/s15-autograder.js',
+  './Plantillas/proyecto-final/Datos/casos.csv',
+  './Plantillas/proyecto-final/Datos/eventos.csv',
+  './Plantillas/proyecto-final/Datos/evidencias.json',
   './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
   './Presentaciones/M3/sql-lab-s6.js',
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
@@ -105,7 +110,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link)\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder)\.js|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
