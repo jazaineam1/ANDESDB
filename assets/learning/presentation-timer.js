@@ -2,7 +2,7 @@
   'use strict';
   if (document.getElementById('andes-presentation-timer')) return;
 
-  const POS_KEY = 'andesdb-presentation-timer-position-v6';
+  const POS_KEY = 'andesdb-presentation-timer-position-v7';
   const root = document.createElement('div');
   root.id = 'andes-presentation-timer';
   root.setAttribute('role', 'region');
@@ -37,11 +37,11 @@
     #andes-presentation-timer .apt-adjust .apt-more{background:#e9f8ef;color:#155d3d;border-color:#bfe7ce}
     #andes-presentation-timer .apt-status{font-size:.76rem;line-height:1.35;color:#cbd8e2;text-align:center;min-height:1.3em;padding:0 .2rem}
 
-    #andes-presentation-timer .apt-compact{display:none;align-items:center;gap:.58rem;height:4.5rem;min-width:12.4rem;padding:.35rem .48rem .35rem .82rem;border-radius:999px;background:rgba(11,18,25,.98);border:1px solid rgba(255,255,255,.2);box-shadow:0 16px 38px rgba(0,0,0,.38);cursor:grab;backdrop-filter:blur(14px)}
-    #andes-presentation-timer .apt-compact-symbol{font-size:1.55rem;line-height:1;opacity:.95}
-    #andes-presentation-timer .apt-compact-time{font-variant-numeric:tabular-nums;font-size:2.25rem;line-height:1;font-weight:950;letter-spacing:.035em;white-space:nowrap;flex:1;text-align:center}
-    #andes-presentation-timer .apt-compact-hide{width:2.55rem;height:2.55rem;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-weight:950;font-size:1rem;display:grid;place-items:center}
-    #andes-presentation-timer .apt-icon-only{display:none;width:3.4rem;height:3.4rem;border-radius:999px;background:rgba(11,18,25,.97);border:1px solid rgba(255,255,255,.2);box-shadow:0 14px 34px rgba(0,0,0,.34);cursor:grab;place-items:center;color:#fff;font-size:1.45rem}
+    #andes-presentation-timer .apt-compact{display:none;align-items:center;gap:.5rem;height:4.15rem;min-width:10.8rem;padding:.32rem .42rem .32rem .7rem;border-radius:999px;background:rgba(11,18,25,.98);border:1px solid rgba(255,255,255,.2);box-shadow:0 16px 38px rgba(0,0,0,.38);cursor:grab;backdrop-filter:blur(14px)}
+    #andes-presentation-timer .apt-compact-symbol{font-size:1.35rem;line-height:1;opacity:.95}
+    #andes-presentation-timer .apt-compact-time{font-variant-numeric:tabular-nums;font-size:2.05rem;line-height:1;font-weight:950;letter-spacing:.035em;white-space:nowrap;flex:1;text-align:center}
+    #andes-presentation-timer .apt-compact-hide{width:2.35rem;height:2.35rem;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-weight:950;font-size:1rem;display:grid;place-items:center}
+    #andes-presentation-timer .apt-icon-only{display:none;width:3rem;height:3rem;border-radius:999px;background:rgba(11,18,25,.97);border:1px solid rgba(255,255,255,.2);box-shadow:0 14px 34px rgba(0,0,0,.34);cursor:grab;place-items:center;color:#fff;font-size:1.28rem}
 
     #andes-presentation-timer.is-compact .apt-shell{display:none}
     #andes-presentation-timer.is-compact .apt-compact{display:flex}
@@ -51,22 +51,42 @@
     #andes-presentation-timer.is-done .apt-display,#andes-presentation-timer.is-done .apt-compact-time{color:#a9e6bf}
     #andes-presentation-timer.is-free .apt-display,#andes-presentation-timer.is-free .apt-compact-time{color:#ffd600}
     #andes-presentation-timer.is-free .apt-display{font-size:2.35rem}
-    #andes-presentation-timer.is-pause .apt-shell{width:min(530px,calc(100vw - 1.5rem));border-radius:30px}
-    #andes-presentation-timer.is-pause .apt-head{padding:1.05rem 1rem .86rem}
-    #andes-presentation-timer.is-pause .apt-display{font-size:6.2rem;letter-spacing:.035em}
-    #andes-presentation-timer.is-pause .apt-body{padding:1rem;gap:.72rem}
-    #andes-presentation-timer.is-pause .apt-status{font-size:.84rem}
+    #andes-presentation-timer.is-pause-slide{display:none!important}
+
+    .slide[data-title="Pausa"].apt-pause-enhanced{position:relative;overflow:hidden}
+    .slide[data-title="Pausa"].apt-pause-enhanced>.ey,
+    .slide[data-title="Pausa"].apt-pause-enhanced>h2,
+    .slide[data-title="Pausa"].apt-pause-enhanced>p.lead{display:none!important}
+    .slide[data-title="Pausa"].apt-pause-enhanced>.brand{position:relative;z-index:4}
+    .apt-pause-stage{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:3.8rem 2rem 4.8rem;color:#111;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .apt-pause-center{width:min(760px,88vw);text-align:center;display:grid;justify-items:center;gap:.65rem}
+    .apt-pause-kicker{font-size:.88rem;line-height:1;font-weight:950;letter-spacing:.16em;text-transform:uppercase}
+    .apt-pause-time{font-variant-numeric:tabular-nums;font-size:clamp(6rem,12vw,10.5rem);line-height:.88;font-weight:1000;letter-spacing:-.045em;margin:.15rem 0 .1rem}
+    .apt-pause-return{font-size:clamp(1.75rem,3.2vw,2.65rem);line-height:1.05;font-weight:950;margin:.15rem 0 .3rem}
+    .apt-pause-copy{font-size:clamp(1.05rem,2vw,1.45rem);line-height:1.35;max-width:720px;margin:0 0 .55rem}
+    .apt-pause-controls{width:min(650px,92%);display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;margin-top:.3rem}
+    .apt-pause-start{min-height:3.25rem;border:0;border-radius:999px;background:#171717;color:#fff;font:inherit;font-weight:950;font-size:1rem;padding:.75rem 1.25rem;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.16)}
+    .apt-pause-start:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(0,0,0,.2)}
+    .apt-pause-sound{width:3.25rem;height:3.25rem;border:0;border-radius:999px;background:#171717;color:#fff;font-size:1.18rem;display:grid;place-items:center;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.16)}
+    .apt-pause-note{font-size:.82rem;font-weight:750;opacity:.72;min-height:1.2em;margin-top:.15rem}
+    .apt-pause-stage.is-done .apt-pause-time{color:#146c43}
+    .apt-pause-stage.is-running .apt-pause-start{background:#2b2b2b}
+
     @media(max-width:700px){
       #andes-presentation-timer{right:.48rem;bottom:4.4rem}
       #andes-presentation-timer .apt-shell{width:min(350px,calc(100vw - .95rem))}
       #andes-presentation-timer .apt-display{font-size:3rem}
-      #andes-presentation-timer.is-pause .apt-shell{width:min(440px,calc(100vw - .95rem))}
-      #andes-presentation-timer.is-pause .apt-display{font-size:4.7rem}
-      #andes-presentation-timer .apt-compact{min-width:10.7rem;height:4rem;padding-left:.72rem}
-      #andes-presentation-timer .apt-compact-time{font-size:1.85rem}
-      #andes-presentation-timer .apt-icon-only{width:3.15rem;height:3.15rem;font-size:1.32rem}
+      #andes-presentation-timer .apt-compact{min-width:9.8rem;height:3.8rem;padding-left:.62rem}
+      #andes-presentation-timer .apt-compact-time{font-size:1.72rem}
+      #andes-presentation-timer .apt-icon-only{width:2.8rem;height:2.8rem;font-size:1.2rem}
+      .apt-pause-stage{padding:3.3rem 1rem 4.5rem}
+      .apt-pause-center{width:min(94vw,620px);gap:.55rem}
+      .apt-pause-time{font-size:clamp(5.2rem,22vw,8rem)}
+      .apt-pause-return{font-size:clamp(1.5rem,6vw,2.15rem)}
+      .apt-pause-copy{font-size:clamp(.98rem,4vw,1.2rem)}
+      .apt-pause-controls{width:min(94%,560px);grid-template-columns:1fr auto}
     }
-    @media print{#andes-presentation-timer{display:none!important}}
+    @media print{#andes-presentation-timer,.apt-pause-stage{display:none!important}}
   `;
   document.head.appendChild(style);
 
@@ -132,8 +152,13 @@
   let drag = null;
   let suppressCompactClick = false;
   let suppressIconClick = false;
-  let viewMode = 'full';
+  let viewMode = 'icon';
   let wasPause = false;
+  let pauseStage = null;
+  let pauseTime = null;
+  let pauseStart = null;
+  let pauseSound = null;
+  let pauseNote = null;
 
   const format = (seconds) => {
     const safe = Math.max(0, Math.ceil(seconds));
@@ -162,6 +187,27 @@
     root.classList.toggle('is-icon', mode === 'icon');
   };
 
+  const renderPause = () => {
+    if (!pauseStage) return;
+    const timeText = freeMode ? 'LIBRE' : format(remainingSeconds);
+    pauseTime.textContent = timeText;
+    pauseStage.classList.toggle('is-running', running);
+    pauseStage.classList.toggle('is-done', !freeMode && remainingSeconds <= 0);
+    pauseSound.textContent = soundEnabled ? '🔔' : '🔕';
+    if (freeMode) {
+      pauseStart.textContent = 'Modo libre';
+      pauseStart.disabled = true;
+      pauseNote.textContent = 'El descanso termina cuando el grupo esté listo.';
+      return;
+    }
+    pauseStart.disabled = false;
+    if (running) pauseStart.textContent = '❚❚ Pausar descanso';
+    else if (remainingSeconds <= 0) pauseStart.textContent = '↺ Reiniciar 15 minutos';
+    else if (remainingSeconds < selectedSeconds) pauseStart.textContent = '▶ Continuar descanso';
+    else pauseStart.textContent = '▶ Iniciar los 15 minutos';
+    pauseNote.textContent = remainingSeconds <= 0 ? 'Descanso cumplido. Puedes volver cuando el grupo esté listo.' : 'El contador es una guía; puedes pausarlo o ampliar el tiempo si lo necesitas.';
+  };
+
   const render = () => {
     const timeText = freeMode ? 'LIBRE' : format(remainingSeconds);
     display.textContent = timeText;
@@ -173,6 +219,7 @@
     root.classList.toggle('is-free', freeMode);
     soundBtn.textContent = soundEnabled ? '🔔' : '🔕';
     compact.setAttribute('aria-label', freeMode ? 'Temporizador en modo libre. Abrir controles.' : `Quedan ${timeText}. Abrir controles.`);
+    renderPause();
   };
 
   const primeAudio = () => {
@@ -190,15 +237,20 @@
       primeAudio();
       if (!audioCtx) return;
       const now = audioCtx.currentTime;
-      [[0,740,.38],[.5,740,.38],[1,880,.42],[1.55,880,.42],[2.15,1047,.5],[2.8,1047,.5],[3.5,1175,.56],[4.2,1175,.56],[5,1318,.62],[5.8,1318,.62],[6.65,1568,.78]].forEach(([t,f,d]) => {
-        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-        o.type = 'sine'; o.frequency.value = f;
+      [[0,659,.42],[.55,784,.42],[1.1,988,.5],[1.8,784,.42],[2.35,988,.5],[3.05,1175,.58],[3.85,988,.5],[4.55,1175,.58],[5.35,1318,.65],[6.25,1175,.58],[7.05,1318,.68],[8.0,1568,.82],[9.1,1318,.72]].forEach(([t,f,d]) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
         g.gain.setValueAtTime(.0001, now + t);
-        g.gain.exponentialRampToValueAtTime(.16, now + t + .04);
+        g.gain.exponentialRampToValueAtTime(.18, now + t + .04);
         g.gain.exponentialRampToValueAtTime(.0001, now + t + d);
-        o.connect(g); g.connect(audioCtx.destination); o.start(now + t); o.stop(now + t + d + .08);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(now + t);
+        o.stop(now + t + d + .08);
       });
-      if (navigator.vibrate) navigator.vibrate([300,120,300,120,500]);
+      if (navigator.vibrate) navigator.vibrate([350,120,350,120,650,180,650]);
     } catch (_) {}
   };
 
@@ -211,15 +263,48 @@
   const setMinutes = m => { setSeconds(m*60); selectButton(b=>Number(b.dataset.min)===m); };
   const setFree = () => { stop(); freeMode = true; alarmed = false; selectButton(b=>b.hasAttribute('data-free')); status.textContent = 'Modo libre: termina cuando el grupo esté listo.'; render(); };
 
+  const toggleRun = () => {
+    if (freeMode) return;
+    primeAudio();
+    if (remainingSeconds <= 0) {
+      setMinutes(15);
+    }
+    if (running) {
+      updateRemaining();
+      stop();
+      status.textContent = 'Pausado.';
+    } else {
+      endAt = Date.now() + remainingSeconds * 1000;
+      running = true;
+      alarmed = false;
+      startLoop();
+      status.textContent = 'En marcha.';
+    }
+    render();
+  };
+
   root.querySelectorAll('[data-min]').forEach(b=>b.addEventListener('click',()=>setMinutes(Number(b.dataset.min))));
   root.querySelector('[data-free]').addEventListener('click',setFree);
   root.querySelectorAll('[data-adjust]').forEach(b=>b.addEventListener('click',()=>{
-    const delta=Number(b.dataset.adjust||0); if(freeMode) freeMode=false; stop(); remainingSeconds=Math.max(0,remainingSeconds+delta); selectedSeconds=Math.max(1,selectedSeconds+delta); alarmed=false; selectButton(()=>false); status.textContent=`${format(remainingSeconds)} listo.`; render();
+    const delta=Number(b.dataset.adjust||0);
+    if(freeMode) freeMode=false;
+    stop();
+    remainingSeconds=Math.max(0,remainingSeconds+delta);
+    selectedSeconds=Math.max(1,selectedSeconds+delta);
+    alarmed=false;
+    selectButton(()=>false);
+    status.textContent=`${format(remainingSeconds)} listo.`;
+    render();
   }));
 
-  customApply.addEventListener('click',()=>{ const parsed=parseCustom(customInput.value); if(!parsed){status.textContent='Usa minutos (12), MM:SS (7:30) o HH:MM:SS (1:05:00).';return;} setSeconds(parsed); customInput.value=''; });
+  customApply.addEventListener('click',()=>{
+    const parsed=parseCustom(customInput.value);
+    if(!parsed){status.textContent='Usa minutos (12), MM:SS (7:30) o HH:MM:SS (1:05:00).';return;}
+    setSeconds(parsed);
+    customInput.value='';
+  });
   customInput.addEventListener('keydown',e=>{if(e.key==='Enter')customApply.click();});
-  startBtn.addEventListener('click',()=>{ if(freeMode)return; primeAudio(); if(running){updateRemaining();stop();status.textContent='Pausado.';}else{if(remainingSeconds<=0)remainingSeconds=selectedSeconds;endAt=Date.now()+remainingSeconds*1000;running=true;alarmed=false;startLoop();status.textContent='En marcha.';}render(); });
+  startBtn.addEventListener('click',toggleRun);
   resetBtn.addEventListener('click',()=>{stop();freeMode=false;remainingSeconds=selectedSeconds;alarmed=false;status.textContent=`${format(selectedSeconds)} listo.`;render();});
   soundBtn.addEventListener('click',()=>{soundEnabled=!soundEnabled;if(soundEnabled)primeAudio();status.textContent=soundEnabled?'Sonido activado.':'Sonido desactivado.';render();});
 
@@ -236,18 +321,57 @@
   head.addEventListener('pointerdown',e=>beginDrag(e,'full'));
   compact.addEventListener('pointerdown',e=>beginDrag(e,'compact'));
   iconOnly.addEventListener('pointerdown',e=>beginDrag(e,'icon'));
-  addEventListener('pointermove',moveDrag);addEventListener('pointerup',endDrag);addEventListener('pointercancel',endDrag);
+  addEventListener('pointermove',moveDrag);
+  addEventListener('pointerup',endDrag);
+  addEventListener('pointercancel',endDrag);
+
+  const ensurePauseStage = slide => {
+    if (pauseStage && pauseStage.isConnected) return;
+    slide.classList.add('apt-pause-enhanced');
+    pauseStage = document.createElement('div');
+    pauseStage.className = 'apt-pause-stage';
+    pauseStage.innerHTML = `
+      <div class="apt-pause-center">
+        <div class="apt-pause-kicker">Pausa</div>
+        <div class="apt-pause-time" aria-live="polite">15:00</div>
+        <div class="apt-pause-return">Volvemos en 15 minutos</div>
+        <div class="apt-pause-copy">Al volver: después de reducir el periodo con partition, veremos cómo clustering evita bloques dentro de ese periodo.</div>
+        <div class="apt-pause-controls">
+          <button class="apt-pause-start" type="button">▶ Iniciar los 15 minutos</button>
+          <button class="apt-pause-sound" type="button" title="Sonido" aria-label="Sonido">🔔</button>
+        </div>
+        <div class="apt-pause-note">El contador es una guía; puedes pausarlo o ampliar el tiempo si lo necesitas.</div>
+      </div>`;
+    slide.appendChild(pauseStage);
+    pauseTime = pauseStage.querySelector('.apt-pause-time');
+    pauseStart = pauseStage.querySelector('.apt-pause-start');
+    pauseSound = pauseStage.querySelector('.apt-pause-sound');
+    pauseNote = pauseStage.querySelector('.apt-pause-note');
+    pauseStart.addEventListener('click',toggleRun);
+    pauseSound.addEventListener('click',()=>{soundEnabled=!soundEnabled;if(soundEnabled)primeAudio();render();});
+    renderPause();
+  };
 
   const syncPauseSlide=()=>{
     const active=document.querySelector('.slide.active');
     const isPause=!!active&&/pausa/i.test(active.getAttribute('data-title')||'');
-    root.classList.toggle('is-pause',isPause);
-    if(isPause&&!wasPause){setView('full');if(!running&&!freeMode)setMinutes(15);status.textContent=running?'Pausa en curso.':'15:00 listo para la pausa.';}
+    root.classList.toggle('is-pause-slide',isPause);
+    if(isPause){
+      ensurePauseStage(active);
+      if(!wasPause && !running){
+        setMinutes(15);
+      }
+    }
     wasPause=isPause;
+    render();
   };
+
   new MutationObserver(syncPauseSlide).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
-  addEventListener('keydown',e=>{if(e.key?.toLowerCase()==='t'&&!e.target.matches('input,textarea'))setView(viewMode==='full'?'compact':'full');});
+  addEventListener('keydown',e=>{if(e.key?.toLowerCase()==='t'&&!e.target.matches('input,textarea'))setView(viewMode==='full'?'icon':'full');});
   addEventListener('resize',()=>{const r=root.getBoundingClientRect();if(r.right>innerWidth||r.bottom>innerHeight){root.style.left=`${Math.max(6,Math.min(innerWidth-root.offsetWidth-6,r.left))}px`;root.style.top=`${Math.max(6,Math.min(innerHeight-root.offsetHeight-6,r.top))}px`;savePosition();}});
 
-  restorePosition();syncPauseSlide();render();
+  restorePosition();
+  setView('icon');
+  syncPauseSlide();
+  render();
 })();
