@@ -4,7 +4,7 @@
   "institucion": "Universidad de los Andes · Colsubsidio",
   "subtitulo": "Aprende a entender un problema de datos, modelarlo, consultarlo y elegir la tecnología adecuada. Practicamos con datos reales y servicios cloud reales.",
   "datos": ["48 horas · 16 sesiones", "Clases virtuales sincrónicas", "Actividad práctica cada 10–15 minutos"],
-  "sesionActual": 12,
+  "sesionActual": 14,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -87,7 +87,7 @@
       "desc": "Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.",
       "recursos": [],
       "sesiones": [
-        {"n": 12, "fecha": "2026-09-11", "duracionUtil": 165, "modo": "guiada", "titulo": "Fundamentos de data warehouse", "estado": "hoy", "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.", "tags": ["data warehouse", "modelo estrella", "hechos", "dimensiones", "batch", "streaming", "Fabric", "Databricks"], "href": "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html", "recursos": [{"txt": "🧮 Laboratorio del grano (DuckDB-Wasm, en tu navegador, 0 créditos)", "href": "labs/grano-estrella.html"}]},
+        {"n": 12, "fecha": "2026-09-11", "duracionUtil": 165, "modo": "guiada", "titulo": "Fundamentos de data warehouse", "estado": "completado", "desc": "Grano, hechos, dimensiones, esquema estrella, batch/streaming y mapa Azure de cargas analíticas.", "tags": ["data warehouse", "modelo estrella", "hechos", "dimensiones", "batch", "streaming", "Fabric", "Databricks"], "href": "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html", "recursos": [{"txt": "🧮 Laboratorio del grano (DuckDB-Wasm, en tu navegador, 0 créditos)", "href": "labs/grano-estrella.html"}]},
         {
           "n": 13,
           "fecha": "2026-09-15",
@@ -95,18 +95,17 @@
           "modo": "autonomo_guiado_con_servicio_real",
           "trabajoAutonomoMin": 75,
           "titulo": "BigQuery: partición, clusterización y costo",
-          "estado": "pendiente",
-          "desc": "Partición, clustering, pruning y evidencia de bytes procesados en BigQuery real, anclado a M5C2.",
+          "estado": "completado",
+          "desc": "Partición, clustering, pruning y evidencia de bytes procesados en BigQuery real.",
           "tags": ["BigQuery", "PARTITION BY", "clusterización", "pruning", "bytes procesados", "costo"],
           "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
           "recursos": [
             {"txt": "🎓 Ruta Beginner: Google Cloud Data Analytics Certificate", "href": "https://www.skills.google/paths/420", "externo": true},
-            {"txt": "▶ Laboratorio real: partición de tablas en BigQuery", "href": "https://www.skills.google/paths/420/course_templates/1295/labs/562865", "externo": true},
-            {"txt": "▶ Laboratorio real: clusterización de tablas en BigQuery", "href": "https://www.skills.google/paths/420/course_templates/1304/labs/562975", "externo": true},
-            {"txt": "➕ Práctica adicional de la misma ruta", "href": "https://www.skills.google/paths/420/course_templates/1298/labs/575654", "externo": true}
+            {"txt": "▶ Lab verificado: partición · GSP414", "href": "https://www.skills.google/focuses/3694?locale=es&parent=catalog", "externo": true},
+            {"txt": "▶ Lab verificado: clustering · GSP266", "href": "https://www.skills.google/focuses/78061?locale=es&parent=catalog", "externo": true}
           ]
         },
-        {"n": 14, "fecha": "2026-09-16", "duracionUtil": 165, "modo": "guiada_con_servicio_real", "titulo": "BigQuery anidado + transferencia cloud", "estado": "pendiente", "desc": "ARRAY, STRUCT, UNNEST, formatos semiestructurados y transferencia conceptual hacia almacenamiento y analítica Azure.", "tags": ["ARRAY", "STRUCT", "UNNEST", "JSON", "Parquet", "BigQuery", "Azure", "Power BI"], "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html", "recursos": [{"txt": "☁️ Lab · JSON, Arrays and Structs in BigQuery", "href": "https://www.cloudskillsboost.google/course_templates/624/labs/548383", "externo": true}]}
+        {"n": 14, "fecha": "2026-09-16", "duracionUtil": 120, "modo": "guiada_con_servicio_real", "titulo": "BigQuery anidado + transferencia cloud", "estado": "hoy", "desc": "ARRAY, STRUCT, UNNEST, JSON/Parquet y transferencia conceptual hacia almacenamiento y analítica Azure.", "tags": ["ARRAY", "STRUCT", "UNNEST", "JSON", "Parquet", "BigQuery", "Azure", "Power BI"], "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html", "recursos": [{"txt": "☁️ Lab verificado · GSP416 · JSON, Arrays and Structs in BigQuery", "href": "https://www.skills.google/focuses/3696?locale=es&parent=catalog", "externo": true}, {"txt": "↪ Curso padre · Build a Data Warehouse with BigQuery", "href": "https://www.skills.google/course_templates/624", "externo": true}]}
       ]
     },
     {
