@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="ANDESDB · Workbench de evaluación integradora · Sesión 15">
+<title>ANDESDB · S15 Workbench</title>
+<link rel="stylesheet" href="assets/learning/s15-workbench.css?v=s15w3">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/ANDESDB/">ANDESDB</a>
+    <div class="top-title"><b>S15 · Workbench integrador</b><span>Reto evaluado · 2 h orientativas</span></div>
+    <div class="top-spacer"></div>
+    <div class="top-score"><span id="livePoints">0</span><small>/100 verificados</small></div>
+    <button class="ghost smallbtn" id="toggleNav" type="button">Misiones</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="ey">Assessment lab · construir, romper, reparar</div>
+      <h1>No respondas qué harías. <span>Haz que funcione.</span></h1>
+      <p>Vas a inspeccionar datos, modelar entidades, armar un flujo, escribir DDL, depurar SQL, diseñar un esquema analítico y someter toda la solución a cambios. Cada herramienta produce evidencia automática.</p>
+      <div class="hero-badges">
+        <span>7 estaciones</span><span>≈ 37 checkpoints</span><span>100 puntos</span><span>reintentos con feedback</span>
+      </div>
+    </div>
+    <div class="hero-card">
+      <strong>Ritmo sugerido, no punitivo</strong>
+      <p>La ruta está pensada para unas 2 horas de trabajo activo. Puedes volver atrás, corregir y volver a probar. La nota final usa tu mejor estado verificado en cada dimensión.</p>
+      <div id="lmsStatus" class="lms mini">Comprobando LMS…</div>
+    </div>
+  </div>
+</section>
+
+<div class="layout">
+  <aside class="mission-nav" id="missionNav">
+    <div class="nav-head">
+      <b>Ruta de misiones</b>
+      <span id="checkpointCount">0/37 checkpoints</span>
+    </div>
+    <a href="#m1" data-mission="source"><span>1</span><div><b>Inspector</b><small>fuentes + grano</small></div><em>10</em></a>
+    <a href="#m2" data-mission="model"><span>2</span><div><b>Modelador ER</b><small>drag & drop</small></div><em>15</em></a>
+    <a href="#m3" data-mission="flow"><span>3</span><div><b>Flow Builder</b><small>arquitectura</small></div><em>15</em></a>
+    <a href="#m4" data-mission="ddl"><span>4</span><div><b>DDL Lab</b><small>constraints reales</small></div><em>15</em></a>
+    <a href="#m5" data-mission="sql"><span>5</span><div><b>SQL Debug Arena</b><small>5 problemas</small></div><em>25</em></a>
+    <a href="#m6" data-mission="star"><span>6</span><div><b>Star Builder</b><small>salida analítica</small></div><em>10</em></a>
+    <a href="#m7" data-mission="chaos"><span>7</span><div><b>Chaos Lab</b><small>cambio + resiliencia</small></div><em>10</em></a>
+    <div class="nav-actions">
+      <button class="ghost" id="saveDraft" type="button">Guardar borrador</button>
+      <button class="ghost" id="resetDraft" type="button">Reiniciar</button>
+    </div>
+  </aside>
+
+  <main class="workbench">
+    <div id="engineStatus" class="status work">Preparando datos y motor SQL…</div>
+
+    <section class="mission" id="m1" data-mission="source">
+      <header class="mission-head">
+        <div class="mission-num">1</div>
+        <div><div class="ey dark">Descubrimiento · 10 puntos</div><h2>Inspector de datos</h2><p>No te damos el grano en una pregunta de selección múltiple: inspecciona las fuentes y clasifícalas.</p></div>
+        <div class="mission-score"><b id="score-source">0</b><span>/10</span></div>
+      </header>
+      <div class="tool-grid">
+        <div class="tool-card span2">
+          <div class="tool-title"><b>Explorador</b><span>abre cada fuente y mira su perfil</span></div>
+          <div class="data-tabs" id="dataTabs">
+            <button data-dataset="casos" class="active">casos.csv</button>
+            <button data-dataset="eventos">eventos.csv</button>
+            <button data-dataset="evidencias">evidencias.json</button>
+          </div>
+          <div class="profile-strip" id="profileStrip"></div>
+          <div class="table-wrap" id="dataPreview"></div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-title"><b>Mapa de función</b><span>arrastra cada fuente al rol correcto</span></div>
+          <div class="palette source-palette" id="sourcePalette">
+            <div class="drag-card" draggable="true" data-kind="source" data-id="casos">casos.csv</div>
+            <div class="drag-card" draggable="true" data-kind="source" data-id="eventos">eventos.csv</div>
+            <div class="drag-card" draggable="true" data-kind="source" data-id="evidencias">evidencias.json</div>
+          </div>
+          <div class="drop-stack">
+            <div class="dropzone role-zone" data-role="snapshot"><b>Snapshot operacional</b><span>estado actual / una fila por objeto</span></div>
+            <div class="dropzone role-zone" data-role="history"><b>Historia de cambios</b><span>muchas filas por objeto</span></div>
+            <div class="dropzone role-zone" data-role="document"><b>Evidencia flexible</b><span>estructura variable/anidada</span></div>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-title"><b>Claves observadas</b><span>arrastra la clave de cada fuente al slot</span></div>
+          <div class="field-palette key-palette">
+            <button class="chip drag-card" draggable="true" data-kind="key" data-id="caso_id">caso_id</button>
+            <button class="chip drag-card" draggable="true" data-kind="key" data-id="evento_id">evento_id</button>
+            <button class="chip drag-card decoy" draggable="true" data-kind="key" data-id="barrio">barrio</button>
+            <button class="chip drag-card decoy" draggable="true" data-kind="key" data-id="estado">estado</button>
+          </div>
+          <div class="drop-stack">
+            <div class="dropzone key-zone" data-keyslot="casos"><b>Clave de caso</b><span>identifica cada caso</span></div>
+            <div class="dropzone key-zone" data-keyslot="eventos"><b>Clave de evento</b><span>identifica cada evento</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mission-actions"><button class="primary" data-check="source">Validar estación 1</button><div class="feedback" id="fb-source"></div></div>
+    </section>
+
+    <section class="mission" id="m2" data-mission="model">
+      <header class="mission-head">
+        <div class="mission-num">2</div>
+        <div><div class="ey dark">Modelado · 15 puntos</div><h2>Modelador ER drag-and-drop</h2><p>Construye las dos entidades operacionales, marca PK y crea la relación. Después podrás generar un DDL inicial desde lo que modelaste.</p></div>
+        <div class="mission-score"><b id="score-model">0</b><span>/15</span></div>
+      </header>
+      <div class="modeler">
+        <div class="model-palette">
+          <b>Campos disponibles</b>
+          <small>Arrastra a la entidad correcta. Haz clic en un campo ya colocado para marcar/desmarcar PK.</small>
+          <div id="modelPalette" class="field-palette"></div>
+        </div>
+        <div class="entity-board">
+          <article class="entity">
+            <header><b>CASO</b><span>entidad operacional</span></header>
+            <div class="dropzone entity-fields" data-entity="caso"></div>
+          </article>
+          <div class="relation-column">
+            <div class="relation-arrow">1 ⟶ N</div>
+            <div class="dropzone fk-zone" data-fkzone="evento.caso_id"><b>FK</b><span>arrastra aquí <code>evento.caso_id</code> desde EVENTO</span></div>
+            <button class="ghost" id="toggleCardinality" type="button">Cardinalidad: <b id="cardinalityLabel">sin definir</b></button>
+          </div>
+          <article class="entity">
+            <header><b>EVENTO</b><span>historial</span></header>
+            <div class="dropzone entity-fields" data-entity="evento"></div>
+          </article>
+        </div>
+      </div>
+      <div class="model-legend"><span><i class="pkdot"></i> clic = PK</span><span><i class="fkdot"></i> slot central = FK</span><span>doble clic = devolver al palette</span></div>
+      <div class="mission-actions"><button class="primary" data-check="model">Validar modelo</button><button class="secondary" id="generateDDL" type="button">Generar DDL base desde mi modelo</button><div class="feedback" id="fb-model"></div></div>
+    </section>
+
+    <section class="mission" id="m3" data-mission="flow">
+      <header class="mission-head">
+        <div class="mission-num">3</div>
+        <div><div class="ey dark">Arquitectura · 15 puntos</div><h2>Flow Builder</h2><p>Organiza componentes y crea conexiones. No estás escogiendo “SQL o NoSQL”: estás construyendo un flujo que debe servir a operación, evidencia flexible y analítica histórica.</p></div>
+        <div class="mission-score"><b id="score-flow">0</b><span>/15</span></div>
+      </header>
+      <div class="flow-help">Arrastra nodos a las capas. Luego pulsa un nodo origen y después un nodo destino para crear una conexión. Pulsa una conexión para eliminarla.</div>
+      <div class="flow-palette" id="flowPalette"></div>
+      <div class="flow-board" id="flowBoard">
+        <div class="flow-lane dropzone" data-lane="source"><header>1 · Fuentes</header><div class="lane-body"></div></div>
+        <div class="flow-lane dropzone" data-lane="operational"><header>2 · Operación / persistencia</header><div class="lane-body"></div></div>
+        <div class="flow-lane dropzone" data-lane="analytics"><header>3 · Analítica / consumo</header><div class="lane-body"></div></div>
+      </div>
+      <div class="edge-panel"><b>Conexiones</b><div id="edgeList" class="edge-list"></div></div>
+      <div class="mission-actions"><button class="primary" data-check="flow">Validar flujo</button><div class="feedback" id="fb-flow"></div></div>
+    </section>
+
+    <section class="mission" id="m4" data-mission="ddl">
+      <header class="mission-head">
+        <div class="mission-num">4</div>
+        <div><div class="ey dark">Implementación · 15 puntos</div><h2>DDL Lab</h2><p>El modelo visual ya no basta. Haz que SQLite rechace lo que debe rechazar y acepte una evolución legítima.</p></div>
+        <div class="mission-score"><b id="score-ddl">0</b><span>/15</span></div>
+      </header>
+      <div class="split">
+        <div class="tool-card">
+          <div class="tool-title"><b>Editor de esquema</b><span>SQL.js · aislado en tu navegador</span></div>
+          <textarea id="ddl" class="code tall" spellcheck="false" placeholder="Construye o genera tu DDL…"></textarea>
+          <div class="button-row"><button class="primary" id="runDDL" type="button">Ejecutar 6 pruebas</button><button class="secondary" id="loadDDLStarter" type="button">Cargar esqueleto mínimo</button></div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-title"><b>Banco de pruebas</b><span>comportamiento, no apariencia</span></div>
+          <div id="ddlTests" class="test-console"></div>
+        </div>
+      </div>
+      <div class="mission-actions"><div class="feedback" id="fb-ddl"></div></div>
+    </section>
+
+    <section class="mission" id="m5" data-mission="sql">
+      <header class="mission-head">
+        <div class="mission-num">5</div>
+        <div><div class="ey dark">SQL Debug Arena · 25 puntos</div><h2>Cinco consultas rotas. Repáralas.</h2><p>La arena parte de SQL defectuoso deliberadamente. Cada solución se ejecuta sobre el dataset visible y sobre mutaciones. Obtener hoy “el número correcto” no basta.</p></div>
+        <div class="mission-score"><b id="score-sql">0</b><span>/25</span></div>
+      </header>
+      <div class="arena-toolbar">
+        <button class="secondary" id="runAllQueries" type="button">Ejecutar las 5 misiones</button>
+        <span id="variantBadge">3 escenarios automáticos por consulta</span>
+      </div>
+      <div id="sqlTasks"></div>
+      <div class="mission-actions"><div class="feedback" id="fb-sql"></div></div>
+    </section>
+
+    <section class="mission" id="m6" data-mission="star">
+      <header class="mission-head">
+        <div class="mission-num">6</div>
+        <div><div class="ey dark">Analítica · 10 puntos</div><h2>Star Builder</h2><p>La pregunta cambia: queremos evolución histórica y tiempos de atención por fecha, barrio, tipo, prioridad y estado. Construye el grano y separa medidas de dimensiones.</p></div>
+        <div class="mission-score"><b id="score-star">0</b><span>/10</span></div>
+      </header>
+      <div class="star-layout">
+        <div class="star-palette">
+          <b>Piezas</b>
+          <div id="starPalette" class="field-palette"></div>
+        </div>
+        <div class="star-board">
+          <div class="dropzone star-zone fact" data-star="grain"><b>Grano del hecho</b><span>una ficha</span></div>
+          <div class="dropzone star-zone fact" data-star="measure"><b>Medidas</b><span>arrastra medidas aditivas o contables</span></div>
+          <div class="dropzone star-zone dim" data-star="dimension"><b>Dimensiones</b><span>atributos para cortar el análisis</span></div>
+        </div>
+      </div>
+      <div class="mission-actions"><button class="primary" data-check="star">Validar modelo analítico</button><div class="feedback" id="fb-star"></div></div>
+    </section>
+
+    <section class="mission" id="m7" data-mission="chaos">
+      <header class="mission-head">
+        <div class="mission-num">7</div>
+        <div><div class="ey dark">Transferencia · 10 puntos</div><h2>Chaos / Change Lab</h2><p>Ahora la plataforma cambia debajo de ti. El laboratorio reutiliza tu DDL, tus consultas, tu flujo y tu diseño analítico. No hay respuestas nuevas que seleccionar.</p></div>
+        <div class="mission-score"><b id="score-chaos">0</b><span>/10</span></div>
+      </header>
+      <div class="chaos-grid" id="chaosGrid"></div>
+      <div class="mission-actions"><button class="danger" id="runChaos" type="button">⚡ Ejecutar Chaos Lab</button><div class="feedback" id="fb-chaos"></div></div>
+    </section>
+
+    <section class="final-panel" id="final">
+      <div>
+        <div class="ey">Cierre del intento</div>
+        <h2>Registra la evidencia completa</h2>
+        <p>Antes de enviar, el sistema vuelve a validar las siete estaciones. Si hay sesión iniciada en ANDESDB, guarda puntaje, desglose, estado del modelo, flujo, código y checkpoints.</p>
+      </div>
+      <div class="final-score"><strong id="finalScore">0</strong><span>/100</span></div>
+      <div class="score-grid" id="scoreGrid"></div>
+      <div id="finalFeedback" class="final-feedback">Aún no has ejecutado el intento final.</div>
+      <div class="button-row">
+        <button class="final-btn" id="submitFinal" type="button">Evaluar todo y registrar intento</button>
+        <button class="secondary" id="downloadEvidence" type="button">Descargar evidencia JSON</button>
+      </div>
+      <div class="attempts" id="attemptHistory"></div>
+    </section>
+  </main>
+</div>
+
+<script src="assets/vendor/sqljs/sql-wasm.js"></script>
+<script src="assets/learning/s15-autograder.js?v=s15w3"></script>
+</body>
+</html>
