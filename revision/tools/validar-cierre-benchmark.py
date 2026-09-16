@@ -120,12 +120,13 @@ def validate_course_s13(course: dict) -> None:
     if not s13:
         err("curso.json: falta S13")
         return
-    if s13.get("duracionUtil") != 165:
-        err(f"curso.json S13: duración debe ser 165, no {s13.get('duracionUtil')!r}")
     resources = " ".join(str(r.get("href", "")) for r in s13.get("recursos", []))
-    for token in ["paths/420", "562865", "562975"]:
+    for token in ["paths/420", "focuses/3694", "focuses/78061"]:
         if token not in resources:
-            err(f"curso.json S13: falta recurso M5C2 {token}")
+            err(f"curso.json S13: falta recurso verificado {token}")
+    for stale in ["562865", "562975"]:
+        if stale in resources:
+            err(f"curso.json S13: conserva enlace obsoleto {stale}")
 
 
 def main() -> int:
@@ -140,6 +141,10 @@ def main() -> int:
         "Presentaciones/M4/sesion-10-sql-o-nosql.html",
         "Presentaciones/M4/sesion-11-documentos-de-verdad.html",
         "Presentaciones/M5/sesion-12-fundamentos-data-warehouse.html",
+        "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
+        "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html",
+        "Presentaciones/M6/sesion-15-desafio-final.html",
+        "Presentaciones/M6/sesion-16-cierre-dp900.html",
     ]:
         same_as_main(path)
 
@@ -153,25 +158,43 @@ def main() -> int:
     s13 = read("Presentaciones/M5/sesion-13-laboratorio-bigquery.html")
     require(s13, [
         "BigQuery Sandbox", "PARTITION BY", "partition pruning", "Clusterización", "CLUSTER BY", "bytes",
-        "paths/420", "562865", "562975", "575654", "9", "4",
-        "modificar o retirar la especificación de clustering",
-        "Una tabla no particionada no se convierte directamente en particionada",
-        'href="sesion-13-laboratorio-bigquery.html"', "learning-core.js"
+        "Laboratorio partición", "Laboratorio clustering", 'href="sesion-13-laboratorio-bigquery.html"',
+        "learning-core.js", "presentation-timer.js"
     ], "S13")
-    forbid(s13, ["fact_venta.csv · 44 filas", "Ni partición ni clusterización se agregan después"], "S13 residuos")
+    forbid(s13, ["562865", "562975", "fact_venta.csv · 44 filas", "Ni partición ni clusterización se agregan después"], "S13 residuos")
 
     s14 = read("Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html")
-    require(s14, ["ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet", "Laboratorio 1", "Taller proyecto integrador", "Lab 2", "548383", "562904", "575654", "Azure Blob Storage", "Azure Cosmos DB", 'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js"], "S14")
+    require(s14, [
+        "ARRAY", "STRUCT", "UNNEST", "CSV", "JSON", "Parquet", "GSP416", "focuses/3696",
+        "Azure Blob Storage", "Azure Cosmos DB", "Microsoft Fabric", "Power BI",
+        'href="sesion-14-bigquery-anidados-mapa-azure.html"', "learning-core.js", "presentation-timer.js"
+    ], "S14")
+    forbid(s14, ["Taller proyecto integrador", "Lab 2 · arquitecturas", "548383", "562904"], "S14 residuos")
 
     validate_final_dataset()
-    read("Plantillas/proyecto-final/criterios.md")
+    criteria = read("Plantillas/proyecto-final/criterios.md")
+    require(criteria, ["Cuatro puertas del reto", "Escalera de validación", "Alta y Cerrado", "eventos huérfanos"], "S15 criterios")
+    for rel in ["README.md", "decisiones.md", "schema.sql", "queries.sql", "validaciones.sql", "arquitectura.md"]:
+        read(f"Plantillas/proyecto-final/{rel}")
+
     s15 = read("Presentaciones/M6/sesion-15-desafio-final.html")
-    require(s15, ["Atención de incidentes urbanos", "casos cerrados", "Code ownership", "Pruebas negativas", "90 s por equipo", 'href="sesion-15-desafio-final.html"', "learning-core.js"], "S15")
-    forbid(s15, ["sesion-12-fundamentos-data-warehouse.html"], "S15 descarga")
+    require(s15, [
+        "Atención de incidentes urbanos", "Tres archivos, tres granos", "tres trampas deliberadas",
+        "PUERTA 1", "PUERTA 2", "PUERTA 3", "PUERTA 4", "Escalera de validación",
+        "Code ownership", "Mínimo viable defendible", "Pausa · 15 minutos",
+        'href="sesion-15-desafio-final.html"', "learning-core.js", "presentation-timer.js"
+    ], "S15")
+    forbid(s15, ["90 s por equipo", "0–15 min", "15–45 min", "45–105 min"], "S15 residuos")
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
-    require(s16, ["cinco preguntas de S1", "25–30%", "20–25%", "15–20%", "Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8", "Escenarios 9–11", "Escenarios 12–13", "Clasifica el error", 'href="sesion-16-cierre-dp900.html"'], "S16")
-    forbid(s16, ["sesion-12-fundamentos-data-warehouse.html", 'data-title="Mapa del curso"'], "S16")
+    require(s16, [
+        "Repite las cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
+        "Dominio 1", "Dominio 2", "Dominio 3", "Dominio 4", "16 escenarios",
+        "Clasifica el error", "Concepto", "Transferencia", "Lectura",
+        "Practice Assessment", "Exam Sandbox", "Pausa · 15 minutos",
+        'href="sesion-16-cierre-dp900.html"', "presentation-timer.js"
+    ], "S16")
+    forbid(s16, ["Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8", "Escenarios 9–11", "Escenarios 12–13", "0–15 min", "25 min", "35 min", "50 min"], "S16 residuos")
 
     course = json.loads(read("tools/curso.json") or "{}")
     m1 = next((m for m in course.get("modulos", []) if m.get("n") == 1), {})
@@ -191,7 +214,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ sesiones maduras protegidas, S13 alineada a M5C2, datos reproducibles y guías específicas")
+    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 activa por cuatro dominios DP-900")
     return 0
 
 
