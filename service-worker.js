@@ -16,8 +16,11 @@ const ESSENTIAL = [
   './assets/learning/learning-core.js',
   './assets/learning/learning-plan.json',
   './evaluador-s15.html',
-  './assets/learning/s15-autograder.js',
-  './assets/learning/s15-workbench.css',
+  './evaluador-s15-v6.html',
+  './assets/learning/s15-autograder-v6.js',
+  './assets/learning/s15-autograder-v6b.js',
+  './assets/learning/s15-azure-transfer-v1.js',
+  './assets/learning/s15-workbench-v6.css',
   './Plantillas/proyecto-final/Datos/casos.csv',
   './Plantillas/proyecto-final/Datos/eventos.csv',
   './Plantillas/proyecto-final/Datos/evidencias.json',
@@ -111,7 +114,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder)\.js|learning\/s15-workbench\.css|learning\/learning-plan\.json|pwa-install\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder(?:-v6b?)?|s15-azure-transfer-v1)\.js|learning\/(?:s15-workbench(?:-v6)?\.css|learning-plan\.json)|pwa-install\.js)$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
