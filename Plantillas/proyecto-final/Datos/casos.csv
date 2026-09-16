@@ -1,0 +1,13 @@
+caso_id,fecha_creacion,ciudadano_id,tipo,prioridad,estado,canal,barrio
+1001,2026-08-01,C001,Alumbrado,Alta,Cerrado,Web,Chapinero
+1002,2026-08-02,C002,Ruido,Media,Abierto,App,Suba
+1003,2026-08-02,C003,Hueco,Alta,En_proceso,Web,Teusaquillo
+1004,2026-08-03,C004,Basuras,Media,Cerrado,Telefono,Kennedy
+1005,2026-08-04,C005,Alumbrado,Baja,Abierto,App,Engativa
+1006,2026-08-04,C006,Ruido,Alta,Cerrado,Web,Suba
+1007,2026-08-05,C007,Semaforo,Alta,En_proceso,App,Usaquen
+1008,2026-08-06,C008,Basuras,Baja,Abierto,Telefono,Bosa
+1009,2026-08-07,C009,Hueco,Media,Cerrado,Web,Kennedy
+1010,2026-08-08,C010,Alumbrado,Media,En_proceso,App,Chapinero
+1011,2026-08-09,C011,Ruido,Baja,Abierto,Web,Teusaquillo
+1012,2026-08-10,C012,Semaforo,Alta,En_proceso,App,Usaquen
