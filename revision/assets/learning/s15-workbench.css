@@ -35,3 +35,23 @@ button{border:0;cursor:pointer}.smallbtn{padding:8px 10px}.hero{background:linea
 .final-panel{background:#101828;color:#fff;border-radius:18px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:12px;box-shadow:var(--shadow)}.final-panel h2{margin:.2rem 0}.final-panel p{color:#cbd5df;max-width:80ch;font-size:.82rem}.final-score{display:flex;align-items:baseline;gap:3px}.final-score strong{font-size:4rem;color:var(--yellow);line-height:1}.final-score span{font-size:1.2rem}.score-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.score-grid article{background:#ffffff0d;border:1px solid #ffffff18;border-radius:10px;padding:8px;text-align:center}.score-grid b{display:block}.score-grid span{font-size:.62rem;color:#cbd5df}.final-feedback{grid-column:1/-1;white-space:pre-wrap;background:#fff;color:#17202a;border-radius:12px;padding:12px;font-size:.78rem;max-height:330px;overflow:auto}.final-panel .button-row{grid-column:1/-1}.final-btn{background:#175cd3}.attempts{grid-column:1/-1;color:#cbd5df;font-size:.72rem}
 @media(max-width:1050px){.layout{grid-template-columns:1fr}.mission-nav{position:fixed;left:2vw;right:2vw;top:72px;z-index:70;max-height:75vh;overflow:auto;display:none}.mission-nav.open{display:block}.modeler,.star-layout{grid-template-columns:1fr}.entity-board{grid-template-columns:1fr}.relation-column{order:2}.hero-in{grid-template-columns:1fr}.split{grid-template-columns:1fr}.chaos-grid{grid-template-columns:1fr 1fr}.score-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:760px){.tool-grid,.flow-board,.sql-task-body{grid-template-columns:1fr}.tool-grid .span2{grid-column:auto}.profile-strip{grid-template-columns:1fr 1fr}.mission-head{grid-template-columns:40px 1fr}.mission-score{grid-column:2;justify-self:start}.chaos-grid{grid-template-columns:1fr}.star-board{grid-template-columns:1fr}.star-zone.grain{grid-column:auto}.score-grid{grid-template-columns:1fr 1fr}.top-title{display:none}.hero h1{font-size:2.55rem}.layout{width:94vw}.final-panel{grid-template-columns:1fr}.final-score{grid-row:auto}}
+
+/* S15_MOBILE_TAP_V1 · soporte táctil y ergonomía móvil */
+.mobile-help{display:none;margin:0 0 12px;padding:10px 12px;border:1px solid #b2ddff;border-left:4px solid #175cd3;border-radius:12px;background:#eff8ff;color:#1849a9;font-size:.8rem}
+.drag-card,.flow-node{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.drag-card.tap-selected,.flow-node.tap-selected{outline:3px solid #175cd366;border-color:#175cd3;background:#eff8ff!important}
+.dropzone.tap-ready{border-color:#84adff}
+.model-field-actions{display:flex;align-items:center;gap:5px;margin-left:auto}
+.model-remove{width:30px;height:30px;border-radius:8px;background:#fef3f2;color:#b42318;border:1px solid #fecdca;font-weight:950;display:grid;place-items:center;padding:0}
+@media(max-width:760px),(pointer:coarse){
+  .mobile-help{display:block}
+  .drag-card,.flow-node,.primary,.secondary,.danger,.final-btn,.ghost,.data-tabs button,.edge-chip{min-height:44px}
+  .drag-card,.flow-node,.chip{padding:10px 12px}
+  .dropzone{min-height:72px}
+  .code{font-size:16px;line-height:1.45;min-height:220px}
+  .code.tall{min-height:300px}
+  .table-wrap,.query-result{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .mission-actions{align-items:stretch}
+  .mission-actions>button{width:100%}
+  .feedback{min-width:0;width:100%}
+}

@@ -556,7 +556,8 @@
         "evaluador": "evaluador-s15.html",
         "version": "s15-workbench-v3",
         "checkpoints": 37,
-        "puntaje_maximo": 100
+        "puntaje_maximo": 100,
+        "interaccion_movil": "tap_then_destination"
       },
       "trabajo_autonomo_min": 120,
       "nucleo": {

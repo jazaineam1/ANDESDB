@@ -518,10 +518,11 @@
           "modo": "workbench_integrador_autoevaluado",
           "titulo": "Desafío final · Workbench integrador",
           "estado": "pendiente",
-          "desc": "Reto de dos horas de trabajo activo: inspector de datos, modelador ER drag-and-drop, constructor de flujo, DDL con pruebas, SQL Debug Arena, modelo estrella y Chaos Lab. 37 checkpoints automáticos generan retroalimentación y registran reintentos en el LMS.",
+          "desc": "Reto de trabajo activo: inspector de datos, modelador ER interactivo, constructor de flujo, DDL con pruebas, SQL Debug Arena, modelo estrella y Chaos Lab. 37 checkpoints automáticos generan retroalimentación y registran reintentos en el LMS.",
           "tags": [
             "workbench",
             "drag-and-drop",
+            "touch",
             "modelado ER",
             "arquitectura",
             "DDL",

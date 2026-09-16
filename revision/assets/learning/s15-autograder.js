@@ -181,7 +181,8 @@ const CHECK_META={
  x5:['las cinco consultas sobreviven a un escenario nuevo',2]
 };
 
-let SQL=null,baseData=null,dragPayload=null,selectedFlowNode=null;
+let SQL=null,baseData=null,dragPayload=null,tapPayload=null,selectedFlowNode=null;
+const S15_MOBILE_TAP_V1=true;
 let lastReport=null;
 let state=freshState();
 
@@ -315,7 +316,7 @@ function renderModel(){
   for(const [id,label] of MODEL_FIELDS){
     if(!placed.has(id)){const b=document.createElement('button');b.className='chip drag-card';b.draggable=true;b.dataset.kind='model';b.dataset.id=id;b.textContent=id.replace('.', ' · ');palette.appendChild(b)}
   }
-  $$('.entity-fields').forEach(z=>{z.innerHTML='';const ent=z.dataset.entity;for(const id of state.model.entities[ent]||[]){const f=document.createElement('div');f.className='model-field drag-card'+(state.model.pk[ent]===id?' pk':'');f.draggable=true;f.dataset.kind='model';f.dataset.id=id;f.dataset.entity=ent;const label=MODEL_FIELDS.find(x=>x[0]===id)?.[1]||id;f.innerHTML=`<span>${esc(label)}</span>${state.model.pk[ent]===id?'<span class="badge pk">PK</span>':''}`;z.appendChild(f)}})
+  $$('.entity-fields').forEach(z=>{z.innerHTML='';const ent=z.dataset.entity;for(const id of state.model.entities[ent]||[]){const f=document.createElement('div');f.className='model-field drag-card'+(state.model.pk[ent]===id?' pk':'');f.draggable=true;f.dataset.kind='model';f.dataset.id=id;f.dataset.entity=ent;const label=MODEL_FIELDS.find(x=>x[0]===id)?.[1]||id;f.innerHTML=`<span>${esc(label)}</span><span class="model-field-actions">${state.model.pk[ent]===id?'<span class="badge pk">PK</span>':''}<button type="button" class="model-remove" data-remove-model="${esc(id)}" aria-label="Devolver ${esc(label)} al banco de campos">×</button></span>`;z.appendChild(f)}})
   const fkz=$('.fk-zone');if(fkz){fkz.innerHTML='<b>FK</b><span>arrastra aquí <code>evento.caso_id</code> desde EVENTO</span>';if(state.model.fk){const c=document.createElement('div');c.className='star-item';c.innerHTML='<span>evento.caso_id</span><span class="badge fk">FK → caso.caso_id</span>';fkz.appendChild(c)}}
   $('#cardinalityLabel').textContent=state.model.cardinality||'sin definir';
 }
@@ -722,8 +723,34 @@ function removeModelField(id){
 }
 function cycleCardinality(){const vals=[null,'1:N','1:1','N:M'];state.model.cardinality=vals[(vals.indexOf(state.model.cardinality)+1)%vals.length];renderModel();save();updateScores()}
 
+function clearTapPlacement(){
+  tapPayload=null;
+  $$('.tap-selected').forEach(el=>{el.classList.remove('tap-selected');el.setAttribute?.('aria-pressed','false')});
+  $$('.dropzone.tap-ready').forEach(z=>z.classList.remove('tap-ready'));
+}
+function selectTapPlacement(el){
+  if(!el)return false;
+  const next={kind:el.dataset.kind,id:el.dataset.id};
+  if(tapPayload&&tapPayload.kind===next.kind&&tapPayload.id===next.id){clearTapPlacement();return true}
+  clearTapPlacement();tapPayload=next;el.classList.add('tap-selected');el.setAttribute?.('aria-pressed','true');
+  $$('.dropzone').forEach(z=>z.classList.add('tap-ready'));
+  setEngine(`Seleccionaste ${el.textContent.trim().slice(0,60)}. Ahora toca el destino.`, 'work');
+  return true;
+}
+function decorateTapTargets(){
+  $$('[draggable="true"][data-kind]').forEach(el=>{
+    if(el.tagName!=='BUTTON'){el.setAttribute('role','button');el.tabIndex=0}
+    el.setAttribute('aria-pressed',tapPayload&&tapPayload.kind===el.dataset.kind&&tapPayload.id===el.dataset.id?'true':'false');
+  });
+}
+function finishTapDrop(zone){
+  if(!tapPayload||!zone)return false;
+  const payload={...tapPayload};handleDrop(zone,payload);clearTapPlacement();decorateTapTargets();return true;
+}
+
 function bindEvents(){
   document.addEventListener('dragstart',e=>{
+    clearTapPlacement();
     const el=e.target.closest('[draggable="true"][data-kind]');if(!el)return;
     dragPayload={kind:el.dataset.kind,id:el.dataset.id};el.classList.add('dragging');e.dataTransfer?.setData('text/plain',JSON.stringify(dragPayload));if(e.dataTransfer)e.dataTransfer.effectAllowed='move';
   });
@@ -733,17 +760,26 @@ function bindEvents(){
   document.addEventListener('drop',e=>{const z=e.target.closest('.dropzone');if(!z)return;e.preventDefault();z.classList.remove('over');let p=dragPayload;try{p=p||JSON.parse(e.dataTransfer.getData('text/plain'))}catch{}handleDrop(z,p)});
   document.addEventListener('click',async e=>{
     const tab=e.target.closest('[data-dataset]');if(tab&&tab.closest('#dataTabs')){previewDataset(tab.dataset.dataset);return}
-    const mf=e.target.closest('.model-field');if(mf){const ent=mf.dataset.entity,id=mf.dataset.id;state.model.pk[ent]=state.model.pk[ent]===id?null:id;renderModel();save();updateScores();return}
+    const rm=e.target.closest('[data-remove-model]');if(rm){removeModelField(rm.dataset.removeModel);decorateTapTargets();return}
+    const tapCard=e.target.closest('[draggable="true"][data-kind]');
+    if(tapCard&&!tapCard.classList.contains('model-field')&&!tapCard.classList.contains('flow-node')){selectTapPlacement(tapCard);return}
+    const mf=e.target.closest('.model-field');if(mf){const ent=mf.dataset.entity,id=mf.dataset.id;state.model.pk[ent]=state.model.pk[ent]===id?null:id;renderModel();decorateTapTargets();save();updateScores();return}
     const fn=e.target.closest('.flow-node');if(fn){
-      const id=fn.dataset.id;if(!selectedFlowNode){selectedFlowNode=id}else if(selectedFlowNode===id){selectedFlowNode=null}else{if(!edge(selectedFlowNode,id))state.flow.edges.push([selectedFlowNode,id]);selectedFlowNode=null}renderFlow();save();updateScores();return
+      const id=fn.dataset.id;
+      if(!state.flow.placements[id]){selectTapPlacement(fn);return}
+      clearTapPlacement();if(!selectedFlowNode){selectedFlowNode=id}else if(selectedFlowNode===id){selectedFlowNode=null}else{if(!edge(selectedFlowNode,id))state.flow.edges.push([selectedFlowNode,id]);selectedFlowNode=null}renderFlow();decorateTapTargets();save();updateScores();return
     }
+    const zone=e.target.closest('.dropzone');
+    if(zone&&tapPayload){finishTapDrop(zone);return}
+    if(zone?.classList.contains('flow-lane')&&selectedFlowNode&&!e.target.closest('.flow-node')){state.flow.placements[selectedFlowNode]=zone.dataset.lane;selectedFlowNode=null;renderFlow();decorateTapTargets();save();updateScores();return}
     const edgeBtn=e.target.closest('[data-edge]');if(edgeBtn){state.flow.edges.splice(+edgeBtn.dataset.edge,1);renderFlow();save();updateScores();return}
     const checker=e.target.closest('[data-check]');if(checker){const k=checker.dataset.check;const r=k==='source'?evaluateSource():k==='model'?evaluateModel():k==='flow'?evaluateFlow():evaluateStar();renderFeedback(k,r);updateScores();return}
     const run=e.target.closest('[data-run-query]');if(run){await runQuery(run.dataset.runQuery,true,true);renderFeedback('sql',storedDynamicResult('sql',['q1','q2','q3','q4','q5'],25));return}
     const reset=e.target.closest('[data-reset-query]');if(reset){const id=reset.dataset.resetQuery;state.queries[id]=QUERY_DEFS[id].starter;$(`#${id}`).value=state.queries[id];state.tests[id]=false;save();updateScores();return}
     const hint=e.target.closest('[data-hint]');if(hint){const id=hint.dataset.hint;state.hints[id]=(state.hints[id]||0)+1;save();const el=$(`#status-${id}`);el.className='task-status';el.textContent=`Pista: ${QUERY_DEFS[id].hint}`;return}
   });
-  document.addEventListener('dblclick',e=>{const mf=e.target.closest('.model-field');if(mf){removeModelField(mf.dataset.id);return}});
+  document.addEventListener('dblclick',e=>{const mf=e.target.closest('.model-field');if(mf){removeModelField(mf.dataset.id);decorateTapTargets();return}});
+  document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('[draggable="true"][data-kind]')){e.preventDefault();e.target.click()}});
   $$('textarea').forEach(t=>t.addEventListener('input',()=>{if(t.id==='ddl')state.ddl=t.value;else if(QUERY_DEFS[t.id])state.queries[t.id]=t.value;save()}));
   $('#toggleCardinality')?.addEventListener('click',cycleCardinality);
   $('#generateDDL')?.addEventListener('click',generateDDLFromModel);
@@ -763,7 +799,7 @@ async function init(){
   try{
     SQL=await window.initSqlJs({locateFile:f=>`${SQLJS_BASE}${f}`});
     baseData=await loadData();
-    renderAll();previewDataset('casos');bindEvents();
+    renderAll();previewDataset('casos');decorateTapTargets();bindEvents();
     setEngine(`Workbench listo: ${baseData.casos.length} casos, ${baseData.eventos.length} eventos y ${baseData.evidencias.length} documentos de evidencias.`,'ok');
   }catch(e){setEngine(`No se pudo iniciar el workbench: ${e.message||e}`,'bad')}
 }

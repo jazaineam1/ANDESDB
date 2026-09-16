@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="ANDESDB · Workbench de evaluación integradora · Sesión 15">
 <title>ANDESDB · S15 Workbench</title>
-<link rel="stylesheet" href="assets/learning/s15-workbench.css?v=s15w3">
+<link rel="stylesheet" href="assets/learning/s15-workbench.css?v=s15w4">
 </head>
 <body>
 <header class="topbar">
   <div class="topbar-in">
     <a class="brand" href="/ANDESDB/">ANDESDB</a>
-    <div class="top-title"><b>S15 · Workbench integrador</b><span>Reto evaluado · 2 h orientativas</span></div>
+    <div class="top-title"><b>S15 · Workbench integrador</b><span>Reto integrador · evidencia automática</span></div>
     <div class="top-spacer"></div>
     <div class="top-score"><span id="livePoints">0</span><small>/100 verificados</small></div>
     <button class="ghost smallbtn" id="toggleNav" type="button">Misiones</button>
@@ -30,7 +30,7 @@
     </div>
     <div class="hero-card">
       <strong>Ritmo sugerido, no punitivo</strong>
-      <p>La ruta está pensada para unas 2 horas de trabajo activo. Puedes volver atrás, corregir y volver a probar. La nota final usa tu mejor estado verificado en cada dimensión.</p>
+      <p>La ruta está pensada como trabajo activo y corregible. Puedes volver atrás, reparar y volver a probar. La nota final usa tu mejor estado verificado en cada dimensión.</p>
       <div id="lmsStatus" class="lms mini">Comprobando LMS…</div>
     </div>
   </div>
@@ -57,6 +57,7 @@
 
   <main class="workbench">
     <div id="engineStatus" class="status work">Preparando datos y motor SQL…</div>
+    <div id="mobileHelp" class="mobile-help"><b>Modo táctil:</b> toca una ficha y luego su destino. No necesitas arrastrar. En SQL, el código ya parte de un bug pequeño para que puedas repararlo también desde el celular.</div>
 
     <section class="mission" id="m1" data-mission="source">
       <header class="mission-head">
@@ -77,7 +78,7 @@
         </div>
 
         <div class="tool-card">
-          <div class="tool-title"><b>Mapa de función</b><span>arrastra cada fuente al rol correcto</span></div>
+          <div class="tool-title"><b>Mapa de función</b><span>arrastra cada fuente al rol correcto; en celular, toca la ficha y luego el destino</span></div>
           <div class="palette source-palette" id="sourcePalette">
             <div class="drag-card" draggable="true" data-kind="source" data-id="casos">casos.csv</div>
             <div class="drag-card" draggable="true" data-kind="source" data-id="eventos">eventos.csv</div>
@@ -91,7 +92,7 @@
         </div>
 
         <div class="tool-card">
-          <div class="tool-title"><b>Claves observadas</b><span>arrastra la clave de cada fuente al slot</span></div>
+          <div class="tool-title"><b>Claves observadas</b><span>arrastra la clave de cada fuente; en celular, toca la clave y luego el slot</span></div>
           <div class="field-palette key-palette">
             <button class="chip drag-card" draggable="true" data-kind="key" data-id="caso_id">caso_id</button>
             <button class="chip drag-card" draggable="true" data-kind="key" data-id="evento_id">evento_id</button>
@@ -116,7 +117,7 @@
       <div class="modeler">
         <div class="model-palette">
           <b>Campos disponibles</b>
-          <small>Arrastra a la entidad correcta. Haz clic en un campo ya colocado para marcar/desmarcar PK.</small>
+          <small>Arrastra a la entidad correcta. En celular, toca un campo y luego la entidad. Toca un campo colocado para marcar/desmarcar PK.</small>
           <div id="modelPalette" class="field-palette"></div>
         </div>
         <div class="entity-board">
@@ -145,7 +146,7 @@
         <div><div class="ey dark">Arquitectura · 15 puntos</div><h2>Flow Builder</h2><p>Organiza componentes y crea conexiones. No estás escogiendo “SQL o NoSQL”: estás construyendo un flujo que debe servir a operación, evidencia flexible y analítica histórica.</p></div>
         <div class="mission-score"><b id="score-flow">0</b><span>/15</span></div>
       </header>
-      <div class="flow-help">Arrastra nodos a las capas. Luego pulsa un nodo origen y después un nodo destino para crear una conexión. Pulsa una conexión para eliminarla.</div>
+      <div class="flow-help">Arrastra nodos a las capas. En celular, toca un nodo sin ubicar y luego la capa. Para conectar, toca un nodo ubicado y después otro. Toca una conexión para eliminarla.</div>
       <div class="flow-palette" id="flowPalette"></div>
       <div class="flow-board" id="flowBoard">
         <div class="flow-lane dropzone" data-lane="source"><header>1 · Fuentes</header><div class="lane-body"></div></div>
@@ -239,6 +240,6 @@
 </div>
 
 <script src="assets/vendor/sqljs/sql-wasm.js"></script>
-<script src="assets/learning/s15-autograder.js?v=s15w3"></script>
+<script src="assets/learning/s15-autograder.js?v=s15w4"></script>
 </body>
 </html>
