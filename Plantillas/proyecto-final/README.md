@@ -1,49 +1,58 @@
-# Sesión 15 · Atención de incidentes urbanos
+# Sesión 15 · Atención de incidentes urbanos · Workbench v5
 
-La herramienta principal es el **S15 Workbench**: [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html).
+La herramienta principal es [`/ANDESDB/evaluador-s15-v5.html`](/ANDESDB/evaluador-s15-v5.html).
 
-No necesitas preparar un paquete de archivos para revisión manual. La sesión funciona como un laboratorio integrador de aproximadamente dos horas de trabajo activo, con siete estaciones conectadas y retroalimentación inmediata.
+La sesión ya no funciona como una entrega para revisión manual. El estudiante construye y repara una solución en seis estaciones de **mastery corregible** y después enfrenta un **Boss Transfer** con datos y requisitos distintos.
 
-## Qué vas a hacer
-
-1. **Inspector de datos.** Explora `casos.csv`, `eventos.csv` y `evidencias.json`; identifica su función, grano y claves.
-2. **Modelador ER.** Arrastra campos a `CASO` y `EVENTO`, marca PK, crea la FK y define la relación 1:N.
-3. **Flow Builder.** Construye el camino desde las fuentes hasta persistencia operacional, transformación, warehouse y BI.
-4. **DDL Lab.** Convierte el modelo en SQL y haz que pase seis pruebas de integridad.
-5. **SQL Debug Arena.** Repara cinco consultas defectuosas; cada una se prueba sobre los datos visibles y sobre variaciones automáticas.
-6. **Star Builder.** Transfiere el caso a una salida analítica definiendo grano, medidas y dimensiones.
-7. **Chaos / Change Lab.** La herramienta introduce duplicados, huérfanos, un estado nuevo, una evidencia de tipo nuevo y datos adicionales para comprobar si toda la solución resiste.
-
-## Fuentes
+## Las fuentes
 
 - [`Datos/casos.csv`](Datos/casos.csv): snapshot operacional.
 - [`Datos/eventos.csv`](Datos/eventos.csv): historia de eventos 1:N.
-- [`Datos/evidencias.json`](Datos/evidencias.json): documentos con arreglos de evidencias.
-- [`criterios.md`](criterios.md): contrato completo de los 37 checkpoints.
+- [`Datos/evidencias.json`](Datos/evidencias.json): evidencia flexible/anidada.
+- [`criterios.md`](criterios.md): contrato completo de evaluación.
 
-## Cómo funciona la evaluación
+## Mastery · 80 puntos
 
-La escala final es de 100 puntos:
+El estudiante puede probar, pedir ayudas, corregir y volver a intentar. Pedir ayuda no resta puntos.
 
-- Inspector: 10
-- Modelador ER: 15
-- Flow Builder: 15
-- DDL Lab: 15
-- SQL Debug Arena: 25
-- Star Builder: 10
-- Chaos / Change Lab: 10
+1. **Inspector · 8.** Explora fuentes, identifica grano, función y claves.
+2. **ER Builder · 12.** Construye CASO/EVENTO, PK, FK y cardinalidad.
+3. **Flow Builder · 10.** Diseña un flujo que cumpla propiedades; no se exige un único diagrama.
+4. **DDL + Mutation Hunter · 15.** Implementa integridad y diseña pruebas capaces de detectar esquemas defectuosos.
+5. **SQL Debug Arena · 25.** Repara cinco consultas con partial credit y feedback progresivo.
+6. **Star Builder · 10.** Define grano, medidas y dimensiones con follow-through.
 
-El Workbench guarda el borrador en tu navegador. Puedes comprobar una estación, leer la retroalimentación, corregir y volver a probar. Al final, **Evaluar todo y registrar intento** vuelve a ejecutar la solución completa y, si tienes sesión iniciada en ANDESDB, registra el puntaje y el detalle en el LMS.
+## Boss Transfer · 20 puntos
 
-## Qué se espera
+La prueba final cambia el contexto sin cambiar las competencias:
 
-No se busca que copies la sintaxis exacta del profesor. Se evalúa comportamiento:
+- aparece `sensor_events.json` y debe incorporarse al flujo sin conectarse directamente a BI;
+- aparece un requerimiento de SLA por caso y estado final;
+- el servidor vuelve a ejecutar el DDL con una evolución legítima distinta de la practicada;
+- las cinco consultas se prueban sobre un dataset secreto nuevo.
 
-- que el modelo tenga el grano y relaciones correctas;
-- que la base rechace datos inválidos sin bloquear cambios legítimos;
-- que las consultas respondan correctamente aunque cambien los datos;
-- que la arquitectura tenga caminos coherentes para operación, evidencia flexible y analítica;
-- que puedas trasladar el caso a un modelo analítico;
-- que la solución resista el Chaos Lab.
+## Cómo funciona el SQL
 
-La corrección forma parte del reto: un segundo intento mejor que el primero es evidencia de aprendizaje.
+El navegador usa SQL.js para feedback inmediato. Cada consulta obtiene partial credit por ejecución segura, estructura de salida y comportamiento en variaciones de entrenamiento.
+
+Al registrar el intento, la Edge Function `learning-autograde-s15` **no confía en booleanos calculados por el navegador**. Envía el DDL y las consultas al grader server-side de Supabase/Postgres, que crea tablas temporales, ejecuta pruebas ocultas y recalcula la nota.
+
+Las consultas de referencia finales y los datasets secretos no están publicados en el JavaScript del Workbench.
+
+## Feedback progresivo
+
+En SQL, la ayuda se abre en tres capas:
+
+1. concepto que probablemente está fallando;
+2. contraejemplo mínimo;
+3. bloques tipo Parsons para reconstruir la estrategia.
+
+El uso de ayudas se conserva como telemetría pedagógica, no como penalización.
+
+## Analítica docente
+
+El panel [`/ANDESDB/s15-analytics.html`](/ANDESDB/s15-analytics.html) permite al docente revisar tasas de éxito de primer intento y mejor intento, mejora por checkpoint, número de intentos, uso de ayudas y misconceptions frecuentes.
+
+## Qué cuenta como buen resultado
+
+No se busca reproducir exactamente la sintaxis del profesor. Se busca que la solución conserve el significado del dato, proteja integridad, responda bien cuando cambia el dataset y pueda adaptarse a nuevos requisitos sin depender de valores memorizados.
