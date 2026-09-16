@@ -496,10 +496,10 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final · evaluación automática",
+      "titulo": "Desafío final · Workbench integrador",
       "duracion_util": 165,
-      "modo": "evaluacion_automatica_guiada",
-      "objetivo": "Demostrar transferencia con una solución que sobreviva pruebas de integridad, consultas sobre datos variables y decisiones de arquitectura dadas restricciones explícitas.",
+      "modo": "workbench_integrador_autoevaluado",
+      "objetivo": "Integrar grano, modelado, integridad, SQL, arquitectura y analítica construyendo una solución que sobreviva pruebas y cambios de requisitos.",
       "evaluacion": {
         "modo": "automatica",
         "href": "evaluador-s15.html",
@@ -553,7 +553,34 @@
       ],
       "solucion": {
         "modo": "automatica",
-        "href": "evaluador-s15.html"
+        "evaluador": "evaluador-s15.html",
+        "version": "s15-workbench-v3",
+        "checkpoints": 37,
+        "puntaje_maximo": 100
+      },
+      "trabajo_autonomo_min": 120,
+      "nucleo": {
+        "titulo": "Construye y prueba una solución completa",
+        "minutos": 90,
+        "instrucciones": "Completa Inspector, ER Builder, Flow Builder, DDL Lab y SQL Debug Arena. Cada estación genera evidencia automática y puede corregirse antes de continuar.",
+        "criterios": [
+          "clasifica fuentes y claves desde evidencia",
+          "construye el modelo ER por manipulación directa",
+          "crea un flujo de datos coherente",
+          "implementa integridad ejecutable",
+          "repara consultas que sobreviven a variaciones"
+        ]
+      },
+      "reto": {
+        "titulo": "Transferencia analítica + Chaos Lab",
+        "minutos": 30,
+        "instrucciones": "Construye el modelo estrella y ejecuta el Chaos Lab. La prueba final reutiliza el DDL, las consultas y el flujo; no agrega preguntas de selección.",
+        "criterios": [
+          "define grano, medidas y dimensiones",
+          "acepta evolución legítima sin perder integridad",
+          "mantiene resultados al cambiar los datos",
+          "conserva un camino para evidencia semiestructurada"
+        ]
       }
     },
     "16": {

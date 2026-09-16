@@ -508,31 +508,33 @@
       "n": 6,
       "titulo": "Desafío final y consolidación",
       "estado": "pendiente",
-      "desc": "Integrar el recorrido en un caso nuevo mediante una evaluación automática que ejecuta, prueba, retroalimenta y registra intentos; cerrar después con transferencia hacia DP-900.",
+      "desc": "Integrar el recorrido en un caso nuevo construyendo una solución ejecutable, sometiéndola a pruebas y cambios automáticos, y cerrar después con transferencia hacia DP-900.",
       "recursos": [],
       "sesiones": [
         {
           "n": 15,
           "fecha": "2026-09-18",
           "duracionUtil": 165,
-          "modo": "evaluacion_automatica_guiada",
-          "titulo": "Desafío final · evaluación automática",
+          "modo": "workbench_integrador_autoevaluado",
+          "titulo": "Desafío final · Workbench integrador",
           "estado": "pendiente",
-          "desc": "Caso de incidentes urbanos evaluado automáticamente: grano, DDL e integridad, cuatro consultas sometidas a variaciones de datos y decisiones de arquitectura; feedback inmediato y reintentos registrados en el LMS.",
+          "desc": "Reto de dos horas de trabajo activo: inspector de datos, modelador ER drag-and-drop, constructor de flujo, DDL con pruebas, SQL Debug Arena, modelo estrella y Chaos Lab. 37 checkpoints automáticos generan retroalimentación y registran reintentos en el LMS.",
           "tags": [
-            "evaluación automática",
-            "grano",
+            "workbench",
+            "drag-and-drop",
+            "modelado ER",
+            "arquitectura",
             "DDL",
-            "SQL",
-            "pruebas",
-            "variaciones",
-            "feedback",
+            "SQL debugging",
+            "modelo estrella",
+            "chaos testing",
+            "evaluación automática",
             "LMS"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
             {
-              "txt": "🧪 Evaluador automático S15",
+              "txt": "🧪 S15 Workbench · 7 estaciones / 37 checkpoints",
               "href": "evaluador-s15.html"
             },
             {
@@ -540,10 +542,11 @@
               "href": "capstone.html"
             },
             {
-              "txt": "✅ Contrato de evaluación",
+              "txt": "✅ Contrato y rúbrica del workbench",
               "href": "Plantillas/proyecto-final/criterios.md"
             }
-          ]
+          ],
+          "trabajoAutonomoMin": 120
         },
         {
           "n": 16,
