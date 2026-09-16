@@ -65,6 +65,30 @@ jobs:
       - name: S15 · validar interfaz del Workbench
         run: python -c "from tools.test_s15_autograder import test_workbench_contract; test_workbench_contract()"
 
+      - name: S15 · validar contrato móvil táctil
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path('evaluador-s15.html').read_text(encoding='utf-8')
+          js = Path('assets/learning/s15-autograder.js').read_text(encoding='utf-8')
+          css = Path('assets/learning/s15-workbench.css').read_text(encoding='utf-8')
+          assert 'S15_MOBILE_TAP_V1' in js and 'S15_MOBILE_TAP_V1' in css
+          assert 'tapPayload' in js and 'selectTapPlacement' in js and 'finishTapDrop' in js
+          assert 'data-remove-model' in js, 'El modelo debe tener una salida explícita en móvil'
+          assert "e.key==='Enter'||e.key===' '" in js, 'Falta alternativa de teclado'
+          assert 'Modo táctil:' in html and 'toca una ficha y luego su destino' in html
+          assert 'touch-action:manipulation' in css
+          assert 'font-size:16px' in css, 'Evitar auto-zoom del teclado móvil en editores'
+          assert 'min-height:44px' in css, 'Los controles táctiles deben tener blancos de al menos 44px'
+          assert '.tool-grid,.flow-board,.sql-task-body{grid-template-columns:1fr}' in css
+          assert '.entity-board{grid-template-columns:1fr}' in css
+          assert '.mission-nav.open{display:block}' in css
+          visible = re.sub(r'<script[\s\S]*?</script>', '', html, flags=re.I)
+          assert not re.search(r'\b(?:2\s*h|2\s*horas|dos\s+horas)\b', visible, flags=re.I), 'No mostrar minutaje rígido del reto en el Workbench'
+          print('Contrato móvil S15 OK: tap→destino, targets 44px, editor 16px, layout 1 columna y sin minutaje rígido.')
+          PY
+
       - name: S15 · validar presentación pública y revisión
         run: python -c "from tools.test_s15_autograder import test_presentation_contract; test_presentation_contract()"
 
