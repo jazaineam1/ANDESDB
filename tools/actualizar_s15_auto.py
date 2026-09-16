@@ -8,8 +8,7 @@ La fuente de verdad de la evaluación es v5:
 - Presentaciones/M6/sesion-15-desafio-final-v5.html
 - s15-analytics.html
 
-Las rutas históricas evaluador-s15.html y sesion-15-desafio-final.html se
-mantienen como redirecciones para no romper enlaces previos.
+Las rutas históricas se mantienen como redirecciones para no romper enlaces.
 """
 from __future__ import annotations
 import json
@@ -144,6 +143,7 @@ def sync_assets() -> None:
         "evaluador-s15-v5.html",
         "assets/learning/s15-autograder-v5.js",
         "assets/learning/s15-workbench-v5.css",
+        "assets/learning/s15-teacher-link.js",
         "Presentaciones/M6/sesion-15-desafio-final.html",
         "Presentaciones/M6/sesion-15-desafio-final-v5.html",
         "s15-analytics.html",
@@ -154,11 +154,25 @@ def sync_assets() -> None:
         copy(rel)
 
 
+def patch_teacher_dashboard() -> None:
+    path = ROOT / "revision" / "teacher-dashboard.html"
+    if not path.exists():
+        return
+    text = path.read_text(encoding="utf-8")
+    tag = '<script src="assets/learning/s15-teacher-link.js?v=s15v5a"></script>'
+    if tag not in text:
+        if "</body>" not in text:
+            raise RuntimeError("teacher-dashboard.html no tiene </body>")
+        text = text.replace("</body>", tag + "</body>", 1)
+        path.write_text(text, encoding="utf-8")
+
+
 def main() -> int:
     update_course()
     update_learning_plan()
     sync_assets()
-    print("S15 Workbench v5 sincronizado: mastery 80 + transfer 20 + grader server-side.")
+    patch_teacher_dashboard()
+    print("S15 Workbench v5 sincronizado: mastery 80 + transfer 20 + grader server-side + analytics docente.")
     return 0
 
 
