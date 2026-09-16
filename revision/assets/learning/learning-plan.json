@@ -335,24 +335,24 @@
     "14": {
       "fecha": "2026-09-16",
       "titulo": "BigQuery anidado + transferencia cloud",
-      "duracion_util": 165,
+      "duracion_util": 120,
       "modo": "guiada_con_servicio_real",
-      "objetivo": "Consultar estructuras anidadas, controlar el grano tras UNNEST y transferir necesidades a familias de servicios Azure.",
+      "objetivo": "Comprender ARRAY, STRUCT y UNNEST en BigQuery real, controlar el cambio de grano al expandir arreglos y transferir las decisiones de formato/uso al ecosistema Azure.",
       "nucleo": {
-        "titulo": "ARRAY, STRUCT y UNNEST ejecutables",
-        "minutos": 60,
-        "instrucciones": "Construye/consulta una estructura anidada, predice el grano antes y después de UNNEST y compara CSV, JSON y Parquet según uso.",
-        "criterios": ["STRUCT", "ARRAY", "UNNEST", "grano explícito", "consulta real"]
+        "titulo": "ARRAY, STRUCT y UNNEST en BigQuery real",
+        "minutos": 100,
+        "instrucciones": "Conecta el pedido relacional/documental con una representación analítica anidada; predice el grano antes y después de UNNEST; distingue CSV, JSON y Parquet; realiza de forma guiada GSP416 en BigQuery real y explica con una consulta qué cambió.",
+        "criterios": ["distingue ARRAY y STRUCT", "declara el grano antes y después de UNNEST", "ejecuta al menos una consulta en BigQuery real", "distingue CSV, JSON y Parquet por forma y uso", "relaciona necesidad con almacenamiento, proceso o visualización en Azure"]
       },
       "reto": {
-        "titulo": "Lab 2 · Taller proyecto integrador",
-        "minutos": 30,
-        "instrucciones": "A partir de una necesidad, decide representación y mapea almacenamiento, procesamiento y consumo a familias Azure sin usar el formato como único criterio."
+        "titulo": "Doble UNNEST y multiplicación de filas",
+        "minutos": 8,
+        "instrucciones": "Si terminas el núcleo con tiempo, analiza qué ocurre al expandir dos arreglos independientes y explica por qué el grano puede multiplicarse."
       },
       "servicio_real": {
         "requerido": true,
-        "nombre": "Google BigQuery",
-        "fallback": "DuckDB-Wasm puede practicar JSON/Parquet si falla acceso individual, pero no reemplaza el laboratorio real."
+        "nombre": "Google BigQuery · GSP416",
+        "fallback": "BigQuery Sandbox o DuckDB-Wasm pueden dar continuidad si una cuenta queda bloqueada; no sustituyen la demostración y la práctica guiada en BigQuery real."
       },
       "dp900": [
         {
