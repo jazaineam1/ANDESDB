@@ -9,7 +9,10 @@ def test_azure_transfer_contract() -> None:
     loader = (ROOT / 'assets/learning/s15-autograder-v6.js').read_text(encoding='utf-8')
     runtime = (ROOT / 'assets/learning/s15-azure-transfer-v1.js').read_text(encoding='utf-8')
     s14 = (ROOT / 'Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html').read_text(encoding='utf-8')
+    s15 = (ROOT / 'Presentaciones/M6/sesion-15-desafio-final-v6.html').read_text(encoding='utf-8')
     generator = (ROOT / 'tools/actualizar_s15_auto.py').read_text(encoding='utf-8')
+    contract = (ROOT / 'Plantillas/proyecto-final/criterios.md').read_text(encoding='utf-8')
+    sw = (ROOT / 'service-worker.js').read_text(encoding='utf-8')
 
     assert 's15-azure-transfer-v1.js' in loader
     assert 'azure_transfer' in runtime and 'learning-autograde-s15' in runtime
@@ -22,10 +25,17 @@ def test_azure_transfer_contract() -> None:
     # La evaluación no puede introducir familias que S14 no enseñó.
     for token in ('Azure Blob Storage / ADLS Gen2', 'Azure Cosmos DB', 'Microsoft Fabric / Azure Databricks', 'Power BI'):
         assert token in s14
+        assert token in contract
 
-    # El generador/sincronizador debe conservar el módulo en revision/.
+    # S15 debe explicar que la transferencia es por necesidad, no equivalencia literal.
+    assert 'necesidad → familia Azure' in s15
+    assert 'necesidad → familia de servicio' in contract
+
+    # Generación/revisión/PWA deben conservar y refrescar el módulo real.
     assert "'assets/learning/s15-azure-transfer-v1.js'" in generator
     assert 'transferencia Azure' in generator
+    assert "'./assets/learning/s15-azure-transfer-v1.js'" in sw
+    assert 's15-azure-transfer-v1' in sw and 'networkFirst' in sw
 
 
 if __name__ == '__main__':
