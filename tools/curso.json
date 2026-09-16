@@ -515,35 +515,38 @@
           "n": 15,
           "fecha": "2026-09-18",
           "duracionUtil": 165,
-          "modo": "workbench_integrador_autoevaluado",
-          "titulo": "Desafío final · Workbench integrador",
+          "modo": "workbench_integral_v6",
+          "titulo": "Desafío final · Workbench integral",
           "estado": "pendiente",
-          "desc": "Reto de trabajo activo: inspector de datos, modelador ER interactivo, constructor de flujo, DDL con pruebas, SQL Debug Arena, modelo estrella y Chaos Lab. 37 checkpoints automáticos generan retroalimentación y registran reintentos en el LMS.",
+          "desc": "Evaluación integradora de S2–S14: SQL, modelado y 3FN, DDL, documentos, Data Warehouse, BigQuery físico, ARRAY/STRUCT/UNNEST y Boss de transferencia. Dominio corregible 80 puntos + transferencia inédita 20 puntos; nota recalculada server-side.",
           "tags": [
-            "workbench",
-            "drag-and-drop",
-            "touch",
-            "modelado ER",
-            "arquitectura",
-            "DDL",
-            "SQL debugging",
-            "modelo estrella",
-            "chaos testing",
             "evaluación automática",
-            "LMS"
+            "SQL",
+            "normalización",
+            "DDL",
+            "NoSQL",
+            "Data Warehouse",
+            "BigQuery",
+            "partition",
+            "clustering",
+            "ARRAY",
+            "STRUCT",
+            "UNNEST",
+            "transferencia",
+            "server-side grader"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
             {
-              "txt": "🧪 S15 Workbench · 7 estaciones / 37 checkpoints",
+              "txt": "🧪 S15 Workbench integral · 80 dominio + 20 transferencia",
               "href": "evaluador-s15.html"
             },
             {
-              "txt": "🧭 Tablero del desafío",
-              "href": "capstone.html"
+              "txt": "📊 Analítica docente del autograder",
+              "href": "s15-analytics.html"
             },
             {
-              "txt": "✅ Contrato y rúbrica del workbench",
+              "txt": "✅ Contrato de evaluación integral",
               "href": "Plantillas/proyecto-final/criterios.md"
             }
           ],

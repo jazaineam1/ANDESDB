@@ -1,117 +1,67 @@
-# Sesión 15 · Contrato del Workbench integrador
+# Sesión 15 · Contrato del Workbench integral v6
 
-La evaluación se realiza en [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html). No es un cuestionario ni una entrega de seis archivos para corrección manual. El estudiante construye una solución dentro de **siete herramientas encadenadas**; cada herramienta produce evidencia verificable y el intento final registra el resultado en el LMS.
+La evaluación se realiza en [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html). Integra las competencias trabajadas desde S2 hasta S14 y separa **dominio corregible (80 puntos)** de **transferencia inédita (20 puntos)**.
 
-La ruta está diseñada para unas **2 horas de trabajo activo orientativo**. El ritmo no es punitivo: se puede volver a una estación, reparar lo que falló y ejecutar de nuevo.
+El navegador sirve para practicar y recibir feedback. La nota registrada se recalcula en Supabase: el servidor ejecuta nuevamente el DDL y las consultas SQL sobre escenarios distintos y vuelve a validar las decisiones estructuradas. No confía en booleanos enviados por el cliente.
 
-## Rúbrica · 100 puntos · 37 checkpoints
+## Rúbrica · 100 puntos
 
-| Estación | Puntos | Qué produce el estudiante | Cómo se valida |
-|---|---:|---|---|
-| 1. Inspector de datos | 10 | mapa de función de fuentes + claves observadas | 5 checkpoints sobre grano, rol y claves |
-| 2. Modelador ER | 15 | entidades CASO/EVENTO, PK, FK y cardinalidad | 6 checkpoints sobre campos y relación |
-| 3. Flow Builder | 15 | flujo desde fuentes hasta BI | 5 checkpoints sobre capas y conexiones |
-| 4. DDL Lab | 15 | esquema SQL ejecutable | 6 pruebas reales de integridad |
-| 5. SQL Debug Arena | 25 | cinco consultas reparadas | cada consulta corre sobre datos base y variaciones |
-| 6. Star Builder | 10 | grano de hecho, medidas y dimensiones | 5 checkpoints de diseño analítico |
-| 7. Chaos / Change Lab | 10 | la solución completa frente a cambios | 5 pruebas integradas que reutilizan DDL, queries y flujo |
+| Estación | Sesiones integradas | Puntos | Evidencia |
+|---|---|---:|---|
+| SQL Arena | S2–S5 | 15 | 5 consultas sobre varios escenarios, JOIN/CTE/agregación/grano |
+| Modelo ER + 3FN | S6–S8 | 12 | entidades, PK/FK, 1:N y descomposición CASO/EVENTO/AGENTE |
+| DDL Mutation Lab | S9 | 10 | constraints ejecutables + Mutation Hunter |
+| Document Lab | S10–S11 | 10 | embeber/referenciar por acceso, crecimiento y ciclo de vida |
+| Warehouse Builder | S6 + S12 | 13 | OLTP/OLAP, grano del hecho, medidas, dimensiones, batch/streaming/ELT |
+| BigQuery Physical | S13 | 10 | partition, orden de clustering, pruning y lectura conceptual |
+| Nested BigQuery | S14 | 10 | ARRAY<STRUCT>, UNNEST, JSON y Parquet |
+| Boss Transfer | integración | 20 | pedidos omnicanal + pruebas ocultas |
 
-## 1 · Inspector de datos
+## Qué significa “mastery”
 
-El estudiante inspecciona `casos.csv`, `eventos.csv` y `evidencias.json`. La herramienta muestra perfiles de filas, columnas, IDs, vacíos, documentos y tipos de evidencia. Después debe arrastrar cada fuente al rol correcto y ubicar las claves observadas.
+Las primeras siete estaciones pueden corregirse. El feedback SQL progresa por capas: concepto → contraejemplo → bloques tipo Parsons. El objetivo es que el estudiante llegue a una solución correcta **después de razonar y reparar**, no penalizar para siempre el primer error.
 
-Se valida:
+## SQL y partial credit
 
-- `casos.csv` como snapshot operacional;
-- `eventos.csv` como historia de cambios;
-- `evidencias.json` como evidencia flexible/anidada;
-- `caso_id` como clave de caso;
-- `evento_id` como clave de evento.
+Las cinco consultas trabajan filtros/agregación, último evento temporal, acumulación hasta cierre, control de grano después de JOIN 1:N y promedios a grano caso. Cada consulta se prueba sobre varias variaciones visibles. El servidor conserva un escenario adicional no publicado para medir transferencia.
 
-## 2 · Modelador ER drag-and-drop
+El conjunto visible incluye un contraejemplo específico para evitar que `MAX(estado)` pase accidentalmente como equivalente de “último estado”.
 
-Los campos se arrastran a las entidades `CASO` y `EVENTO`. El estudiante marca PK mediante interacción directa, define la FK y establece la cardinalidad.
+## Modelo, normalización y DDL
 
-El modelo correcto debe contener:
+El modelo esperado conserva `CASO 1:N EVENTO`. La normalización separa `AGENTE` para evitar repetir `agente_nombre` en cada evento. El DDL debe rechazar duplicados, huérfanos, `NULL` requeridos y minutos negativos sin convertir los valores observados hoy en un dominio eterno.
 
-- `caso(caso_id, fecha_creacion, tipo, prioridad, estado, barrio)`;
-- `evento(evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior)`;
-- PK en `caso.caso_id` y `evento.evento_id`;
-- FK `evento.caso_id → caso.caso_id`;
-- relación `CASO 1:N EVENTO`.
+Mutation Hunter evalúa una competencia adicional: saber qué prueba mínima revela un esquema defectuoso.
 
-El Workbench puede generar un **DDL inicial** desde el modelo construido. Ese DDL todavía debe ser endurecido por el estudiante.
+## SQL/NoSQL y documentos
 
-## 3 · Flow Builder
+El estudiante decide qué vive dentro del documento de caso y qué debe mantenerse referenciado. Se evalúan propiedades de la decisión: acceso conjunto, crecimiento potencial y ciclo de vida independiente. No se acepta la regla simplista “JSON = NoSQL”.
 
-El estudiante arrastra nodos a tres capas —fuentes, persistencia operacional y analítica— y crea conexiones nodo a nodo.
+## Data Warehouse
 
-El validador busca un flujo funcional:
+La estación obliga a separar OLTP de OLAP, declarar el grano del hecho antes de las medidas y construir dimensiones útiles. También evalúa cómo llegan datos nuevos: streaming para eventos, procesos batch para actualizaciones periódicas y ELT para cargar y transformar dentro de la plataforma analítica.
 
-- `casos` y `eventos` alimentan un store relacional operacional;
-- `evidencias` alimenta una representación flexible/documental;
-- ambos caminos llegan a transformación;
-- transformación alimenta un warehouse;
-- warehouse alimenta BI;
-- las fuentes crudas no saltan directamente a BI.
+## BigQuery físico
 
-## 4 · DDL Lab
+El patrón de consulta acota fechas y filtra frecuentemente barrio y tipo. La evaluación espera una partición alineada con el tiempo y clustering cuyo orden refleje el patrón de filtros. Un simulador conceptual traduce las decisiones a territorio/bloques que podrían evitarse; no pretende reproducir el optimizador real de BigQuery.
 
-El SQL se ejecuta localmente con SQL.js. Se realizan seis pruebas de comportamiento:
+## ARRAY, STRUCT, UNNEST y formatos
 
-1. la PK de caso rechaza duplicados;
-2. la PK de evento rechaza duplicados;
-3. la FK rechaza eventos huérfanos;
-4. los campos requeridos son `NOT NULL`;
-5. `minutos_desde_anterior < 0` es rechazado;
-6. un estado nuevo llamado `Escalado` puede entrar porque el negocio no declaró un dominio cerrado.
+`evidencias` debe reconocerse como un arreglo de estructuras. La consulta debe cambiar el grano a una fila por evidencia mediante `UNNEST`, conservando la clave raíz. También se evalúa JSON como formato flexible de aterrizaje y Parquet como formato columnar para analítica.
 
-La sexta prueba evita convertir accidentalmente los valores observados hoy en una regla eterna.
+## Boss Transfer · 20 puntos
 
-## 5 · SQL Debug Arena
+El dominio cambia a pedidos omnicanal. Debe reconocerse línea de pedido como grano analítico, cantidad e importe como medidas, fecha de pedido como partición y categoría/cliente como patrón de clustering. Además se requiere `UNNEST(p.items)` sin perder `pedido_id`.
 
-El estudiante no empieza desde una hoja en blanco: recibe **cinco consultas defectuosas** y debe repararlas.
+El servidor añade dos controles que el navegador no revela: vuelve a probar el DDL y las cinco consultas SQL con datos diferentes. Por eso memorizar el dataset del caso urbano no basta.
 
-1. prioridad Alta por barrio;
-2. estado actual frente al último evento real;
-3. minutos acumulados para casos cuyo último evento es Cerrado;
-4. conteos después de un JOIN 1:N sin inflar el grano de caso;
-5. promedio de minutos por caso antes de agregar por tipo.
+## Principios del autograder
 
-Cada consulta se ejecuta sobre los datos visibles y sobre variaciones automáticas. Una consulta que funciona solo porque los datos actuales tienen determinada forma no aprueba.
-
-## 6 · Star Builder
-
-La misma realidad cambia de propósito: ahora se necesita análisis histórico por fecha, barrio, tipo, prioridad y estado. El estudiante arrastra piezas para construir:
-
-- grano del hecho = un evento;
-- medidas = conteo de eventos y minutos;
-- dimensiones = fecha, barrio, tipo, prioridad y estado.
-
-## 7 · Chaos / Change Lab
-
-No hay preguntas nuevas. La herramienta reutiliza la solución ya construida y cambia el escenario:
-
-- intenta insertar un duplicado;
-- intenta insertar un evento huérfano;
-- introduce el estado `Escalado`;
-- introduce una evidencia nueva tipo `sensor` con atributos adicionales y comprueba que el flujo documental tiene salida hacia analítica;
-- vuelve a ejecutar las cinco consultas sobre un escenario con nuevos casos y eventos.
-
-Esta estación es la prueba integradora: no puede aprobarse memorizando una opción correcta.
-
-## Retroalimentación e intentos
-
-El Workbench mantiene un puntaje provisional por estación y un conteo de checkpoints. Al ejecutar el intento final:
-
-1. recalcula las siete estaciones;
-2. devuelve puntaje y lista de checkpoints pendientes;
-3. guarda el estado del modelo, flujo, diseño estrella, pruebas y código;
-4. registra el intento en el LMS si el estudiante está autenticado;
-5. permite corregir y volver a enviar.
-
-La evidencia relevante no es solo la nota final: también es la evolución entre intentos.
-
-## Alcance técnico
-
-El SQL se ejecuta en el navegador con SQL.js, por lo que la clase no depende de 40–50 conexiones concurrentes a un servidor de base de datos. La evaluación es adecuada como actividad formativa y de curso; no debe interpretarse como un sistema antifraude de examen de alta seguridad.
+- grader server-side como fuente de verdad de la nota;
+- tests visibles para entrenamiento y tests ocultos para transferencia;
+- partial credit en SQL;
+- feedback progresivo y reintentos;
+- mutation testing del propio autograder;
+- evaluación de propiedades y coherencia, no de una captura idéntica al profesor;
+- analítica docente de primer intento, mejor intento y errores recurrentes;
+- interacción táctil y drag-and-drop equivalentes.

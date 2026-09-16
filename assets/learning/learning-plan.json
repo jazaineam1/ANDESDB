@@ -496,10 +496,10 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final · Workbench integrador",
+      "titulo": "Desafío final · Workbench integral",
       "duracion_util": 165,
-      "modo": "workbench_integrador_autoevaluado",
-      "objetivo": "Integrar grano, modelado, integridad, SQL, arquitectura y analítica construyendo una solución que sobreviva pruebas y cambios de requisitos.",
+      "modo": "workbench_integral_v6",
+      "objetivo": "Integrar S2–S14 en una solución ejecutable y transferir el razonamiento a un caso nuevo.",
       "evaluacion": {
         "modo": "automatica",
         "href": "evaluador-s15.html",
@@ -552,35 +552,36 @@
         }
       ],
       "solucion": {
-        "modo": "automatica",
+        "modo": "automatica_server_side",
         "evaluador": "evaluador-s15.html",
-        "version": "s15-workbench-v3",
-        "checkpoints": 37,
+        "version": "s15-workbench-v6",
         "puntaje_maximo": 100,
-        "interaccion_movil": "tap_then_destination"
+        "mastery": 80,
+        "transferencia": 20
       },
       "trabajo_autonomo_min": 120,
       "nucleo": {
-        "titulo": "Construye y prueba una solución completa",
-        "minutos": 90,
-        "instrucciones": "Completa Inspector, ER Builder, Flow Builder, DDL Lab y SQL Debug Arena. Cada estación genera evidencia automática y puede corregirse antes de continuar.",
+        "titulo": "Dominio corregible · 80 puntos",
+        "instrucciones": "Completa SQL Arena, Modelo+3FN, DDL Mutation, Document Lab, Warehouse Builder, BigQuery Physical y Nested BigQuery. Corrige con feedback progresivo.",
         "criterios": [
-          "clasifica fuentes y claves desde evidencia",
-          "construye el modelo ER por manipulación directa",
-          "crea un flujo de datos coherente",
-          "implementa integridad ejecutable",
-          "repara consultas que sobreviven a variaciones"
+          "SQL sobre variaciones",
+          "modelo ER y 3FN",
+          "constraints y pruebas negativas",
+          "embeber/referenciar",
+          "hechos/dimensiones y OLTP/OLAP",
+          "partition/clustering/pruning",
+          "ARRAY/STRUCT/UNNEST y formatos"
         ]
       },
       "reto": {
-        "titulo": "Transferencia analítica + Chaos Lab",
-        "minutos": 30,
-        "instrucciones": "Construye el modelo estrella y ejecuta el Chaos Lab. La prueba final reutiliza el DDL, las consultas y el flujo; no agrega preguntas de selección.",
+        "titulo": "Boss Transfer · 20 puntos",
+        "instrucciones": "Resuelve pedidos omnicanal con un caso nuevo; el servidor además ejecuta pruebas ocultas de DDL y SQL.",
         "criterios": [
-          "define grano, medidas y dimensiones",
-          "acepta evolución legítima sin perder integridad",
-          "mantiene resultados al cambiar los datos",
-          "conserva un camino para evidencia semiestructurada"
+          "grano línea de pedido",
+          "medidas cantidad e importe",
+          "partición por fecha",
+          "clustering por patrón de filtros",
+          "UNNEST de items sin perder pedido_id"
         ]
       }
     },

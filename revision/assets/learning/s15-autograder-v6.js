@@ -1,0 +1,1 @@
+(()=>{'use strict';const self=document.currentScript;const s=document.createElement('script');s.src=new URL('s15-autograder-v6b.js?v=s15v6b',self.src).href;s.defer=false;self.after(s);})();
