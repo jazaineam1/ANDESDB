@@ -1,1 +1,1 @@
-(()=>{'use strict';const self=document.currentScript;const s=document.createElement('script');s.src=new URL('s15-autograder-v6b.js?v=s15v6b',self.src).href;s.defer=false;self.after(s);})();
+(()=>{'use strict';const self=document.currentScript;const core=document.createElement('script');core.src=new URL('s15-autograder-v6b.js?v=s15v6b',self.src).href;core.defer=false;core.onload=()=>{const az=document.createElement('script');az.src=new URL('s15-azure-transfer-v1.js?v=20260916a',self.src).href;az.defer=false;core.after(az)};self.after(core);})();
