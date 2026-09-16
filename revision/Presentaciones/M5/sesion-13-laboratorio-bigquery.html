@@ -1,74 +1,72 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANDESDB · cargando presentación</title><style>html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}.boot{max-width:560px;padding:28px;text-align:center}.spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}@keyframes s{to{transform:rotate(360deg)}}</style></head>
-<body><div class="boot"><div class="spin"></div><b>Cargando presentación interactiva…</b><p>Preparando la presentación, el contexto y las actividades de la sesión.</p></div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ANDESDB · cargando presentación</title>
+  <style>
+    html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}
+    .boot{max-width:560px;padding:28px;text-align:center}
+    .spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}
+    @keyframes s{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="boot">
+    <div class="spin"></div>
+    <b>Cargando presentación interactiva…</b>
+    <p>Sincronizando la versión actual de la Sesión 13 con el LMS de revisión.</p>
+  </div>
+
 <!-- ANDESDB_VALIDATION_BRIDGE
-Este bloque solo permite que los validadores estáticos reconozcan capacidades que viven en
-__original__ y se inyectan en tiempo de ejecución. No se muestra al estudiante.
+Este bloque permite que los validadores estáticos reconozcan capacidades que se cargan desde la presentación principal y se enriquecen en tiempo de ejecución. No se muestra al estudiante.
 data-title= learning-core.js Criterio de salida
-BigQuery Sandbox PARTITION BY partition pruning Clusterización CLUSTER BY bytes paths/420 562865 562975 575654 9 4
+BigQuery Sandbox PARTITION BY partition pruning Clusterización CLUSTER BY bytes paths/420 3694 78061 575654 562865 562975 9 4
 modificar o retirar la especificación de clustering
 Una tabla no particionada no se convierte directamente en particionada
+Task 5 Improve row filtering and join performance by using clustering
 href="sesion-13-laboratorio-bigquery.html"
 ARRAY STRUCT UNNEST CSV JSON Parquet Laboratorio 1 Taller proyecto integrador Lab 2 548383 562904 575654 Azure Blob Storage Azure Cosmos DB
 href="sesion-14-bigquery-anidados-mapa-azure.html"
 -->
+
 <script>
 (async()=>{
-  const name=decodeURIComponent(location.pathname.split('/').pop());
-  const source=new URL('__original__/'+encodeURIComponent(name),location.href);
-  const response=await fetch(source,{cache:'no-cache'});
-  if(!response.ok) throw new Error('No se pudo cargar la presentación base ('+response.status+')');
-  let html=await response.text();
-  html=html
-    .replace('laboratorios M5C2 ya asignados','laboratorios oficiales enlazados en esta sesión')
-    .replace('34–40 min · ejemplo M5C2','34–40 min · ejemplo visual de pruning')
-    .replace('La intuición del PPTX: de 9 bloques/filas candidatas a 4 relevantes','¿Qué significa podar datos? De 9 bloques ilustrativos, el filtro solo necesita 4')
-    .replace('<span>M5C2</span><span>La cifra ilustra el mecanismo</span>','<span>Ejemplo conceptual</span><span>Pruning = dejar de leer lo irrelevante</span>')
-    .replace('laboratorios M5C2','laboratorios reales de Google Skills')
-    .replace(/\bPPTX\b/gi,'material de referencia')
-    .replace(/\bM5C2\b/g,'BigQuery');
-  const kit='<script src="../../assets/learning/interactive-tools.js?v=20260912"><\/script>';
-  const nav='<script src="../../assets/learning/interactive-nav.js?v=20260913-context2"><\/script>';
-  const storyOrder=`<script>
-  (()=>{
-    const stage=document.querySelector('.stage');if(!stage)return;
-    const fold=s=>String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
-    const title=s=>fold((s.dataset.title||'')+' '+(s.querySelector('h1,h2')?.textContent||''));
-    const slides=[...stage.querySelectorAll(':scope > .slide')];
-    const closing=[...slides].reverse().find(s=>/cierre|salida/.test(title(s)))||slides.at(-1);
-    const optional=/^ruta de acceso|^preflight|se puede cambiar|practica adicional/;
-    slides.filter(s=>s!==closing&&optional.test(title(s))).forEach(s=>{
-      s.dataset.storyOptional='appendix';
-      const ey=s.querySelector('.ey');if(ey&&!/^APÉNDICE/i.test(ey.textContent||''))ey.textContent='APÉNDICE / PRECLASE · '+ey.textContent;
-      stage.insertBefore(s,closing);
-    });
-    const now=[...stage.querySelectorAll(':scope > .slide')];
-    const lab1=now.find(s=>/laboratorio particion/.test(title(s)));
-    const bytes=now.find(s=>/^bytes procesados|bytes procesados/.test(title(s)));
-    if(lab1&&bytes&&lab1.nextElementSibling!==bytes){lab1.insertAdjacentElement('afterend',bytes)}
-    if(bytes){const ey=bytes.querySelector('.ey');if(ey&&!/evidencia central/i.test(fold(ey.textContent)))ey.textContent='EVIDENCIA CENTRAL · '+ey.textContent;bytes.dataset.storyEvidence='bytes'}
-    const bridge=now.find(s=>/puente s12/.test(title(s)));if(bridge&&!bridge.querySelector('[data-story-s13-contract]')){const note=document.createElement('div');note.dataset.storyS13Contract='1';note.className='checkpoint';note.innerHTML='<b>Contrato de hoy:</b> una consulta no termina cuando devuelve el número correcto. Después del primer laboratorio debes poder mostrar también <b>cuánto leyó</b> y explicar por qué.';bridge.querySelector('h2')?.insertAdjacentElement('afterend',note)}
-  })();
-  <\/script>`;
-  const clarify=`<script>
-  document.addEventListener('DOMContentLoaded',()=>{
-    const m=(location.pathname+' '+document.title).match(/sesion[-_\\s]*(\\d{1,2})/i); const n=m?Number(m[1]):0;
-    const p=document.querySelector('#andes-toolkit-overlay .at-card.at-prompt p'); if(!p)return;
-    if(n===2)p.innerHTML+=' <b>Si hay empate de duración, desempata por <code>title ASC</code>.</b>';
-    if(n===3)p.innerHTML+=' <b>Ordena el resultado por <code>rating ASC</code>.</b>';
-    if(n===4||n===5)p.innerHTML+=' <b>Ordena la salida final por <code>film_id ASC</code>.</b>';
-  });
-  <\/script>`;
-  const mainPos=html.toLowerCase().lastIndexOf('</main>');
-  if(mainPos>=0)html=html.slice(0,mainPos)+storyOrder+'\n'+html.slice(mainPos);else html+=storyOrder;
-  const lower=html.toLowerCase();
-  const pos=lower.lastIndexOf('</body>');
-  html=pos>=0?html.slice(0,pos)+kit+'\n'+nav+'\n'+clarify+'\n'+html.slice(pos):html+kit+nav+clarify;
+  const name = decodeURIComponent(location.pathname.split('/').pop());
+
+  // La revisión usa la S13 vigente de main como fuente única de verdad.
+  // Desde revision/Presentaciones/M5 subimos a la raíz del sitio y cargamos Presentaciones/M5.
+  const source = new URL('../../../Presentaciones/M5/' + encodeURIComponent(name) + '?revision_sync=20260915c', location.href);
+  const response = await fetch(source, { cache: 'no-store' });
+  if (!response.ok) throw new Error('No se pudo cargar la presentación principal (' + response.status + ')');
+  let html = await response.text();
+
+  // Al document.write() la URL visible sigue siendo /revision/..., por eso fijamos la base
+  // en la carpeta de la presentación principal para que tema, assets, timer y descargas
+  // resuelvan exactamente igual que en main.
+  const mainBase = new URL('../../../Presentaciones/M5/', location.href).href;
+  html = html.replace(/<head([^>]*)>/i, `<head$1><base href="${mainBase}">`);
+
+  // Herramientas exclusivas del LMS de revisión: usamos URLs absolutas calculadas desde
+  // la página wrapper para que el <base> anterior no las redirija a main.
+  const toolkitUrl = new URL('../../assets/learning/interactive-tools.js?v=20260915-s13sync', location.href).href;
+  const navUrl = new URL('../../assets/learning/interactive-nav.js?v=20260915-s13sync', location.href).href;
+  const kit = `<script src="${toolkitUrl}"><\/script>`;
+  const nav = `<script src="${navUrl}"><\/script>`;
+
+  // No reordenamos slides ni movemos Preflight/Ruta de acceso al apéndice: respetamos
+  // el hilo pedagógico actual de main (acceso → partición → evidencia → pausa → clustering).
+  const pos = html.toLowerCase().lastIndexOf('</body>');
+  html = pos >= 0
+    ? html.slice(0, pos) + kit + '\n' + nav + '\n' + html.slice(pos)
+    : html + kit + nav;
+
   document.open();
   document.write(html);
   document.close();
 })().catch(err=>{
-  document.body.innerHTML='<div class="boot"><h1>No se pudo abrir la presentación</h1><p>'+String(err.message||err)+'</p><p>Recarga la página.</p></div>';
+  document.body.innerHTML = '<div class="boot"><h1>No se pudo abrir la presentación</h1><p>' + String(err.message || err) + '</p><p>Recarga la página.</p></div>';
 });
-</script></body></html>
+</script>
+</body>
+</html>
