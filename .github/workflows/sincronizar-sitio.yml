@@ -52,8 +52,20 @@ jobs:
       - name: Validar sintaxis del Workbench S15
         run: node --check assets/learning/s15-autograder.js
 
-      - name: Probar 7 estaciones y variaciones S15
-        run: python tools/test_s15_autograder.py
+      - name: S15 · probar DDL de referencia
+        run: python -c "from tools.test_s15_autograder import test_reference_ddl; test_reference_ddl()"
+
+      - name: S15 · probar 5 queries y mutaciones
+        run: python -c "from tools.test_s15_autograder import test_reference_queries; test_reference_queries()"
+
+      - name: S15 · validar interfaz del Workbench
+        run: python -c "from tools.test_s15_autograder import test_workbench_contract; test_workbench_contract()"
+
+      - name: S15 · validar presentación pública y revisión
+        run: python -c "from tools.test_s15_autograder import test_presentation_contract; test_presentation_contract()"
+
+      - name: S15 · validar 37 checkpoints y 100 puntos
+        run: python -c "from tools.test_s15_autograder import test_scoring_contract; test_scoring_contract()"
 
       - name: Renovar caché del sitio
         env:
