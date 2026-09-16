@@ -1,14 +1,24 @@
 (() => {
   'use strict';
+  const current = document.currentScript || [...document.scripts].find(s => /analytics-fallback-link\.js(?:\?|$)/.test(s.src));
+  if (!current) return;
+
   const m = (document.title + ' ' + location.pathname).match(/(?:sesi[oó]n|sesion)[-_\s]*(1[2-4])/i);
   if (!m) return;
   const n = Number(m[1]);
-  if (n < 12 || n > 14) return;
 
-  const thisScript = document.currentScript || [...document.scripts].find(s => /analytics-fallback-link\.js(?:\?|$)/.test(s.src));
-  if (!thisScript) return;
-  const labUrl = new URL('../../labs/analitica-local.html', new URL('./', thisScript.src)).href;
+  if (n === 13 || n === 14) {
+    const src = new URL('../../../assets/learning/analytics-fallback-link.js?v=20260916-shared1', new URL('./', current.src)).href;
+    if (![...document.scripts].some(s => s.src === src)) {
+      const el = document.createElement('script');
+      el.src = src;
+      el.async = false;
+      document.head.appendChild(el);
+    }
+    return;
+  }
 
+  const labUrl = new URL('../../labs/analitica-local.html', new URL('./', current.src)).href;
   const inject = () => {
     const overlay = document.getElementById('andes-learning-overlay');
     if (!overlay || overlay.querySelector('[data-analytics-fallback-link]')) return false;
@@ -27,7 +37,6 @@
     target.appendChild(a);
     return true;
   };
-
   if (inject()) return;
   const observer = new MutationObserver(() => { if (inject()) observer.disconnect(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
