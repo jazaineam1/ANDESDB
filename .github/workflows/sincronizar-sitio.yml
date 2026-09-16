@@ -13,6 +13,7 @@ on:
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - 'assets/learning/s15-autograder.js'
+      - 'assets/learning/s15-workbench.css'
       - 'evaluador-s15.html'
       - 'capstone.html'
       - 'Plantillas/proyecto-final/**'
@@ -34,7 +35,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Sincronizar Sesión 15 automática
+      - name: Sincronizar S15 Workbench
         run: python tools/actualizar_s15_auto.py
 
       - name: Generar portada pública desde curso.json
@@ -48,10 +49,10 @@ jobs:
       - name: Integrar PWA y experiencia común
         run: python tools/integrar-experiencia.py
 
-      - name: Validar sintaxis del evaluador S15
+      - name: Validar sintaxis del Workbench S15
         run: node --check assets/learning/s15-autograder.js
 
-      - name: Probar solución de referencia y variaciones S15
+      - name: Probar 7 estaciones y variaciones S15
         run: python tools/test_s15_autograder.py
 
       - name: Renovar caché del sitio
@@ -85,6 +86,9 @@ jobs:
             index.html revision/index.html \
             tools/curso.json revision/tools/curso.json \
             assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
+            assets/learning/s15-autograder.js revision/assets/learning/s15-autograder.js \
+            assets/learning/s15-workbench.css revision/assets/learning/s15-workbench.css \
+            evaluador-s15.html revision/evaluador-s15.html \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
             capstone.html revision/capstone.html \
             Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
@@ -96,6 +100,6 @@ jobs:
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 automática, index y cache'
+          git commit -m 'Sincronizar S15 Workbench, index y cache'
           git pull --rebase origin main
           git push origin main
