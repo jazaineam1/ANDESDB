@@ -27,9 +27,10 @@ def test_azure_transfer_contract() -> None:
         assert token in s14
         assert token in contract
 
-    # S15 debe explicar que la transferencia es por necesidad, no equivalencia literal.
+    # S15 debe evaluar el criterio, no depender de una frase exacta del material.
     assert 'necesidad → familia Azure' in s15
-    assert 'necesidad → familia de servicio' in contract
+    assert 'partir de la necesidad' in contract
+    assert 'familia Azure' in contract
 
     # Generación/revisión/PWA deben conservar y refrescar el módulo real.
     assert "'assets/learning/s15-azure-transfer-v1.js'" in generator
