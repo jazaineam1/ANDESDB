@@ -10,10 +10,12 @@ on:
       - 'tools/integrar-experiencia.py'
       - 'tools/actualizar_s15_auto.py'
       - 'tools/test_s15_v6.py'
+      - 'tools/test_s15_azure_transfer.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
       - 'assets/learning/s15-autograder-v6.js'
       - 'assets/learning/s15-autograder-v6b.js'
+      - 'assets/learning/s15-azure-transfer-v1.js'
       - 'assets/learning/s15-workbench-v6.css'
       - 'assets/learning/s15-teacher-link.js'
       - 'evaluador-s15.html'
@@ -60,10 +62,13 @@ jobs:
         run: |
           node --check assets/learning/s15-autograder-v6.js
           node --check assets/learning/s15-autograder-v6b.js
+          node --check assets/learning/s15-azure-transfer-v1.js
           node --check assets/learning/s15-teacher-link.js
 
       - name: S15 v6 · cobertura integral y mutation tests
-        run: python tools/test_s15_v6.py
+        run: |
+          python tools/test_s15_v6.py
+          python tools/test_s15_azure_transfer.py
 
       - name: Renovar caché del sitio
         env:
@@ -93,6 +98,7 @@ jobs:
             evaluador-s15-v6.html revision/evaluador-s15-v6.html \
             assets/learning/s15-autograder-v6.js revision/assets/learning/s15-autograder-v6.js \
             assets/learning/s15-autograder-v6b.js revision/assets/learning/s15-autograder-v6b.js \
+            assets/learning/s15-azure-transfer-v1.js revision/assets/learning/s15-azure-transfer-v1.js \
             assets/learning/s15-workbench-v6.css revision/assets/learning/s15-workbench-v6.css \
             assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
