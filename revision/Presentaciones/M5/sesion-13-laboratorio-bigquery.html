@@ -2,71 +2,26 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ANDESDB · cargando presentación</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Sesión 13 · BigQuery: leer menos, decidir mejor</title>
   <style>
-    html,body{margin:0;height:100%;background:#0b1218;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center}
-    .boot{max-width:560px;padding:28px;text-align:center}
-    .spin{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#ffd600;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}
-    @keyframes s{to{transform:rotate(360deg)}}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1218}
+    #s13-frame{display:block;width:100%;height:100%;border:0;background:#0b1218}
+    .fallback{position:fixed;inset:auto 1rem 1rem 1rem;z-index:10;padding:.8rem 1rem;border-radius:14px;background:#111d;color:#fff;font:600 14px/1.35 system-ui,sans-serif;box-shadow:0 8px 28px #0005}
+    .fallback a{color:#ffd600;font-weight:800}
   </style>
 </head>
 <body>
-  <div class="boot">
-    <div class="spin"></div>
-    <b>Cargando presentación interactiva…</b>
-    <p>Sincronizando la versión actual de la Sesión 13 con el LMS de revisión.</p>
-  </div>
-
-<!-- ANDESDB_VALIDATION_BRIDGE
-Este bloque permite que los validadores estáticos reconozcan capacidades que se cargan desde la presentación principal y se enriquecen en tiempo de ejecución. No se muestra al estudiante.
-data-title= learning-core.js Criterio de salida
-BigQuery Sandbox PARTITION BY partition pruning Clusterización CLUSTER BY bytes paths/420 3694 78061 575654 562865 562975 9 4
-modificar o retirar la especificación de clustering
-Una tabla no particionada no se convierte directamente en particionada
-Task 5 Improve row filtering and join performance by using clustering
-href="sesion-13-laboratorio-bigquery.html"
-ARRAY STRUCT UNNEST CSV JSON Parquet Laboratorio 1 Taller proyecto integrador Lab 2 548383 562904 575654 Azure Blob Storage Azure Cosmos DB
-href="sesion-14-bigquery-anidados-mapa-azure.html"
--->
-
-<script>
-(async()=>{
-  const name = decodeURIComponent(location.pathname.split('/').pop());
-
-  // La revisión usa la S13 vigente de main como fuente única de verdad.
-  // Desde revision/Presentaciones/M5 subimos a la raíz del sitio y cargamos Presentaciones/M5.
-  const source = new URL('../../../Presentaciones/M5/' + encodeURIComponent(name) + '?revision_sync=20260915c', location.href);
-  const response = await fetch(source, { cache: 'no-store' });
-  if (!response.ok) throw new Error('No se pudo cargar la presentación principal (' + response.status + ')');
-  let html = await response.text();
-
-  // Al document.write() la URL visible sigue siendo /revision/..., por eso fijamos la base
-  // en la carpeta de la presentación principal para que tema, assets, timer y descargas
-  // resuelvan exactamente igual que en main.
-  const mainBase = new URL('../../../Presentaciones/M5/', location.href).href;
-  html = html.replace(/<head([^>]*)>/i, `<head$1><base href="${mainBase}">`);
-
-  // Herramientas exclusivas del LMS de revisión: usamos URLs absolutas calculadas desde
-  // la página wrapper para que el <base> anterior no las redirija a main.
-  const toolkitUrl = new URL('../../assets/learning/interactive-tools.js?v=20260915-s13sync', location.href).href;
-  const navUrl = new URL('../../assets/learning/interactive-nav.js?v=20260915-s13sync', location.href).href;
-  const kit = `<script src="${toolkitUrl}"><\/script>`;
-  const nav = `<script src="${navUrl}"><\/script>`;
-
-  // No reordenamos slides ni movemos Preflight/Ruta de acceso al apéndice: respetamos
-  // el hilo pedagógico actual de main (acceso → partición → evidencia → pausa → clustering).
-  const pos = html.toLowerCase().lastIndexOf('</body>');
-  html = pos >= 0
-    ? html.slice(0, pos) + kit + '\n' + nav + '\n' + html.slice(pos)
-    : html + kit + nav;
-
-  document.open();
-  document.write(html);
-  document.close();
-})().catch(err=>{
-  document.body.innerHTML = '<div class="boot"><h1>No se pudo abrir la presentación</h1><p>' + String(err.message || err) + '</p><p>Recarga la página.</p></div>';
-});
-</script>
+  <iframe
+    id="s13-frame"
+    title="Sesión 13 · BigQuery: leer menos, decidir mejor"
+    src="../../../Presentaciones/M5/sesion-13-laboratorio-bigquery.html?revision_lms=20260915d"
+    loading="eager"
+    allow="fullscreen"
+    referrerpolicy="same-origin">
+  </iframe>
+  <noscript>
+    <div class="fallback">Activa JavaScript o abre directamente la <a href="../../../Presentaciones/M5/sesion-13-laboratorio-bigquery.html">presentación principal</a>.</div>
+  </noscript>
 </body>
 </html>
