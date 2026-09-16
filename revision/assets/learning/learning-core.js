@@ -12,13 +12,13 @@
   };
 
   const isPresentation = /\/Presentaciones\//i.test(location.pathname) || !!document.querySelector('.slide');
-  const isS13S14 = /sesion[-_\s]*1[34]/i.test(location.pathname + ' ' + document.title);
+  const isSharedPresentation = /sesion[-_\s]*1[3-5]/i.test(location.pathname + ' ' + document.title);
 
-  /* S13 y S14 deben ser exactamente la misma experiencia en pública y revisión.
-     En esas dos sesiones no cargamos las capas narrativas adicionales de revision:
-     delegamos al runtime público compartido. */
-  if (isPresentation && isS13S14) {
-    load(new URL('../../../assets/learning/learning-core.js?v=20260916-shared1', dir).href);
+  /* S13, S14 y S15 deben ejecutar exactamente el mismo runtime en pública y
+     revisión. La curación vive en el HTML/plan compartido, no en capas JS
+     diferentes según la ruta. */
+  if (isPresentation && isSharedPresentation) {
+    load(new URL('../../../assets/learning/learning-core.js?v=20260916-shared2', dir).href);
     return;
   }
 
