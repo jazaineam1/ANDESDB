@@ -28,11 +28,62 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Generar portada desde curso.json
+      - name: Alinear manifiesto M6 con S15 y S16 rediseñadas
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = Path('tools/curso.json')
+          course = json.loads(p.read_text(encoding='utf-8'))
+          m6 = next(m for m in course['modulos'] if m['n'] == 6)
+          m6['desc'] = 'Integrar el recorrido en un caso nuevo, demostrar la solución con validación por capas y cerrar con un diagnóstico activo de transferencia hacia DP-900.'
+
+          s15 = next(s for s in m6['sesiones'] if s['n'] == 15)
+          s15.pop('trabajoAutonomoMin', None)
+          s15.update({
+              'duracionUtil': 165,
+              'modo': 'autonomo_guiado',
+              'titulo': 'Desafío final integrador',
+              'estado': 'pendiente',
+              'href': 'Presentaciones/M6/sesion-15-desafio-final.html',
+              'desc': 'Caso de incidentes urbanos: declarar granos, decidir fuente de verdad y representación, construir un modelo que proteja reglas, responder con SQL, validar por capas y defender las decisiones.',
+              'tags': ['desafío', 'grano', 'fuente de verdad', 'SQL / NoSQL', 'pruebas negativas', 'validación', 'defensa'],
+              'recursos': [
+                  {'txt': '🧭 Tablero del desafío final', 'href': 'capstone.html'},
+                  {'txt': '📘 Plantilla y recorrido del proyecto', 'href': 'Plantillas/proyecto-final/README.md'},
+                  {'txt': '✅ Controles y criterios de validación', 'href': 'Plantillas/proyecto-final/criterios.md'}
+              ]
+          })
+
+          s16 = next(s for s in m6['sesiones'] if s['n'] == 16)
+          s16.update({
+              'duracionUtil': 165,
+              'modo': 'consolidacion',
+              'titulo': 'Cierre + preparación DP-900',
+              'estado': 'pendiente',
+              'href': 'Presentaciones/M6/sesion-16-cierre-dp900.html',
+              'desc': 'Cierre con evidencia S1 → S15 → S16 y diagnóstico interactivo de 16 escenarios, cuatro por dominio DP-900, clasificando errores como concepto, transferencia o lectura para construir un plan de estudio dirigido.',
+              'tags': ['DP-900', 'diagnóstico', 'C / T / L', 'Azure', 'transferencia', 'plan de estudio'],
+              'recursos': [
+                  {'txt': '📘 Guía oficial de estudio DP-900', 'href': 'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900', 'externo': True},
+                  {'txt': '🧪 Practice Assessments de Microsoft', 'href': 'https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications', 'externo': True},
+                  {'txt': '🎓 Preparación oficial y Exam Sandbox', 'href': 'https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam', 'externo': True}
+              ]
+          })
+
+          text = json.dumps(course, ensure_ascii=False, indent=2) + '\n'
+          p.write_text(text, encoding='utf-8')
+          Path('revision/tools/curso.json').write_text(text, encoding='utf-8')
+          PY
+
+      - name: Generar portada pública desde curso.json
         run: python tools/construir-index.py
 
-      - name: Integrar PWA y experiencia S6+
-        run: python tools/integrar-experiencia.py
+      - name: Generar portada de revisión desde curso.json
+        run: |
+          cd revision
+          python tools/construir-index.py
 
       - name: Renovar caché del sitio
         env:
@@ -44,28 +95,23 @@ jobs:
           p = Path('service-worker.js')
           text = p.read_text(encoding='utf-8')
           sha = os.environ['BUILD_SHA'][:12]
-          text = re.sub(
-              r"const VERSION = '[^']+';",
-              f"const VERSION = 'andesdb-auto-{sha}';",
-              text,
-              count=1,
-          )
+          text = re.sub(r"const VERSION = '[^']+';", f"const VERSION = 'andesdb-auto-{sha}';", text, count=1)
           p.write_text(text, encoding='utf-8')
           PY
 
-      - name: Validar curso
+      - name: Validar curso público
         run: python tools/validar_curso.py
 
-      - name: Publicar cambios generados
+      - name: Publicar manifiestos e índices actualizados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones service-worker.js; then
-            echo 'Sitio ya sincronizado'
-            exit 0
-          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones service-worker.js
-          git commit -m 'Sincronizar sitio, index y cache'
+          git add tools/curso.json revision/tools/curso.json index.html revision/index.html service-worker.js
+          if git diff --cached --quiet; then
+            echo 'Índices ya sincronizados'
+            exit 0
+          fi
+          git commit -m 'Actualizar index S15-S16 y manifiestos M6'
           git pull --rebase origin main
           git push origin main
