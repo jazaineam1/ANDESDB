@@ -83,13 +83,13 @@
   };
 
   const installPauseViewportStyle = () => {
-    if (n !== 13 || document.getElementById('s13-pause-viewport-style')) return;
+    if (![13, 14].includes(n) || document.getElementById('analytics-pause-viewport-style')) return;
     const style = document.createElement('style');
-    style.id = 's13-pause-viewport-style';
+    style.id = 'analytics-pause-viewport-style';
     style.textContent = `
-      html.s13-pause-viewport-active,
-      html.s13-pause-viewport-active body{background:#ffd600!important}
-      body>.apt-pause-stage[data-s13-viewport-pause="1"]{
+      html.analytics-pause-viewport-active,
+      html.analytics-pause-viewport-active body{background:#ffd600!important}
+      body>.apt-pause-stage[data-analytics-viewport-pause="1"]{
         position:fixed!important;
         inset:0!important;
         width:100vw!important;
@@ -104,39 +104,39 @@
         background:linear-gradient(160deg,#ffe14d 0%,#ffd600 100%)!important;
         color:#111!important;
       }
-      body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-center{
+      body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-center{
         width:min(760px,92vw)!important;
         max-width:92vw!important;
         margin:auto!important;
       }
-      body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-time{
+      body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-time{
         font-size:clamp(6rem,14vw,10.5rem)!important;
       }
       .slide[data-title="Pausa"].apt-pause-enhanced>.brand{display:none!important}
       @media(max-width:700px){
-        body>.apt-pause-stage[data-s13-viewport-pause="1"]{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"]{
           padding:max(1.25rem,env(safe-area-inset-top)) .85rem calc(6.8rem + env(safe-area-inset-bottom))!important;
           align-items:center!important;
         }
-        body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-center{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-center{
           width:min(94vw,560px)!important;
           max-width:94vw!important;
           gap:.42rem!important;
         }
-        body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-time{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-time{
           font-size:clamp(5rem,24vw,8.2rem)!important;
           line-height:.9!important;
         }
-        body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-return{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-return{
           font-size:clamp(1.45rem,6vw,2.05rem)!important;
           line-height:1.05!important;
         }
-        body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-copy{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-copy{
           font-size:clamp(.95rem,3.7vw,1.12rem)!important;
           line-height:1.28!important;
           margin-bottom:.35rem!important;
         }
-        body>.apt-pause-stage[data-s13-viewport-pause="1"] .apt-pause-controls{
+        body>.apt-pause-stage[data-analytics-viewport-pause="1"] .apt-pause-controls{
           width:min(94vw,520px)!important;
         }
       }
@@ -145,19 +145,24 @@
   };
 
   const patchPauseViewport = () => {
-    if (n !== 13) return;
+    if (![13, 14].includes(n)) return;
     installPauseViewportStyle();
     const pauseSlide = document.querySelector('.slide[data-title="Pausa"]');
     if (!pauseSlide) return;
     const active = pauseSlide.classList.contains('active');
-    let stage = document.querySelector('body > .apt-pause-stage[data-s13-viewport-pause="1"]');
+    let stage = document.querySelector('body > .apt-pause-stage[data-analytics-viewport-pause="1"]');
     const nestedStage = pauseSlide.querySelector('.apt-pause-stage');
     if (nestedStage) {
-      nestedStage.dataset.s13ViewportPause = '1';
+      nestedStage.dataset.analyticsViewportPause = '1';
       document.body.appendChild(nestedStage);
       stage = nestedStage;
     }
-    document.documentElement.classList.toggle('s13-pause-viewport-active', active);
+    if (stage) {
+      const sourceCopy = pauseSlide.querySelector('p.lead')?.textContent?.trim();
+      const copy = stage.querySelector('.apt-pause-copy');
+      if (sourceCopy && copy) copy.textContent = sourceCopy;
+    }
+    document.documentElement.classList.toggle('analytics-pause-viewport-active', active);
     if (stage) stage.style.setProperty('display', active ? 'grid' : 'none', 'important');
   };
 
