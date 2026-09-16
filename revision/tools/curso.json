@@ -518,7 +518,7 @@
           "modo": "workbench_integral_v6",
           "titulo": "Desafío final · Workbench integral",
           "estado": "pendiente",
-          "desc": "Evaluación integradora de S2–S14: SQL, modelado y 3FN, DDL, documentos, Data Warehouse, BigQuery físico, ARRAY/STRUCT/UNNEST y Boss de transferencia. Dominio corregible 80 puntos + transferencia inédita 20 puntos; nota recalculada server-side.",
+          "desc": "Evaluación integradora de S2–S14: SQL, modelado y 3FN, DDL, documentos, Data Warehouse, BigQuery físico, ARRAY/STRUCT/UNNEST, formatos y transferencia Azure por necesidad. Dominio corregible 80 puntos + transferencia inédita 20 puntos; nota recalculada server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
@@ -532,6 +532,13 @@
             "ARRAY",
             "STRUCT",
             "UNNEST",
+            "JSON",
+            "Parquet",
+            "Azure",
+            "Blob/ADLS",
+            "Cosmos DB",
+            "Fabric/Databricks",
+            "Power BI",
             "transferencia",
             "server-side grader"
           ],

@@ -499,7 +499,7 @@
       "titulo": "Desafío final · Workbench integral",
       "duracion_util": 165,
       "modo": "workbench_integral_v6",
-      "objetivo": "Integrar S2–S14 en una solución ejecutable y transferir el razonamiento a un caso nuevo.",
+      "objetivo": "Integrar S2–S14 en una solución ejecutable y transferir el razonamiento a un caso nuevo, incluida la elección de familia Azure a partir de la necesidad.",
       "evaluacion": {
         "modo": "automatica",
         "href": "evaluador-s15.html",
@@ -570,18 +570,22 @@
           "embeber/referenciar",
           "hechos/dimensiones y OLTP/OLAP",
           "partition/clustering/pruning",
-          "ARRAY/STRUCT/UNNEST y formatos"
+          "ARRAY/STRUCT/UNNEST y formatos JSON/Parquet"
         ]
       },
       "reto": {
         "titulo": "Boss Transfer · 20 puntos",
-        "instrucciones": "Resuelve pedidos omnicanal con un caso nuevo; el servidor además ejecuta pruebas ocultas de DDL y SQL.",
+        "instrucciones": "Resuelve pedidos omnicanal con un caso nuevo; el servidor ejecuta pruebas ocultas de DDL y SQL y verifica transferencia conceptual a Azure por necesidad.",
         "criterios": [
-          "grano línea de pedido",
-          "medidas cantidad e importe",
-          "partición por fecha",
-          "clustering por patrón de filtros",
-          "UNNEST de items sin perder pedido_id"
+          "SQL oculto",
+          "DDL oculto",
+          "grano línea de pedido y medidas",
+          "partición por fecha y clustering por patrón de filtros",
+          "UNNEST de items sin perder pedido_id",
+          "objetos → Blob/ADLS",
+          "documento operacional → Cosmos DB",
+          "lakehouse/ingeniería → Fabric/Databricks",
+          "BI → Power BI"
         ]
       }
     },
