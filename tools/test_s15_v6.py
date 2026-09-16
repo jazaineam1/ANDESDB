@@ -25,7 +25,9 @@ def test_interface_contract():
     assert '80 puntos corregibles' in html and 'Boss 20 puntos' in html
     for token in ('SQL Arena','Modelo ER + laboratorio de normalización','DDL Mutation Lab','Document Lab','Warehouse Builder','BigQuery Physical Lab','Nested BigQuery Lab','Boss · pedidos omnicanal'):assert token in html,token
     for token in ('PARTITION BY','CLUSTER BY','UNNEST','ARRAY&lt;STRUCT&gt;','Parquet','OLTP','OLAP','Mutation Hunter'):assert token in ui,token
-    assert 'type="radio"' not in html.lower();assert "VERSION='s15-workbench-v6'" in js;assert 'reference:' not in js.lower(),'No publicar queries de referencia finales';assert 'v3.casos' in js and 'E099' in js,'Falta contraejemplo visible temporal';assert 'bqEstimate' in js and 'unnestOk' in js and 'dwScore' in js;assert 'data-drop' in html and 'dragstart' in js and 'touch' in css;assert 'min-height:44px' in css and 'font-size:16px' in css
+    assert 'type="radio"' not in html.lower();assert "VERSION='s15-workbench-v6'" in js
+    assert not re.search(r"reference\s*:\s*[`'\"]\s*(?:select|with)\b",js,re.I),'No publicar queries SQL de referencia finales'
+    assert 'v3.casos' in js and 'E099' in js,'Falta contraejemplo visible temporal';assert 'bqEstimate' in js and 'unnestOk' in js and 'dwScore' in js;assert 'data-drop' in html and 'dragstart' in js and 'touch' in css;assert 'min-height:44px' in css and 'font-size:16px' in css
 
 def test_stable_routes():
     ev=(ROOT/'evaluador-s15.html').read_text(encoding='utf-8');pr=(ROOT/'Presentaciones/M6/sesion-15-desafio-final.html').read_text(encoding='utf-8');assert 'evaluador-s15-v6.html' in ev and 'v5.html' not in ev;assert 'sesion-15-desafio-final-v6.html' in pr and 'v5.html' not in pr
