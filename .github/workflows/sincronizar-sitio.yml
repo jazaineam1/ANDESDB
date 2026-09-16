@@ -14,6 +14,7 @@ on:
       - 'assets/learning/learning-plan.json'
       - 'assets/learning/s15-autograder-v5.js'
       - 'assets/learning/s15-workbench-v5.css'
+      - 'assets/learning/s15-teacher-link.js'
       - 'evaluador-s15.html'
       - 'evaluador-s15-v5.html'
       - 's15-analytics.html'
@@ -57,7 +58,9 @@ jobs:
           cp Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html
 
       - name: S15 v5 · validar sintaxis JavaScript
-        run: node --check assets/learning/s15-autograder-v5.js
+        run: |
+          node --check assets/learning/s15-autograder-v5.js
+          node --check assets/learning/s15-teacher-link.js
 
       - name: S15 v5 · mutation tests y contratos
         run: python tools/test_s15_v5.py
@@ -97,9 +100,11 @@ jobs:
             evaluador-s15-v5.html revision/evaluador-s15-v5.html \
             assets/learning/s15-autograder-v5.js revision/assets/learning/s15-autograder-v5.js \
             assets/learning/s15-workbench-v5.css revision/assets/learning/s15-workbench-v5.css \
+            assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
             Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html \
             s15-analytics.html revision/s15-analytics.html \
+            revision/teacher-dashboard.html \
             capstone.html revision/capstone.html \
             Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
             revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
@@ -110,6 +115,6 @@ jobs:
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 Workbench v5, index y cache'
+          git commit -m 'Sincronizar S15 Workbench v5, analytics, index y cache'
           git pull --rebase origin main
           git push origin main
