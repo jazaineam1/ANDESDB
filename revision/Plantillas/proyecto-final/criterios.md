@@ -15,7 +15,7 @@ El navegador sirve para practicar y recibir feedback. La nota registrada se reca
 | Warehouse Builder | S6 + S12 | 13 | OLTP/OLAP, grano del hecho, medidas, dimensiones, batch/streaming/ELT |
 | BigQuery Physical | S13 | 10 | partition, orden de clustering, pruning y lectura conceptual |
 | Nested BigQuery | S14 | 10 | ARRAY<STRUCT>, UNNEST, JSON y Parquet |
-| Boss Transfer | integración | 20 | pedidos omnicanal + pruebas ocultas |
+| Boss Transfer | integración S2–S14 | 20 | caso nuevo + pruebas ocultas + transferencia Azure por necesidad |
 
 ## Qué significa “mastery”
 
@@ -45,21 +45,41 @@ La estación obliga a separar OLTP de OLAP, declarar el grano del hecho antes de
 
 El patrón de consulta acota fechas y filtra frecuentemente barrio y tipo. La evaluación espera una partición alineada con el tiempo y clustering cuyo orden refleje el patrón de filtros. Un simulador conceptual traduce las decisiones a territorio/bloques que podrían evitarse; no pretende reproducir el optimizador real de BigQuery.
 
-## ARRAY, STRUCT, UNNEST y formatos
+## ARRAY, STRUCT, UNNEST, formatos y transferencia cloud
 
 `evidencias` debe reconocerse como un arreglo de estructuras. La consulta debe cambiar el grano a una fila por evidencia mediante `UNNEST`, conservando la clave raíz. También se evalúa JSON como formato flexible de aterrizaje y Parquet como formato columnar para analítica.
 
+La transferencia Azure conserva el criterio enseñado en S14: **no traducir productos uno a uno, sino partir de la necesidad**. El mapa utilizado por el Boss es:
+
+- guardar JSON, CSV o Parquet como objetos → **Azure Blob Storage / ADLS Gen2**;
+- documento operacional distribuido → **Azure Cosmos DB**;
+- lakehouse, ingeniería y analítica → **Microsoft Fabric / Azure Databricks**;
+- consumo visual y BI → **Power BI**.
+
+Que un dato llegue como JSON no basta para concluir que debe ir a Cosmos DB.
+
 ## Boss Transfer · 20 puntos
 
-El dominio cambia a pedidos omnicanal. Debe reconocerse línea de pedido como grano analítico, cantidad e importe como medidas, fecha de pedido como partición y categoría/cliente como patrón de clustering. Además se requiere `UNNEST(p.items)` sin perder `pedido_id`.
+El dominio cambia a pedidos omnicanal. Debe reconocerse línea de pedido como grano analítico, cantidad e importe como medidas, fecha de pedido como partición y categoría/cliente como patrón de clustering. Además se requiere `UNNEST(p.items)` sin perder `pedido_id` y trasladar cuatro necesidades a la familia Azure correspondiente.
 
-El servidor añade dos controles que el navegador no revela: vuelve a probar el DDL y las cinco consultas SQL con datos diferentes. Por eso memorizar el dataset del caso urbano no basta.
+El servidor distribuye los 20 puntos del Boss así:
+
+| Evidencia de transferencia | Puntos |
+|---|---:|
+| SQL sobre escenario oculto | 4 |
+| DDL sobre escenario oculto | 3 |
+| Warehouse del caso nuevo | 3 |
+| Diseño físico de BigQuery | 3 |
+| `UNNEST` del arreglo `items[]` | 3 |
+| Necesidad → familia Azure | 4 |
+
+El servidor vuelve a probar el DDL y las cinco consultas SQL con datos diferentes. La asociación Azure se corrige también en servidor y el navegador no revela de antemano cuáles selecciones son correctas. Por eso memorizar el dataset del caso urbano o depender de una etiqueta de producto no basta.
 
 ## Principios del autograder
 
 - grader server-side como fuente de verdad de la nota;
 - tests visibles para entrenamiento y tests ocultos para transferencia;
-- partial credit en SQL;
+- partial credit en SQL y en la transferencia Azure;
 - feedback progresivo y reintentos;
 - mutation testing del propio autograder;
 - evaluación de propiedades y coherencia, no de una captura idéntica al profesor;
