@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 13,
+  "sesionActual": 14,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -409,8 +409,8 @@
           "modo": "autonomo_guiado_con_servicio_real",
           "trabajoAutonomoMin": 75,
           "titulo": "Laboratorio BigQuery",
-          "estado": "hoy",
-          "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición, clusterización, pruning y bytes procesados, con acceso estable desde los cursos de Google Skills.",
+          "estado": "completado",
+          "desc": "Cierra el laboratorio del grano sobre BigQuery real: partición, clusterización, pruning y bytes procesados, con prácticas verificadas de Google Skills.",
           "tags": ["BigQuery", "PARTITION BY", "clusterización", "pruning", "bytes procesados", "SQL", "workshop"],
           "href": "Presentaciones/M5/sesion-13-laboratorio-bigquery.html",
           "recursos": [
@@ -420,23 +420,13 @@
               "externo": true
             },
             {
-              "txt": "1️⃣ Curso para el lab de partición: Introduction to Data Analytics in Google Cloud",
-              "href": "https://www.skills.google/course_templates/1295",
+              "txt": "▶ Lab verificado: partición de tablas en BigQuery · GSP414",
+              "href": "https://www.skills.google/focuses/3694?locale=es&parent=catalog",
               "externo": true
             },
             {
-              "txt": "▶ Lab directo: partición de tablas en BigQuery",
-              "href": "https://www.skills.google/paths/420/course_templates/1295/labs/562865",
-              "externo": true
-            },
-            {
-              "txt": "2️⃣ Curso para el lab de clustering: Data Management and Storage in the Cloud",
-              "href": "https://www.skills.google/course_templates/1304",
-              "externo": true
-            },
-            {
-              "txt": "▶ Lab directo: clusterización de tablas en BigQuery",
-              "href": "https://www.skills.google/paths/420/course_templates/1304/labs/562975",
+              "txt": "▶ Lab verificado: clustering y optimización en BigQuery · GSP266",
+              "href": "https://www.skills.google/focuses/78061?locale=es&parent=catalog",
               "externo": true
             },
             {
@@ -449,18 +439,37 @@
         {
           "n": 14,
           "fecha": "2026-09-16",
-          "duracionUtil": 165,
+          "duracionUtil": 120,
           "modo": "guiada_con_servicio_real",
           "titulo": "BigQuery anidados + mapa Azure",
-          "estado": "pendiente",
-          "desc": "Datos anidados y semiestructurados en BigQuery real; transferencia conceptual hacia almacenamiento, Fabric, Databricks y Power BI.",
+          "estado": "hoy",
+          "desc": "ARRAY, STRUCT y UNNEST en BigQuery real; JSON/Parquet y transferencia conceptual hacia Blob/ADLS, Cosmos DB, Fabric, Databricks y Power BI.",
+          "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html",
           "tags": [
-            "nested",
+            "ARRAY",
+            "STRUCT",
+            "UNNEST",
             "JSON",
             "Parquet",
             "BigQuery",
-            "Power BI",
             "Azure analytics"
+          ],
+          "recursos": [
+            {
+              "txt": "🧪 Lab oficial verificado · JSON, Arrays y Structs en BigQuery · GSP416",
+              "href": "https://www.skills.google/focuses/3696?locale=es&parent=catalog",
+              "externo": true
+            },
+            {
+              "txt": "↪ Curso padre · Build a Data Warehouse with BigQuery",
+              "href": "https://www.skills.google/course_templates/624",
+              "externo": true
+            },
+            {
+              "txt": "🛟 BigQuery Sandbox (plan B sin tarjeta)",
+              "href": "https://docs.cloud.google.com/bigquery/docs/sandbox",
+              "externo": true
+            }
           ]
         }
       ]
