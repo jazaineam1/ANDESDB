@@ -2,7 +2,7 @@
   'use strict';
   if (document.getElementById('andes-presentation-timer')) return;
 
-  const POS_KEY = 'andesdb-presentation-timer-position-v4';
+  const POS_KEY = 'andesdb-presentation-timer-position-v5';
   const root = document.createElement('div');
   root.id = 'andes-presentation-timer';
   root.setAttribute('role', 'region');
@@ -10,44 +10,52 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    #andes-presentation-timer{position:fixed;right:1rem;bottom:4.5rem;z-index:160;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;touch-action:none;user-select:none}
+    #andes-presentation-timer{position:fixed;right:1rem;bottom:4.6rem;z-index:180;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;touch-action:none;user-select:none}
     #andes-presentation-timer *{box-sizing:border-box}
-    #andes-presentation-timer button{border:0;border-radius:999px;cursor:pointer;font:inherit;font-weight:850}
-    #andes-presentation-timer .apt-shell{width:min(350px,calc(100vw - 1.2rem));background:rgba(12,20,28,.97);border:1px solid rgba(255,255,255,.16);border-radius:22px;box-shadow:0 18px 44px rgba(0,0,0,.34);overflow:hidden;backdrop-filter:blur(14px)}
-    #andes-presentation-timer .apt-head{display:flex;align-items:center;gap:.5rem;padding:.55rem .6rem;background:rgba(255,255,255,.045);cursor:grab}
+    #andes-presentation-timer button{border:0;cursor:pointer;font:inherit}
+    #andes-presentation-timer .apt-shell{width:min(390px,calc(100vw - 1.2rem));background:rgba(11,18,25,.97);border:1px solid rgba(255,255,255,.15);border-radius:26px;box-shadow:0 20px 52px rgba(0,0,0,.38);overflow:hidden;backdrop-filter:blur(16px)}
+    #andes-presentation-timer .apt-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.6rem;padding:.8rem .85rem .68rem;background:rgba(255,255,255,.045);cursor:grab}
     #andes-presentation-timer.is-dragging .apt-head,#andes-presentation-timer.is-dragging .apt-mini{cursor:grabbing}
-    #andes-presentation-timer .apt-grip{font-size:1rem;line-height:1;opacity:.62;padding:0 .15rem;letter-spacing:-.12em}
-    #andes-presentation-timer .apt-display{font-variant-numeric:tabular-nums;font-size:2.25rem;line-height:1;font-weight:950;letter-spacing:.035em;margin-right:auto;min-width:6.7rem;text-align:center}
-    #andes-presentation-timer .apt-icon{width:2.35rem;height:2.35rem;background:#fff;color:#151515;display:grid;place-items:center;padding:0;font-size:1rem}
-    #andes-presentation-timer .apt-body{padding:.72rem;display:grid;gap:.58rem}
-    #andes-presentation-timer .apt-presets,#andes-presentation-timer .apt-actions,#andes-presentation-timer .apt-adjust{display:flex;gap:.42rem;flex-wrap:wrap}
-    #andes-presentation-timer .apt-presets button{flex:1 1 3.2rem;background:#263746;color:#fff;padding:.5rem .55rem;border:1px solid rgba(255,255,255,.11)}
-    #andes-presentation-timer .apt-presets button:hover,#andes-presentation-timer .apt-presets button.is-selected{background:#36536a;outline:1px solid rgba(255,214,0,.75)}
+    #andes-presentation-timer .apt-grip{font-size:1rem;line-height:1;opacity:.55;padding:.1rem .15rem;letter-spacing:-.12em}
+    #andes-presentation-timer .apt-display{font-variant-numeric:tabular-nums;font-size:3.4rem;line-height:1;font-weight:950;letter-spacing:.025em;text-align:center;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+    #andes-presentation-timer .apt-head-actions{display:flex;gap:.38rem}
+    #andes-presentation-timer .apt-icon{width:2.6rem;height:2.6rem;border-radius:999px;background:#fff;color:#151515;display:grid;place-items:center;padding:0;font-size:1.05rem;font-weight:900}
+    #andes-presentation-timer .apt-body{padding:.78rem;display:grid;gap:.62rem}
+    #andes-presentation-timer .apt-presets,#andes-presentation-timer .apt-actions,#andes-presentation-timer .apt-adjust{display:flex;gap:.46rem;flex-wrap:wrap}
+    #andes-presentation-timer .apt-presets button{flex:1 1 3.4rem;border-radius:999px;background:#263746;color:#fff;padding:.54rem .58rem;border:1px solid rgba(255,255,255,.11);font-weight:850}
+    #andes-presentation-timer .apt-presets button:hover,#andes-presentation-timer .apt-presets button.is-selected{background:#36536a;outline:1px solid rgba(255,214,0,.8)}
     #andes-presentation-timer .apt-custom{display:grid;grid-template-columns:1fr auto;gap:.45rem;align-items:center}
-    #andes-presentation-timer .apt-custom input{min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);background:#0b151d;color:#fff;border-radius:12px;padding:.58rem .72rem;font:inherit;font-weight:800;font-variant-numeric:tabular-nums;outline:none}
+    #andes-presentation-timer .apt-custom input{min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);background:#0b151d;color:#fff;border-radius:13px;padding:.62rem .74rem;font:inherit;font-weight:800;font-variant-numeric:tabular-nums;outline:none}
     #andes-presentation-timer .apt-custom input:focus{border-color:#ffd600;box-shadow:0 0 0 2px rgba(255,214,0,.16)}
     #andes-presentation-timer .apt-custom input::placeholder{color:#91a4b2;font-weight:650}
-    #andes-presentation-timer .apt-custom button{background:#ffd600;color:#352c00;padding:.58rem .85rem}
-    #andes-presentation-timer .apt-actions button{flex:1 1 5rem;padding:.56rem .65rem}
+    #andes-presentation-timer .apt-custom button{border-radius:999px;background:#ffd600;color:#352c00;padding:.62rem .92rem;font-weight:900}
+    #andes-presentation-timer .apt-actions button{flex:1 1 5rem;border-radius:999px;padding:.64rem .7rem;font-weight:900}
     #andes-presentation-timer .apt-primary{background:#ffd600;color:#352c00}
     #andes-presentation-timer .apt-secondary{background:#fff;color:#171717}
     #andes-presentation-timer .apt-adjust{align-items:center;justify-content:center}
-    #andes-presentation-timer .apt-adjust button{background:transparent;color:#dfe8ef;border:1px solid rgba(255,255,255,.18);padding:.39rem .75rem}
+    #andes-presentation-timer .apt-adjust button{border-radius:999px;background:transparent;color:#dfe8ef;border:1px solid rgba(255,255,255,.18);padding:.43rem .82rem;font-weight:850}
     #andes-presentation-timer .apt-adjust .apt-more{background:#e9f8ef;color:#155d3d;border-color:#bfe7ce}
-    #andes-presentation-timer .apt-status{font-size:.72rem;line-height:1.3;color:#cbd8e2;text-align:center;min-height:1.2em;padding:0 .2rem}
-    #andes-presentation-timer .apt-mini{display:none;align-items:center;gap:.42rem;min-width:6.2rem;height:3.1rem;padding:0 .78rem;border-radius:999px;background:rgba(12,20,28,.97);border:1px solid rgba(255,255,255,.18);box-shadow:0 12px 28px rgba(0,0,0,.3);cursor:grab}
-    #andes-presentation-timer .apt-mini-icon{font-size:1.18rem;line-height:1}
-    #andes-presentation-timer .apt-mini-time{font-variant-numeric:tabular-nums;font-size:1.05rem;font-weight:950;letter-spacing:.035em;white-space:nowrap}
+    #andes-presentation-timer .apt-status{font-size:.76rem;line-height:1.35;color:#cbd8e2;text-align:center;min-height:1.3em;padding:0 .2rem}
+    #andes-presentation-timer .apt-mini{display:none;width:3.4rem;height:3.4rem;border-radius:999px;background:rgba(11,18,25,.97);border:1px solid rgba(255,255,255,.2);box-shadow:0 14px 34px rgba(0,0,0,.34);cursor:grab;place-items:center;color:#fff;font-size:1.45rem}
+    #andes-presentation-timer .apt-mini:hover{transform:scale(1.04)}
     #andes-presentation-timer.is-collapsed .apt-shell{display:none}
-    #andes-presentation-timer.is-collapsed .apt-mini{display:flex}
-    #andes-presentation-timer.is-done .apt-shell{outline:2px solid #8fd6aa;box-shadow:0 0 0 5px rgba(93,190,130,.12),0 18px 44px rgba(0,0,0,.34)}
-    #andes-presentation-timer.is-done .apt-display,#andes-presentation-timer.is-done .apt-mini-time{color:#a9e6bf}
-    #andes-presentation-timer.is-free .apt-display,#andes-presentation-timer.is-free .apt-mini-time{color:#ffd600}
-    #andes-presentation-timer.is-free .apt-display{font-size:1.6rem}
-    #andes-presentation-timer.is-pause .apt-shell{width:min(430px,calc(100vw - 1.2rem))}
-    #andes-presentation-timer.is-pause .apt-display{font-size:3.55rem;min-width:9rem}
-    #andes-presentation-timer.is-pause .apt-head{padding:.8rem .8rem .62rem}
-    @media(max-width:700px){#andes-presentation-timer{right:.45rem;bottom:4.35rem}#andes-presentation-timer .apt-shell{width:min(330px,calc(100vw - .9rem))}#andes-presentation-timer .apt-display{font-size:1.95rem}#andes-presentation-timer.is-pause .apt-shell{width:min(380px,calc(100vw - .9rem))}#andes-presentation-timer.is-pause .apt-display{font-size:3rem}#andes-presentation-timer .apt-mini{height:2.85rem;min-width:5.8rem;padding:0 .68rem}#andes-presentation-timer .apt-mini-time{font-size:.98rem}}
+    #andes-presentation-timer.is-collapsed .apt-mini{display:grid}
+    #andes-presentation-timer.is-done .apt-shell{outline:2px solid #8fd6aa;box-shadow:0 0 0 5px rgba(93,190,130,.12),0 20px 52px rgba(0,0,0,.38)}
+    #andes-presentation-timer.is-done .apt-display{color:#a9e6bf}
+    #andes-presentation-timer.is-free .apt-display{color:#ffd600;font-size:2.35rem}
+    #andes-presentation-timer.is-pause .apt-shell{width:min(510px,calc(100vw - 1.5rem));border-radius:30px}
+    #andes-presentation-timer.is-pause .apt-head{grid-template-columns:auto 1fr auto;padding:1rem 1rem .82rem}
+    #andes-presentation-timer.is-pause .apt-display{font-size:5.5rem;letter-spacing:.035em}
+    #andes-presentation-timer.is-pause .apt-body{padding:1rem;gap:.72rem}
+    #andes-presentation-timer.is-pause .apt-status{font-size:.84rem}
+    @media(max-width:700px){
+      #andes-presentation-timer{right:.48rem;bottom:4.4rem}
+      #andes-presentation-timer .apt-shell{width:min(350px,calc(100vw - .95rem))}
+      #andes-presentation-timer .apt-display{font-size:2.8rem}
+      #andes-presentation-timer.is-pause .apt-shell{width:min(430px,calc(100vw - .95rem))}
+      #andes-presentation-timer.is-pause .apt-display{font-size:4.3rem}
+      #andes-presentation-timer .apt-mini{width:3.15rem;height:3.15rem;font-size:1.32rem}
+    }
     @media print{#andes-presentation-timer{display:none!important}}
   `;
   document.head.appendChild(style);
@@ -57,8 +65,10 @@
       <div class="apt-head" title="Arrastra para mover">
         <span class="apt-grip" aria-hidden="true">⠿</span>
         <span class="apt-display" aria-live="polite">10:00</span>
-        <button class="apt-icon apt-sound" type="button" title="Sonido" aria-label="Sonido">🔔</button>
-        <button class="apt-icon apt-toggle" type="button" title="Minimizar" aria-label="Minimizar">−</button>
+        <span class="apt-head-actions">
+          <button class="apt-icon apt-sound" type="button" title="Sonido" aria-label="Sonido">🔔</button>
+          <button class="apt-icon apt-toggle" type="button" title="Minimizar" aria-label="Minimizar">−</button>
+        </span>
       </div>
       <div class="apt-body">
         <div class="apt-presets">
@@ -74,17 +84,13 @@
         </div>
         <div class="apt-adjust"><button type="button" data-adjust="-300">−5 min</button><button class="apt-more" type="button" data-adjust="300">+5 min</button></div>
         <div class="apt-actions"><button class="apt-primary apt-start" type="button">▶ Iniciar</button><button class="apt-secondary apt-reset" type="button">↺ Reiniciar</button></div>
-        <div class="apt-status">Puedes mover, minimizar o ajustar el tiempo en cualquier momento.</div>
+        <div class="apt-status">Arrastra el reloj para moverlo. Minimízalo cuando no lo necesites.</div>
       </div>
     </div>
-    <div class="apt-mini" title="Abrir temporizador" aria-label="Abrir temporizador">
-      <span class="apt-mini-icon" aria-hidden="true">⏱</span>
-      <span class="apt-mini-time" aria-live="polite">10:00</span>
-    </div>`;
+    <button class="apt-mini" type="button" title="Abrir temporizador" aria-label="Abrir temporizador">⏱</button>`;
   document.body.appendChild(root);
 
   const display = root.querySelector('.apt-display');
-  const miniTime = root.querySelector('.apt-mini-time');
   const startBtn = root.querySelector('.apt-start');
   const resetBtn = root.querySelector('.apt-reset');
   const toggleBtn = root.querySelector('.apt-toggle');
@@ -107,6 +113,7 @@
   let audioCtx = null;
   let drag = null;
   let ignoreMiniClick = false;
+  let wasPause = false;
 
   const format = (seconds) => {
     const safe = Math.max(0, Math.ceil(seconds));
@@ -137,10 +144,7 @@
   const selectButton = (fn) => presetButtons.forEach(b => b.classList.toggle('is-selected', fn(b)));
 
   const render = () => {
-    const timeText = freeMode ? 'LIBRE' : format(remainingSeconds);
-    display.textContent = timeText;
-    miniTime.textContent = timeText;
-    mini.setAttribute('aria-label', freeMode ? 'Temporizador en modo libre' : `Tiempo restante ${timeText}. Abrir temporizador`);
+    display.textContent = freeMode ? 'LIBRE' : format(remainingSeconds);
     startBtn.disabled = freeMode;
     startBtn.style.opacity = freeMode ? '.55' : '1';
     startBtn.textContent = running ? '❚❚ Pausar' : (remainingSeconds < selectedSeconds && remainingSeconds > 0 ? '▶ Continuar' : '▶ Iniciar');
@@ -164,17 +168,23 @@
       primeAudio();
       if (!audioCtx) return;
       const now = audioCtx.currentTime;
-      [[0,740,.34],[.48,740,.34],[.96,880,.4],[1.52,880,.4],[2.12,1047,.46],[2.82,1047,.46],[3.55,1318,.68]].forEach(([t,f,d]) => {
+      const pattern = [
+        [0,740,.38],[.5,740,.38],[1.0,880,.42],[1.55,880,.42],
+        [2.15,1047,.5],[2.8,1047,.5],[3.5,1175,.56],[4.2,1175,.56],
+        [5.0,1318,.62],[5.8,1318,.62],[6.65,1568,.78]
+      ];
+      pattern.forEach(([t,f,d]) => {
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         o.type = 'sine';
         o.frequency.value = f;
         g.gain.setValueAtTime(.0001, now + t);
-        g.gain.exponentialRampToValueAtTime(.13, now + t + .035);
+        g.gain.exponentialRampToValueAtTime(.16, now + t + .04);
         g.gain.exponentialRampToValueAtTime(.0001, now + t + d);
         o.connect(g); g.connect(audioCtx.destination);
-        o.start(now + t); o.stop(now + t + d + .06);
+        o.start(now + t); o.stop(now + t + d + .08);
       });
+      if (navigator.vibrate) navigator.vibrate([300,120,300,120,500]);
     } catch (_) {}
   };
 
@@ -190,7 +200,7 @@
     if (!alarmed) {
       alarmed = true;
       alarm();
-      status.textContent = 'Tiempo cumplido. Puedes añadir tiempo o continuar.';
+      status.textContent = 'Tiempo sugerido cumplido. Puedes añadir tiempo o continuar.';
     }
     render();
   };
@@ -228,46 +238,35 @@
     freeMode = true;
     alarmed = false;
     selectButton(b => b.hasAttribute('data-free'));
-    status.textContent = 'Modo libre.';
+    status.textContent = 'Modo libre: termina cuando el grupo esté listo.';
     render();
   };
 
   root.querySelectorAll('[data-min]').forEach(b => b.addEventListener('click', () => setMinutes(Number(b.dataset.min))));
   root.querySelector('[data-free]').addEventListener('click', setFree);
+
   root.querySelectorAll('[data-adjust]').forEach(b => b.addEventListener('click', () => {
-    const d = Number(b.dataset.adjust || 0);
-    if (freeMode) { setMinutes(10); return; }
-    if (running) {
-      endAt += d * 1000;
-      remainingSeconds = Math.max(0, (endAt - Date.now()) / 1000);
-      selectedSeconds = Math.max(1, selectedSeconds + d);
-    } else {
-      selectedSeconds = Math.max(1, selectedSeconds + d);
-      remainingSeconds = Math.max(1, remainingSeconds + d);
-    }
+    const delta = Number(b.dataset.adjust || 0);
+    if (freeMode) freeMode = false;
+    stop();
+    remainingSeconds = Math.max(0, remainingSeconds + delta);
+    selectedSeconds = Math.max(1, selectedSeconds + delta);
     alarmed = false;
     selectButton(() => false);
+    status.textContent = `${format(remainingSeconds)} listo.`;
     render();
   }));
 
   customApply.addEventListener('click', () => {
-    const s = parseCustom(customInput.value);
-    if (!s) {
-      status.textContent = 'Usa 12, 7:30 o 1:05:00.';
-      customInput.focus();
+    const parsed = parseCustom(customInput.value);
+    if (!parsed) {
+      status.textContent = 'Usa minutos (12), MM:SS (7:30) o HH:MM:SS (1:05:00).';
       return;
     }
-    setSeconds(s);
-    customInput.value = format(s);
+    setSeconds(parsed);
+    customInput.value = '';
   });
-
-  customInput.addEventListener('keydown', e => {
-    e.stopPropagation();
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      customApply.click();
-    }
-  });
+  customInput.addEventListener('keydown', e => { if (e.key === 'Enter') customApply.click(); });
 
   startBtn.addEventListener('click', () => {
     if (freeMode) return;
@@ -276,16 +275,15 @@
       updateRemaining();
       stop();
       status.textContent = 'Pausado.';
-      render();
-      return;
+    } else {
+      if (remainingSeconds <= 0) remainingSeconds = selectedSeconds;
+      endAt = Date.now() + remainingSeconds * 1000;
+      running = true;
+      alarmed = false;
+      startLoop();
+      status.textContent = 'En marcha.';
     }
-    if (remainingSeconds <= 0) remainingSeconds = selectedSeconds;
-    endAt = Date.now() + remainingSeconds * 1000;
-    running = true;
-    alarmed = false;
-    status.textContent = 'En marcha.';
     render();
-    startLoop();
   });
 
   resetBtn.addEventListener('click', () => {
@@ -293,90 +291,113 @@
     freeMode = false;
     remainingSeconds = selectedSeconds;
     alarmed = false;
-    status.textContent = 'Reiniciado.';
+    status.textContent = `${format(selectedSeconds)} listo.`;
     render();
   });
 
   soundBtn.addEventListener('click', () => {
     soundEnabled = !soundEnabled;
     if (soundEnabled) primeAudio();
-    render();
+    soundBtn.textContent = soundEnabled ? '🔔' : '🔕';
+    status.textContent = soundEnabled ? 'Sonido activado.' : 'Sonido desactivado.';
   });
 
-  toggleBtn.addEventListener('click', () => root.classList.add('is-collapsed'));
+  const collapse = (yes) => root.classList.toggle('is-collapsed', yes);
+  toggleBtn.addEventListener('click', () => collapse(true));
   mini.addEventListener('click', () => {
     if (ignoreMiniClick) { ignoreMiniClick = false; return; }
-    root.classList.remove('is-collapsed');
+    collapse(false);
   });
 
-  addEventListener('keydown', e => {
-    if (e.target === customInput) return;
-    if (e.key.toLowerCase() === 't') root.classList.toggle('is-collapsed');
-  });
+  const savePosition = () => {
+    try {
+      localStorage.setItem(POS_KEY, JSON.stringify({ left: root.style.left || '', top: root.style.top || '' }));
+    } catch (_) {}
+  };
 
   const restorePosition = () => {
     try {
-      const p = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
-      if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+      const saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
+      if (saved?.left && saved?.top) {
+        root.style.left = saved.left;
+        root.style.top = saved.top;
         root.style.right = 'auto';
         root.style.bottom = 'auto';
-        root.style.left = `${Math.max(6, Math.min(innerWidth - 90, p.x))}px`;
-        root.style.top = `${Math.max(6, Math.min(innerHeight - 60, p.y))}px`;
       }
     } catch (_) {}
   };
 
-  const startDrag = (e) => {
-    if (e.target.closest('button,input')) return;
+  const beginDrag = (e, fromMini = false) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    if (!fromMini && e.target.closest('button,input')) return;
     const r = root.getBoundingClientRect();
-    drag = { sx:e.clientX, sy:e.clientY, left:r.left, top:r.top, moved:false };
-    root.classList.add('is-dragging');
-    root.style.right = 'auto';
-    root.style.bottom = 'auto';
+    drag = { x:e.clientX, y:e.clientY, left:r.left, top:r.top, moved:false, fromMini };
     root.style.left = `${r.left}px`;
     root.style.top = `${r.top}px`;
-    e.currentTarget.setPointerCapture?.(e.pointerId);
+    root.style.right = 'auto';
+    root.style.bottom = 'auto';
+    root.classList.add('is-dragging');
+    try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch (_) {}
+    e.preventDefault();
   };
 
   const moveDrag = (e) => {
     if (!drag) return;
-    const dx = e.clientX - drag.sx;
-    const dy = e.clientY - drag.sy;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) drag.moved = true;
-    const w = root.offsetWidth || 100;
-    const h = root.offsetHeight || 52;
-    const x = Math.max(6, Math.min(innerWidth - w - 6, drag.left + dx));
-    const y = Math.max(6, Math.min(innerHeight - h - 6, drag.top + dy));
-    root.style.left = `${x}px`;
-    root.style.top = `${y}px`;
+    const w = root.offsetWidth;
+    const h = root.offsetHeight;
+    const left = Math.max(6, Math.min(innerWidth - w - 6, drag.left + dx));
+    const top = Math.max(6, Math.min(innerHeight - h - 6, drag.top + dy));
+    root.style.left = `${left}px`;
+    root.style.top = `${top}px`;
   };
 
   const endDrag = () => {
     if (!drag) return;
-    ignoreMiniClick = drag.moved;
-    root.classList.remove('is-dragging');
-    try { localStorage.setItem(POS_KEY, JSON.stringify({x:root.offsetLeft,y:root.offsetTop})); } catch (_) {}
+    if (drag.fromMini && drag.moved) ignoreMiniClick = true;
     drag = null;
+    root.classList.remove('is-dragging');
+    savePosition();
   };
 
-  [head, mini].forEach(el => el.addEventListener('pointerdown', startDrag));
+  head.addEventListener('pointerdown', e => beginDrag(e, false));
+  mini.addEventListener('pointerdown', e => beginDrag(e, true));
   addEventListener('pointermove', moveDrag);
   addEventListener('pointerup', endDrag);
-
-  const syncPause = () => {
-    const active = document.querySelector('.slide.active');
-    const isPause = !!active && (/pausa/i.test(active.dataset.title || '') || /^\s*pausa/i.test(active.textContent || ''));
-    root.classList.toggle('is-pause', isPause);
-    if (isPause) {
-      root.classList.remove('is-collapsed');
-      if (!running && !freeMode && remainingSeconds === selectedSeconds) setMinutes(15);
+  addEventListener('pointercancel', endDrag);
+  addEventListener('resize', () => {
+    const r = root.getBoundingClientRect();
+    if (r.right > innerWidth || r.bottom > innerHeight) {
+      root.style.left = `${Math.max(6, Math.min(innerWidth - root.offsetWidth - 6, r.left))}px`;
+      root.style.top = `${Math.max(6, Math.min(innerHeight - root.offsetHeight - 6, r.top))}px`;
+      savePosition();
     }
+  });
+
+  const syncPauseSlide = () => {
+    const active = document.querySelector('.slide.active');
+    const isPause = !!active && /pausa/i.test(active.getAttribute('data-title') || '');
+    root.classList.toggle('is-pause', isPause);
+    if (isPause && !wasPause) {
+      collapse(false);
+      if (!running && !freeMode) setMinutes(15);
+      status.textContent = running ? 'Pausa en curso.' : '15:00 listo para la pausa.';
+    }
+    wasPause = isPause;
   };
 
-  const stage = document.querySelector('.stage');
-  if (stage) new MutationObserver(syncPause).observe(stage, {subtree:true,attributes:true,attributeFilter:['class']});
+  const observer = new MutationObserver(syncPauseSlide);
+  observer.observe(document.body, { subtree:true, attributes:true, attributeFilter:['class'] });
+
+  addEventListener('keydown', e => {
+    if (e.key?.toLowerCase() === 't' && !e.target.matches('input,textarea')) {
+      collapse(!root.classList.contains('is-collapsed'));
+    }
+  });
 
   restorePosition();
-  syncPause();
+  syncPauseSlide();
   render();
 })();
