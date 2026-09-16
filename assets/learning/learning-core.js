@@ -9,8 +9,9 @@
   const ROOT = new URL('../../', BASE);
   const SESSION_RE = /(?:sesi[oó]n|sesion)[-_\s]*(\d{1,2})/i;
 
-  // Diferenciación por velocidad técnica. No es una mecánica transversal.
-  const CODE_PRACTICE_SESSIONS = new Set(['11', '12', '13', '14', '15']);
+  // Diferenciación técnica flotante solo donde aporta una segunda ruta. En S15
+  // el mínimo viable y la extensión ya están integrados en el propio desafío.
+  const CODE_PRACTICE_SESSIONS = new Set(['11', '12', '13', '14']);
 
   function sessionNumber() {
     const candidates = [document.title, location.pathname, document.body?.innerText?.slice(0, 500) || ''];
@@ -155,9 +156,6 @@
   }
 
   async function init() {
-    // Una página incrustada en un iframe (el laboratorio dentro de una
-    // diapositiva) no necesita su propio botón flotante: la página que la
-    // contiene ya trae el suyo.
     if (window.self !== window.top) return;
     addManifest();
     const n = sessionNumber();
@@ -166,7 +164,8 @@
       return;
     }
 
-    // S6, S7, S8, S9, S10 y S16 no reciben una capa artificial Núcleo/Reto.
+    // S15 ya trae mínimo viable, puertas y extensión dentro del reto; no necesita
+    // una segunda capa flotante con instrucciones o minutaje paralelos.
     if (!CODE_PRACTICE_SESSIONS.has(n)) {
       await registerSW();
       return;
