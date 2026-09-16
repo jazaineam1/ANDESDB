@@ -9,19 +9,18 @@ on:
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
       - 'tools/actualizar_s15_auto.py'
-      - 'tools/test_s15_v5.py'
+      - 'tools/test_s15_v6.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
-      - 'assets/learning/s15-autograder-v5.js'
-      - 'assets/learning/s15-workbench-v5.css'
+      - 'assets/learning/s15-autograder-v6.js'
+      - 'assets/learning/s15-autograder-v6b.js'
+      - 'assets/learning/s15-workbench-v6.css'
       - 'assets/learning/s15-teacher-link.js'
       - 'evaluador-s15.html'
-      - 'evaluador-s15-v5.html'
+      - 'evaluador-s15-v6.html'
       - 's15-analytics.html'
-      - 'capstone.html'
       - 'Plantillas/proyecto-final/**'
       - 'Presentaciones/**/*.html'
-      - 'Scripts/*.sql'
       - '.github/workflows/sincronizar-sitio.yml'
 
 permissions:
@@ -38,7 +37,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Sincronizar S15 Workbench v5
+      - name: Sincronizar S15 Workbench v6
         run: python tools/actualizar_s15_auto.py
 
       - name: Generar portada pública desde curso.json
@@ -55,33 +54,27 @@ jobs:
       - name: Alinear S15 pública y revisión tras integración
         run: |
           cp Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html
-          cp Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html
+          cp Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html
 
-      - name: S15 v5 · validar sintaxis JavaScript
+      - name: S15 v6 · validar sintaxis JavaScript
         run: |
-          node --check assets/learning/s15-autograder-v5.js
+          node --check assets/learning/s15-autograder-v6.js
+          node --check assets/learning/s15-autograder-v6b.js
           node --check assets/learning/s15-teacher-link.js
 
-      - name: S15 v5 · mutation tests y contratos
-        run: python tools/test_s15_v5.py
+      - name: S15 v6 · cobertura integral y mutation tests
+        run: python tools/test_s15_v6.py
 
       - name: Renovar caché del sitio
         env:
           BUILD_SHA: ${{ github.sha }}
         run: |
           python - <<'PY'
-          import os, re
+          import os,re
           from pathlib import Path
-          p = Path('service-worker.js')
-          text = p.read_text(encoding='utf-8')
-          sha = os.environ['BUILD_SHA'][:12]
-          text = re.sub(
-              r"const VERSION = '[^']+';",
-              f"const VERSION = 'andesdb-auto-{sha}';",
-              text,
-              count=1,
-          )
-          p.write_text(text, encoding='utf-8')
+          p=Path('service-worker.js');text=p.read_text(encoding='utf-8');sha=os.environ['BUILD_SHA'][:12]
+          text=re.sub(r"const VERSION = '[^']+';",f"const VERSION = 'andesdb-auto-{sha}';",text,count=1)
+          p.write_text(text,encoding='utf-8')
           PY
 
       - name: Validar curso
@@ -97,15 +90,15 @@ jobs:
             tools/curso.json revision/tools/curso.json \
             assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
             evaluador-s15.html revision/evaluador-s15.html \
-            evaluador-s15-v5.html revision/evaluador-s15-v5.html \
-            assets/learning/s15-autograder-v5.js revision/assets/learning/s15-autograder-v5.js \
-            assets/learning/s15-workbench-v5.css revision/assets/learning/s15-workbench-v5.css \
+            evaluador-s15-v6.html revision/evaluador-s15-v6.html \
+            assets/learning/s15-autograder-v6.js revision/assets/learning/s15-autograder-v6.js \
+            assets/learning/s15-autograder-v6b.js revision/assets/learning/s15-autograder-v6b.js \
+            assets/learning/s15-workbench-v6.css revision/assets/learning/s15-workbench-v6.css \
             assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
-            Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html \
+            Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html \
             s15-analytics.html revision/s15-analytics.html \
             revision/teacher-dashboard.html \
-            capstone.html revision/capstone.html \
             Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
             revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
             tools/integrar-experiencia.py revision/tools/integrar-experiencia.py \
@@ -115,6 +108,6 @@ jobs:
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 Workbench v5, analytics, index y cache'
+          git commit -m 'Sincronizar S15 Workbench integral v6, analytics, index y cache'
           git pull --rebase origin main
           git push origin main
