@@ -8,8 +8,14 @@ on:
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
+      - 'tools/actualizar_s15_auto.py'
+      - 'tools/test_s15_autograder.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
+      - 'assets/learning/s15-autograder.js'
+      - 'evaluador-s15.html'
+      - 'capstone.html'
+      - 'Plantillas/proyecto-final/**'
       - 'Presentaciones/**/*.html'
       - 'Scripts/*.sql'
       - '.github/workflows/sincronizar-sitio.yml'
@@ -28,11 +34,25 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Generar portada desde curso.json
+      - name: Sincronizar Sesión 15 automática
+        run: python tools/actualizar_s15_auto.py
+
+      - name: Generar portada pública desde curso.json
         run: python tools/construir-index.py
 
-      - name: Integrar PWA y experiencia S6+
+      - name: Generar portada de revisión desde curso.json
+        run: |
+          cd revision
+          python tools/construir-index.py
+
+      - name: Integrar PWA y experiencia común
         run: python tools/integrar-experiencia.py
+
+      - name: Validar sintaxis del evaluador S15
+        run: node --check assets/learning/s15-autograder.js
+
+      - name: Probar solución de referencia y variaciones S15
+        run: python tools/test_s15_autograder.py
 
       - name: Renovar caché del sitio
         env:
@@ -59,13 +79,23 @@ jobs:
       - name: Publicar cambios generados
         run: |
           set -euo pipefail
-          if git diff --quiet -- index.html Presentaciones service-worker.js; then
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            index.html revision/index.html \
+            tools/curso.json revision/tools/curso.json \
+            assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
+            Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
+            capstone.html revision/capstone.html \
+            Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
+            revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
+            tools/integrar-experiencia.py revision/tools/integrar-experiencia.py \
+            tools/validar_curso.py revision/tools/validar_curso.py \
+            service-worker.js
+          if git diff --cached --quiet; then
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Presentaciones service-worker.js
-          git commit -m 'Sincronizar sitio, index y cache'
+          git commit -m 'Sincronizar S15 automática, index y cache'
           git pull --rebase origin main
           git push origin main
