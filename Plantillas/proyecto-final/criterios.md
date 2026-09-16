@@ -1,120 +1,67 @@
-# Sesión 15 · Contrato del Workbench v5
+# Sesión 15 · Contrato del Workbench integral v6
 
-La evaluación se realiza en [`/ANDESDB/evaluador-s15-v5.html`](/ANDESDB/evaluador-s15-v5.html). El objetivo ya no es entregar archivos para corrección manual ni responder un cuestionario. El estudiante construye, prueba, rompe y repara una solución; después enfrenta un cambio de requisitos y datos que el grader verifica en servidor.
+La evaluación se realiza en [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html). Integra las competencias trabajadas desde S2 hasta S14 y separa **dominio corregible (80 puntos)** de **transferencia inédita (20 puntos)**.
 
-## Estructura de la nota
+El navegador sirve para practicar y recibir feedback. La nota registrada se recalcula en Supabase: el servidor ejecuta nuevamente el DDL y las consultas SQL sobre escenarios distintos y vuelve a validar las decisiones estructuradas. No confía en booleanos enviados por el cliente.
 
-La nota separa dos evidencias distintas:
+## Rúbrica · 100 puntos
 
-| Capa | Puntos | Significado |
-|---|---:|---|
-| **Mastery corregible** | **80** | Qué logra después de inspeccionar, probar, recibir feedback y reparar |
-| **Boss Transfer** | **20** | Si puede transferir la solución a datos y requisitos no practicados |
-| **Total** | **100** | Resultado registrado por el grader server-side |
+| Estación | Sesiones integradas | Puntos | Evidencia |
+|---|---|---:|---|
+| SQL Arena | S2–S5 | 15 | 5 consultas sobre varios escenarios, JOIN/CTE/agregación/grano |
+| Modelo ER + 3FN | S6–S8 | 12 | entidades, PK/FK, 1:N y descomposición CASO/EVENTO/AGENTE |
+| DDL Mutation Lab | S9 | 10 | constraints ejecutables + Mutation Hunter |
+| Document Lab | S10–S11 | 10 | embeber/referenciar por acceso, crecimiento y ciclo de vida |
+| Warehouse Builder | S6 + S12 | 13 | OLTP/OLAP, grano del hecho, medidas, dimensiones, batch/streaming/ELT |
+| BigQuery Physical | S13 | 10 | partition, orden de clustering, pruning y lectura conceptual |
+| Nested BigQuery | S14 | 10 | ARRAY<STRUCT>, UNNEST, JSON y Parquet |
+| Boss Transfer | integración | 20 | pedidos omnicanal + pruebas ocultas |
 
-Pedir ayudas durante mastery **no descuenta puntos**. El uso de ayudas queda registrado para diagnóstico pedagógico.
+## Qué significa “mastery”
 
-## Mastery · 80 puntos
+Las primeras siete estaciones pueden corregirse. El feedback SQL progresa por capas: concepto → contraejemplo → bloques tipo Parsons. El objetivo es que el estudiante llegue a una solución correcta **después de razonar y reparar**, no penalizar para siempre el primer error.
 
-| Estación | Puntos | Evidencia |
-|---|---:|---|
-| Inspector de datos | 8 | rol de fuentes y claves inferidos desde los datos |
-| ER Builder | 12 | entidades, atributos mínimos, PK, FK y cardinalidad |
-| Flow Builder | 10 | propiedades del flujo, no coincidencia con un dibujo único |
-| DDL + Mutation Hunter | 15 | constraints ejecutables y capacidad de diseñar pruebas contra mutantes |
-| SQL Debug Arena | 25 | cinco consultas con partial credit y variaciones de entrenamiento |
-| Star Builder | 10 | coherencia entre grano, medidas y dimensiones con follow-through |
+## SQL y partial credit
 
-### Inspector
+Las cinco consultas trabajan filtros/agregación, último evento temporal, acumulación hasta cierre, control de grano después de JOIN 1:N y promedios a grano caso. Cada consulta se prueba sobre varias variaciones visibles. El servidor conserva un escenario adicional no publicado para medir transferencia.
 
-Se inspeccionan `casos.csv`, `eventos.csv` y `evidencias.json`. El estudiante clasifica snapshot operacional, historia de cambios y evidencia flexible, e identifica las claves de caso y evento.
+El conjunto visible incluye un contraejemplo específico para evitar que `MAX(estado)` pase accidentalmente como equivalente de “último estado”.
 
-### ER Builder
+## Modelo, normalización y DDL
 
-El modelo debe poder representar `CASO 1:N EVENTO`, con PK, FK y los campos necesarios para responder las preguntas del reto. El Workbench puede generar un DDL base desde el modelo, pero la integridad final sigue siendo responsabilidad del estudiante.
+El modelo esperado conserva `CASO 1:N EVENTO`. La normalización separa `AGENTE` para evitar repetir `agente_nombre` en cada evento. El DDL debe rechazar duplicados, huérfanos, `NULL` requeridos y minutos negativos sin convertir los valores observados hoy en un dominio eterno.
 
-### Flow Builder por propiedades
+Mutation Hunter evalúa una competencia adicional: saber qué prueba mínima revela un esquema defectuoso.
 
-El grader no exige una única arquitectura canónica. Comprueba propiedades:
+## SQL/NoSQL y documentos
 
-- las fuentes se ubican como fuentes;
-- casos y eventos tienen camino hacia transformación;
-- la evidencia flexible tiene un camino persistente hacia transformación;
-- transformación llega a warehouse y BI;
-- ninguna fuente cruda salta directamente a BI.
+El estudiante decide qué vive dentro del documento de caso y qué debe mantenerse referenciado. Se evalúan propiedades de la decisión: acceso conjunto, crecimiento potencial y ciclo de vida independiente. No se acepta la regla simplista “JSON = NoSQL”.
 
-### DDL + Mutation Hunter
+## Data Warehouse
 
-El DDL se prueba localmente y se vuelve a probar en servidor. Se verifican duplicados, FK, `NOT NULL`, negativos y evolución legítima del dominio.
+La estación obliga a separar OLTP de OLAP, declarar el grano del hecho antes de las medidas y construir dimensiones útiles. También evalúa cómo llegan datos nuevos: streaming para eventos, procesos batch para actualizaciones periódicas y ELT para cargar y transformar dentro de la plataforma analítica.
 
-Mutation Hunter evalúa una competencia distinta: detectar qué prueba mínima mata cinco esquemas defectuosos conocidos (sin PK, sin FK, sin `NOT NULL`, sin regla de no-negativos y con un dominio de estado rígido inventado).
+## BigQuery físico
 
-### SQL Debug Arena · partial credit
+El patrón de consulta acota fechas y filtra frecuentemente barrio y tipo. La evaluación espera una partición alineada con el tiempo y clustering cuyo orden refleje el patrón de filtros. Un simulador conceptual traduce las decisiones a territorio/bloques que podrían evitarse; no pretende reproducir el optimizador real de BigQuery.
 
-Cada una de las cinco consultas vale 5 puntos de mastery. El puntaje se descompone en:
+## ARRAY, STRUCT, UNNEST y formatos
 
-1. consulta segura y ejecutable;
-2. columnas requeridas;
-3. resultado correcto sobre datos visibles;
-4. comportamiento correcto en una variación de entrenamiento;
-5. comportamiento correcto en otra variación de entrenamiento.
-
-El servidor vuelve a ejecutar las consultas sobre **cuatro escenarios ocultos** distintos de los visibles en el navegador. Las consultas de referencia finales no se publican en el JavaScript del estudiante.
-
-Las consultas trabajan:
-
-- prioridad Alta por barrio;
-- último evento temporal;
-- minutos acumulados hasta cierre;
-- protección del grano después de un JOIN 1:N;
-- promedio por caso antes de agregar por tipo.
-
-### Feedback progresivo
-
-Las ayudas SQL se abren por capas:
-
-- primer pedido: concepto que probablemente está fallando;
-- segundo pedido: contraejemplo mínimo;
-- tercer pedido: bloques tipo Parsons para reconstruir la estrategia.
-
-La ayuda sirve para aprender durante mastery, no para decidir la nota de transferencia.
-
-### Star Builder · follow-through
-
-El grader acepta más de una decisión inicial si la solución posterior es internamente coherente. Puede trabajarse a grano evento o grano caso, siempre que las medidas sean compatibles con ese grano y las dimensiones requeridas estén disponibles. Un error temprano no borra automáticamente toda la evidencia posterior correcta.
+`evidencias` debe reconocerse como un arreglo de estructuras. La consulta debe cambiar el grano a una fila por evidencia mediante `UNNEST`, conservando la clave raíz. También se evalúa JSON como formato flexible de aterrizaje y Parquet como formato columnar para analítica.
 
 ## Boss Transfer · 20 puntos
 
-El Boss no repite las mismas pruebas del mastery.
+El dominio cambia a pedidos omnicanal. Debe reconocerse línea de pedido como grano analítico, cantidad e importe como medidas, fecha de pedido como partición y categoría/cliente como patrón de clustering. Además se requiere `UNNEST(p.items)` sin perder `pedido_id`.
 
-| Criterio | Puntos |
-|---|---:|
-| El DDL acepta una evolución legítima nueva sin perder integridad | 5 |
-| Las cinco consultas sobreviven a un dataset secreto nuevo | 5 |
-| El flujo incorpora `sensor_events.json` sin atajo directo a BI | 5 |
-| El modelo analítico se adapta a SLA por caso y estado final | 5 |
+El servidor añade dos controles que el navegador no revela: vuelve a probar el DDL y las cinco consultas SQL con datos diferentes. Por eso memorizar el dataset del caso urbano no basta.
 
-Los datos secretos y las soluciones SQL de referencia viven en el grader server-side, no en la página pública.
+## Principios del autograder
 
-## Seguridad de la calificación
-
-El navegador puede ejecutar pruebas formativas rápidas, pero **no decide la nota registrada**. Al enviar un intento, el servidor recibe DDL, consultas y estado de los builders, vuelve a ejecutar las pruebas y recalcula mastery y transferencia.
-
-Un valor enviado desde DevTools como `q3=true` no es aceptado como evidencia suficiente.
-
-## Analítica docente
-
-El panel `s15-analytics.html` permite revisar de forma agregada:
-
-- tasa de éxito por checkpoint en primer intento;
-- tasa de éxito en el mejor intento;
-- mejora entre primer y mejor intento;
-- mediana de intentos;
-- uso medio de ayudas;
-- misconceptions frecuentes.
-
-La intención es usar el autograder también para mejorar la enseñanza, no solo para producir notas.
-
-## Mutation testing del propio autograder
-
-El repositorio incluye mutantes SQL y DDL conocidos. El CI debe demostrar que el grader detecta errores típicos como `MAX(estado)` usado como “último evento”, conteos inflados por JOIN 1:N, promediar filas de eventos en vez de casos, ausencia de FK o dominios rígidos inventados.
+- grader server-side como fuente de verdad de la nota;
+- tests visibles para entrenamiento y tests ocultos para transferencia;
+- partial credit en SQL;
+- feedback progresivo y reintentos;
+- mutation testing del propio autograder;
+- evaluación de propiedades y coherencia, no de una captura idéntica al profesor;
+- analítica docente de primer intento, mejor intento y errores recurrentes;
+- interacción táctil y drag-and-drop equivalentes.
