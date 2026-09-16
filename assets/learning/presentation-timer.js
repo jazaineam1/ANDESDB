@@ -111,6 +111,7 @@
   [head,mini].forEach(el=>el.addEventListener('pointerdown',startDrag));addEventListener('pointermove',moveDrag);addEventListener('pointerup',endDrag);
 
   const syncPause=()=>{const active=document.querySelector('.slide.active'),isPause=!!active&&(/pausa/i.test(active.dataset.title||'')||/^\s*pausa/i.test(active.textContent||''));root.classList.toggle('is-pause',isPause);if(isPause){root.classList.remove('is-collapsed');if(!running&&!freeMode&&remainingSeconds===selectedSeconds)setMinutes(15)}};
-  new MutationObserver(syncPause).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class']});
+  const stage=document.querySelector('.stage');
+  if(stage){new MutationObserver(syncPause).observe(stage,{subtree:true,attributes:true,attributeFilter:['class']});}
   restorePosition();syncPause();render();
 })();
