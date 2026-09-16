@@ -9,12 +9,14 @@ on:
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
       - 'tools/actualizar_s15_auto.py'
-      - 'tools/test_s15_autograder.py'
+      - 'tools/test_s15_v5.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
-      - 'assets/learning/s15-autograder.js'
-      - 'assets/learning/s15-workbench.css'
+      - 'assets/learning/s15-autograder-v5.js'
+      - 'assets/learning/s15-workbench-v5.css'
       - 'evaluador-s15.html'
+      - 'evaluador-s15-v5.html'
+      - 's15-analytics.html'
       - 'capstone.html'
       - 'Plantillas/proyecto-final/**'
       - 'Presentaciones/**/*.html'
@@ -35,7 +37,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Sincronizar S15 Workbench
+      - name: Sincronizar S15 Workbench v5
         run: python tools/actualizar_s15_auto.py
 
       - name: Generar portada pública desde curso.json
@@ -52,48 +54,13 @@ jobs:
       - name: Alinear S15 pública y revisión tras integración
         run: |
           cp Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html
+          cp Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html
 
-      - name: Validar sintaxis del Workbench S15
-        run: node --check assets/learning/s15-autograder.js
+      - name: S15 v5 · validar sintaxis JavaScript
+        run: node --check assets/learning/s15-autograder-v5.js
 
-      - name: S15 · probar DDL de referencia
-        run: python -c "from tools.test_s15_autograder import test_reference_ddl; test_reference_ddl()"
-
-      - name: S15 · probar 5 queries y mutaciones
-        run: python -c "from tools.test_s15_autograder import test_reference_queries; test_reference_queries()"
-
-      - name: S15 · validar interfaz del Workbench
-        run: python -c "from tools.test_s15_autograder import test_workbench_contract; test_workbench_contract()"
-
-      - name: S15 · validar contrato móvil táctil
-        run: |
-          python - <<'PY'
-          import re
-          from pathlib import Path
-          html = Path('evaluador-s15.html').read_text(encoding='utf-8')
-          js = Path('assets/learning/s15-autograder.js').read_text(encoding='utf-8')
-          css = Path('assets/learning/s15-workbench.css').read_text(encoding='utf-8')
-          assert 'S15_MOBILE_TAP_V1' in js and 'S15_MOBILE_TAP_V1' in css
-          assert 'tapPayload' in js and 'selectTapPlacement' in js and 'finishTapDrop' in js
-          assert 'data-remove-model' in js, 'El modelo debe tener una salida explícita en móvil'
-          assert "e.key==='Enter'||e.key===' '" in js, 'Falta alternativa de teclado'
-          assert 'Modo táctil:' in html and 'toca una ficha y luego su destino' in html
-          assert 'touch-action:manipulation' in css
-          assert 'font-size:16px' in css, 'Evitar auto-zoom del teclado móvil en editores'
-          assert 'min-height:44px' in css, 'Los controles táctiles deben tener blancos de al menos 44px'
-          assert '.tool-grid,.flow-board,.sql-task-body{grid-template-columns:1fr}' in css
-          assert '.entity-board{grid-template-columns:1fr}' in css
-          assert '.mission-nav.open{display:block}' in css
-          visible = re.sub(r'<script[\s\S]*?</script>', '', html, flags=re.I)
-          assert not re.search(r'\b(?:2\s*h|2\s*horas|dos\s+horas)\b', visible, flags=re.I), 'No mostrar minutaje rígido del reto en el Workbench'
-          print('Contrato móvil S15 OK: tap→destino, targets 44px, editor 16px, layout 1 columna y sin minutaje rígido.')
-          PY
-
-      - name: S15 · validar presentación pública y revisión
-        run: python -c "from tools.test_s15_autograder import test_presentation_contract; test_presentation_contract()"
-
-      - name: S15 · validar 37 checkpoints y 100 puntos
-        run: python -c "from tools.test_s15_autograder import test_scoring_contract; test_scoring_contract()"
+      - name: S15 v5 · mutation tests y contratos
+        run: python tools/test_s15_v5.py
 
       - name: Renovar caché del sitio
         env:
@@ -126,10 +93,13 @@ jobs:
             index.html revision/index.html \
             tools/curso.json revision/tools/curso.json \
             assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
-            assets/learning/s15-autograder.js revision/assets/learning/s15-autograder.js \
-            assets/learning/s15-workbench.css revision/assets/learning/s15-workbench.css \
             evaluador-s15.html revision/evaluador-s15.html \
+            evaluador-s15-v5.html revision/evaluador-s15-v5.html \
+            assets/learning/s15-autograder-v5.js revision/assets/learning/s15-autograder-v5.js \
+            assets/learning/s15-workbench-v5.css revision/assets/learning/s15-workbench-v5.css \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
+            Presentaciones/M6/sesion-15-desafio-final-v5.html revision/Presentaciones/M6/sesion-15-desafio-final-v5.html \
+            s15-analytics.html revision/s15-analytics.html \
             capstone.html revision/capstone.html \
             Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
             revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
@@ -140,6 +110,6 @@ jobs:
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 Workbench, index y cache'
+          git commit -m 'Sincronizar S15 Workbench v5, index y cache'
           git pull --rebase origin main
           git push origin main
