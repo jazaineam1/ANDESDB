@@ -12,6 +12,7 @@ FILES=(
   'assets/learning/s15-workbench-v7.css',
   'Presentaciones/M6/sesion-15-desafio-final.html',
   'Presentaciones/M6/sesion-15-desafio-final-v7.html',
+  's15-analytics.html',
   'Plantillas/proyecto-final/criterios.md',
   'Plantillas/proyecto-final/Datos/casos.csv',
   'Plantillas/proyecto-final/Datos/eventos.csv',
