@@ -1,0 +1,9 @@
+evento_id,caso_id,fecha_evento,estado,agente_id,minutos_desde_anterior
+D001,2001,2026-09-01 08:00,Abierto,A01,0
+D002,2001,2026-09-01 09:00,Cerrado,A01,60
+D003,2001,2026-09-01 10:00,Abierto,A01,60
+D004,2002,2026-09-01 08:30,Abierto,A02,0
+D005,2002,2026-09-01 10:30,Cerrado,A02,120
+D006,9999,2026-09-02 07:00,Abierto,A03,0
+D007,2004,2026-09-02 09:00,Abierto,A04,0
+D008,2004,2026-09-02 11:00,Cerrado,A04,120
