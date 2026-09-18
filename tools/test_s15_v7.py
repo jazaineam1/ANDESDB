@@ -129,7 +129,7 @@ def test_acceptance_22():
     assert "stripSql(q)" in JS and "const alias=m[2]" in JS
     assert "Usa UNNEST(c.evidencias) AS e" not in JS
     assert "s15-nested-duckdb-v1.mjs" in JS and 'id="runNested"' in HTML
-    assert "S15NestedDuckDB.validate" in JS
+    assert "engine.validate(state.unnestQuery)" in JS
 
     # 20. ciudadano_id se evalúa como referencia guardada dentro, perfil fuera.
     assert 'data-drop="doc:refid"' in HTML and "exact(state.doc.refid,['ciudadano_ref'])" in JS
