@@ -43,7 +43,6 @@ jobs:
       - name: Validar evaluación integral S15 v7
         run: |
           python tools/test_s15_v7.py
-          python tools/test_s15_v7.py
 
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
