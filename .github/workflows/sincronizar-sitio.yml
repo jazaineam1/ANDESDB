@@ -3,7 +3,7 @@ name: Sincronizar sitio desde manifiestos
 on:
   workflow_dispatch:
   push:
-    branches: [main, s15-auditoria-integral-v7]
+    branches: [main]
     paths:
       - 'tools/curso.json'
       - 'tools/estilo-portada.css'
@@ -95,6 +95,5 @@ jobs:
             exit 0
           fi
           git commit -m 'Sincronizar S15 Workbench integral v7, index y cache'
-          BRANCH="${GITHUB_REF_NAME}"
-          git pull --rebase origin "$BRANCH"
-          git push origin HEAD:"$BRANCH"
+          git pull --rebase origin main
+          git push origin main
