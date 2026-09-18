@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const VERSION='s15-workbench-v7',STORE='andesdb.s15.workbench.v7',AUTH='andesdb.lms.auth.v1';
-const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-autograde-s15';
+const API='https://gnpouhsvsisqoxketlfr.supabase.co/functions/v1/learning-autograde-s15-v7';
 const MODE=new URLSearchParams(location.search).get('modo')==='practica'?'practica':'evaluacion';
 const MAX_CHECKS=3,MAX_SQL_ATTEMPTS=3;
 const script=document.currentScript,SQLJS_BASE=new URL('../vendor/sqljs/',script.src).href,DATA_BASE=new URL('../../Plantillas/proyecto-final/Datos/',script.src).href;
