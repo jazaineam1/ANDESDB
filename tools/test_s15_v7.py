@@ -52,10 +52,44 @@ def test_acceptance_22():
     }
     con,casos,eventos=source_db()
     try:
-      assert all(con.execute(sql).fetchall() for sql in starters.values())
-      # Contraejemplos deterministas que matan el significado de los starters.
-      assert any(r["prioridad"]=="Alta" for r in casos) and any(r["prioridad"]=="Media" for r in casos)
-      # 1010 tiene snapshot desactualizado frente al último evento.
+      # Construye la verdad esperada desde los datos, sin publicar SQL solución.
+      alta={}
+      for r in casos:
+        if r["prioridad"]=="Alta": alta[r["barrio"]]=alta.get(r["barrio"],0)+1
+      expected_q1=sorted((k,v) for k,v in alta.items())
+      latest={}
+      for e in eventos:
+        k=e["caso_id"]
+        if k not in latest or e["fecha_evento"]>latest[k]["fecha_evento"]: latest[k]=e
+      expected_q2=sorted((int(r["caso_id"]),r["estado"],latest.get(r["caso_id"],{}).get("estado")) for r in casos)
+      closed={k for k,e in latest.items() if e["estado"]=="Cerrado"}
+      sums={}
+      for e in eventos:
+        if e["caso_id"] in closed:sums[e["caso_id"]]=sums.get(e["caso_id"],0)+int(e["minutos_desde_anterior"])
+      expected_q3=sorted((int(k),v) for k,v in sums.items())
+      expected_q4=[(len(casos),len(eventos),sum(r["prioridad"]=="Alta" for r in casos))]
+      mins={r["caso_id"]:0 for r in casos}
+      for e in eventos:mins[e["caso_id"]]=mins.get(e["caso_id"],0)+int(e["minutos_desde_anterior"])
+      by={}
+      for r in casos:by.setdefault(r["tipo"],[]).append(mins[r["caso_id"]])
+      expected_q5=sorted((k,len(v),round(sum(v)/len(v),1)) for k,v in by.items())
+      expected={"q1":expected_q1,"q2":expected_q2,"q3":expected_q3,"q4":expected_q4,"q5":expected_q5}
+      for key,sql in starters.items():
+        got=sorted(con.execute(sql).fetchall())
+        assert got!=expected[key],f"{key} starter no debe pasar con datos base"
+      # Tres errores conceptuales típicos también deben fallar.
+      bad_q2_id="""WITH u AS (SELECT caso_id,MAX(evento_id) AS id FROM eventos_src GROUP BY caso_id)
+      SELECT c.caso_id,c.estado,e.estado FROM casos_src c LEFT JOIN u ON u.caso_id=c.caso_id LEFT JOIN eventos_src e ON e.evento_id=u.id"""
+      bad_q3_any="SELECT caso_id,SUM(minutos_desde_anterior) FROM eventos_src WHERE caso_id IN (SELECT caso_id FROM eventos_src WHERE estado='Cerrado') GROUP BY caso_id"
+      bad_q2_snapshot="SELECT caso_id,estado,estado FROM casos_src"
+      assert sorted(con.execute(bad_q2_id).fetchall())!=expected_q2
+      assert sorted(con.execute(bad_q3_any).fetchall())!=expected_q3
+      assert sorted(con.execute(bad_q2_snapshot).fetchall())!=expected_q2
+      # Contraejemplos específicos de reapertura, id tardío y snapshot desactualizado.
+      ev1006=[r for r in eventos if r["caso_id"]=="1006"]
+      assert max(ev1006,key=lambda r:r["evento_id"])["evento_id"] != max(ev1006,key=lambda r:r["fecha_evento"])["evento_id"]
+      ev1016=sorted([r for r in eventos if r["caso_id"]=="1016"],key=lambda x:x["fecha_evento"])
+      assert any(r["estado"]=="Cerrado" for r in ev1016) and ev1016[-1]["estado"]!="Cerrado"
       c1010=next(r for r in casos if r["caso_id"]=="1010")
       e1010=sorted([r for r in eventos if r["caso_id"]=="1010"],key=lambda x:x["fecha_evento"])[-1]
       assert c1010["estado"]!=e1010["estado"]
@@ -107,7 +141,7 @@ def test_acceptance_22():
     assert "e.texto" in JS and "e.metadata" not in JS
 
     # 22. Camino experto completo accesible por UI y pesos suman exactamente 80.
-    assert all(x in HTML for x in ('id="fkSelect"','id="domainEvolution"','id="docPartitionKey"','id="eventLatency"','id="runNested"'))
+    assert all(x in HTML for x in ('id="fkSelect"','id="domainMigration"','id="runDomainMigration"','id="docPartitionKey"','id="eventLatency"','id="runNested"'))
     assert "const MAX={sql:15,model:12,ddl:10,doc:10,dw:13,bq:10,nested:10}" in JS
     assert sum([15,12,10,10,13,10,10])==80
 
@@ -124,6 +158,12 @@ def test_methodology_and_security_regressions():
     assert all(x in HTML for x in ('id="s0"','id="docStoreCase"','id="docStoreLedger"','id="docPartitionKey"','id="eventLatency"','id="dimLatency"'))
     # Simulador distingue estimación previa y procesamiento posterior.
     assert 'id="bqPreBytes"' in HTML and 'id="bqPostBytes"' in HTML
+    assert "if(state.bq.cluster.length&&filters.has(state.bq.cluster[0]))" in JS
+    # Phase 2: mutation testing diferencial, migración real y telemetría por estación.
+    assert 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML
+    assert "function runMutationProbe()" in JS and "mutationOutcome(MUTANT_DDL[selectedMutant],probe)" in JS
+    assert "function runDomainMigration()" in JS and "beforeFails&&out.afterPass" in JS
+    assert "function initStationTiming()" in JS and "station_seconds:stationSeconds()" in JS
 
 def test_routes_and_pwa():
     assert "evaluador-s15-v7.html" in (ROOT/"evaluador-s15.html").read_text(encoding="utf-8")
@@ -133,6 +173,6 @@ def test_routes_and_pwa():
 
 def main():
     test_acceptance_22();test_methodology_and_security_regressions();test_routes_and_pwa()
-    print("OK · S15 v7: 22/22 criterios de aceptación estáticos/deterministas + metodología + rutas/PWA")
+    print("OK · S15 v7: 22/22 criterios de aceptación deterministas + fase 1/2 + rutas/PWA")
 
 if __name__=="__main__":main()
