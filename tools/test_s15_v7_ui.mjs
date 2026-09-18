@@ -45,8 +45,7 @@ assert.match(document.querySelector('#entity-caso').textContent,/caso_id/);
 assert.equal(document.querySelector('#score-model').textContent,'—');
 for(const id of ['caso.fecha_creacion','caso.tipo','caso.prioridad','caso.estado','caso.barrio'])await place('model',id,'model:caso');
 for(const id of ['evento.evento_id','evento.caso_id','evento.fecha_evento','evento.estado','evento.minutos_desde_anterior'])await place('model',id,'model:evento');
-click(document.querySelector('[data-model-field="caso.caso_id"]'));
-click(document.querySelector('[data-model-field="evento.evento_id"]'));
+change('#pkCaseSelect','caso.caso_id');change('#pkEventSelect','evento.evento_id');
 change('#fkSelect','evento.caso_id');change('#cardinalitySelect','1:N');
 for(const pair of [
  ['caso.caso_id','caso'],['caso.barrio','caso'],
@@ -54,15 +53,6 @@ for(const pair of [
  ['agente.agente_id','agente'],['agente.agente_nombre','agente']
 ])await place('norm',pair[0],'norm:'+pair[1]);
 click(document.querySelector('[data-check="model"]'));
-if(document.querySelector('#score-model').textContent!=='12'){
-  console.error('MODEL DEBUG',document.querySelector('#fb-model').textContent);
-  console.error('CASO',document.querySelector('#entity-caso').textContent);
-  console.error('EVENTO',document.querySelector('#entity-evento').textContent);
-  console.error('FK',document.querySelector('#fkSelect').value,'CARD',document.querySelector('#cardinalitySelect').value);
-  console.error('NORM CASO',document.querySelector('#norm-caso').textContent);
-  console.error('NORM EVENTO',document.querySelector('#norm-evento').textContent);
-  console.error('NORM AGENTE',document.querySelector('#norm-agente').textContent);
-}
 assert.equal(document.querySelector('#score-model').textContent,'12');
 
 for(const id of ['q1','q2','q3','q4','q5']){
