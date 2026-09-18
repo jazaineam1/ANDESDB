@@ -3,8 +3,10 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import initSqlJs from 'sql.js';
+import {fileURLToPath} from 'node:url';
 
-const ROOT=path.resolve(import.meta.dirname,'..');
+const HERE=path.dirname(fileURLToPath(import.meta.url));
+const ROOT=path.resolve(HERE,'..');
 const html=fs.readFileSync(path.join(ROOT,'evaluador-s15-v7.html'),'utf8');
 const js=fs.readFileSync(path.join(ROOT,'assets/learning/s15-autograder-v7.js'),'utf8');
 const dataDir=path.join(ROOT,'Plantillas/proyecto-final/Datos');
@@ -86,6 +88,22 @@ const ddlExtra=[
 setText('#ddl',ddlExtra);click(document.querySelector('#runDdl'));
 await waitFor(()=>document.querySelectorAll('#ddlTests .pill.ok').length===7,'DDL extra 7/7');
 
+// Mutation Hunter 2.0: el INSERT lo escribe el estudiante y debe diferenciar esquema correcto/mutante.
+const mutationCases=[
+ ['no_case_pk',"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(9001,'2026-09-02','Ruido','Alta','Abierto','Prueba')"],
+ ['wrong_fk',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9001,9999,'2026-09-02 10:00','Abierto',0)"],
+ ['weak_minutes',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9205,9001,'2026-09-02 11:00','Abierto',0)"]
+];
+for(const [id,probe] of mutationCases){
+  click(tile('mutant',id));setText('#mutationProbe',probe);click(document.querySelector('#runMutation'));
+  await waitFor(()=>document.querySelector('#mutationState').textContent.includes('Esquema correcto'),id+' mutation outcome');
+}
+setText('#domainMigration',"INSERT INTO estado_catalogo(estado) VALUES('Escalado')");
+click(document.querySelector('#runDomainMigration'));
+await waitFor(()=>document.querySelector('#domainMigrationFeedback').classList.contains('ok'),'migración de dominio');
+click(document.querySelector('[data-check="ddl"]'));
+assert.equal(document.querySelector('#score-ddl').textContent,'10');
+
 for(const id of ['snapshot_estado','evidencias'])await place('doc',id,'doc:embed');
 await place('doc','ciudadano_ref','doc:refid');
 for(const id of ['historial_eventos','perfil_ciudadano'])await place('doc',id,'doc:outside');
@@ -119,4 +137,4 @@ click(document.querySelector('#runNested'));
 await waitFor(()=>document.querySelector('#unnestFeedback').classList.contains('warn'),'UNNEST comentario rechazado');
 click(document.querySelector('[data-check="nested"]'));assert.notEqual(document.querySelector('#score-nested').textContent,'10');
 
-console.log('OK · S15 v7 UI jsdom: tap ER, FK, score gating, starters 0/4, DDL extra, Document, sobreinclusión y UNNEST');
+console.log('OK · S15 v7 UI jsdom: tap ER, FK, score gating, starters 0/4, DDL extra, Mutation Hunter, migración, Document, sobreinclusión y UNNEST');
