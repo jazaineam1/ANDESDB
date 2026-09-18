@@ -499,7 +499,7 @@
       "titulo": "Desafío final · Workbench integral v7",
       "duracion_util": 165,
       "modo": "workbench_integral_v7",
-      "objetivo": "Integrar S2–S14 con evidencia ejecutable, diagnosticar datos imperfectos y transferir decisiones a un caso nuevo cuyo workload varía por estudiante.",
+      "objetivo": "Llegar desde práctica previa de S2–S14 a una validación breve del dominio y transferir el razonamiento a un caso nuevo, con evidencia ejecutable y defensa.",
       "evaluacion": {
         "modo": "automatica_server_side",
         "href": "evaluador-s15.html",
@@ -580,7 +580,7 @@
       "trabajo_autonomo_min": 75,
       "nucleo": {
         "titulo": "Dominio · 80 puntos",
-        "instrucciones": "Completa diagnóstico, SQL, modelo+3FN, DDL, documentos, warehouse, BigQuery y datos anidados. En evaluación el puntaje solo se revela al comprobar.",
+        "instrucciones": "Antes de S15, completa las siete estaciones en modo práctica durante ~75 minutos. En la sesión cambia a evaluación para validar el dominio ya practicado con comprobaciones limitadas; no rehagas todo desde cero.",
         "criterios": [
           "contratos SQL visibles y grano",
           "modelo ER y 3FN",
@@ -593,7 +593,7 @@
       },
       "reto": {
         "titulo": "Boss Transfer · 20 puntos",
-        "instrucciones": "Resuelve un caso de pedidos con medidas en niveles distintos y un workload asignado por estudiante. El servidor recalcula la transferencia y conserva la variante.",
+        "instrucciones": "En S15 dedica el bloque principal al Boss de pedidos con workload asignado por estudiante y a una defensa breve. El servidor recalcula la transferencia y conserva la variante.",
         "criterios": [
           "resolver conflicto de grano",
           "diseño físico derivado de workload",
