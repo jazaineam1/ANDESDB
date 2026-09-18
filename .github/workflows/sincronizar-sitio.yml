@@ -10,10 +10,8 @@ on:
       - 'tools/integrar-experiencia.py'
       - 'tools/actualizar_s15_auto.py'
       - 'tools/test_s15_v7.py'
-      - 'tools/test_s15_v7.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
-      - 'assets/learning/s15-autograder-v7.js'
       - 'assets/learning/s15-autograder-v7.js'
       - 'assets/learning/s15-nested-duckdb-v1.mjs'
       - 'assets/learning/s15-workbench-v7.css'
@@ -39,7 +37,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Sincronizar S15 Workbench v6
+      - name: Sincronizar S15 Workbench v7
         run: python tools/actualizar_s15_auto.py
 
       - name: Generar portada pública desde curso.json
@@ -61,8 +59,7 @@ jobs:
       - name: S15 v7 · validar sintaxis JavaScript
         run: |
           node --check assets/learning/s15-autograder-v7.js
-          node --check assets/learning/s15-autograder-v7.js
-          node --check assets/learning/s15-azure-transfer-v1.js
+          node --check assets/learning/s15-nested-duckdb-v1.mjs
           node --check assets/learning/s15-teacher-link.js
 
       - name: S15 v7 · cobertura integral y mutation tests
@@ -96,8 +93,7 @@ jobs:
             evaluador-s15.html revision/evaluador-s15.html \
             evaluador-s15-v7.html revision/evaluador-s15-v7.html \
             assets/learning/s15-autograder-v7.js revision/assets/learning/s15-autograder-v7.js \
-            assets/learning/s15-autograder-v7.js revision/assets/learning/s15-autograder-v7.js \
-            assets/learning/s15-azure-transfer-v1.js revision/assets/learning/s15-azure-transfer-v1.js \
+            assets/learning/s15-nested-duckdb-v1.mjs revision/assets/learning/s15-nested-duckdb-v1.mjs \
             assets/learning/s15-workbench-v7.css revision/assets/learning/s15-workbench-v7.css \
             assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
@@ -105,6 +101,7 @@ jobs:
             s15-analytics.html revision/s15-analytics.html \
             revision/teacher-dashboard.html \
             Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
+            Plantillas/proyecto-final/Datos/casos.csv Plantillas/proyecto-final/Datos/eventos.csv Plantillas/proyecto-final/Datos/casos_dirty.csv Plantillas/proyecto-final/Datos/eventos_dirty.csv \
             revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
             tools/integrar-experiencia.py revision/tools/integrar-experiencia.py \
             tools/validar_curso.py revision/tools/validar_curso.py \
@@ -113,6 +110,6 @@ jobs:
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 Workbench integral v6, analytics, index y cache'
+          git commit -m 'Sincronizar S15 Workbench integral v7, index y cache'
           git pull --rebase origin main
           git push origin main
