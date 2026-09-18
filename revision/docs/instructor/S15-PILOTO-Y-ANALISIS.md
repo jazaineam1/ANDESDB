@@ -68,3 +68,13 @@ Interpretación recomendada:
 ## Decisión docente
 
 Antes de usar S16, revisa los checkpoints con baja discriminación, contratos ambiguos o fallos de UI. Si una estación tuvo un defecto conocido durante la aplicación, no la uses como evidencia diagnóstica en S16.
+
+
+## Decisión de ponderación
+
+Antes de abrir la evaluación oficial, deja explícita una de estas dos políticas:
+
+- **80/20:** dominio 80 + transferencia 20. Es la distribución mínima aceptable después de las correcciones técnicas.
+- **40/30/30:** dominio 40 + transferencia 30 + justificación/defensa 30. Es la distribución recomendada por la auditoría si se quiere aumentar el peso del razonamiento observable.
+
+No cambies la ponderación durante una cohorte. Si se adopta 40/30/30, actualiza juntos el contrato público, el grader servidor y el panel docente antes de abrir S15.
