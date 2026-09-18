@@ -518,7 +518,7 @@
           "modo": "workbench_integral_v7",
           "titulo": "Desafío final · Workbench integral v7",
           "estado": "hoy",
-          "desc": "Evaluación integradora S2–S14 con práctica previa recomendada: diagnóstico con datos imperfectos, contratos SQL explícitos, modelo/3FN, DDL y mutation testing, SQL/NoSQL, warehouse, BigQuery por workload, UNNEST ejecutado y Boss con variante por estudiante. 80 dominio + 20 transferencia, recalculados server-side.",
+          "desc": "Evaluación integradora S2–S14 con 75 min de práctica previa: en clase se valida el dominio ya preparado y el foco pasa a diagnóstico, Boss con variante por estudiante y defensa. Incluye SQL, modelo/3FN, DDL/mutation testing, SQL/NoSQL, warehouse, BigQuery por workload y UNNEST ejecutado. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
