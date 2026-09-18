@@ -44,6 +44,12 @@ jobs:
         run: |
           python tools/test_s15_v7.py
 
+      - name: Preparar prueba UI S15 v7
+        run: npm install --no-save --package-lock=false jsdom@26 sql.js@1.13.0
+
+      - name: Probar interfaz S15 v7 en jsdom + SQL.js
+        run: node tools/test_s15_v7_ui.mjs
+
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
 
