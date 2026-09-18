@@ -11,3 +11,5 @@ caso_id,fecha_creacion,ciudadano_id,tipo,prioridad,estado,canal,barrio
 1010,2026-08-08,C010,Alumbrado,Media,En_proceso,App,Chapinero
 1011,2026-08-09,C011,Ruido,Baja,Abierto,Web,Teusaquillo
 1012,2026-08-10,C012,Semaforo,Alta,En_proceso,App,Usaquen
+1015,2026-08-11,C015,Alumbrado,Alta,Cerrado,Web,Bosa
+1016,2026-08-12,C016,Ruido,Media,Abierto,App,Suba
