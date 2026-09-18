@@ -55,6 +55,7 @@ jobs:
       - name: Alinear S15 pública y revisión tras integración
         run: |
           cp Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html
+          cp Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html
           cp Presentaciones/M6/sesion-15-desafio-final-v7.html revision/Presentaciones/M6/sesion-15-desafio-final-v7.html
 
       - name: S15 v7 · validar sintaxis JavaScript
@@ -98,6 +99,7 @@ jobs:
             assets/learning/s15-workbench-v7.css revision/assets/learning/s15-workbench-v7.css \
             assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
             Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
+            Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html \
             Presentaciones/M6/sesion-15-desafio-final-v7.html revision/Presentaciones/M6/sesion-15-desafio-final-v7.html \
             s15-analytics.html revision/s15-analytics.html \
             revision/teacher-dashboard.html \
