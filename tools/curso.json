@@ -515,10 +515,10 @@
           "n": 15,
           "fecha": "2026-09-18",
           "duracionUtil": 165,
-          "modo": "workbench_integral_v6",
-          "titulo": "Desafío final · Workbench integral",
+          "modo": "workbench_integral_v7",
+          "titulo": "Desafío final · Workbench integral v7",
           "estado": "pendiente",
-          "desc": "Evaluación integradora de S2–S14: SQL, modelado y 3FN, DDL, documentos, Data Warehouse, BigQuery físico, ARRAY/STRUCT/UNNEST, formatos y transferencia Azure por necesidad. Dominio corregible 80 puntos + transferencia inédita 20 puntos; nota recalculada server-side.",
+          "desc": "Evaluación integradora S2–S14 corregida tras auditoría: diagnóstico con datos imperfectos, contratos SQL explícitos, modelo/DDL ejecutables, decisiones SQL/NoSQL, warehouse, BigQuery por workload, UNNEST ejecutado y Boss con variante por estudiante. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
@@ -540,7 +540,12 @@
             "Fabric/Databricks",
             "Power BI",
             "transferencia",
-            "server-side grader"
+            "server-side grader",
+            "datos imperfectos",
+            "justificación",
+            "workload por estudiante",
+            "DuckDB-Wasm",
+            "evaluación v7"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
@@ -557,7 +562,7 @@
               "href": "Plantillas/proyecto-final/criterios.md"
             }
           ],
-          "trabajoAutonomoMin": 120
+          "trabajoAutonomoMin": 75
         },
         {
           "n": 16,
