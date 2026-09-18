@@ -6,7 +6,7 @@ S15 integra S2–S14 y separa **dominio (80 puntos)** de **transferencia (20 pun
 
 - **Práctica:** feedback y ayudas sin límite de nota; úsalo para aprender antes de evaluar.
 - **Evaluación:** el puntaje local solo se revela al pulsar **Comprobar**, con un máximo de tres comprobaciones por estación y tres pruebas por consulta. Las pistas no restan puntos, pero se registran. El envío final está limitado por el servidor.
-- El estudiante debe incluir una **justificación breve** por estación. La nota automática mide el producto ejecutable; la justificación queda como evidencia para revisión docente y defensa.
+- La evaluación es **determinística**: la nota depende únicamente de resultados ejecutables y decisiones cerradas con solución definida. No se califican textos libres ni explicaciones semánticas.
 
 ## Rúbrica
 
@@ -19,7 +19,7 @@ S15 integra S2–S14 y separa **dominio (80 puntos)** de **transferencia (20 pun
 | Warehouse Builder | 13 | grano único, medidas, dimensiones, OLTP/OLAP y decisión de latencia |
 | BigQuery físico | 10 | partición y clustering derivados de un workload explícito |
 | Nested BigQuery | 10 | esquema anidado coherente con los datos, formatos y UNNEST ejecutado localmente |
-| Boss Transfer | 20 | caso nuevo con workload asignado por estudiante y decisiones recalculadas en servidor |
+| Boss Transfer | 20 | caso nuevo con workload asignado por estudiante; estrategia, grano, medidas, partición, clustering, UNNEST y equivalencias Azure se corrigen contra soluciones cerradas |
 
 ## Reglas de justicia de la evaluación
 
@@ -49,4 +49,4 @@ La evaluación se considera completa cuando el estudiante puede:
 - reproducir un resultado;
 - mostrar una entrada inválida rechazada por su diseño;
 - explicar una decisión de representación o arquitectura;
-- indicar qué control volvería a ejecutar después de un cambio.
+- completar el Boss con decisiones cerradas reproducibles y verificables.
