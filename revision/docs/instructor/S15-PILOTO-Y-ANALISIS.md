@@ -26,7 +26,7 @@ No enseñes la solución. Pide que verbalicen qué creen que significa cada cont
    - bloqueo móvil;
    - respuesta correcta que la herramienta rechaza;
    - respuesta incorrecta que la herramienta acepta.
-5. Cerrar con una defensa de una decisión.
+5. Cerrar comprobando que el resultado final es reproducible y que no aparece ninguna respuesta abierta calificable.
 
 ## Criterios de parada
 
@@ -47,7 +47,6 @@ El panel S15 v7 calcula:
 - discriminación aproximada de cada checkpoint;
 - correlación dominio–Boss;
 - tiempo por estación;
-- nivel de justificación 0–2;
 - distribución de variantes del Boss.
 
 Interpretación recomendada:
@@ -59,7 +58,7 @@ Interpretación recomendada:
 
 ## Registro manual del piloto
 
-| Participante | Dispositivo | Experiencia | Bloqueo principal | Falso positivo | Falso negativo | Tiempo Boss | Defensa satisfactoria |
+| Participante | Dispositivo | Experiencia | Bloqueo principal | Falso positivo | Falso negativo | Tiempo Boss | Resultado reproducible |
 |---|---|---|---|---|---|---:|---|
 | P1 | | | | | | | |
 | P2 | | | | | | | |
@@ -70,11 +69,8 @@ Interpretación recomendada:
 Antes de usar S16, revisa los checkpoints con baja discriminación, contratos ambiguos o fallos de UI. Si una estación tuvo un defecto conocido durante la aplicación, no la uses como evidencia diagnóstica en S16.
 
 
-## Decisión de ponderación
+## Ponderación fijada
 
-Antes de abrir la evaluación oficial, deja explícita una de estas dos políticas:
+S15 mantiene **80 puntos de dominio + 20 puntos de transferencia**.
 
-- **80/20:** dominio 80 + transferencia 20. Es la distribución mínima aceptable después de las correcciones técnicas.
-- **40/30/30:** dominio 40 + transferencia 30 + justificación/defensa 30. Es la distribución recomendada por la auditoría si se quiere aumentar el peso del razonamiento observable.
-
-No cambies la ponderación durante una cohorte. Si se adopta 40/30/30, actualiza juntos el contrato público, el grader servidor y el panel docente antes de abrir S15.
+La nota es completamente determinística. No se asignan puntos a justificaciones, defensas orales ni texto libre. Si el docente realiza una conversación posterior, funciona únicamente como actividad pedagógica y no modifica la calificación automática.
