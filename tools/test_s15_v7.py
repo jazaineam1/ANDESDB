@@ -171,6 +171,14 @@ def test_methodology_and_security_regressions():
     assert "function runDomainMigration()" in JS and "beforeFails&&out.afterPass" in JS
     assert "minutesRule=state.ddlChecks.neg&&state.ddlChecks.null_minutes&&state.ddlChecks.zero_valid" in JS
     assert "function initStationTiming()" in JS and "station_seconds:stationSeconds()" in JS
+    # Runtime/performance: SQL.js is loaded explicitly, DuckDB is lazy and guest mode works without auth.
+    assert 'assets/vendor/sqljs/sql-wasm.js?v=s15v7-fast1' in HTML
+    assert 'type="module" src="assets/learning/s15-nested-duckdb-v1.mjs' not in HTML
+    assert "async function ensureSqlJs()" in JS and "async function ensureNestedEngine()" in JS
+    assert "$('.mission').forEach" in JS
+    assert "Modo invitado activo" in JS and "Guardar evidencia local" in JS
+    assert "if(MODE==='practica')live=currentScores()" in JS
+    assert "function captureTextarea(el)" in JS
 
 def test_routes_and_pwa():
     assert "evaluador-s15-v7.html" in (ROOT/"evaluador-s15.html").read_text(encoding="utf-8")
