@@ -12,7 +12,7 @@ Este documento compara la auditoría original con la implementación vigente de 
 - El grader de servidor recalcula SQL, DDL, modelo, documentos, warehouse, BigQuery, nested y Boss.
 - SQL/DDL del servidor usa una variante oculta determinística por estudiante: cambian valores, no reglas ni contratos.
 - Boss usa workload estable por estudiante y la clave no está en el contrato público.
-- Analítica docente registra primer/mejor intento, checkpoints, discriminación, tiempos, justificaciones, misconceptions y distribución de variantes.
+- Analítica docente registra primer/mejor intento, checkpoints, discriminación, tiempos, misconceptions y distribución de variantes.
 
 ## Matriz de hallazgos
 
@@ -26,7 +26,7 @@ Este documento compara la auditoría original con la implementación vigente de 
 | M1–M5 · oráculo, contratos ocultos, crédito sin mérito y sobreinclusión | Resuelto | modo evaluación, límites de comprobación, contratos visibles, contraejemplos y selección exacta |
 | M6 · Boss no mide transferencia | Resuelto | caso de pedidos nuevo, dos hechos, workload variable, nested y mapeo Azure |
 | M7 · tiempo empuja a adivinar | Resuelto en la herramienta | S15 no impone cronómetro rígido; tiempos se registran para análisis, no para cortar la resolución |
-| M8 · no se recoge razonamiento | Resuelto | justificación por estación; el cliente y el servidor exigen evidencia mínima en evaluación |
+| M8 · riesgo de subjetividad en razonamiento abierto | Resuelto por diseño determinístico | S15 no asigna puntos a texto libre; las competencias se comprueban con ejecución y opciones cerradas |
 | M9 · misma respuesta para todos | Resuelto en evaluación | Boss variable + escenarios SQL ocultos sembrados por estudiante; práctica conserva datos comunes |
 | M10–M11 · demanda/cobertura incompleta | Resuelto | diagnóstico dirty, SQL/NoSQL, Cosmos partition key, batch/streaming, Mutation Hunter y migración |
 | M12 · política de pistas | Resuelto | política pública; evaluación limita pistas y registra uso |
@@ -41,7 +41,7 @@ Este documento compara la auditoría original con la implementación vigente de 
 
 1. **Piloto think-aloud con 3–5 personas reales**, incluyendo al menos una persona en teléfono y una sin experiencia previa. Si aparece un falso positivo, falso negativo o bloqueo esencial, S15 no debe usarse todavía como nota.
 2. **Análisis posterior a la primera aplicación.** Hasta que existan intentos v7 no es posible estimar empíricamente dificultad, discriminación, correlación dominio–Boss ni tiempos reales.
-3. **Política de ponderación.** La implementación mantiene 80 puntos de dominio + 20 de transferencia, que la auditoría acepta como distribución mínima después de corregir la fase 0. La alternativa 40/30/30 (dominio/transferencia/justificación-defensa) es una recomendación pedagógica y requiere decisión docente antes de cambiar la nota oficial.
+3. **Ponderación.** Queda fijada en 80 puntos de dominio + 20 de transferencia. No existe componente subjetivo de justificación o defensa.
 4. **Uso de S16.** Solo deben reutilizarse como diagnóstico los checkpoints que, después de la cohorte, no muestren problemas de discriminación, contrato o interfaz.
 
 ## Regla de publicación
