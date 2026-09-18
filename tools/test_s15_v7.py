@@ -148,11 +148,12 @@ def test_acceptance_22():
     assert sum([15,12,10,10,13,10,10])==80
 
 def test_methodology_and_security_regressions():
-    # Dos modos, límites de intentos, justificaciones y Boss variable.
-    assert "MODE===" in JS and "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS
+    # Dos modos, límites de intentos y Boss variable; ninguna respuesta abierta entra en la nota.
+    assert "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS
     assert "runMutationProbe" in JS and 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML
     assert "stationSeconds()" in JS and "IntersectionObserver" in JS
-    for k in ("why-sql","why-model","why-ddl","why-doc","why-dw","why-bq","why-nested","why-boss"):assert f'id="{k}"' in HTML
+    assert 'class="reason"' not in HTML and 'id="why-' not in HTML
+    assert "reasoningComplete" not in JS and "state.reasoning" not in JS
     assert "action:'init'" in JS and "workload" in HTML.lower()
     # La clave fija del Boss ya no puede estar en el contrato/plan públicos.
     forbidden=("línea de pedido como grano","fecha de pedido como partición","categoría/cliente como patrón de clustering")
