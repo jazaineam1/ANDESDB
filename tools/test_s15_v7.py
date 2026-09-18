@@ -158,6 +158,8 @@ def test_methodology_and_security_regressions():
     forbidden=("línea de pedido como grano","fecha de pedido como partición","categoría/cliente como patrón de clustering")
     assert not any(x in CRIT.lower() for x in forbidden)
     assert "s15-workbench-v7" in PLAN
+    assert "variante oculta determinística" in CRIT
+    assert "Declara las PK con los selectores explícitos" in JS
     # Diagnóstico, SQL/NoSQL, Cosmos, batch/streaming.
     assert all(x in HTML for x in ('id="s0"','id="docStoreCase"','id="docStoreLedger"','id="docPartitionKey"','id="eventLatency"','id="dimLatency"'))
     # Simulador distingue estimación previa y procesamiento posterior.
