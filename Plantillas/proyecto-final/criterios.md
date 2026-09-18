@@ -1,87 +1,51 @@
-# Sesión 15 · Contrato del Workbench integral v6
+# Sesión 15 · Contrato público del Workbench integral v7
 
-La evaluación se realiza en [`/ANDESDB/evaluador-s15.html`](/ANDESDB/evaluador-s15.html). Integra las competencias trabajadas desde S2 hasta S14 y separa **dominio corregible (80 puntos)** de **transferencia inédita (20 puntos)**.
+S15 integra S2–S14 y separa **dominio (80 puntos)** de **transferencia (20 puntos)**. La fuente de verdad de la nota es el grader del servidor; el navegador sirve para ejecutar, practicar y reunir evidencia, pero el servidor vuelve a comprobar las respuestas.
 
-El navegador sirve para practicar y recibir feedback. La nota registrada se recalcula en Supabase: el servidor ejecuta nuevamente el DDL y las consultas SQL sobre escenarios distintos y vuelve a validar las decisiones estructuradas. No confía en booleanos enviados por el cliente.
+## Modos
 
-## Rúbrica · 100 puntos
+- **Práctica:** feedback y ayudas sin límite de nota; úsalo para aprender antes de evaluar.
+- **Evaluación:** el puntaje local solo se revela al pulsar **Comprobar**, con un máximo de tres comprobaciones por estación y tres pruebas por consulta. Las pistas no restan puntos, pero se registran. El envío final está limitado por el servidor.
+- El estudiante debe incluir una **justificación breve** por estación. La nota automática mide el producto ejecutable; la justificación queda como evidencia para revisión docente y defensa.
 
-| Estación | Sesiones integradas | Puntos | Evidencia |
-|---|---|---:|---|
-| SQL Arena | S2–S5 | 15 | 5 consultas sobre varios escenarios, JOIN/CTE/agregación/grano |
-| Modelo ER + 3FN | S6–S8 | 12 | entidades, PK/FK, 1:N y descomposición CASO/EVENTO/AGENTE |
-| DDL Mutation Lab | S9 | 10 | constraints ejecutables + Mutation Hunter |
-| Document Lab | S10–S11 | 10 | embeber/referenciar por acceso, crecimiento y ciclo de vida |
-| Warehouse Builder | S6 + S12 | 13 | OLTP/OLAP, grano del hecho, medidas, dimensiones, batch/streaming/ELT |
-| BigQuery Physical | S13 | 10 | partition, orden de clustering, pruning y lectura conceptual |
-| Nested BigQuery | S14 | 10 | ARRAY<STRUCT>, UNNEST, JSON y Parquet |
-| Boss Transfer | integración S2–S14 | 20 | caso nuevo + pruebas ocultas + transferencia Azure por necesidad |
+## Rúbrica
 
-## Qué significa “mastery”
+| Estación | Puntos | Evidencia |
+|---|---:|---|
+| SQL Arena | 15 | cinco consultas ejecutables que respetan el contrato visible y sobreviven a variaciones |
+| Modelo ER + 3FN | 12 | entidades, claves, relación y descomposición normalizada |
+| DDL Mutation Lab | 10 | restricciones observables mediante pruebas negativas + razonamiento de evolución |
+| Document Lab | 10 | embeber/referenciar, SQL/NoSQL y partición documental según requisitos |
+| Warehouse Builder | 13 | grano único, medidas, dimensiones, OLTP/OLAP y decisión de latencia |
+| BigQuery físico | 10 | partición y clustering derivados de un workload explícito |
+| Nested BigQuery | 10 | esquema anidado coherente con los datos, formatos y UNNEST ejecutado localmente |
+| Boss Transfer | 20 | caso nuevo con workload asignado por estudiante y decisiones recalculadas en servidor |
 
-Las primeras siete estaciones pueden corregirse. El feedback SQL progresa por capas: concepto → contraejemplo → bloques tipo Parsons. El objetivo es que el estudiante llegue a una solución correcta **después de razonar y reparar**, no penalizar para siempre el primer error.
+## Reglas de justicia de la evaluación
 
-## SQL y partial credit
+1. Una respuesta correcta no debe fallar por un requisito de formato no declarado. Por eso cada consulta SQL publica columnas, redondeo y población esperada.
+2. Los escenarios ocultos cambian datos, no las reglas de negocio. No introducen desempates temporales o contratos que no aparezcan en el enunciado.
+3. El resultado que se muestra al estudiante corresponde siempre a los **datos base**. Las variaciones sirven para comprobar robustez y se reportan por nombre, no sustituyen silenciosamente la tabla visible.
+4. El DDL inicial contiene columnas y tipos, **no** PK/FK/NOT NULL/CHECK resueltos.
+5. El modelo ER usa selectores explícitos para FK y cardinalidad y rotula el origen de campos homónimos.
+6. El diseño de BigQuery parte de frecuencias de consulta visibles. El simulador separa la estimación previa por partición del ahorro conceptual posterior por clustering.
+7. La consulta de datos anidados elimina comentarios antes de validar, acepta alias equivalentes y se ejecuta con DuckDB-Wasm; escribir UNNEST en un comentario no genera crédito.
+8. El Boss no publica una clave fija. El servidor asigna un workload estable por estudiante y vuelve a calcular la transferencia sin confiar en localStorage ni en puntajes del cliente.
 
-Las cinco consultas trabajan filtros/agregación, último evento temporal, acumulación hasta cierre, control de grano después de JOIN 1:N y promedios a grano caso. Cada consulta se prueba sobre varias variaciones visibles. El servidor conserva un escenario adicional no publicado para medir transferencia.
+## Contenido evaluado
 
-El conjunto visible incluye un contraejemplo específico para evitar que `MAX(estado)` pase accidentalmente como equivalente de “último estado”.
+El diagnóstico inicial usa datos imperfectos para distinguir hallazgos confirmados de hipótesis. S15 también comprueba decisiones SQL/NoSQL, una partition key documental, batch frente a streaming según latencia y evolución controlada de dominios.
 
-## Modelo, normalización y DDL
+El Boss plantea un problema de pedidos donde existen métricas en niveles distintos y un patrón de consulta variable. La evaluación pide **derivar** el diseño y explicar el razonamiento; este contrato describe las competencias, no las respuestas.
 
-El modelo esperado conserva `CASO 1:N EVENTO`. La normalización separa `AGENTE` para evitar repetir `agente_nombre` en cada evento. El DDL debe rechazar duplicados, huérfanos, `NULL` requeridos y minutos negativos sin convertir los valores observados hoy en un dominio eterno.
+## Política de IA y colaboración
 
-Mutation Hunter evalúa una competencia adicional: saber qué prueba mínima revela un esquema defectuoso.
+Se permite consultar documentación y herramientas de apoyo según las reglas del curso. La evidencia final no es una frase copiada: el estudiante debe poder explicar una decisión, modificarla ante un requisito nuevo y volver a ejecutar la validación correspondiente.
 
-## SQL/NoSQL y documentos
+## Cierre
 
-El estudiante decide qué vive dentro del documento de caso y qué debe mantenerse referenciado. Se evalúan propiedades de la decisión: acceso conjunto, crecimiento potencial y ciclo de vida independiente. No se acepta la regla simplista “JSON = NoSQL”.
-
-## Data Warehouse
-
-La estación obliga a separar OLTP de OLAP, declarar el grano del hecho antes de las medidas y construir dimensiones útiles. También evalúa cómo llegan datos nuevos: streaming para eventos, procesos batch para actualizaciones periódicas y ELT para cargar y transformar dentro de la plataforma analítica.
-
-## BigQuery físico
-
-El patrón de consulta acota fechas y filtra frecuentemente barrio y tipo. La evaluación espera una partición alineada con el tiempo y clustering cuyo orden refleje el patrón de filtros. Un simulador conceptual traduce las decisiones a territorio/bloques que podrían evitarse; no pretende reproducir el optimizador real de BigQuery.
-
-## ARRAY, STRUCT, UNNEST, formatos y transferencia cloud
-
-`evidencias` debe reconocerse como un arreglo de estructuras. La consulta debe cambiar el grano a una fila por evidencia mediante `UNNEST`, conservando la clave raíz. También se evalúa JSON como formato flexible de aterrizaje y Parquet como formato columnar para analítica.
-
-La transferencia Azure conserva el criterio enseñado en S14: **no traducir productos uno a uno, sino partir de la necesidad**. El mapa utilizado por el Boss es:
-
-- guardar JSON, CSV o Parquet como objetos → **Azure Blob Storage / ADLS Gen2**;
-- documento operacional distribuido → **Azure Cosmos DB**;
-- lakehouse, ingeniería y analítica → **Microsoft Fabric / Azure Databricks**;
-- consumo visual y BI → **Power BI**.
-
-Que un dato llegue como JSON no basta para concluir que debe ir a Cosmos DB.
-
-## Boss Transfer · 20 puntos
-
-El dominio cambia a pedidos omnicanal. Debe reconocerse línea de pedido como grano analítico, cantidad e importe como medidas, fecha de pedido como partición y categoría/cliente como patrón de clustering. Además se requiere `UNNEST(p.items)` sin perder `pedido_id` y trasladar cuatro necesidades a la familia Azure correspondiente.
-
-El servidor distribuye los 20 puntos del Boss así:
-
-| Evidencia de transferencia | Puntos |
-|---|---:|
-| SQL sobre escenario oculto | 4 |
-| DDL sobre escenario oculto | 3 |
-| Warehouse del caso nuevo | 3 |
-| Diseño físico de BigQuery | 3 |
-| `UNNEST` del arreglo `items[]` | 3 |
-| Necesidad → familia Azure | 4 |
-
-El servidor vuelve a probar el DDL y las cinco consultas SQL con datos diferentes. La asociación Azure se corrige también en servidor y el navegador no revela de antemano cuáles selecciones son correctas. Por eso memorizar el dataset del caso urbano o depender de una etiqueta de producto no basta.
-
-## Principios del autograder
-
-- grader server-side como fuente de verdad de la nota;
-- tests visibles para entrenamiento y tests ocultos para transferencia;
-- partial credit en SQL y en la transferencia Azure;
-- feedback progresivo y reintentos;
-- mutation testing del propio autograder;
-- evaluación de propiedades y coherencia, no de una captura idéntica al profesor;
-- analítica docente de primer intento, mejor intento y errores recurrentes;
-- interacción táctil y drag-and-drop equivalentes.
+La evaluación se considera completa cuando el estudiante puede:
+- reproducir un resultado;
+- mostrar una entrada inválida rechazada por su diseño;
+- explicar una decisión de representación o arquitectura;
+- indicar qué control volvería a ejecutar después de un cambio.

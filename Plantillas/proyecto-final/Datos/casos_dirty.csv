@@ -1,0 +1,6 @@
+caso_id,fecha_creacion,ciudadano_id,tipo,prioridad,estado,canal,barrio
+2001,2026-09-01,D001,Alumbrado,Alta,Abierto,Web,Suba
+2001,2026-09-01,D001,Alumbrado,Alta,Abierto,Web,Suba
+2002,2026-09-01,D002,Ruido,Media,Cerrado,App,Bosa
+2003,2026-09-02,D003,,Alta,En_proceso,Web,Chapinero
+2004,2026-09-02,D004,Hueco,Media,En_proceso,App,Kennedy

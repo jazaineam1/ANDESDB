@@ -3,23 +3,22 @@ name: Sincronizar sitio desde manifiestos
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'tools/curso.json'
       - 'tools/estilo-portada.css'
       - 'tools/construir-index.py'
       - 'tools/integrar-experiencia.py'
       - 'tools/actualizar_s15_auto.py'
-      - 'tools/test_s15_v6.py'
-      - 'tools/test_s15_azure_transfer.py'
+      - 'tools/test_s15_v7.py'
       - 'assets/learning/learning-core.js'
       - 'assets/learning/learning-plan.json'
-      - 'assets/learning/s15-autograder-v6.js'
-      - 'assets/learning/s15-autograder-v6b.js'
-      - 'assets/learning/s15-azure-transfer-v1.js'
-      - 'assets/learning/s15-workbench-v6.css'
+      - 'assets/learning/s15-autograder-v7.js'
+      - 'assets/learning/s15-nested-duckdb-v1.mjs'
+      - 'assets/learning/s15-workbench-v7.css'
       - 'assets/learning/s15-teacher-link.js'
       - 'evaluador-s15.html'
-      - 'evaluador-s15-v6.html'
+      - 'evaluador-s15-v7.html'
       - 's15-analytics.html'
       - 'Plantillas/proyecto-final/**'
       - 'Presentaciones/**/*.html'
@@ -39,7 +38,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Sincronizar S15 Workbench v6
+      - name: Sincronizar S15 Workbench v7
         run: python tools/actualizar_s15_auto.py
 
       - name: Generar portada pública desde curso.json
@@ -57,18 +56,17 @@ jobs:
         run: |
           cp Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html
           cp Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html
+          cp Presentaciones/M6/sesion-15-desafio-final-v7.html revision/Presentaciones/M6/sesion-15-desafio-final-v7.html
 
-      - name: S15 v6 · validar sintaxis JavaScript
+      - name: S15 v7 · validar sintaxis JavaScript
         run: |
-          node --check assets/learning/s15-autograder-v6.js
-          node --check assets/learning/s15-autograder-v6b.js
-          node --check assets/learning/s15-azure-transfer-v1.js
+          node --check assets/learning/s15-autograder-v7.js
+          node --check assets/learning/s15-nested-duckdb-v1.mjs
           node --check assets/learning/s15-teacher-link.js
 
-      - name: S15 v6 · cobertura integral y mutation tests
+      - name: S15 v7 · cobertura integral y mutation tests
         run: |
-          python tools/test_s15_v6.py
-          python tools/test_s15_azure_transfer.py
+          python tools/test_s15_v7.py
 
       - name: Renovar caché del sitio
         env:
@@ -90,30 +88,13 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            index.html revision/index.html \
-            tools/curso.json revision/tools/curso.json \
-            assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
-            evaluador-s15.html revision/evaluador-s15.html \
-            evaluador-s15-v6.html revision/evaluador-s15-v6.html \
-            assets/learning/s15-autograder-v6.js revision/assets/learning/s15-autograder-v6.js \
-            assets/learning/s15-autograder-v6b.js revision/assets/learning/s15-autograder-v6b.js \
-            assets/learning/s15-azure-transfer-v1.js revision/assets/learning/s15-azure-transfer-v1.js \
-            assets/learning/s15-workbench-v6.css revision/assets/learning/s15-workbench-v6.css \
-            assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
-            Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
-            Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html \
-            s15-analytics.html revision/s15-analytics.html \
-            revision/teacher-dashboard.html \
-            Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
-            revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
-            tools/integrar-experiencia.py revision/tools/integrar-experiencia.py \
-            tools/validar_curso.py revision/tools/validar_curso.py \
-            service-worker.js
+          git status --porcelain
+          git add -A
           if git diff --cached --quiet; then
             echo 'Sitio ya sincronizado'
             exit 0
           fi
-          git commit -m 'Sincronizar S15 Workbench integral v6, analytics, index y cache'
-          git pull --rebase origin main
-          git push origin main
+          git commit -m 'Sincronizar S15 Workbench integral v7, index y cache'
+          BRANCH="${GITHUB_REF_NAME}"
+          git pull --rebase origin "$BRANCH"
+          git push origin HEAD:"$BRANCH"

@@ -40,10 +40,9 @@ jobs:
       - name: Validar estructura, pedagogía y recursos
         run: python tools/validar_curso.py
 
-      - name: Validar evaluación integral S15 v6
+      - name: Validar evaluación integral S15 v7
         run: |
-          python tools/test_s15_v6.py
-          python tools/test_s15_azure_transfer.py
+          python tools/test_s15_v7.py
 
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
@@ -98,8 +97,8 @@ jobs:
       - name: Validar JavaScript de la experiencia
         run: |
           node --check assets/learning/learning-core.js
-          node --check assets/learning/s15-autograder-v6.js
-          node --check assets/learning/s15-autograder-v6b.js
+          node --check assets/learning/s15-autograder-v7.js
+          node --check assets/learning/s15-nested-duckdb-v1.mjs
           node --check assets/learning/s15-azure-transfer-v1.js
           node --check assets/pwa-install.js
           node --check service-worker.js

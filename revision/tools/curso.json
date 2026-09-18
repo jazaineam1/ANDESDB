@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 14,
+  "sesionActual": 15,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -472,7 +472,7 @@
           "duracionUtil": 120,
           "modo": "guiada_con_servicio_real",
           "titulo": "BigQuery anidados + mapa Azure",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "ARRAY, STRUCT y UNNEST en BigQuery real; JSON/Parquet y transferencia conceptual hacia Blob/ADLS, Cosmos DB, Fabric, Databricks y Power BI.",
           "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html",
           "tags": [
@@ -515,10 +515,10 @@
           "n": 15,
           "fecha": "2026-09-18",
           "duracionUtil": 165,
-          "modo": "workbench_integral_v6",
-          "titulo": "Desafío final · Workbench integral",
-          "estado": "pendiente",
-          "desc": "Evaluación integradora de S2–S14: SQL, modelado y 3FN, DDL, documentos, Data Warehouse, BigQuery físico, ARRAY/STRUCT/UNNEST, formatos y transferencia Azure por necesidad. Dominio corregible 80 puntos + transferencia inédita 20 puntos; nota recalculada server-side.",
+          "modo": "workbench_integral_v7",
+          "titulo": "Desafío final · Workbench integral v7",
+          "estado": "hoy",
+          "desc": "Evaluación integradora S2–S14 con 75 min de práctica previa: en clase se valida el dominio ya preparado y el foco pasa a diagnóstico, Boss con variante por estudiante y defensa. Incluye SQL, modelo/3FN, DDL/mutation testing, SQL/NoSQL, warehouse, BigQuery por workload y UNNEST ejecutado. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
@@ -540,7 +540,12 @@
             "Fabric/Databricks",
             "Power BI",
             "transferencia",
-            "server-side grader"
+            "server-side grader",
+            "datos imperfectos",
+            "justificación",
+            "workload por estudiante",
+            "DuckDB-Wasm",
+            "evaluación v7"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
@@ -557,7 +562,7 @@
               "href": "Plantillas/proyecto-final/criterios.md"
             }
           ],
-          "trabajoAutonomoMin": 120
+          "trabajoAutonomoMin": 75
         },
         {
           "n": 16,

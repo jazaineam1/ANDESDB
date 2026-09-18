@@ -496,31 +496,49 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final · Workbench integral",
+      "titulo": "Desafío final · Workbench integral v7",
       "duracion_util": 165,
-      "modo": "workbench_integral_v6",
-      "objetivo": "Integrar S2–S14 en una solución ejecutable y transferir el razonamiento a un caso nuevo, incluida la elección de familia Azure a partir de la necesidad.",
+      "modo": "workbench_integral_v7",
+      "objetivo": "Llegar desde práctica previa de S2–S14 a una validación breve del dominio y transferir el razonamiento a un caso nuevo, con evidencia ejecutable y defensa.",
       "evaluacion": {
-        "modo": "automatica",
+        "modo": "automatica_server_side",
         "href": "evaluador-s15.html",
         "puntaje_total": 100,
-        "reintentos": true,
+        "max_intentos_finales": 2,
+        "comprobaciones_por_estacion": 3,
+        "pistas_sql_evaluacion": 2,
         "registro_lms": true,
         "criterios": [
           {
-            "titulo": "Grano y lectura de fuentes",
-            "puntos": 20
+            "titulo": "SQL Arena",
+            "puntos": 15
           },
           {
-            "titulo": "DDL e integridad",
-            "puntos": 25
+            "titulo": "Modelo ER + 3FN",
+            "puntos": 12
           },
           {
-            "titulo": "SQL y validación",
-            "puntos": 35
+            "titulo": "DDL Mutation Lab",
+            "puntos": 10
           },
           {
-            "titulo": "Arquitectura y adaptabilidad",
+            "titulo": "Document Lab",
+            "puntos": 10
+          },
+          {
+            "titulo": "Warehouse Builder",
+            "puntos": 13
+          },
+          {
+            "titulo": "BigQuery físico",
+            "puntos": 10
+          },
+          {
+            "titulo": "Nested BigQuery",
+            "puntos": 10
+          },
+          {
+            "titulo": "Boss Transfer",
             "puntos": 20
           }
         ]
@@ -554,38 +572,34 @@
       "solucion": {
         "modo": "automatica_server_side",
         "evaluador": "evaluador-s15.html",
-        "version": "s15-workbench-v6",
+        "version": "s15-workbench-v7",
         "puntaje_maximo": 100,
         "mastery": 80,
         "transferencia": 20
       },
-      "trabajo_autonomo_min": 120,
+      "trabajo_autonomo_min": 75,
       "nucleo": {
-        "titulo": "Dominio corregible · 80 puntos",
-        "instrucciones": "Completa SQL Arena, Modelo+3FN, DDL Mutation, Document Lab, Warehouse Builder, BigQuery Physical y Nested BigQuery. Corrige con feedback progresivo.",
+        "titulo": "Dominio · 80 puntos",
+        "instrucciones": "Antes de S15, completa las siete estaciones en modo práctica durante ~75 minutos. En la sesión cambia a evaluación para validar el dominio ya practicado con comprobaciones limitadas; no rehagas todo desde cero.",
         "criterios": [
-          "SQL sobre variaciones",
+          "contratos SQL visibles y grano",
           "modelo ER y 3FN",
-          "constraints y pruebas negativas",
-          "embeber/referenciar",
-          "hechos/dimensiones y OLTP/OLAP",
-          "partition/clustering/pruning",
-          "ARRAY/STRUCT/UNNEST y formatos JSON/Parquet"
+          "restricciones y pruebas negativas",
+          "embeber/referenciar y SQL/NoSQL",
+          "hechos/dimensiones y latencia batch/streaming",
+          "partition/clustering derivados de workload",
+          "ARRAY/STRUCT/UNNEST ejecutable y formatos"
         ]
       },
       "reto": {
         "titulo": "Boss Transfer · 20 puntos",
-        "instrucciones": "Resuelve pedidos omnicanal con un caso nuevo; el servidor ejecuta pruebas ocultas de DDL y SQL y verifica transferencia conceptual a Azure por necesidad.",
+        "instrucciones": "En S15 dedica el bloque principal al Boss de pedidos con workload asignado por estudiante y a una defensa breve. El servidor recalcula la transferencia y conserva la variante.",
         "criterios": [
-          "SQL oculto",
-          "DDL oculto",
-          "grano línea de pedido y medidas",
-          "partición por fecha y clustering por patrón de filtros",
-          "UNNEST de items sin perder pedido_id",
-          "objetos → Blob/ADLS",
-          "documento operacional → Cosmos DB",
-          "lakehouse/ingeniería → Fabric/Databricks",
-          "BI → Power BI"
+          "resolver conflicto de grano",
+          "diseño físico derivado de workload",
+          "expansión de items sin perder clave raíz",
+          "transferencia Azure por necesidad",
+          "justificación defendible"
         ]
       }
     },
