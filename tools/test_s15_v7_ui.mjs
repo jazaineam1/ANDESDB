@@ -17,6 +17,9 @@ const window=dom.window,document=window.document;
 window.initSqlJs=async()=>SQL;
 window.confirm=()=>true;
 window.alert=()=>{};
+window.URL.createObjectURL=()=> 'blob:s15-test';
+window.URL.revokeObjectURL=()=>{};
+window.HTMLAnchorElement.prototype.click=function(){};
 window.IntersectionObserver=class{
   constructor(cb){this.cb=cb;this.items=[]}
   observe(el){this.items.push(el)}
@@ -42,6 +45,9 @@ async function place(kind,id,drop){click(tile(kind,id));click(document.querySele
 window.eval(js);
 if(document.readyState==='loading')document.dispatchEvent(new window.Event('DOMContentLoaded',{bubbles:true}));
 await waitFor(()=>document.querySelector('#engineStatus')?.textContent.startsWith('Listo:'),'inicialización');
+assert.match(document.querySelector('#modePill').textContent,/Invitado.*Evaluación/);
+assert.match(document.querySelector('#authStatus').textContent,/evaluación local determinística/i);
+assert.equal(document.querySelector('#serverScoreLabel').textContent,'/100 no se registra');
 
 for(const id of ['sql','model','ddl','doc','dw','bq','nested'])assert.equal(document.querySelector('#score-'+id).textContent,'—');
 
@@ -143,4 +149,21 @@ click(document.querySelector('#runNested'));
 await waitFor(()=>document.querySelector('#unnestFeedback').classList.contains('warn'),'UNNEST comentario rechazado');
 click(document.querySelector('[data-check="nested"]'));assert.notEqual(document.querySelector('#score-nested').textContent,'10');
 
-console.log('OK · S15 v7 UI jsdom: tap ER, FK, score gating, starters 0/4, DDL extra, Mutation Hunter, migración, Document, sobreinclusión y UNNEST');
+// Boss invitado: 20/20 con criterios cerrados y sin texto libre.
+change('#bossStrategy','two_facts');
+await place('bossdw','linea_pedido','boss:grain');
+await place('bossdw','cantidad','boss:measure');await place('bossdw','importe','boss:measure');
+await place('bossbq','fecha_pedido','boss:partition');
+await place('bossbq','categoria','boss:cluster');await place('bossbq','canal','boss:cluster');
+setText('#bossUnnest',"SELECT p.pedido_id, i.categoria, i.cantidad\nFROM pedidos AS p\nCROSS JOIN UNNEST(p.items) AS i");
+change('#az-object','blob_adls');change('#az-document','cosmos');change('#az-lakehouse','fabric_databricks');change('#az-bi','power_bi');
+click(document.querySelector('#checkBoss'));
+assert.equal(document.querySelector('#score-boss').textContent,'20');
+assert.match(document.querySelector('#fb-boss').textContent,/20\/20/);
+
+// El envío invitado calcula un resultado local y no llama al grader.
+click(document.querySelector('#submitFinal'));
+assert.notEqual(document.querySelector('#finalTotal').textContent,'—');
+assert.match(document.querySelector('#engineStatus').textContent,/Modo invitado: resultado local/);
+
+console.log('OK · S15 v7 UI jsdom: invitado, arranque, ER/FK, score gating, SQL, DDL, Mutation, Document, BigQuery, UNNEST y Boss local 20/20');
