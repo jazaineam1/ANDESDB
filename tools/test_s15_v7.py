@@ -147,7 +147,9 @@ def test_acceptance_22():
 
 def test_methodology_and_security_regressions():
     # Dos modos, límites de intentos, justificaciones y Boss variable.
-    assert "MODE===" in JS and "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS\n    assert "runMutationProbe" in JS and 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML\n    assert "stationSeconds()" in JS and "IntersectionObserver" in JS
+    assert "MODE===" in JS and "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS
+    assert "runMutationProbe" in JS and 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML
+    assert "stationSeconds()" in JS and "IntersectionObserver" in JS
     for k in ("why-sql","why-model","why-ddl","why-doc","why-dw","why-bq","why-nested","why-boss"):assert f'id="{k}"' in HTML
     assert "action:'init'" in JS and "workload" in HTML.lower()
     # La clave fija del Boss ya no puede estar en el contrato/plan públicos.
