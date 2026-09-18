@@ -518,7 +518,7 @@
           "modo": "workbench_integral_v7",
           "titulo": "Desafío final · Workbench integral v7",
           "estado": "hoy",
-          "desc": "Evaluación integradora S2–S14 con 75 min de práctica previa: en clase se valida el dominio ya preparado y el foco pasa a diagnóstico, Boss con variante por estudiante y defensa. Incluye SQL, modelo/3FN, DDL/mutation testing, SQL/NoSQL, warehouse, BigQuery por workload y UNNEST ejecutado. 80 dominio + 20 transferencia, recalculados server-side.",
+          "desc": "Evaluación integradora S2–S14 con práctica previa. En clase se valida el dominio con contratos ejecutables y soluciones cerradas; el Boss usa workload por estudiante. No se califican textos libres. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
@@ -542,10 +542,11 @@
             "transferencia",
             "server-side grader",
             "datos imperfectos",
-            "justificación",
             "workload por estudiante",
             "DuckDB-Wasm",
-            "evaluación v7"
+            "evaluación v7",
+            "determinística",
+            "sin texto libre"
           ],
           "href": "Presentaciones/M6/sesion-15-desafio-final.html",
           "recursos": [
