@@ -96,7 +96,7 @@ def test_acceptance_22():
     finally:con.close()
 
     # 6-8. DDL: starter sin solución, error visible y contrato tolera columnas extra.
-    starter=JS[JS.index("function ddlStarter()"):JS.index("function runDdl()")]
+    starter=JS[JS.index("function ddlStarter()"):JS.index("function runDdl(")]
     assert "PRIMARY KEY" not in starter and "FOREIGN KEY" not in starter and "NOT NULL" not in starter and "CHECK(" not in starter
     assert "Tu DDL no se ejecutó:" in JS and "INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio)" in JS
     assert "ciudadano_id" in (DATA/"casos.csv").read_text(encoding="utf-8")  # columna extra permitida por el contrato/server
@@ -147,7 +147,7 @@ def test_acceptance_22():
 
 def test_methodology_and_security_regressions():
     # Dos modos, límites de intentos, justificaciones y Boss variable.
-    assert "MODE===" in JS and "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS
+    assert "MODE===" in JS and "MAX_CHECKS=3" in JS and "MAX_SQL_ATTEMPTS=3" in JS\n    assert "runMutationProbe" in JS and 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML\n    assert "stationSeconds()" in JS and "IntersectionObserver" in JS
     for k in ("why-sql","why-model","why-ddl","why-doc","why-dw","why-bq","why-nested","why-boss"):assert f'id="{k}"' in HTML
     assert "action:'init'" in JS and "workload" in HTML.lower()
     # La clave fija del Boss ya no puede estar en el contrato/plan públicos.
