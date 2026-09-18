@@ -17,6 +17,11 @@ const window=dom.window,document=window.document;
 window.initSqlJs=async()=>SQL;
 window.confirm=()=>true;
 window.alert=()=>{};
+window.IntersectionObserver=class{
+  constructor(cb){this.cb=cb;this.items=[]}
+  observe(el){this.items.push(el)}
+  disconnect(){}
+};
 window.S15NestedDuckDB={ready:Promise.resolve(true),validate:async()=>({ok:true,fields:['caso_id','tipo'],rows:[[1001,'foto']]})};
 window.fetch=async input=>{
   const url=String(input),name=url.split('/').pop().split('?')[0],p=path.join(dataDir,name);
