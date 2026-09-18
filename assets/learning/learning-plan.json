@@ -499,7 +499,7 @@
       "titulo": "Desafío final · Workbench integral v7",
       "duracion_util": 165,
       "modo": "workbench_integral_v7",
-      "objetivo": "Llegar desde práctica previa de S2–S14 a una validación breve del dominio y transferir el razonamiento a un caso nuevo, con evidencia ejecutable y defensa.",
+      "objetivo": "Validar de forma determinística el dominio S2–S14 y transferirlo a un caso nuevo mediante consultas ejecutables, pruebas de comportamiento y decisiones cerradas.",
       "evaluacion": {
         "modo": "automatica_server_side",
         "href": "evaluador-s15.html",
@@ -541,7 +541,9 @@
             "titulo": "Boss Transfer",
             "puntos": 20
           }
-        ]
+        ],
+        "deterministica": true,
+        "respuestas_abiertas_calificadas": false
       },
       "dp900": [
         {
@@ -593,13 +595,13 @@
       },
       "reto": {
         "titulo": "Boss Transfer · 20 puntos",
-        "instrucciones": "En S15 dedica el bloque principal al Boss de pedidos con workload asignado por estudiante y a una defensa breve. El servidor recalcula la transferencia y conserva la variante.",
+        "instrucciones": "En S15 dedica el bloque principal al Boss de pedidos con workload asignado por estudiante. La transferencia se corrige únicamente con criterios cerrados y reproducibles en servidor.",
         "criterios": [
           "resolver conflicto de grano",
           "diseño físico derivado de workload",
           "expansión de items sin perder clave raíz",
           "transferencia Azure por necesidad",
-          "justificación defendible"
+          "corrección determinística sin texto libre"
         ]
       }
     },
