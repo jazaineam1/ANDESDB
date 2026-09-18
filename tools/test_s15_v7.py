@@ -127,7 +127,8 @@ def test_acceptance_22():
     # 17-19. UNNEST: comentarios no cuentan, alias libre y feedback no entrega la línea-respuesta.
     assert "stripSql(q)" in JS and "const alias=m[2]" in JS
     assert "Usa UNNEST(c.evidencias) AS e" not in JS
-    assert "DuckDB-Wasm" in HTML and "s15-nested-duckdb-v1.mjs" in HTML
+    assert "s15-nested-duckdb-v1.mjs" in HTML and 'id="runNested"' in HTML
+    assert "S15NestedDuckDB.validate" in JS
 
     # 20. ciudadano_id se evalúa como referencia guardada dentro, perfil fuera.
     assert 'data-drop="doc:refid"' in HTML and "exact(state.doc.refid,['ciudadano_ref'])" in JS
