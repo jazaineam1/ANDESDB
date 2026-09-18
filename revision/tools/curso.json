@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 14,
+  "sesionActual": 15,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -472,7 +472,7 @@
           "duracionUtil": 120,
           "modo": "guiada_con_servicio_real",
           "titulo": "BigQuery anidados + mapa Azure",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "ARRAY, STRUCT y UNNEST en BigQuery real; JSON/Parquet y transferencia conceptual hacia Blob/ADLS, Cosmos DB, Fabric, Databricks y Power BI.",
           "href": "Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html",
           "tags": [
@@ -517,8 +517,8 @@
           "duracionUtil": 165,
           "modo": "workbench_integral_v7",
           "titulo": "Desafío final · Workbench integral v7",
-          "estado": "pendiente",
-          "desc": "Evaluación integradora S2–S14 corregida tras auditoría: diagnóstico con datos imperfectos, contratos SQL explícitos, modelo/DDL ejecutables, decisiones SQL/NoSQL, warehouse, BigQuery por workload, UNNEST ejecutado y Boss con variante por estudiante. 80 dominio + 20 transferencia, recalculados server-side.",
+          "estado": "hoy",
+          "desc": "Evaluación integradora S2–S14 con práctica previa recomendada: diagnóstico con datos imperfectos, contratos SQL explícitos, modelo/3FN, DDL y mutation testing, SQL/NoSQL, warehouse, BigQuery por workload, UNNEST ejecutado y Boss con variante por estudiante. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
             "SQL",
