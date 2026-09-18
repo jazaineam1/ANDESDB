@@ -496,12 +496,12 @@
     },
     "15": {
       "fecha": "2026-09-18",
-      "titulo": "Desafío final · Workbench integral",
+      "titulo": "Desafío final · Workbench integral v7",
       "duracion_util": 165,
-      "modo": "workbench_integral_v6",
-      "objetivo": "Integrar S2–S14 en una solución ejecutable y transferir el razonamiento a un caso nuevo, incluida la elección de familia Azure a partir de la necesidad.",
+      "modo": "workbench_integral_v7",
+      "objetivo": "Integrar S2–S14 con evidencia ejecutable, diagnosticar datos imperfectos y transferir decisiones a un caso nuevo cuyo workload varía por estudiante.",
       "evaluacion": {
-        "modo": "automatica",
+        "modo": "automatica_server_side",
         "href": "evaluador-s15.html",
         "puntaje_total": 100,
         "reintentos": true,
@@ -554,38 +554,34 @@
       "solucion": {
         "modo": "automatica_server_side",
         "evaluador": "evaluador-s15.html",
-        "version": "s15-workbench-v6",
+        "version": "s15-workbench-v7",
         "puntaje_maximo": 100,
         "mastery": 80,
         "transferencia": 20
       },
-      "trabajo_autonomo_min": 120,
+      "trabajo_autonomo_min": 75,
       "nucleo": {
-        "titulo": "Dominio corregible · 80 puntos",
-        "instrucciones": "Completa SQL Arena, Modelo+3FN, DDL Mutation, Document Lab, Warehouse Builder, BigQuery Physical y Nested BigQuery. Corrige con feedback progresivo.",
+        "titulo": "Dominio · 80 puntos",
+        "instrucciones": "Completa diagnóstico, SQL, modelo+3FN, DDL, documentos, warehouse, BigQuery y datos anidados. En evaluación el puntaje solo se revela al comprobar.",
         "criterios": [
-          "SQL sobre variaciones",
+          "contratos SQL visibles y grano",
           "modelo ER y 3FN",
-          "constraints y pruebas negativas",
-          "embeber/referenciar",
-          "hechos/dimensiones y OLTP/OLAP",
-          "partition/clustering/pruning",
-          "ARRAY/STRUCT/UNNEST y formatos JSON/Parquet"
+          "restricciones y pruebas negativas",
+          "embeber/referenciar y SQL/NoSQL",
+          "hechos/dimensiones y latencia batch/streaming",
+          "partition/clustering derivados de workload",
+          "ARRAY/STRUCT/UNNEST ejecutable y formatos"
         ]
       },
       "reto": {
         "titulo": "Boss Transfer · 20 puntos",
-        "instrucciones": "Resuelve pedidos omnicanal con un caso nuevo; el servidor ejecuta pruebas ocultas de DDL y SQL y verifica transferencia conceptual a Azure por necesidad.",
+        "instrucciones": "Resuelve un caso de pedidos con medidas en niveles distintos y un workload asignado por estudiante. El servidor recalcula la transferencia y conserva la variante.",
         "criterios": [
-          "SQL oculto",
-          "DDL oculto",
-          "grano línea de pedido y medidas",
-          "partición por fecha y clustering por patrón de filtros",
-          "UNNEST de items sin perder pedido_id",
-          "objetos → Blob/ADLS",
-          "documento operacional → Cosmos DB",
-          "lakehouse/ingeniería → Fabric/Databricks",
-          "BI → Power BI"
+          "resolver conflicto de grano",
+          "diseño físico derivado de workload",
+          "expansión de items sin perder clave raíz",
+          "transferencia Azure por necesidad",
+          "justificación defendible"
         ]
       }
     },
