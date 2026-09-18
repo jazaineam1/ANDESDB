@@ -88,27 +88,8 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            index.html revision/index.html \
-            tools/curso.json revision/tools/curso.json \
-            assets/learning/learning-plan.json revision/assets/learning/learning-plan.json \
-            evaluador-s15.html revision/evaluador-s15.html \
-            evaluador-s15-v7.html revision/evaluador-s15-v7.html \
-            assets/learning/s15-autograder-v7.js revision/assets/learning/s15-autograder-v7.js \
-            assets/learning/s15-nested-duckdb-v1.mjs revision/assets/learning/s15-nested-duckdb-v1.mjs \
-            assets/learning/s15-workbench-v7.css revision/assets/learning/s15-workbench-v7.css \
-            assets/learning/s15-teacher-link.js revision/assets/learning/s15-teacher-link.js \
-            Presentaciones/M6/sesion-15-desafio-final.html revision/Presentaciones/M6/sesion-15-desafio-final.html \
-            Presentaciones/M6/sesion-15-desafio-final-v6.html revision/Presentaciones/M6/sesion-15-desafio-final-v6.html \
-            Presentaciones/M6/sesion-15-desafio-final-v7.html revision/Presentaciones/M6/sesion-15-desafio-final-v7.html \
-            s15-analytics.html revision/s15-analytics.html \
-            revision/teacher-dashboard.html \
-            Plantillas/proyecto-final/README.md Plantillas/proyecto-final/criterios.md \
-            Plantillas/proyecto-final/Datos/casos.csv Plantillas/proyecto-final/Datos/eventos.csv Plantillas/proyecto-final/Datos/casos_dirty.csv Plantillas/proyecto-final/Datos/eventos_dirty.csv \
-            revision/Plantillas/proyecto-final/README.md revision/Plantillas/proyecto-final/criterios.md \
-            tools/integrar-experiencia.py revision/tools/integrar-experiencia.py \
-            tools/validar_curso.py revision/tools/validar_curso.py \
-            service-worker.js
+          git status --porcelain
+          git add -A
           if git diff --cached --quiet; then
             echo 'Sitio ya sincronizado'
             exit 0
