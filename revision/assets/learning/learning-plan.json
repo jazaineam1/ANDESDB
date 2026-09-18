@@ -504,23 +504,41 @@
         "modo": "automatica_server_side",
         "href": "evaluador-s15.html",
         "puntaje_total": 100,
-        "reintentos": true,
+        "max_intentos_finales": 2,
+        "comprobaciones_por_estacion": 3,
+        "pistas_sql_evaluacion": 2,
         "registro_lms": true,
         "criterios": [
           {
-            "titulo": "Grano y lectura de fuentes",
-            "puntos": 20
+            "titulo": "SQL Arena",
+            "puntos": 15
           },
           {
-            "titulo": "DDL e integridad",
-            "puntos": 25
+            "titulo": "Modelo ER + 3FN",
+            "puntos": 12
           },
           {
-            "titulo": "SQL y validación",
-            "puntos": 35
+            "titulo": "DDL Mutation Lab",
+            "puntos": 10
           },
           {
-            "titulo": "Arquitectura y adaptabilidad",
+            "titulo": "Document Lab",
+            "puntos": 10
+          },
+          {
+            "titulo": "Warehouse Builder",
+            "puntos": 13
+          },
+          {
+            "titulo": "BigQuery físico",
+            "puntos": 10
+          },
+          {
+            "titulo": "Nested BigQuery",
+            "puntos": 10
+          },
+          {
+            "titulo": "Boss Transfer",
             "puntos": 20
           }
         ]
