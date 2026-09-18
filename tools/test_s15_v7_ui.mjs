@@ -54,6 +54,15 @@ for(const pair of [
  ['agente.agente_id','agente'],['agente.agente_nombre','agente']
 ])await place('norm',pair[0],'norm:'+pair[1]);
 click(document.querySelector('[data-check="model"]'));
+if(document.querySelector('#score-model').textContent!=='12'){
+  console.error('MODEL DEBUG',document.querySelector('#fb-model').textContent);
+  console.error('CASO',document.querySelector('#entity-caso').textContent);
+  console.error('EVENTO',document.querySelector('#entity-evento').textContent);
+  console.error('FK',document.querySelector('#fkSelect').value,'CARD',document.querySelector('#cardinalitySelect').value);
+  console.error('NORM CASO',document.querySelector('#norm-caso').textContent);
+  console.error('NORM EVENTO',document.querySelector('#norm-evento').textContent);
+  console.error('NORM AGENTE',document.querySelector('#norm-agente').textContent);
+}
 assert.equal(document.querySelector('#score-model').textContent,'12');
 
 for(const id of ['q1','q2','q3','q4','q5']){
