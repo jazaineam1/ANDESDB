@@ -31,6 +31,7 @@ S15 integra S2–S14 y separa **dominio (80 puntos)** de **transferencia (20 pun
 6. El diseño de BigQuery parte de frecuencias de consulta visibles. El simulador separa la estimación previa por partición del ahorro conceptual posterior por clustering.
 7. La consulta de datos anidados elimina comentarios antes de validar, acepta alias equivalentes y se ejecuta con DuckDB-Wasm; escribir UNNEST en un comentario no genera crédito.
 8. El Boss no publica una clave fija. El servidor asigna un workload estable por estudiante y vuelve a calcular la transferencia sin confiar en localStorage ni en puntajes del cliente.
+9. En evaluación, el servidor también usa una variante oculta determinística por estudiante para los escenarios SQL: cambian valores como ids, barrios y tipos, pero nunca las reglas de negocio ni el contrato publicado.
 
 ## Contenido evaluado
 
