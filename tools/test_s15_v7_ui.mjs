@@ -46,6 +46,8 @@ assert.equal(document.querySelector('#score-model').textContent,'—');
 for(const id of ['caso.fecha_creacion','caso.tipo','caso.prioridad','caso.estado','caso.barrio'])await place('model',id,'model:caso');
 for(const id of ['evento.evento_id','evento.caso_id','evento.fecha_evento','evento.estado','evento.minutos_desde_anterior'])await place('model',id,'model:evento');
 change('#pkCaseSelect','caso.caso_id');change('#pkEventSelect','evento.evento_id');
+click(document.querySelector('[data-model-field="caso.caso_id"]'));
+assert.equal(document.querySelector('#pkCaseSelect').value,'caso.caso_id');
 change('#fkSelect','evento.caso_id');change('#cardinalitySelect','1:N');
 for(const pair of [
  ['caso.caso_id','caso'],['caso.barrio','caso'],
