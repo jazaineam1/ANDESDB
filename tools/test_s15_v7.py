@@ -39,6 +39,7 @@ def test_acceptance_22():
 
     # 2-4. Banco ER: toque/drag válidos, FK explícita y homónimos identificables.
     assert 'data-drop="model:caso"' in HTML and 'data-drop="model:evento"' in HTML
+    assert 'id="pkCaseSelect"' in HTML and 'id="pkEventSelect"' in HTML
     assert 'id="fkSelect"' in HTML and 'value="evento.caso_id"' in HTML and 'id="cardinalitySelect"' in HTML
     assert "caso_id · CASO" in JS and "caso_id · EVENTO" in JS and "estado · CASO" in JS and "estado · EVENTO" in JS
 
