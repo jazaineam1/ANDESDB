@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-auto-009210da64bf';
+const VERSION = 'andesdb-s15-v7-audit';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
@@ -17,6 +17,16 @@ const ESSENTIAL = [
   './assets/learning/learning-plan.json',
   './evaluador-s15.html',
   './evaluador-s15-v6.html',
+  './assets/vendor/apache-arrow/apache-arrow.mjs',
+  './assets/vendor/duckdb/duckdb-browser-mvp.worker.js',
+  './assets/vendor/duckdb/duckdb-mvp.wasm',
+  './assets/vendor/duckdb/duckdb-browser.mjs',
+  './Plantillas/proyecto-final/Datos/eventos_dirty.csv',
+  './Plantillas/proyecto-final/Datos/casos_dirty.csv',
+  './assets/learning/s15-workbench-v7.css',
+  './assets/learning/s15-nested-duckdb-v1.mjs',
+  './assets/learning/s15-autograder-v7.js',
+  './evaluador-s15-v7.html',
   './assets/learning/s15-autograder-v6.js',
   './assets/learning/s15-autograder-v6b.js',
   './assets/learning/s15-azure-transfer-v1.js',
@@ -114,7 +124,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder(?:-v6b?)?|s15-azure-transfer-v1)\.js|learning\/(?:s15-workbench(?:-v6)?\.css|learning-plan\.json)|pwa-install\.js)$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder(?:-v6b?|-v7)?|s15-azure-transfer-v1)\.js|learning\/(?:s15-workbench(?:-v6|-v7)?\.css|learning-plan\.json)|pwa-install\.js)$/i.test(url.pathname) || /\/assets\/learning\/s15-nested-duckdb-v1\.mjs$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));
