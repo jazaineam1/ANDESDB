@@ -1,4 +1,4 @@
-const VERSION = 'andesdb-auto-ec284e55588a';
+const VERSION = 'andesdb-auto-8b341ec4cc52';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const BASE = new URL('./', self.location.href).pathname;
