@@ -52,7 +52,9 @@ for(const pair of [
  ['agente.agente_id','agente'],['agente.agente_nombre','agente']
 ])await place('norm',pair[0],'norm:'+pair[1]);
 click(document.querySelector('[data-check="model"]'));
-assert.equal(document.querySelector('#score-model').textContent,'12');
+const modelScore=document.querySelector('#score-model').textContent;
+if(modelScore!=='12')console.log('MODEL_DEBUG',JSON.stringify({score:modelScore,feedback:document.querySelector('#fb-model').textContent,fk:document.querySelector('#fkView').textContent,cardinality:document.querySelector('#cardinalitySelect').value,caso:document.querySelector('#entity-caso').textContent,evento:document.querySelector('#entity-evento').textContent,normCaso:document.querySelector('#norm-caso').textContent,normEvento:document.querySelector('#norm-evento').textContent,normAgente:document.querySelector('#norm-agente').textContent}));
+assert.equal(modelScore,'12');
 
 for(const id of ['q1','q2','q3','q4','q5']){
   click(document.querySelector('[data-run="'+id+'"]'));
