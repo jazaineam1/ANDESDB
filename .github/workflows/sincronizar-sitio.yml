@@ -95,5 +95,6 @@ jobs:
             exit 0
           fi
           git commit -m 'Sincronizar S15 Workbench integral v7, index y cache'
-          git pull --rebase origin main
-          git push origin main
+          BRANCH="${GITHUB_REF_NAME}"
+          git pull --rebase origin "$BRANCH"
+          git push origin HEAD:"$BRANCH"
