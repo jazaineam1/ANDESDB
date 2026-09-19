@@ -49,6 +49,21 @@ assert.match(document.querySelector('#modePill').textContent,/Invitado.*Evaluaci
 assert.match(document.querySelector('#authStatus').textContent,/evaluación local determinística/i);
 assert.equal(document.querySelector('#serverScoreLabel').textContent,'/100 no se registra');
 
+// Solo las preguntas realmente difíciles llevan marcador de transferencia.
+const transferTasks=[...document.querySelectorAll('#sqlTasks .sqltask')].filter(x=>x.querySelector('.transfer-badge'));
+assert.equal(transferTasks.length,2);
+assert.deepEqual(transferTasks.map(x=>x.querySelector('h3').textContent.slice(0,2)).sort(),['Q3','Q5']);
+for(const x of transferTasks){
+  assert.match(x.querySelector('.transfer-badge').textContent,/Reto de transferencia/);
+  assert.match(x.querySelector('.transfer-note').textContent,/Conexión adicional/);
+  assert.match(x.querySelector('.transfer-note').textContent,/no memoria literal/i);
+}
+for(const q of ['Q1','Q2','Q4']){
+  const article=[...document.querySelectorAll('#sqlTasks .sqltask')].find(x=>x.querySelector('h3').textContent.startsWith(q));
+  assert.ok(article);
+  assert.equal(article.querySelector('.transfer-badge'),null,q+' no debe marcarse como reto de transferencia');
+}
+
 for(const id of ['sql','model','ddl','doc','dw','bq','nested'])assert.equal(document.querySelector('#score-'+id).textContent,'—');
 
 await place('model','caso.caso_id','model:caso');
