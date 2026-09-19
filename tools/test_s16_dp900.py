@@ -100,7 +100,7 @@ for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","v
     assert token.casefold() in GUIDE.casefold(), token
 
 assert GLOSS==RGLOSS
-for token in ["Grano","Partición","Clustering","UNNEST","OLTP","OLAP","ETL","ELT","Parquet","CAP","SQL Arena","DDL Mutation","Boss Transfer"]:
+for token in ["Grano","Partición","Clustering","UNNEST","OLTP","OLAP","ETL","ELT","Parquet","CAP","0 · Diagnóstico","1 · SQL Arena","2 · Modelo + 3FN","3 · DDL Mutation","4 · Document Lab","5 · Warehouse","6 · BigQuery físico","7 · Nested BigQuery","8 · Boss Transfer"]:
     assert token in GLOSS, token
 
 print("OK · S16: cierre honesto + todo SQL + DP900 + 24 escenarios + glosario + portafolio + encuesta")
