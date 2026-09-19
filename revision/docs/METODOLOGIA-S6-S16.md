@@ -229,7 +229,7 @@ sin coordinación docente ni fecha límite. Ninguna de las dos exige tarjeta.
   el DP-900, igual que Fabric — se nombra, no se instala una cuenta nueva
   para practicarlo.
 - **S15:** datos imperfectos sin herramienta prescrita.
-- **S16:** cierre del curso + primer contacto DP-900: se explica el examen, se resuelven 24 escenarios proporcionales al blueprint con **48 componentes evaluables y crédito parcial**, se clasifica cada error C/T/L, se exploran recursos oficiales y se construye un plan con fecha ligado al voucher. El diagnóstico conserva dos lecturas —exactitud por componente y escenarios completamente correctos—, no fuerza desempates entre dominios y no llama pre/post a la reflexión S1 si no existe una respuesta inicial individual almacenada.
+- **S16:** cierre fuerte del diplomado + puente DP-900: primero consolida SQL, pensamiento de consulta, diseño, integridad, SQL/NoSQL, warehouse, BigQuery y anidados; después resuelve tres casos de transferencia **sin nota** y conecta lo aprendido con el blueprint DP-900. No se repite un diagnóstico custom después del Workbench S15: en su lugar se hacen 5 preguntas del Practice Assessment oficial en vivo. La sesión no recopila respuestas abiertas S1, portafolios, mini encuesta ni diagnóstico adicional al docente.
 
 **Lo que esto descarta a propósito:** un producto nuevo por sesión solo por
 variedad, repetir SQL básico bajo otro nombre, cambiar de caso de negocio a
