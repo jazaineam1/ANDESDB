@@ -576,7 +576,7 @@
           "modo": "consolidacion",
           "titulo": "Cierre del curso + primer contacto DP-900",
           "estado": "pendiente",
-          "desc": "Cierre de 180 min (165 útiles + pausa): apertura honesta, devolución guiada de S15, recorrido «Todo el SQL que escribiste», reflexión de S1, explicación real del DP-900 y voucher, cápsula de vocabulario Azure, diagnóstico de 24 escenarios 7–6–4–7, exploración oficial, plan con fecha, portafolio, glosario y encuesta.",
+          "desc": "Cierre de 180 min totales (165 útiles + pausa): apertura honesta, devolución guiada de S15, recorrido «Todo el SQL que escribiste», reflexión de S1, explicación del DP-900 y voucher, cápsula de vocabulario Azure, diagnóstico de 24 escenarios 7–6–4–7, exploración oficial, plan con fecha, portafolio, glosario y encuesta.",
           "tags": [
             "DP-900",
             "voucher",
