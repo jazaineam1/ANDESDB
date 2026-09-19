@@ -625,6 +625,11 @@
               "txt": "🧩 HackerRank SQL Basic",
               "href": "https://www.hackerrank.com/skills-verification/sql_basic",
               "externo": true
+            },
+            {
+              "txt": "⬇ Glosario de cierre S16 · una página",
+              "href": "Presentaciones/M6/glosario-cierre-s16.html",
+              "download": true
             }
           ]
         }
