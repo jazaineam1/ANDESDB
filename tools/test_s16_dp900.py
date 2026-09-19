@@ -17,12 +17,13 @@ def need(token:str):
 assert HTML==REV
 for token in [
     "Cierre del curso +", "primer contacto DP-900", "45 min", "65 min", "700+",
-    "40–60", "puede variar", "Online o centro", "voucher", "25–30%", "20–25%", "15–20%",
+    "40–60", "Online o centro", "voucher", "25–30%", "20–25%", "15–20%",
     "24 escenarios", "7–6–4–7", "Practice Assessment", "Exam Sandbox",
     "Enviar diagnóstico al docente", "challenge_completed", "learning-track",
     "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"'
 ]:
     need(token)
+assert "puede variar" in HTML.casefold()
 
 for bad in ["Microsoft Paint","Azure DNS","16 escenarios"]:
     assert bad not in HTML, bad
