@@ -124,6 +124,7 @@ assert.equal(p1.document.querySelector('#score-sql').textContent,scoreBefore);
 
 // q2 ya tenía 2 pistas: solo requiere la tercera; no se reinicia el contador.
 click(p1.window,p1.document.querySelector('[data-hint="q2"]'));
+await sleep(330);
 assert.equal(JSON.parse(p1.window.localStorage.getItem(STORE)).hints.q2,3);
 assert.equal(p1.document.querySelector('[data-solution="q2"]').disabled,false);
 
@@ -131,6 +132,7 @@ assert.equal(p1.document.querySelector('[data-solution="q2"]').disabled,false);
 const s2hint=p1.document.querySelector('[data-study-hint="s2"]');
 click(p1.window,s2hint);click(p1.window,s2hint);click(p1.window,s2hint);
 assert.equal(p1.document.querySelector('[data-study-solution="s2"]').disabled,false);
+await sleep(330);
 const afterPracticeRaw=p1.window.localStorage.getItem(STORE);
 const afterPractice=JSON.parse(afterPracticeRaw);
 assert.deepEqual(critical(afterPractice),critical({...legacy,hints:{...legacy.hints,q2:3}}));
@@ -221,6 +223,7 @@ p2.dom.window.close();
     assert.equal(document.querySelector('#study-explanation-'+id).hidden,false,id+' debe mostrar explicación separada');
     click(window,document.querySelector('[data-study-view="'+id+'|attempt"]'));
   }
+  await sleep(330);
   const after=JSON.parse(window.localStorage.getItem(STORE));
   assert.deepEqual(critical(after),domainBefore,'Las guías no-SQL solo pueden añadir studyHints/solutionView');
   for(const id of ['s0','s2','s3','s4','s5','s6','s7','boss'])assert.equal(after.studyHints[id],3);
