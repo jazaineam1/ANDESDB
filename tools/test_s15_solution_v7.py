@@ -69,6 +69,14 @@ def main():
     ):
         assert token in SOL_JS
 
+    # Marcador selectivo: únicamente Q3 y Q5 son retos de transferencia.
+    assert "const SQL_TRANSFER_CHALLENGES=" in SOL_JS
+    transfer=SOL_JS[SOL_JS.index("const SQL_TRANSFER_CHALLENGES="):SOL_JS.index("const SQL_SOLUTIONS=")]
+    assert "q3:" in transfer and "q5:" in transfer
+    assert "q1:" not in transfer and "q2:" not in transfer and "q4:" not in transfer
+    assert "Reto de transferencia" in SOL_JS and "Conexión adicional:" in SOL_JS
+    assert ".transfer-badge" in CSS and ".transfer-note" in CSS
+
     # Q3: último evento -> inclusión -> historial completo -> suma.
     for token in (
         "1. encontrar último evento",
@@ -103,7 +111,7 @@ def main():
     assert ".example-code" in CSS and ".study-guide-bar" in CSS and ".grain-flow" in CSS
 
     # El espejo revision debe ser ejecutable y usar exactamente el mismo runtime.
-    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-format1' in REV_HTML
+    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-transfer1' in REV_HTML
     assert SOL_JS==REV_JS
 
     print("OK · S15 solucionario guiado: estructura, 3 pistas, ejemplos, DDL, sesión y espejo revision")
