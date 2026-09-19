@@ -219,8 +219,8 @@ def test_cohort_persistence_contract():
     # Evaluación queda sin respuestas embebidas; la práctica usa un runtime separado.
     assert "SQL_SOLUTIONS" not in JS and "STATION_GUIDES" not in JS
     assert "SQL_SOLUTIONS" in PRACTICE_JS and "STATION_GUIDES" in PRACTICE_JS
-    assert "s15-autograder-v7-practice.js?v=s15v7-cohort3" in HTML
-    assert "s15-autograder-v7.js?v=s15v7-cohort3" in HTML
+    assert "s15-autograder-v7-practice.js?v=s15v7-transfer1" in HTML
+    assert "s15-autograder-v7.js?v=s15v7-transfer1" in HTML
     assert "new URLSearchParams(location.search).get('modo')==='practica'" in HTML
 
     # La estructura v7 histórica se conserva; los nuevos campos de guía son solo aditivos.
@@ -281,6 +281,14 @@ def test_cohort_persistence_contract():
                   "Patrón de consultas","Antes de UNNEST","Después de UNNEST",
                   "P01","12.000","36.000"):
         assert token in HTML, token
+
+    # Solo Q3 y Q5 se marcan como retos de transferencia: son los saltos conceptuales más fuertes.
+    assert "const SQL_TRANSFER_CHALLENGES=" in JS
+    transfer=JS[JS.index("const SQL_TRANSFER_CHALLENGES="):JS.index("const MODEL_FIELDS=")]
+    assert "q3:" in transfer and "q5:" in transfer
+    assert "q1:" not in transfer and "q2:" not in transfer and "q4:" not in transfer
+    assert "Reto de transferencia" in JS and "Conexión adicional:" in JS
+    assert "transfer-badge" in CSS and "transfer-note" in CSS
 
 def main():
     test_acceptance_22();test_methodology_and_security_regressions();test_routes_and_pwa();test_cohort_persistence_contract()
