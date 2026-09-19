@@ -80,6 +80,7 @@ for url in [
 
 # Cheat Sheet de cuatro páginas, con mapa de referentes por concepto.
 assert sheet.count('<section class="page">')==4
+assert 'id="referentes-industria"' in sheet
 for token in [
     "Cheat Sheet final · SQL y pensamiento de consulta",
     "Orden lógico del motor","INNER JOIN","FULL OUTER JOIN","UNION ALL","WITH / CTE",
@@ -128,6 +129,7 @@ assert "24 escenarios" not in cs["desc"]
 assert "48 componentes" not in cs["desc"]
 assert "Cheat Sheet" in cs["desc"]
 assert any(r["href"]=="Presentaciones/M6/glosario-cierre-s16.html" and "Cheat Sheet" in r["txt"] for r in cs["recursos"])
+assert any(r["href"]=="Presentaciones/M6/glosario-cierre-s16.html#referentes-industria" and "Referentes de industria" in r["txt"] for r in cs["recursos"])
 
 dash=(ROOT/"revision/teacher-dashboard.html").read_text(encoding="utf-8")
 legacy=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
