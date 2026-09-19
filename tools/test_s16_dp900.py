@@ -104,6 +104,12 @@ assert "48 componentes" not in cs["desc"]
 assert "Cheat Sheet" in cs["desc"]
 assert any(r["href"]=="Presentaciones/M6/glosario-cierre-s16.html" and "Cheat Sheet" in r["txt"] for r in cs["recursos"])
 
+dash=(ROOT/"revision/teacher-dashboard.html").read_text(encoding="utf-8")
+legacy=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
+assert "s16-analytics.html" not in dash, "La analítica S16 no debe seguir en la navegación docente activa"
+assert "Analítica histórica (versión anterior)" in legacy
+assert "la S16 actual ya no envía diagnósticos" in legacy
+
 # La guía protege explícitamente la nueva intención.
 for token in [
     "La última sesión no es otra evaluación",
