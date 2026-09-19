@@ -574,16 +574,20 @@
           "fecha": "2026-09-22",
           "duracionUtil": 165,
           "modo": "consolidacion",
-          "titulo": "Cierre + preparación DP-900",
+          "titulo": "Cierre del curso + primer contacto DP-900",
           "estado": "pendiente",
-          "desc": "Cierre con evidencia S1 → S15 → S16 y diagnóstico interactivo de 16 escenarios, cuatro por dominio DP-900, clasificando errores como concepto, transferencia o lectura para construir un plan de estudio dirigido.",
+          "desc": "Cierre S1 → S15, explicación operativa del examen DP-900 y diagnóstico interactivo de 24 escenarios distribuidos 7–6–4–7 según el blueprint vigente. Clasifica errores C/T/L, explora Practice Assessment + Exam Sandbox y sale con plan y fecha antes del vencimiento del voucher.",
           "tags": [
             "DP-900",
-            "diagnóstico",
+            "voucher",
+            "24 escenarios",
+            "7-6-4-7",
             "C / T / L",
             "Azure",
-            "transferencia",
-            "plan de estudio"
+            "Practice Assessment",
+            "Exam Sandbox",
+            "plan con fecha",
+            "diagnóstico docente"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [
@@ -598,8 +602,13 @@
               "externo": true
             },
             {
-              "txt": "🎓 Preparación oficial y Exam Sandbox",
+              "txt": "🧭 Preparación oficial y Exam Sandbox",
               "href": "https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam",
+              "externo": true
+            },
+            {
+              "txt": "📅 Registrar y programar el examen",
+              "href": "https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam",
               "externo": true
             }
           ]
