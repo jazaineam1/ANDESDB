@@ -204,3 +204,38 @@ button,.tile,.chip,.tabs button{touch-action:manipulation}
   .grain-flow>div{min-height:64px}
   .grain-card>.muted{margin:0 10px 10px}
 }
+
+/* S15 · marcadores selectivos de transferencia */
+.sql-title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sql-title-row h3{margin:0}
+.transfer-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#fff4e5;
+  border:1px solid #fdb022;
+  color:#93370d;
+  font-size:.62rem;
+  font-weight:950;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.transfer-note{
+  margin:8px 0 0;
+  padding:8px 10px;
+  border-left:3px solid #f79009;
+  border-radius:8px;
+  background:#fffaeb;
+  color:#694c16;
+  font-size:.72rem;
+  line-height:1.45;
+}
+.transfer-note b{color:#93370d}
+.transfer-note span{display:block;margin-top:2px;color:#7a5d1e}
+@media(max-width:760px){
+  .transfer-badge{font-size:.58rem}
+  .transfer-note{font-size:.69rem}
+}
