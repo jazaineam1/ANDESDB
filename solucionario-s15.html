@@ -1,145 +1,106 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="ANDESDB · Solucionario de sesión 15 explicado paso a paso">
-<title>ANDESDB · Solucionario explicado de sesión 15</title>
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="description" content="ANDESDB · Solucionario guiado S15 con la misma ruta del modo práctica">
+<title>ANDESDB · Solucionario guiado S15</title>
+<link rel="stylesheet" href="assets/learning/s15-workbench-v7.css?v=s15v7-fast1">
 <style>
-:root{--bg:#f4f6f8;--paper:#fff;--ink:#17202a;--muted:#5d6b78;--line:#dce2e8;--blue:#123c69;--gold:#c99700;--ok:#0d6b4f;--soft:#eef4f9;--warn:#fff7dc;--code:#111827;--bad:#8a3900}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.58 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-a{color:var(--blue)}header{background:linear-gradient(135deg,#0e2f53,#184e78);color:#fff;padding:42px 20px 34px}
-.wrap{max-width:1080px;margin:auto}.ey{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#f2cc50}
-h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.04;margin:.25rem 0 1rem}header p{max-width:860px;color:#e4edf5;font-size:1.05rem}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:750;background:#fff;color:#123c69}.btn.alt{background:transparent;color:#fff;border:1px solid #90abc3}
-main{padding:24px 16px 60px}.notice{background:var(--warn);border:1px solid #ead38a;border-radius:14px;padding:16px 18px;margin-bottom:20px}
-nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:22px;box-shadow:0 4px 16px #00000008}
-nav.toc a{display:inline-block;margin:5px 10px 5px 0;padding:7px 10px;border-radius:999px;background:var(--soft);text-decoration:none;font-size:.92rem}
-section{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #00000008}
-h2{margin:.1rem 0 .8rem;font-size:1.65rem;color:#123c69}h3{margin:1.45rem 0 .55rem;font-size:1.15rem}.tag{display:inline-block;background:#e8f0f7;color:#123c69;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:750;margin-bottom:8px}
-.answer{border-left:4px solid var(--ok);padding:12px 14px;background:#f2faf7;border-radius:0 10px 10px 0;margin:10px 0}.why{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}.wrong{border-left:4px solid #cf6f2c;background:#fff5ed;padding:12px 14px;border-radius:0 10px 10px 0;margin:10px 0}
-pre{background:var(--code);color:#e5edf7;padding:15px;border-radius:12px;overflow:auto;font-size:.88rem;line-height:1.5;white-space:pre}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.94rem}th,td{border:1px solid var(--line);padding:9px;vertical-align:top}th{background:#eef3f7;text-align:left}
-details{border:1px solid var(--line);border-radius:12px;margin:10px 0;background:#fff;overflow:hidden}summary{cursor:pointer;padding:12px 14px;font-weight:800;background:#f8fafc}details>div{padding:2px 14px 14px}.solution>summary{background:#edf8f3;color:#075c43}.hint>summary{background:#fffaf0;color:#6b4d00}
-.small{color:var(--muted);font-size:.92rem}.danger{color:var(--bad);font-weight:750}
-.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}.step{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px}.step b{display:block;color:var(--blue);margin-bottom:4px}
-.qa{border-top:1px solid var(--line);padding-top:18px;margin-top:20px}.qa:first-of-type{border-top:0;padding-top:0}
-.call{background:#eef4f9;border:1px solid #cbd9e5;border-radius:12px;padding:12px 14px;margin:10px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.goodbad{display:grid;grid-template-columns:1fr 1fr;gap:12px}.goodbad>div{border-radius:12px;padding:12px;border:1px solid var(--line)}
-footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
-@media(max-width:760px){header{padding-top:30px}section{padding:17px}pre{font-size:.79rem}table{font-size:.83rem}th,td{padding:7px}.steps,.two,.goodbad{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<header>
-  <div class="wrap">
-    <div class="ey">ANDESDB · Sesión 15</div>
-    <h1>Solucionario explicado de sesión 15</h1>
-    <p>Úsalo como acompañamiento del <b>modo práctica</b>: primero intenta, luego abre las pistas y solo al final despliega la solución. Cada respuesta se explica con ejemplos pequeños y con el mismo hilo trabajado entre S2 y S14.</p>
-    <div class="actions">
-      <a class="btn" href="evaluador-s15-v7.html?modo=practica">Abrir Workbench en práctica</a>
-      <a class="btn alt" href="index.html">Volver al curso</a>
-    </div>
-  </div>
-</header>
+.study-help{margin-top:.75rem}.study-feedback{margin-top:.6rem}.study-solution{margin-top:.75rem;padding:1rem;border:1px solid #a8d5c3;border-radius:14px;background:#effaf5;color:#17352c}.study-solution p{margin:.55rem 0}.study-solution table{width:100%;border-collapse:collapse;background:white;color:#17202a}.study-solution th,.study-solution td{border:1px solid #dce2e8;padding:.55rem;vertical-align:top}.study-solution th{background:#eef3f7;text-align:left}.solution-code{white-space:pre;overflow:auto}.solution-label{display:block;font-weight:800;margin-bottom:.35rem}.study-result{min-height:7rem}.hint-source{display:none}.q3-flow{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.7rem}.q3-flow span{padding:.45rem .65rem;border-radius:999px;background:#fff;border:1px solid #d9e2ea}.q3-flow b{color:#b07800}.study-example{margin:.8rem 0}.mini-table{width:100%;border-collapse:collapse;background:#fff;color:#17202a}.mini-table th,.mini-table td{border:1px solid #dce2e8;padding:.45rem}.mini-table th{background:#eef3f7}.study-only{background:#fff7dc;border:1px solid #ead38a;border-radius:12px;padding:.8rem 1rem;margin:.8rem 0}.nav-actions a{display:block;text-align:center;text-decoration:none}.study-solution[hidden]{display:none}.top .scorebox b{font-size:1rem}.mission .mhead p{max-width:850px}.locked-note{font-size:.85rem;color:#647382;margin-top:.45rem}
+@media(max-width:760px){.q3-flow{display:grid;grid-template-columns:1fr}.q3-flow b{display:none}.study-solution{padding:.8rem}}
+</style></head><body>
+<header class="top"><div class="topin"><a class="brand" href="/ANDESDB/">ANDESDB</a><b class="course-title">S15 · solucionario guiado</b><span class="spacer"></span><span class="modepill">Práctica + solución</span><div class="scorebox"><b>3 pistas</b><span>→ respuesta</span></div><button id="toggleNav" class="btn alt" type="button">Misiones</button></div></header>
 
-<main class="wrap">
-  <div class="notice"><b>Regla de uso:</b> no memorices el SQL ni las selecciones. Pregunta primero <b>qué representa una fila</b>, <b>qué conjunto de datos entra</b> y <b>qué regla protege el resultado</b>. Las soluciones están ocultas por defecto para que puedas razonar antes de verlas.</div>
+<section class="hero"><div class="heroin"><div><div class="ey">Misma ruta · mismo orden · más explicación</div><h1>Primero razona. <span>Después abre la respuesta.</span></h1><p>Este solucionario conserva la misma secuencia de la práctica S15. En cada reto debes solicitar tres pistas progresivas antes de que se habilite el botón <b>Ver respuesta</b>.</p><div class="badges"><span>misma estructura S15</span><span>3 pistas por reto</span><span>respuesta bloqueada al inicio</span><span>ejemplos pequeños</span><span>no modifica tu avance</span></div><div class="mode-links"><a href="evaluador-s15-v7.html?modo=practica">Volver a la práctica</a><a class="active" href="solucionario-s15.html">Solucionario guiado</a></div></div><aside class="hero-card"><b>Cómo usarlo</b><p>1) intenta el ejercicio en la práctica; 2) solicita una pista; 3) vuelve a intentar; 4) solicita hasta tres pistas; 5) solo entonces abre la respuesta y compara.</p><p><b>Importante:</b> esta página usa un estado separado del Workbench. Abrir pistas o respuestas aquí no cambia ni reinicia lo que ya hiciste en S15.</p></aside></div></section>
 
-  <nav class="toc">
-    <b>Ir a:</b><br>
-    <a href="#diagnostico">0 Diagnóstico</a>
-    <a href="#sql">1 SQL</a>
-    <a href="#modelo">2 Modelo + 3FN</a>
-    <a href="#ddl">3 DDL</a>
-    <a href="#documentos">4 Documentos</a>
-    <a href="#warehouse">5 Warehouse</a>
-    <a href="#bigquery">6 BigQuery</a>
-    <a href="#nested">7 Anidados</a>
-    <a href="#boss">8 Boss práctica</a>
-  </nav>
+<div class="layout"><aside class="nav" id="nav"><h3>Ruta integral</h3>
+<a href="#s0"><span>0</span><div><b>Diagnóstico</b><small>datos imperfectos · sin puntos</small></div><em>—</em></a>
+<a href="#s1"><span>1</span><div><b>SQL Arena</b><small>S2–S5</small></div><em>15</em></a>
+<a href="#s2"><span>2</span><div><b>Modelo + 3FN</b><small>S6–S8</small></div><em>12</em></a>
+<a href="#s3"><span>3</span><div><b>DDL Mutation</b><small>S9</small></div><em>10</em></a>
+<a href="#s4"><span>4</span><div><b>Document Lab</b><small>S10–S11</small></div><em>10</em></a>
+<a href="#s5"><span>5</span><div><b>Warehouse</b><small>S6 + S12</small></div><em>13</em></a>
+<a href="#s6"><span>6</span><div><b>BigQuery físico</b><small>S13</small></div><em>10</em></a>
+<a href="#s7"><span>7</span><div><b>Nested BigQuery</b><small>S14</small></div><em>10</em></a>
+<a href="#boss"><span>8</span><div><b>Boss Transfer</b><small>caso nuevo</small></div><em>20</em></a>
+<div class="nav-actions"><a class="btn alt" href="evaluador-s15-v7.html?modo=practica">Abrir práctica</a></div>
+</aside><main class="work">
+<div class="status ok"><b>Solucionario:</b> las respuestas están bloqueadas hasta que abras tres pistas en cada reto.</div>
 
-  <section id="diagnostico">
-    <span class="tag">S6 · calidad y evidencia</span>
-    <h2>0 · Diagnóstico de datos imperfectos</h2>
-    <p>La idea es separar <b>lo que la tabla demuestra</b> de <b>la explicación que imaginamos</b>.</p>
-
-    <div class="qa">
-      <h3>Duplicados de caso</h3>
-      <div class="call">Si el mismo <code>caso_id</code> aparece dos veces, eso sí se puede demostrar contando filas por identificador.</div>
-      <details class="solution"><summary>💡 Ver consulta y explicación</summary><div>
-<pre><code>SELECT caso_id, COUNT(*) AS filas
+<section class="mission" id="s0"><header class="mhead"><div class="num">0</div><div><div class="ey">S6 · diagnóstico · sin puntos</div><h2>Datos imperfectos antes de modelar</h2><p>La misma idea del Workbench: distinguir un hallazgo visible en los datos de una explicación sobre su causa.</p></div><div class="mscore">diagnóstico</div></header>
+<div class="grid2"><div class="card"><h3>Ejemplo</h3><pre class="code solution-code"><code>SELECT caso_id, COUNT(*) AS filas
 FROM casos_dirty
 GROUP BY caso_id
-HAVING COUNT(*) &gt; 1;</code></pre>
-        <p><b>Por qué:</b> <code>GROUP BY</code> reúne las filas del mismo ID y <code>HAVING COUNT(*) &gt; 1</code> deja solamente los que aparecen repetidos.</p>
-      </div></details>
-    </div>
+HAVING COUNT(*) &gt; 1;</code></pre><p>Esta consulta demuestra duplicados; no explica por qué ocurrieron.</p></div><div class="card"><h3>Hallazgo vs hipótesis</h3>
 
-    <div class="qa">
-      <h3>NULL en tipo</h3>
-      <details class="solution"><summary>💡 Ver consulta y explicación</summary><div>
-<pre><code>SELECT *
-FROM casos_dirty
-WHERE tipo IS NULL;</code></pre>
-        <p><b>Por qué:</b> aquí no estás explicando la causa del NULL; solo estás demostrando que existe.</p>
-      </div></details>
-    </div>
+<div class="study-help" data-help="diag">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> “existe un evento cuyo caso no aparece” se puede verificar mirando las tablas.</div><div><b>Pista 2:</b> “ocurrió por una falla de sincronización” intenta explicar la causa.</div><div><b>Pista 3:</b> una causa no observada directamente debe tratarse como hipótesis, aunque parezca plausible.</div></div>
+  <div class="study-solution" data-study-solution hidden><div class="answer"><b>Hallazgo:</b> existe un evento cuyo caso no aparece en CASOS.<br><b>Hipótesis:</b> ocurrió por una falla de sincronización.</div><p>El primer enunciado se comprueba con los datos; el segundo necesita evidencia adicional.</p></div>
+</div>
+</div></div></section>
 
-    <div class="qa">
-      <h3>Evento cuyo caso no existe</h3>
-      <details class="solution"><summary>💡 Ver consulta y explicación</summary><div>
-<pre><code>SELECT e.*
-FROM eventos_dirty e
-LEFT JOIN casos_dirty c
-  ON c.caso_id = e.caso_id
-WHERE c.caso_id IS NULL;</code></pre>
-        <p>El <code>LEFT JOIN</code> conserva los eventos aunque no encuentre el caso. Si del lado de CASOS queda <code>NULL</code>, encontramos un evento sin caso correspondiente.</p>
-        <div class="answer"><b>Lo muestran los datos:</b> existe un evento cuyo caso no aparece en CASOS.<br><b>No lo demuestran los datos:</b> “ocurrió por una falla de sincronización”. Esa sería una explicación posible, no un hallazgo observado.</div>
-      </div></details>
-    </div>
-  </section>
-
-  <section id="sql">
-    <span class="tag">S2–S5 · SQL y nivel de agregación</span>
-    <h2>1 · SQL Arena</h2>
-    <p>En cada pregunta: <b>ejemplo → pistas → solución explicada</b>.</p>
-
-    <div class="qa">
-      <h3>Q1 · Casos de prioridad Alta por barrio</h3>
-      <table>
-        <tr><th>barrio</th><th>prioridad</th></tr>
-        <tr><td>Norte</td><td>Alta</td></tr>
-        <tr><td>Norte</td><td>Alta</td></tr>
-        <tr><td>Norte</td><td>Media</td></tr>
-        <tr><td>Sur</td><td>Media</td></tr>
-      </table>
-      <div class="call">Para Norte, la respuesta correcta es <b>2 casos Alta</b>. La fila Media no debe entrar.</div>
-      <details class="hint"><summary>🔎 Pista 1 · ¿Qué debes pensar?</summary><div>Antes de contar, define exactamente qué filas pertenecen a la población pedida.</div></details>
-      <details class="hint"><summary>🔎 Pista 2 · Ejemplo pequeño</summary><div>Si filtras <code>Media</code>, Norte daría 1. Pero la pregunta pide Alta: debe dar 2.</div></details>
-      <details class="hint"><summary>🔎 Pista 3 · Orden de construcción</summary><div><code>SELECT barrio, COUNT(*)</code> → <code>FROM casos_src</code> → <code>WHERE prioridad='Alta'</code> → <code>GROUP BY barrio</code>.</div></details>
-      <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-<pre><code>SELECT barrio,
+<section class="mission" id="s1"><header class="mhead"><div class="num">1</div><div><div class="ey">S2–S5 · 15 puntos</div><h2>SQL Arena · consulta y grano</h2><p>Mismos cinco retos de la práctica. El starter conserva el error inicial para que puedas reconocer qué debes corregir.</p></div><div class="mscore">5 preguntas</div></header>
+<div id="sqlTasks">
+<article class="sqltask">
+  <header>
+    <h3>Q1 · Alta por barrio</h3>
+    <p class="muted">Devuelve SOLO barrios que tengan al menos un caso de prioridad Alta.</p>
+    <div class="contract"><b>Contrato:</b> Columnas exactas: barrio, casos_alta. No incluyas barrios con 0 casos Alta.</div>
+    <div class="contract"><b>Ejemplo mínimo:</b> Norte tiene 2 casos Alta y 1 Media. La respuesta para Norte debe ser 2; la fila Media no entra.</div>
+  </header>
+  <div class="sqlbody">
+    <div>
+      <label class="solution-label">Starter de la práctica</label>
+      <textarea class="code" readonly>SELECT barrio, COUNT(*) AS casos_alta
+FROM casos_src
+WHERE prioridad = &#39;Media&#39;
+GROUP BY barrio;</textarea>
+      
+<div class="study-help" data-help="q1">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Qué mirar:</b> antes de contar, define la población. La palabra que manda es <code>Alta</code>.</div><div><b>Contraejemplo:</b> si dejas <code>prioridad='Media'</code>, responderás una pregunta distinta aunque el SQL ejecute sin error.</div><div><b>Orden:</b> selecciona barrio y conteo → filtra Alta → agrupa por barrio.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>SELECT barrio,
        COUNT(*) AS casos_alta
 FROM casos_src
-WHERE prioridad = 'Alta'
+WHERE prioridad = &#39;Alta&#39;
 GROUP BY barrio;</code></pre>
-        <p><b>1.</b> <code>WHERE</code> decide qué casos entran. <b>2.</b> <code>GROUP BY barrio</code> forma un grupo por barrio. <b>3.</b> <code>COUNT(*)</code> cuenta dentro de cada grupo.</p>
-      </div></details>
+ <p><b>Por qué:</b> <code>WHERE</code> decide qué filas entran; <code>GROUP BY barrio</code> forma los grupos y <code>COUNT(*)</code> cuenta dentro de cada grupo.</p></div>
+</div>
     </div>
-
-    <div class="qa">
-      <h3>Q2 · Último evento temporal</h3>
-      <table>
-        <tr><th>caso</th><th>fecha</th><th>estado</th></tr>
-        <tr><td>1001</td><td>08:00</td><td>Cerrado</td></tr>
-        <tr><td>1001</td><td>10:00</td><td>Abierto</td></tr>
-      </table>
-      <div class="wrong"><b>Error típico:</b> <code>MAX(estado)</code> no significa “último estado”. Compara textos; no mira la hora.</div>
-      <details class="hint"><summary>🔎 Pista 1 · ¿Qué debes pensar?</summary><div>Primero encuentra la fecha más reciente de cada caso.</div></details>
-      <details class="hint"><summary>🔎 Pista 2 · Ejemplo pequeño</summary><div>Para el caso 1001, la fecha mayor es 10:00. El estado correcto es entonces el estado de esa fila: <b>Abierto</b>.</div></details>
-      <details class="hint"><summary>🔎 Pista 3 · Orden de construcción</summary><div><code>WITH ultima_fecha</code> → <code>MAX(fecha_evento)</code> por caso → volver a EVENTOS con esa fecha.</div></details>
-      <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-<pre><code>WITH ultima_fecha AS (
+    <div class="result study-result"><div class="pad"><b>Qué estás aprendiendo</b><p>Lee el contrato, usa las pistas y compara tu razonamiento antes de abrir la respuesta.</p></div></div>
+  </div>
+</article>
+<article class="sqltask">
+  <header>
+    <h3>Q2 · Último evento temporal</h3>
+    <p class="muted">Compara el snapshot actual con el estado del evento de fecha más reciente de cada caso.</p>
+    <div class="contract"><b>Contrato:</b> Columnas exactas: caso_id, estado_actual, ultimo_estado. El orden lo define fecha_evento; no evento_id ni el orden alfabético del estado.</div>
+    <div class="contract"><b>Ejemplo mínimo:</b> caso 1001: 08:00 Cerrado, 10:00 Abierto. El último estado es <b>Abierto</b>, porque 10:00 es la fecha mayor.</div>
+  </header>
+  <div class="sqlbody">
+    <div>
+      <label class="solution-label">Starter de la práctica</label>
+      <textarea class="code" readonly>SELECT c.caso_id, c.estado AS estado_actual,
+       MAX(e.estado) AS ultimo_estado
+FROM casos_src c
+LEFT JOIN eventos_src e ON e.caso_id=c.caso_id
+GROUP BY c.caso_id,c.estado;</textarea>
+      
+<div class="study-help" data-help="q2">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Qué mirar:</b> <code>MAX(estado)</code> compara texto; no sabe cuál fila ocurrió de última.</div><div><b>Primer paso:</b> calcula <code>MAX(fecha_evento)</code> por <code>caso_id</code>.</div><div><b>Segundo paso:</b> vuelve a EVENTOS usando caso + fecha máxima para recuperar el estado de esa fila.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>WITH ultima_fecha AS (
   SELECT caso_id,
          MAX(fecha_evento) AS fecha_evento
   FROM eventos_src
@@ -154,34 +115,35 @@ LEFT JOIN ultima_fecha u
 LEFT JOIN eventos_src e
   ON e.caso_id = u.caso_id
  AND e.fecha_evento = u.fecha_evento;</code></pre>
-        <p>La primera parte responde <b>cuándo ocurrió el último evento</b>. La segunda recupera <b>qué estado tenía ese evento</b>.</p>
-      </div></details>
+ <p><b>Por qué:</b> primero respondes <i>cuándo</i> ocurrió el último evento; luego recuperas <i>qué estado</i> tenía esa fila.</p></div>
+</div>
     </div>
-
-    <div class="qa">
-      <h3>Q3 · Minutos de casos cuyo último evento es Cerrado</h3>
-      <div class="notice"><b>Idea central:</b> primero decides <b>qué casos entran</b>. Después sumas <b>todo su historial</b>.</div>
-      <table>
-        <tr><th>caso</th><th>evento</th><th>estado</th><th>minutos</th></tr>
-        <tr><td>1001</td><td>1</td><td>Abierto</td><td>0</td></tr>
-        <tr><td>1001</td><td>2</td><td>En revisión</td><td>90</td></tr>
-        <tr><td>1001</td><td>3</td><td>Cerrado</td><td>40</td></tr>
-        <tr><td>1002</td><td>1</td><td>Abierto</td><td>0</td></tr>
-        <tr><td>1002</td><td>2</td><td>Cerrado</td><td>30</td></tr>
-        <tr><td>1002</td><td>3</td><td>Reabierto</td><td>20</td></tr>
-      </table>
-      <div class="steps">
-        <div class="step"><b>Paso 1</b>Busca el último evento.<br>1001 → Cerrado<br>1002 → Reabierto</div>
-        <div class="step"><b>Paso 2</b>Decide qué casos entran.<br>1001 ✅<br>1002 ❌</div>
-        <div class="step"><b>Paso 3</b>Vuelve al historial del 1001.<br>0 + 90 + 40</div>
-        <div class="step"><b>Paso 4</b>Suma.<br><b>130 minutos</b></div>
-      </div>
-      <div class="wrong"><b>Por qué falla esto:</b> <code>WHERE estado='Cerrado'</code> selecciona filas Cerrado. La pregunta pide casos cuyo <b>último evento</b> sea Cerrado.</div>
-      <details class="hint"><summary>🔎 Pista 1 · Reutiliza Q2</summary><div>Empieza exactamente como Q2: identifica el último evento temporal de cada caso.</div></details>
-      <details class="hint"><summary>🔎 Pista 2 · Todavía no sumes</summary><div>Con el último evento, separa los casos que terminan en Cerrado de los que terminan en otro estado.</div></details>
-      <details class="hint"><summary>🔎 Pista 3 · Ahora sí vuelve y suma</summary><div>Con los <code>caso_id</code> seleccionados, regresa a <code>eventos_src</code>, toma todo su historial y usa <code>SUM(minutos_desde_anterior)</code>.</div></details>
-      <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-<pre><code>WITH ultima_fecha AS (
+    <div class="result study-result"><div class="pad"><b>Qué estás aprendiendo</b><p>Lee el contrato, usa las pistas y compara tu razonamiento antes de abrir la respuesta.</p></div></div>
+  </div>
+</article>
+<article class="sqltask">
+  <header>
+    <h3>Q3 · Minutos de casos terminados cerrados</h3>
+    <p class="muted">Suma toda la trayectoria de los casos cuyo ÚLTIMO evento temporal es Cerrado.</p>
+    <div class="contract"><b>Contrato:</b> Columnas exactas: caso_id, minutos_hasta_cierre. Un caso reabierto no pertenece al conjunto aunque tenga un evento Cerrado antiguo.</div>
+    <div class="contract"><b>Orden correcto:</b> 1001 termina Cerrado: 0 + 90 + 40 = <b>130</b>. 1002 tuvo un Cerrado antiguo pero termina Reabierto: <b>no entra</b>.<div class="q3-flow"><span>1 · último evento</span><b>→</b><span>2 · elegir casos</span><b>→</b><span>3 · volver al historial</span><b>→</b><span>4 · sumar</span></div></div>
+  </header>
+  <div class="sqlbody">
+    <div>
+      <label class="solution-label">Starter de la práctica</label>
+      <textarea class="code" readonly>SELECT caso_id, SUM(minutos_desde_anterior) AS minutos_hasta_cierre
+FROM eventos_src
+WHERE estado=&#39;Cerrado&#39;
+GROUP BY caso_id;</textarea>
+      
+<div class="study-help" data-help="q3">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Reutiliza Q2:</b> todavía no sumes. Primero identifica el último evento temporal de cada caso.</div><div><b>Decide el conjunto:</b> conserva únicamente los <code>caso_id</code> cuyo último estado es <code>Cerrado</code>.</div><div><b>Ahora sí suma:</b> vuelve a <code>eventos_src</code> con esos IDs y suma <b>todo</b> el historial. <code>WHERE estado='Cerrado'</code> solo sumaría la fila Cerrado.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>WITH ultima_fecha AS (
   SELECT caso_id,
          MAX(fecha_evento) AS fecha_evento
   FROM eventos_src
@@ -193,7 +155,7 @@ cerrados AS (
   JOIN eventos_src e
     ON e.caso_id = u.caso_id
    AND e.fecha_evento = u.fecha_evento
-  WHERE e.estado = 'Cerrado'
+  WHERE e.estado = &#39;Cerrado&#39;
 )
 SELECT e.caso_id,
        SUM(e.minutos_desde_anterior) AS minutos_hasta_cierre
@@ -201,54 +163,73 @@ FROM eventos_src e
 JOIN cerrados c
   ON c.caso_id = e.caso_id
 GROUP BY e.caso_id;</code></pre>
-        <p><b>CTE 1:</b> encuentra la última fecha. <b>CTE 2:</b> conserva solo los casos cuyo último estado es Cerrado. <b>Consulta final:</b> vuelve a todo el historial de esos casos y suma sus minutos.</p>
-      </div></details>
+ <p><b>Lectura:</b> CTE 1 encuentra la última fecha; CTE 2 decide qué casos entran; la consulta final vuelve a todo el historial de esos casos y suma sus minutos.</p></div>
+</div>
     </div>
-
-    <div class="qa">
-      <h3>Q4 · Totales sin inflar por un JOIN 1:N</h3>
-      <div class="two">
-        <div><b>CASO</b><table><tr><th>caso_id</th></tr><tr><td>1001</td></tr></table></div>
-        <div><b>EVENTOS</b><table><tr><th>evento</th></tr><tr><td>E1</td></tr><tr><td>E2</td></tr><tr><td>E3</td></tr></table></div>
-      </div>
-      <p>Después del JOIN:</p>
-      <table>
-        <tr><th>caso_id</th><th>evento</th></tr>
-        <tr><td>1001</td><td>E1</td></tr>
-        <tr><td>1001</td><td>E2</td></tr>
-        <tr><td>1001</td><td>E3</td></tr>
-      </table>
-      <div class="call">Hay <b>3 filas</b>, pero sigue existiendo <b>1 caso</b>.</div>
-      <details class="hint"><summary>🔎 Pista 1</summary><div><code>COUNT(*)</code> cuenta filas del resultado del JOIN, no entidades.</div></details>
-      <details class="hint"><summary>🔎 Pista 2</summary><div>Para casos, protege el identificador con <code>DISTINCT</code>. Para eventos, sí puedes contar sus IDs.</div></details>
-      <details class="hint"><summary>🔎 Pista 3</summary><div>Para contar solamente casos Alta, combina <code>CASE</code> con <code>COUNT(DISTINCT ...)</code>.</div></details>
-      <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-<pre><code>SELECT COUNT(DISTINCT c.caso_id) AS total_casos,
+    <div class="result study-result"><div class="pad"><b>Qué estás aprendiendo</b><p>Lee el contrato, usa las pistas y compara tu razonamiento antes de abrir la respuesta.</p></div></div>
+  </div>
+</article>
+<article class="sqltask">
+  <header>
+    <h3>Q4 · Grano tras JOIN</h3>
+    <p class="muted">Entrega total_casos, total_eventos y casos_alta sin inflar casos por la relación 1:N.</p>
+    <div class="contract"><b>Contrato:</b> Una sola fila con columnas exactas: total_casos, total_eventos, casos_alta.</div>
+    <div class="contract"><b>Ejemplo mínimo:</b> si el caso 1001 tiene E1, E2 y E3, el JOIN produce 3 filas, pero siguen existiendo <b>1 caso</b> y <b>3 eventos</b>.</div>
+  </header>
+  <div class="sqlbody">
+    <div>
+      <label class="solution-label">Starter de la práctica</label>
+      <textarea class="code" readonly>SELECT COUNT(*) AS total_casos,
+       COUNT(*) AS total_eventos,
+       SUM(CASE WHEN c.prioridad=&#39;Alta&#39; THEN 1 ELSE 0 END) AS casos_alta
+FROM casos_src c
+LEFT JOIN eventos_src e ON e.caso_id=c.caso_id;</textarea>
+      
+<div class="study-help" data-help="q4">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Qué cambia:</b> después de un JOIN 1:N, <code>COUNT(*)</code> cuenta filas del resultado.</div><div><b>Protege la entidad:</b> para casos, cuenta <code>DISTINCT c.caso_id</code>; para eventos, cuenta <code>e.evento_id</code>.</div><div><b>Casos Alta:</b> aplica la condición Alta al identificador del caso y protégelo también con <code>DISTINCT</code>.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>SELECT COUNT(DISTINCT c.caso_id) AS total_casos,
        COUNT(e.evento_id) AS total_eventos,
        COUNT(DISTINCT CASE
-         WHEN c.prioridad = 'Alta' THEN c.caso_id
+         WHEN c.prioridad = &#39;Alta&#39; THEN c.caso_id
        END) AS casos_alta
 FROM casos_src c
 LEFT JOIN eventos_src e
   ON e.caso_id = c.caso_id;</code></pre>
-        <p><code>COUNT(DISTINCT c.caso_id)</code> evita que el caso repetido por sus eventos se cuente varias veces. <code>COUNT(e.evento_id)</code> sí cuenta cada evento.</p>
-      </div></details>
+ <p><b>Por qué:</b> el JOIN repite al caso por cada evento. <code>DISTINCT</code> evita convertir esas repeticiones en casos nuevos.</p></div>
+</div>
     </div>
-
-    <div class="qa">
-      <h3>Q5 · Promedio de minutos por caso y tipo</h3>
-      <div class="two">
-        <div class="call"><b>Caso A</b><br>1 evento × 10 min = <b>10 min</b></div>
-        <div class="call"><b>Caso B</b><br>3 eventos × 10 min = <b>30 min</b></div>
-      </div>
-      <p>Promedio correcto por caso:</p>
-      <div class="answer"><b>(10 + 30) / 2 = 20 minutos</b></div>
-      <p>Promediar directamente las cuatro filas de evento daría 10, y haría que el caso con más eventos pesara más.</p>
-      <details class="hint"><summary>🔎 Pista 1</summary><div>La pregunta pide promedio <b>por caso</b>, no promedio de filas de evento.</div></details>
-      <details class="hint"><summary>🔎 Pista 2</summary><div>Primero crea una fila por caso con su total de minutos.</div></details>
-      <details class="hint"><summary>🔎 Pista 3</summary><div>Después de tener <code>total_minutos</code> por caso, agrupa por <code>tipo</code> y calcula <code>AVG(total_minutos)</code>.</div></details>
-      <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-<pre><code>WITH por_caso AS (
+    <div class="result study-result"><div class="pad"><b>Qué estás aprendiendo</b><p>Lee el contrato, usa las pistas y compara tu razonamiento antes de abrir la respuesta.</p></div></div>
+  </div>
+</article>
+<article class="sqltask">
+  <header>
+    <h3>Q5 · Promedio por caso</h3>
+    <p class="muted">Por tipo: cantidad de casos y promedio de minutos acumulados POR CASO; casos sin eventos valen 0.</p>
+    <div class="contract"><b>Contrato:</b> Columnas exactas: tipo, casos, promedio_minutos. Redondea promedio_minutos a 1 decimal.</div>
+    <div class="contract"><b>Ejemplo mínimo:</b> Caso A totaliza 10 min y Caso B 30 min. El promedio por caso es <b>(10 + 30) / 2 = 20</b>. Promediar directamente filas de evento respondería otra cosa.</div>
+  </header>
+  <div class="sqlbody">
+    <div>
+      <label class="solution-label">Starter de la práctica</label>
+      <textarea class="code" readonly>SELECT c.tipo, COUNT(*) AS casos,
+       ROUND(AVG(e.minutos_desde_anterior),1) AS promedio_minutos
+FROM casos_src c
+LEFT JOIN eventos_src e ON e.caso_id=c.caso_id
+GROUP BY c.tipo;</textarea>
+      
+<div class="study-help" data-help="q5">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Grano:</b> la pregunta dice “por caso”. Primero necesitas una fila por caso.</div><div><b>Primer nivel:</b> suma <code>minutos_desde_anterior</code> agrupando por <code>caso_id, tipo</code>; un caso sin eventos debe quedar en 0.</div><div><b>Segundo nivel:</b> ya con <code>total_minutos</code> por caso, agrupa por <code>tipo</code> y calcula <code>AVG(total_minutos)</code>.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>WITH por_caso AS (
   SELECT c.caso_id,
          c.tipo,
          COALESCE(SUM(e.minutos_desde_anterior), 0) AS total_minutos
@@ -262,91 +243,67 @@ SELECT tipo,
        ROUND(AVG(total_minutos), 1) AS promedio_minutos
 FROM por_caso
 GROUP BY tipo;</code></pre>
-        <p>El CTE devuelve una fila por caso. Después el promedio trata a cada caso como una observación. <code>COALESCE(...,0)</code> hace que un caso sin eventos tenga 0 minutos.</p>
-      </div></details>
+ <p><b>Por qué:</b> el CTE devuelve una fila por caso. Solo después se calcula el promedio entre casos.</p></div>
+</div>
     </div>
-  </section>
+    <div class="result study-result"><div class="pad"><b>Qué estás aprendiendo</b><p>Lee el contrato, usa las pistas y compara tu razonamiento antes de abrir la respuesta.</p></div></div>
+  </div>
+</article></div></section>
 
-  <section id="modelo">
-    <span class="tag">S6–S8 · entidades, relaciones y 3FN</span>
-    <h2>2 · Modelo ER + 3FN</h2>
-    <div class="call"><b>Regla sencilla:</b> CASO describe al caso. EVENTO describe algo que ocurrió durante la vida del caso.</div>
-    <details class="hint"><summary>🔎 Pista 1 · Identidad</summary><div><code>caso_id</code> identifica un caso; <code>evento_id</code> identifica un evento.</div></details>
-    <details class="hint"><summary>🔎 Pista 2 · Relación</summary><div>Un caso puede tener muchos eventos. Un evento pertenece a un caso.</div></details>
-    <details class="hint"><summary>🔎 Pista 3 · Agente</summary><div>Si el nombre del agente depende de <code>agente_id</code>, evita repetir el nombre en cada evento.</div></details>
-    <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-      <table>
-        <tr><th>Elemento</th><th>Solución</th><th>Por qué</th></tr>
-        <tr><td>CASO</td><td>caso_id, fecha_creacion, tipo, prioridad, estado, barrio</td><td>Son propiedades del caso.</td></tr>
-        <tr><td>EVENTO</td><td>evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior</td><td>Describen un hecho ocurrido en la vida del caso.</td></tr>
-        <tr><td>PK CASO</td><td>caso_id</td><td>Identifica un caso.</td></tr>
-        <tr><td>PK EVENTO</td><td>evento_id</td><td>Identifica un evento.</td></tr>
-        <tr><td>FK</td><td>EVENTO.caso_id → CASO.caso_id</td><td>Une cada evento con su caso.</td></tr>
-        <tr><td>Cardinalidad</td><td>1:N</td><td>Un caso puede tener muchos eventos.</td></tr>
-      </table>
-      <div class="answer"><b>3FN:</b><br>CASO: caso_id, barrio<br>EVENTO: evento_id, caso_id, fecha_evento, agente_id<br>AGENTE: agente_id, agente_nombre</div>
-      <p>El nombre del agente depende de <code>agente_id</code>. Separarlo evita repetirlo en muchos eventos.</p>
-    </div></details>
-  </section>
+<section class="mission" id="s2"><header class="mhead"><div class="num">2</div><div><div class="ey">S6–S8 · 12 puntos</div><h2>Modelo ER + 3FN</h2><p>Construye CASO/EVENTO y luego separa la información del agente.</p></div><div class="mscore">modelo</div></header>
+<div class="builder"><div class="card"><h3>Pregunta guía</h3><p><b>CASO</b> describe la entidad. <b>EVENTO</b> describe algo que ocurrió durante su vida.</p><div class="contract">Piensa en identidad, relación y dependencia antes de ubicar campos.</div></div><div class="board"><div class="drop wide"><b>CASO / EVENTO</b><div class="pad muted">¿Qué atributos pertenecen a cada entidad?</div></div><div class="drop"><b>PK + FK</b><div class="pad muted">¿Qué identifica cada fila y cómo se conectan?</div></div><div class="drop"><b>3FN</b><div class="pad muted">¿De qué depende agente_nombre?</div></div></div></div>
 
-  <section id="ddl">
-    <span class="tag">S9 · integridad</span>
-    <h2>3 · DDL y restricciones</h2>
-    <div class="notice"><b>Qué debes escribir tú:</b> solamente el <b>DDL</b>. Las pruebas con <code>INSERT</code> y el cambio a <code>Escalado</code> se muestran aquí ya preparadas para que te concentres en las restricciones.</div>
+<div class="study-help" data-help="model">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> <code>caso_id</code> identifica CASO y <code>evento_id</code> identifica EVENTO.</div><div><b>Pista 2:</b> un caso puede tener muchos eventos; EVENTO necesita <code>caso_id</code> para referenciar CASO.</div><div><b>Pista 3:</b> <code>agente_nombre</code> depende de <code>agente_id</code>, por eso conviene separar AGENTE.</div></div>
+  <div class="study-solution" data-study-solution hidden><table><tr><th>Elemento</th><th>Respuesta</th></tr><tr><td>CASO</td><td>caso_id, fecha_creacion, tipo, prioridad, estado, barrio</td></tr><tr><td>EVENTO</td><td>evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior</td></tr><tr><td>PK</td><td>CASO.caso_id y EVENTO.evento_id</td></tr><tr><td>FK</td><td>EVENTO.caso_id → CASO.caso_id</td></tr><tr><td>Cardinalidad</td><td>1:N</td></tr></table><p><b>3FN:</b> CASO(caso_id,barrio), EVENTO(evento_id,caso_id,fecha_evento,agente_id), AGENTE(agente_id,agente_nombre).</p></div>
+</div>
+</section>
 
-    <h3>Qué debe proteger tu DDL</h3>
-    <table>
-      <tr><th>Regla</th><th>Qué debe ocurrir</th></tr>
-      <tr><td>PRIMARY KEY</td><td>un ID repetido debe fallar</td></tr>
-      <tr><td>FOREIGN KEY</td><td>un evento de un caso inexistente debe fallar</td></tr>
-      <tr><td>NOT NULL</td><td>un dato obligatorio vacío debe fallar</td></tr>
-      <tr><td>CHECK</td><td>0 minutos debe pasar; un valor negativo debe fallar</td></tr>
-    </table>
+<section class="mission" id="s3"><header class="mhead"><div class="num">3</div><div><div class="ey">S9 · 10 puntos</div><h2>DDL Mutation Lab</h2><p>En la práctica, lo único que necesitas escribir es el <b>DDL</b>. Los INSERT de prueba y el cambio a <code>Escalado</code> pueden estar preparados.</p></div><div class="mscore">DDL</div></header>
+<div class="grid2"><div class="card"><h3>Tu DDL</h3><div class="study-only"><b>Único bloque que debe editar el estudiante.</b></div><pre class="code solution-code"><code>CREATE TABLE caso(
+  caso_id INTEGER,
+  fecha_creacion TEXT,
+  tipo TEXT,
+  prioridad TEXT,
+  estado TEXT,
+  barrio TEXT
+);
 
-    <h3>Pruebas ya listas</h3>
-    <details><summary>▶ Prueba de PRIMARY KEY</summary><div>
-<pre><code>INSERT INTO caso(
-  caso_id, fecha_creacion, tipo, prioridad, estado, barrio
-)
-VALUES (
-  9001, '2026-09-02', 'Ruido', 'Alta', 'Abierto', 'Prueba'
-);</code></pre>
-      <p>Si <code>9001</code> ya existe, una PK correcta debe rechazar esta segunda fila.</p>
-    </div></details>
+CREATE TABLE evento(
+  evento_id TEXT,
+  caso_id INTEGER,
+  fecha_evento TEXT,
+  estado TEXT,
+  minutos_desde_anterior INTEGER
+);</code></pre></div>
+<div class="card"><h3>Pruebas ya escritas</h3><pre class="code solution-code"><code>-- PK: un ID repetido debe fallar
+INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio)
+VALUES (9001,&#39;2026-09-02&#39;,&#39;Ruido&#39;,&#39;Alta&#39;,&#39;Abierto&#39;,&#39;Prueba&#39;);
 
-    <details><summary>▶ Prueba de FOREIGN KEY</summary><div>
-<pre><code>INSERT INTO evento(
-  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
-)
-VALUES (
-  9200, 9999, '2026-09-01 09:00', 'Abierto', 0
-);</code></pre>
-      <p>Si <code>caso_id=9999</code> no existe, la FK debe impedir este INSERT.</p>
-    </div></details>
+-- FK: un caso inexistente debe fallar
+INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior)
+VALUES (9200,9999,&#39;2026-09-01 09:00&#39;,&#39;Abierto&#39;,0);
 
-    <details><summary>▶ Prueba de CHECK</summary><div>
-<pre><code>-- debe pasar
-INSERT INTO evento(
-  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
-)
-VALUES (9201, 9001, '2026-09-01 10:00', 'Abierto', 0);
+-- CHECK: 0 debe pasar; -1 debe fallar
+INSERT INTO evento VALUES (9201,9001,&#39;2026-09-01 10:00&#39;,&#39;Abierto&#39;,0);
+INSERT INTO evento VALUES (9202,9001,&#39;2026-09-01 10:10&#39;,&#39;Abierto&#39;,-1);
 
--- debe fallar
-INSERT INTO evento(
-  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
-)
-VALUES (9202, 9001, '2026-09-01 10:10', 'Abierto', -1);</code></pre>
-      <p>La regla es <b>mayor o igual que 0</b>: cero representa un valor permitido; los negativos no.</p>
-    </div></details>
+-- Evolución de dominio: ya preparado
+INSERT INTO estado_catalogo(estado) VALUES (&#39;Escalado&#39;);</code></pre></div></div>
 
-    <details><summary>▶ INSERT preparado para agregar Escalado</summary><div>
-<pre><code>INSERT INTO estado_catalogo (estado)
-VALUES ('Escalado');</code></pre>
-      <p>La idea de la prueba es observar dos momentos: antes de agregar el valor, <code>Escalado</code> es rechazado; después, puede utilizarse.</p>
-    </div></details>
-
-    <details class="solution"><summary>💡 Ver DDL mínimo explicado</summary><div>
-<pre><code>CREATE TABLE caso(
+<div class="study-help" data-help="ddl">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> los identificadores que no pueden repetirse necesitan <code>PRIMARY KEY</code>; los datos obligatorios necesitan <code>NOT NULL</code>.</div><div><b>Pista 2:</b> EVENTO pertenece a CASO: protege <code>evento.caso_id</code> con una <code>FOREIGN KEY</code>.</div><div><b>Pista 3:</b> minutos puede ser 0, pero no negativo: la condición correcta usa <code>&gt;= 0</code>.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>CREATE TABLE caso(
   caso_id INTEGER PRIMARY KEY,
   fecha_creacion TEXT NOT NULL,
   tipo TEXT NOT NULL,
@@ -363,196 +320,112 @@ CREATE TABLE evento(
   minutos_desde_anterior INTEGER NOT NULL
     CHECK (minutos_desde_anterior &gt;= 0),
   FOREIGN KEY (caso_id) REFERENCES caso(caso_id)
-);</code></pre>
-      <p><b>PK</b> evita duplicados. <b>FK</b> evita eventos sin caso. <b>NOT NULL</b> obliga a enviar datos necesarios. <b>CHECK</b> define qué valores de minutos son válidos.</p>
-    </div></details>
-  </section>
+);</code></pre><p><b>Lectura:</b> PK evita duplicados; FK evita eventos sin caso; NOT NULL protege datos obligatorios; CHECK acepta 0 y rechaza negativos.</p></div>
+</div>
+</section>
 
-  <section id="documentos">
-    <span class="tag">S10–S11 · SQL/NoSQL y documentos</span>
-    <h2>4 · Documentos: qué guardar junto y qué separar</h2>
-    <p><b>Pregunta guía:</b> cuando alguien abre un caso, ¿qué información necesita ver junta y qué información puede vivir aparte?</p>
-<pre><code>{
-  "caso_id": 1001,
-  "estado": "En_revision",
-  "evidencias": [
-    {"tipo": "foto", "url": "foto-1.jpg"},
-    {"tipo": "comentario", "texto": "Se verificó el lugar"}
+<section class="mission" id="s4"><header class="mhead"><div class="num">4</div><div><div class="ey">S10–S11 · 10 puntos</div><h2>Document Lab · embeber, referenciar y elegir datastore</h2><p>Misma decisión de la práctica: qué guardar dentro, qué referenciar y qué mantener fuera.</p></div><div class="mscore">documentos</div></header>
+<div class="card inset"><div class="contract"><b>Caso A:</b> al abrir un caso se requieren evidencias y estado actual; el historial crece sin límite; el ciudadano tiene ciclo propio.</div>
+<pre class="code solution-code"><code>{
+  &quot;caso_id&quot;: 1001,
+  &quot;estado&quot;: &quot;En_revision&quot;,
+  &quot;evidencias&quot;: [
+    {&quot;tipo&quot;:&quot;foto&quot;,&quot;url&quot;:&quot;foto-1.jpg&quot;},
+    {&quot;tipo&quot;:&quot;comentario&quot;,&quot;texto&quot;:&quot;Se verificó el lugar&quot;}
   ],
-  "ciudadano_id": "C014"
+  &quot;ciudadano_id&quot;: &quot;C014&quot;
 }</code></pre>
-    <div class="steps">
-      <div class="step"><b>¿Lo necesito al abrir el caso?</b>estado y evidencias → dentro</div>
-      <div class="step"><b>¿Solo necesito saber con quién se relaciona?</b>ciudadano_id → referencia</div>
-      <div class="step"><b>¿Puede cambiar aparte?</b>perfil ciudadano → fuera</div>
-      <div class="step"><b>¿Puede crecer sin límite?</b>historial → fuera</div>
-    </div>
-    <details class="hint"><summary>🔎 Pista 1</summary><div>Lo que se consulta junto con mucha frecuencia puede vivir junto.</div></details>
-    <details class="hint"><summary>🔎 Pista 2</summary><div>Si un recurso tiene vida propia, suele ser mejor conservar solo su ID dentro del documento.</div></details>
-    <details class="hint"><summary>🔎 Pista 3</summary><div>Una colección que puede crecer indefinidamente no necesita inflar el documento principal.</div></details>
-    <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-      <table>
-        <tr><th>Dato</th><th>Decisión</th><th>Por qué</th></tr>
-        <tr><td>estado actual</td><td>Dentro del caso</td><td>lo necesitas al abrirlo</td></tr>
-        <tr><td>evidencias[]</td><td>Dentro del caso</td><td>normalmente se muestran junto con el caso</td></tr>
-        <tr><td>ciudadano_id</td><td>Referencia</td><td>relaciona el caso sin copiar todo el perfil</td></tr>
-        <tr><td>perfil ciudadano</td><td>Fuera</td><td>puede cambiar y reutilizarse en otros casos</td></tr>
-        <tr><td>historial de eventos</td><td>Fuera</td><td>puede crecer continuamente</td></tr>
-      </table>
-      <div class="answer"><b>CASO:</b> documental.<br><b>Libro contable:</b> relacional SQL.<br><b>Clave de partición en Cosmos DB:</b> <code>/caso_id</code>.</div>
-      <p>Una foto puede tener <code>url</code> y un comentario <code>texto</code>; un documento tolera bien esa variación. En un libro contable importan más las relaciones estrictas y las transacciones.</p>
-    </div></details>
-  </section>
+</div>
 
-  <section id="warehouse">
-    <span class="tag">S12 · operación y analítica</span>
-    <h2>5 · Data warehouse: grano, medidas y dimensiones</h2>
-    <p><b>Pregunta guía:</b> termina primero la frase: <b>“una fila de mi tabla de hechos representa…”</b></p>
-    <table>
-      <tr><th>evento</th><th>caso</th><th>barrio</th><th>estado</th><th>minutos</th></tr>
-      <tr><td>E01</td><td>1001</td><td>Chapinero</td><td>Abierto</td><td>0</td></tr>
-      <tr><td>E02</td><td>1001</td><td>Chapinero</td><td>Cerrado</td><td>60</td></tr>
-    </table>
-    <div class="call"><b>Si queremos conservar los dos momentos, una fila debe representar un evento.</b></div>
-    <div class="steps">
-      <div class="step"><b>Grano</b>qué representa una fila → <b>evento</b></div>
-      <div class="step"><b>Medidas</b>números que analizamos → conteo, minutos</div>
-      <div class="step"><b>Dimensiones</b>cómo separamos → fecha, barrio, tipo, prioridad, estado</div>
-      <div class="step"><b>Movimiento</b>cuándo llega el dato → batch o streaming</div>
-    </div>
-    <details class="hint"><summary>🔎 Pista 1 · Grano</summary><div>Si un caso tuvo dos eventos y quieres conservar ambos, una fila por caso sería demasiado gruesa.</div></details>
-    <details class="hint"><summary>🔎 Pista 2 · Medidas y dimensiones</summary><div><code>60 minutos</code> es una medida. <code>Chapinero</code> es una dimensión por la que puedes comparar esa medida.</div></details>
-    <details class="hint"><summary>🔎 Pista 3 · Operación y analítica</summary><div>Registrar E02 ahora es operación/OLTP. Preguntar “¿qué barrios acumularon más minutos este mes?” es análisis/OLAP.</div></details>
-    <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-      <table>
-        <tr><th>Elemento</th><th>Respuesta</th><th>Ejemplo</th></tr>
-        <tr><td>Grano</td><td>evento</td><td>E01 y E02 deben ser dos filas distintas</td></tr>
-        <tr><td>Medidas</td><td>conteo de eventos, minutos</td><td>2 eventos y 60 minutos acumulados</td></tr>
-        <tr><td>Dimensiones</td><td>fecha, barrio, tipo, prioridad, estado</td><td>permiten comparar por día, barrio, tipo…</td></tr>
-        <tr><td>OLTP</td><td>casos/eventos actuales</td><td>registrar o actualizar un caso</td></tr>
-        <tr><td>OLAP</td><td>fact_evento histórico</td><td>analizar meses de actividad</td></tr>
-        <tr><td>&lt; 30 segundos</td><td>Streaming</td><td>el dato debe aparecer casi inmediatamente</td></tr>
-        <tr><td>Actualización nocturna</td><td>Batch</td><td>se procesa un lote programado</td></tr>
-        <tr><td>Cargar crudo y transformar dentro</td><td>ELT</td><td>Extraer → Cargar → Transformar</td></tr>
-      </table>
-      <p><b>Orden mental:</b> primero grano, después medidas y dimensiones; al final decides cómo mover y actualizar los datos.</p>
-    </div></details>
-  </section>
+<div class="study-help" data-help="doc">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> lo que se necesita cada vez que abres el caso puede vivir dentro del documento.</div><div><b>Pista 2:</b> si el ciudadano tiene vida propia, guarda su ID en el caso y mantén su perfil aparte. Un historial que crece sin límite también conviene fuera.</div><div><b>Pista 3:</b> en Cosmos DB, una clave como <code>/caso_id</code> dirige consultas de un caso concreto; <code>/estado</code> tendría pocos valores muy repetidos.</div></div>
+  <div class="study-solution" data-study-solution hidden><table><tr><th>Decisión</th><th>Respuesta</th><th>Por qué</th></tr><tr><td>Dentro</td><td>estado actual + evidencias[]</td><td>se consultan al abrir el caso</td></tr><tr><td>Referencia</td><td>ciudadano_id</td><td>relaciona sin copiar todo el perfil</td></tr><tr><td>Fuera</td><td>historial + perfil ciudadano</td><td>crecen o cambian por su cuenta</td></tr><tr><td>CASO</td><td>Documental</td><td>estructura flexible leída en conjunto</td></tr><tr><td>Libro contable</td><td>Relacional SQL</td><td>transacciones y FK estrictas</td></tr><tr><td>Cosmos DB</td><td>/caso_id</td><td>identifica y distribuye por caso</td></tr></table></div>
+</div>
+</section>
 
-  <section id="bigquery">
-    <span class="tag">S13 · diseño físico</span>
-    <h2>6 · BigQuery: partición y clustering</h2>
-    <div class="call"><b>Patrón de consultas:</b> 100% usa fecha; 82% filtra barrio; 54% de esas también usa tipo; 0% usa caso_id.</div>
-    <div class="steps">
-      <div class="step"><b>1</b>¿Qué filtro aparece siempre?<br><b>fecha</b></div>
-      <div class="step"><b>2</b>¿Qué filtro aparece más después?<br><b>barrio</b></div>
-      <div class="step"><b>3</b>¿Qué suele acompañarlo?<br><b>tipo</b></div>
-      <div class="step"><b>4</b>¿Qué no filtran?<br><b>caso_id</b></div>
-    </div>
-    <details class="hint"><summary>🔎 Pista 1</summary><div>La partición debe alinearse con el filtro temporal que aparece en todas las consultas.</div></details>
-    <details class="hint"><summary>🔎 Pista 2</summary><div>Para clustering, prioriza la columna que aparece con mayor frecuencia en los filtros restantes.</div></details>
-    <details class="hint"><summary>🔎 Pista 3</summary><div>El orden esperado es <code>barrio → tipo</code>.</div></details>
-    <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-      <div class="answer"><b>PARTITION BY:</b> fecha_evento<br><b>CLUSTER BY:</b> barrio, tipo</div>
-<pre><code>PARTITION BY DATE(fecha_evento)
-CLUSTER BY barrio, tipo</code></pre>
-      <p>Fecha reduce primero el conjunto por periodo. Dentro de esas particiones, barrio es el filtro más frecuente y tipo el segundo acompañante.</p>
-    </div></details>
-  </section>
+<section class="mission" id="s5"><header class="mhead"><div class="num">5</div><div><div class="ey">S6 + S12 · 13 puntos</div><h2>Warehouse Builder · grano y latencia</h2><p>Primero declara qué representa una fila. Después decide medidas, dimensiones y movimiento.</p></div><div class="mscore">warehouse</div></header>
+<div class="card inset"><table class="mini-table"><tr><th>evento</th><th>caso</th><th>barrio</th><th>estado</th><th>minutos</th></tr><tr><td>E01</td><td>1001</td><td>Chapinero</td><td>Abierto</td><td>0</td></tr><tr><td>E02</td><td>1001</td><td>Chapinero</td><td>Cerrado</td><td>60</td></tr></table><div class="contract"><b>Pregunta:</b> si quieres conservar ambos momentos, ¿qué debe representar una fila del hecho?</div></div>
 
-  <section id="nested">
-    <span class="tag">S14 · ARRAY, STRUCT, UNNEST y formatos</span>
-    <h2>7 · BigQuery con datos anidados</h2>
-<pre><code>{
-  "caso_id": 1001,
-  "estado": "Abierto",
-  "evidencias": [
-    {"tipo": "foto", "url": "a.jpg"},
-    {"tipo": "comentario", "texto": "Revisado"}
+<div class="study-help" data-help="dw">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> una fila por caso perdería E01 o E02. El grano debe ser <b>evento</b>.</div><div><b>Pista 2:</b> conteo y minutos son números que analizas; fecha, barrio, tipo, prioridad y estado son formas de separar esos números.</div><div><b>Pista 3:</b> menos de 30 segundos → streaming; actualización nocturna → batch; cargar crudo y transformar dentro → ELT.</div></div>
+  <div class="study-solution" data-study-solution hidden><table><tr><th>Elemento</th><th>Respuesta</th></tr><tr><td>Grano</td><td>evento</td></tr><tr><td>Medidas</td><td>conteo de eventos, minutos</td></tr><tr><td>Dimensiones</td><td>fecha, barrio, tipo, prioridad, estado</td></tr><tr><td>OLTP</td><td>casos/eventos actuales</td></tr><tr><td>OLAP</td><td>fact_evento histórico</td></tr><tr><td>&lt;30 s</td><td>Streaming</td></tr><tr><td>cada noche</td><td>Batch</td></tr><tr><td>crudo primero</td><td>ELT</td></tr></table><p><b>Orden mental:</b> grano → medidas/dimensiones → operación/analítica → movimiento.</p></div>
+</div>
+</section>
+
+<section class="mission" id="s6"><header class="mhead"><div class="num">6</div><div><div class="ey">S13 · 10 puntos</div><h2>BigQuery Physical Lab · patrón visible</h2><p>La decisión física sale del patrón de consultas.</p></div><div class="mscore">BigQuery</div></header>
+<div class="workload"><b>Patrón observado:</b> 100% acota <code>fecha_evento</code>; 82% filtra <code>barrio</code>; 54% de esas también filtra <code>tipo</code>; 0% filtra <code>caso_id</code>.</div>
+
+<div class="study-help" data-help="bq">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> el filtro que aparece en 100% de las consultas debe guiar la partición.</div><div><b>Pista 2:</b> después de fecha, el filtro más frecuente es barrio.</div><div><b>Pista 3:</b> tipo suele acompañar a barrio; caso_id no aparece en el patrón.</div></div>
+  <div class="study-solution" data-study-solution hidden><pre class="code solution-code"><code>PARTITION BY DATE(fecha_evento)
+CLUSTER BY barrio, tipo</code></pre><p><b>Por qué:</b> fecha reduce primero por periodo; barrio es el filtro dominante dentro de la partición y tipo el segundo acompañante.</p></div>
+</div>
+</section>
+
+<section class="mission" id="s7"><header class="mhead"><div class="num">7</div><div><div class="ey">S14 · 10 puntos</div><h2>Nested BigQuery · esquema real y UNNEST ejecutable</h2><p>Observa qué queda en la raíz, qué vive en evidencias[] y cómo cambia el significado de una fila.</p></div><div class="mscore">anidados</div></header>
+<div class="grid2"><div class="card"><pre class="code solution-code"><code>{
+  &quot;caso_id&quot;:1001,
+  &quot;estado&quot;:&quot;Abierto&quot;,
+  &quot;evidencias&quot;:[
+    {&quot;tipo&quot;:&quot;foto&quot;,&quot;url&quot;:&quot;a.jpg&quot;},
+    {&quot;tipo&quot;:&quot;comentario&quot;,&quot;texto&quot;:&quot;Revisado&quot;}
   ]
-}</code></pre>
-    <div class="two">
-      <div><b>Antes de UNNEST</b><div class="call">1 fila = 1 caso</div></div>
-      <div><b>Después de UNNEST</b><table><tr><th>caso</th><th>evidencia</th></tr><tr><td>1001</td><td>foto</td></tr><tr><td>1001</td><td>comentario</td></tr></table></div>
-    </div>
-    <details class="hint"><summary>🔎 Pista 1</summary><div>Los campos que describen al caso permanecen en la raíz.</div></details>
-    <details class="hint"><summary>🔎 Pista 2</summary><div>Los campos que describen cada evidencia viven dentro de <code>evidencias[]</code>.</div></details>
-    <details class="hint"><summary>🔎 Pista 3</summary><div>Después de <code>UNNEST</code>, cada fila corresponde a una evidencia; conserva <code>caso_id</code> para saber de qué caso provino.</div></details>
-    <details class="solution"><summary>💡 Ver solución explicada</summary><div>
-      <table>
-        <tr><th>Zona</th><th>Respuesta</th></tr>
-        <tr><td>Campos raíz</td><td>caso_id, estado</td></tr>
-        <tr><td>evidencias[]</td><td>tipo, url, texto</td></tr>
-        <tr><td>Datos semiestructurados</td><td>JSON</td></tr>
-        <tr><td>Formato columnar analítico</td><td>Parquet</td></tr>
-      </table>
-<pre><code>SELECT c.caso_id,
+}</code></pre></div><div class="card"><h3>Cambio de grano</h3><div class="contract"><b>Antes:</b> 1 fila = 1 caso.<br><b>Después de UNNEST:</b> 1 fila = 1 evidencia del caso.</div></div></div>
+
+<div class="study-help" data-help="nested">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> <code>caso_id</code> y <code>estado</code> describen al caso; permanecen en la raíz.</div><div><b>Pista 2:</b> <code>tipo</code>, <code>url</code> y <code>texto</code> describen cada evidencia; viven en <code>evidencias[]</code>. JSON conserva la estructura flexible; Parquet es el formato columnar analítico.</div><div><b>Pista 3:</b> <code>UNNEST(c.evidencias)</code> crea una fila por evidencia. Conserva <code>c.caso_id</code> para mantener el vínculo con el caso.</div></div>
+  <div class="study-solution" data-study-solution hidden><table><tr><th>Zona</th><th>Respuesta</th></tr><tr><td>Raíz</td><td>caso_id, estado</td></tr><tr><td>evidencias[]</td><td>tipo, url, texto</td></tr><tr><td>Flexible</td><td>JSON</td></tr><tr><td>Analítica columnar</td><td>Parquet</td></tr></table><pre class="code solution-code"><code>SELECT c.caso_id,
        ev.tipo
 FROM `proyecto.dataset.casos_nested` AS c
-CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre>
-      <p><code>UNNEST</code> convierte los elementos del arreglo en filas. El <code>caso_id</code> se conserva para mantener la relación con el caso original.</p>
-    </div></details>
-  </section>
+CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre><p><b>Por qué:</b> UNNEST expande el arreglo; caso_id conserva la identidad del registro padre.</p></div>
+</div>
+</section>
 
-  <section id="boss">
-    <span class="tag">Transferencia · modo práctica</span>
-    <h2>8 · Boss · pedidos omnicanal</h2>
-    <p>Conviene resolverlo en cuatro decisiones separadas.</p>
-    <h3>1 · Grano y costo de envío</h3>
-    <p>Pedido P01 tiene 3 líneas y un solo <code>costo_envio = 12.000</code>.</p>
-    <div class="goodbad">
-      <div class="wrong"><b>Si repites el costo por línea:</b><br>12.000 + 12.000 + 12.000 = <b>36.000 ❌</b></div>
-      <div class="answer"><b>Costo real del pedido:</b><br><b>12.000 ✅</b></div>
-    </div>
-    <p>Por eso cantidad e importe viven naturalmente a nivel de línea, mientras el costo de envío pertenece al pedido.</p>
-    <h3>2 · Patrón de consultas</h3>
-    <div class="call">100% fecha · 80% categoría · 35% además canal · 5% cliente.</div>
-    <h3>3 · items[] → filas</h3>
-    <p>Para analizar cada ítem, necesitas expandir el arreglo y mantener <code>pedido_id</code>.</p>
-    <h3>4 · Azure</h3>
-    <p>Primero identifica la necesidad; después el servicio.</p>
-    <details class="solution"><summary>💡 Ver solución completa explicada</summary><div>
-      <table>
-        <tr><th>Decisión</th><th>Respuesta</th><th>Por qué</th></tr>
-        <tr><td>Diseño analítico</td><td>dos hechos: línea y pedido</td><td>evita repetir costo_envio por cada línea</td></tr>
-        <tr><td>Grano principal de ventas</td><td>línea de pedido</td><td>cantidad e importe existen por ítem</td></tr>
-        <tr><td>Medidas de línea</td><td>cantidad, importe</td><td>se pueden sumar entre líneas</td></tr>
-        <tr><td>Partición</td><td>fecha_pedido</td><td>todas las consultas acotan fecha</td></tr>
-        <tr><td>Clustering</td><td>categoria, canal</td><td>son los filtros predominantes del modo práctica</td></tr>
-      </table>
-<pre><code>SELECT p.pedido_id,
+<section class="mission boss" id="boss"><header class="mhead"><div class="num">8</div><div><div class="ey">Transferencia · 20 puntos</div><h2>Boss · pedidos omnicanal</h2><p>Mismo caso de práctica: línea de pedido, costo de envío, BigQuery, items[] y equivalencias Azure.</p></div><div class="mscore">transferencia</div></header>
+<div class="workload"><b>Patrón práctica:</b> 100% fecha · 80% categoría · 35% además canal · 5% cliente.</div>
+<div class="contract"><b>Problema de grano:</b> P01 tiene 3 líneas y un solo costo_envio de 12.000. Si repites el costo en cada línea, sumarías 36.000 aunque el pedido costó 12.000.</div>
+
+<div class="study-help" data-help="boss">
+  <div class="actions">
+    <button class="btn alt" type="button" data-study-hint>Solicitar pista</button>
+    <button class="btn dark" type="button" data-study-answer disabled>Ver respuesta</button>
+  </div>
+  <div class="feedback study-feedback" data-study-feedback>Solicita las pistas una a una. La respuesta se habilita después de la tercera.</div>
+  <div class="hint-source" hidden><div><b>Pista 1:</b> cantidad e importe pertenecen a cada línea; costo_envio pertenece al pedido.</div><div><b>Pista 2:</b> el patrón físico prioriza fecha, luego categoría y después canal.</div><div><b>Pista 3:</b> para items[] conserva pedido_id al hacer UNNEST; en Azure piensa necesidad → familia de servicio.</div></div>
+  <div class="study-solution" data-study-solution hidden><table><tr><th>Decisión</th><th>Respuesta</th></tr><tr><td>Diseño analítico</td><td>dos hechos: línea y pedido</td></tr><tr><td>Grano ventas</td><td>línea de pedido</td></tr><tr><td>Medidas de línea</td><td>cantidad, importe</td></tr><tr><td>Partición</td><td>fecha_pedido</td></tr><tr><td>Clustering</td><td>categoria, canal</td></tr></table><pre class="code solution-code"><code>SELECT p.pedido_id,
        i.categoria,
        i.cantidad
 FROM `proyecto.dataset.pedidos_nested` AS p
-CROSS JOIN UNNEST(p.items) AS i;</code></pre>
-      <table>
-        <tr><th>Necesidad</th><th>Familia Azure</th></tr>
-        <tr><td>Guardar JSON/CSV/Parquet como objetos</td><td>Azure Blob Storage / ADLS Gen2</td></tr>
-        <tr><td>Documento operacional distribuido</td><td>Azure Cosmos DB</td></tr>
-        <tr><td>Lakehouse, ingeniería y analítica</td><td>Microsoft Fabric / Azure Databricks</td></tr>
-        <tr><td>Consumo visual y BI</td><td>Power BI</td></tr>
-      </table>
-    </div></details>
-  </section>
+CROSS JOIN UNNEST(p.items) AS i;</code></pre><table><tr><th>Necesidad</th><th>Azure</th></tr><tr><td>objetos JSON/CSV/Parquet</td><td>Blob Storage / ADLS Gen2</td></tr><tr><td>documento operacional</td><td>Cosmos DB</td></tr><tr><td>lakehouse/ingeniería/analítica</td><td>Fabric / Databricks</td></tr><tr><td>BI</td><td>Power BI</td></tr></table></div>
+</div>
+</section>
 
-  <section>
-    <span class="tag">Resumen</span>
-    <h2>La secuencia mental de toda S15</h2>
-    <div class="steps">
-      <div class="step"><b>SQL</b>define población y nivel de agregación</div>
-      <div class="step"><b>Modelo</b>identidad, relación y cardinalidad</div>
-      <div class="step"><b>DDL</b>una regla debe aceptar lo válido y rechazar lo inválido</div>
-      <div class="step"><b>Documentos</b>junta lo que se lee junto; referencia lo que vive aparte</div>
-    </div>
-    <div class="steps">
-      <div class="step"><b>Warehouse</b>grano antes de medidas</div>
-      <div class="step"><b>BigQuery</b>diseño físico desde el patrón de consultas</div>
-      <div class="step"><b>UNNEST</b>declara qué representa una fila antes y después</div>
-      <div class="step"><b>Transferencia</b>primero la necesidad; después la herramienta</div>
-    </div>
-  </section>
-
-  <footer>ANDESDB · Solucionario explicado de sesión 15 · referencia formativa para el modo práctica.</footer>
-</main>
-</body>
-</html>
+</main></div>
+<script>
+(()=>{const KEY='andesdb.s15.solution.guide.v1';let state={};try{state=JSON.parse(sessionStorage.getItem(KEY)||'{}')||{}}catch{state={}}
+const save=()=>{try{sessionStorage.setItem(KEY,JSON.stringify(state))}catch{}};
+function apply(root){const id=root.dataset.help,src=[...root.querySelectorAll('.hint-source>div')],fb=root.querySelector('[data-study-feedback]'),hb=root.querySelector('[data-study-hint]'),ab=root.querySelector('[data-study-answer]'),sol=root.querySelector('[data-study-solution]');const st=state[id]||{hints:0,answer:false};state[id]=st;fb.innerHTML='';for(let i=0;i<Math.min(st.hints,3);i++){const row=document.createElement('div');row.className='study-hint-row';row.innerHTML='<b>Pista '+(i+1)+':</b> '+src[i].innerHTML.replace(/^<b>[^<]*<\/b>\s*/,'');fb.appendChild(row)}if(st.hints===0)fb.textContent='Solicita las pistas una a una. La respuesta se habilita después de la tercera.';hb.textContent=st.hints>=3?'3/3 pistas vistas':'Solicitar pista '+(st.hints+1)+'/3';hb.disabled=st.hints>=3;ab.disabled=st.hints<3;ab.textContent=st.answer?'Ocultar respuesta':'Ver respuesta';sol.hidden=!st.answer}
+document.querySelectorAll('[data-help]').forEach(root=>{apply(root);root.querySelector('[data-study-hint]').addEventListener('click',()=>{const st=state[root.dataset.help]||(state[root.dataset.help]={hints:0,answer:false});st.hints=Math.min(3,(st.hints||0)+1);save();apply(root)});root.querySelector('[data-study-answer]').addEventListener('click',()=>{const st=state[root.dataset.help]||(state[root.dataset.help]={hints:0,answer:false});if(st.hints<3)return;st.answer=!st.answer;save();apply(root)})});
+document.getElementById('toggleNav').onclick=()=>document.getElementById('nav').classList.toggle('open');document.querySelectorAll('.nav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+})();
+</script></body></html>
