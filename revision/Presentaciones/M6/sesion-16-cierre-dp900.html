@@ -43,6 +43,235 @@ pre.sqlviz:before{content:attr(data-label);position:absolute;left:1.15em;top:.62
 .sqlviz .focus{display:inline-block;margin:0 -.45em;padding:0 .45em;background:rgba(255,214,0,.12);border-left:3px solid var(--y)}
 .s16-g4 .result{display:block;margin-bottom:.1em}
 @media (max-aspect-ratio:1/1),(max-width:700px){.s16-g4,.journey,.cases,.mapgrid,.resource-grid{grid-template-columns:1fr}.logic{grid-template-columns:1fr 1fr 1fr}.logic i{display:none}pre.sqlviz{font-size:.84em}}
+
+/* =====================================================================
+   S16 · pasada visual final
+   Regla: solo estilo/composición. Se conserva literalmente el contenido.
+   Reutiliza la gramática de tema-v2: amarillo/azul, bordes laterales,
+   superficies suaves, código oscuro, toolbar y progresión.
+   ===================================================================== */
+
+/* --- profundidad y ritmo de tarjetas -------------------------------- */
+.slide[data-title="SQL que escribes"] .card,
+.slide[data-title="Integridad y DDL"] .card,
+.slide[data-title="SQL o NoSQL"] .card,
+.slide[data-title="OLTP a analítica"] .card,
+.slide[data-title="BigQuery físico"] .card,
+.slide[data-title="Anidados y formatos"] .card,
+.slide[data-title="S15 integró"] .card,
+.slide[data-title="Nombres Azure"] .card,
+.slide[data-title="DP900 práctico"] .card{
+  border-top:1px solid rgba(16,24,32,.045);
+}
+.slide[data-title="SQL que escribes"] .card h3,
+.slide[data-title="SQL o NoSQL"] .card h3,
+.slide[data-title="BigQuery físico"] .card h3,
+.slide[data-title="Nombres Azure"] .card h3{
+  color:var(--b);
+}
+
+/* --- repertorio SQL: las familias se distinguen sin inventar contenido --- */
+.slide[data-title="SQL que escribes"] .card:nth-child(1) .chip{background:var(--b);color:#fff}
+.slide[data-title="SQL que escribes"] .card:nth-child(2) .chip{background:var(--ink);color:var(--y)}
+.slide[data-title="SQL que escribes"] .card:nth-child(3) .chip{background:var(--g);color:#fff}
+.slide[data-title="SQL que escribes"] .chips{gap:.38em}
+.slide[data-title="SQL que escribes"] .chip{
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 1px 2px rgba(16,24,32,.10);
+}
+
+/* --- recorrido: misma familia visual de .steps del tema ------------- */
+.journey{counter-reset:s16journey;position:relative}
+.journey:before{
+  content:"";position:absolute;left:5%;right:5%;top:50%;
+  height:2px;background:linear-gradient(90deg,rgba(255,214,0,.2),rgba(18,78,120,.28),rgba(255,138,36,.22));
+  z-index:0;
+}
+.journey .step{counter-increment:s16journey;padding-left:3.8em;z-index:1}
+.journey .step:before{
+  content:counter(s16journey);
+  position:absolute;left:1em;top:1em;
+  width:2em;height:2em;display:grid;place-items:center;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-weight:900;box-shadow:var(--sh);
+}
+.journey .step:nth-child(even):before{background:var(--b);color:#fff}
+
+/* --- cadenas y microactivaciones: marcadores consistentes ----------- */
+.chain{
+  position:relative;padding-left:3.2em;
+  background:linear-gradient(90deg,var(--dark),#16293a);
+  border-left:.38em solid var(--y);
+}
+.chain:before{
+  content:"→";position:absolute;left:1.05em;top:50%;transform:translateY(-50%);
+  color:var(--y);font-size:1.35em;font-weight:900;
+}
+.micro{position:relative;padding-left:3.4em;box-shadow:var(--sh)}
+.micro:before{
+  content:"?";position:absolute;left:.85em;top:50%;transform:translateY(-50%);
+  width:1.75em;height:1.75em;display:grid;place-items:center;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-weight:950;font-size:.9em;
+}
+.checkpoint{box-shadow:var(--sh)}
+
+/* --- pensamiento SQL: pasos visuales sin alterar el texto ----------- */
+.logic{counter-reset:s16logic}
+.logic span{counter-increment:s16logic;position:relative;padding-left:2.9em}
+.logic span:before{
+  content:counter(s16logic);
+  position:absolute;left:.65em;top:50%;transform:translateY(-50%);
+  width:1.55em;height:1.55em;border-radius:50%;
+  display:grid;place-items:center;background:var(--ink);color:var(--y);
+  font-size:.72em;font-weight:900;
+}
+
+/* --- código: editor oscuro del template + color semántico + toolbar -- */
+pre.sqlviz{
+  position:relative;
+  padding:2.45em 1.15em 1.05em;
+  min-height:4.4em;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 2.35em),
+    #0d1b26;
+  border-left:.4em solid var(--y);
+  border-top:1px solid rgba(255,255,255,.08);
+  box-shadow:0 1px 2px rgba(16,24,32,.08),0 10px 28px rgba(16,24,32,.12);
+}
+pre.sqlviz:before{
+  content:attr(data-label);
+  position:absolute;left:4.2em;top:.72em;
+  font:800 .64em/1 "Segoe UI",Arial,sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;color:#d8e4ec;
+}
+pre.sqlviz:after{
+  content:"";
+  position:absolute;left:1.15em;top:.75em;
+  width:.48em;height:.48em;border-radius:50%;
+  background:#ff6b6b;
+  box-shadow:.78em 0 #ffd166,1.56em 0 #58d68d;
+}
+pre.sqlviz code{display:block;color:#eef6fb}
+.sqlviz .kw{
+  color:#ffd600;font-weight:900;
+  text-shadow:0 0 10px rgba(255,214,0,.10);
+}
+.sqlviz .fn{color:#79c7ff;font-weight:850}
+.sqlviz .str{color:#9be3a8}
+.sqlviz .num{color:#ffad66}
+.sqlviz .obj{color:#f4f8fb;font-weight:700}
+.sqlviz .type{color:#d4b5ff;font-weight:850}
+.sqlviz .op{color:#ffb85c;font-weight:900}
+.sqlviz .cm{color:#8ea2b2;font-style:italic}
+.sqlviz .focus{
+  display:inline-block;margin:0 -.45em;padding:0 .45em;
+  background:rgba(255,214,0,.13);
+  border-left:3px solid var(--y);
+}
+
+/* botón copiar: mismo patrón utilizado en S5/S9/S12 */
+pre.sqlviz .copybtn{
+  position:absolute;top:.48em;right:.62em;z-index:4;
+  font:800 .62em/1 "Segoe UI",Arial,sans-serif;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:#d8e4ec;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:var(--pill);padding:.48em .82em;
+  cursor:pointer;opacity:.72;
+  transition:opacity .15s ease,background .15s ease,color .15s ease,transform .15s ease;
+}
+pre.sqlviz:hover .copybtn{opacity:1}
+pre.sqlviz .copybtn:hover{background:rgba(255,255,255,.16);color:#fff;transform:translateY(-1px)}
+pre.sqlviz .copybtn:focus-visible{outline:3px solid var(--y);outline-offset:2px;opacity:1}
+pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;opacity:1}
+
+/* --- JOIN: la columna de patrón se lee como código ------------------ */
+.slide[data-title="JOIN y conjuntos"] .tbl td:nth-child(2){
+  font-family:Consolas,"Cascadia Mono",monospace;
+  font-weight:850;color:var(--b);background:#f4fafe;
+}
+.slide[data-title="JOIN y conjuntos"] .tbl tbody tr:nth-child(even) td{background:#fbfcfd}
+.slide[data-title="JOIN y conjuntos"] .tbl tbody tr:nth-child(even) td:nth-child(2){background:var(--yl)}
+
+/* --- bloques conceptuales: numeración visual ------------------------ */
+.slide[data-title="BigQuery físico"] .g3,
+.slide[data-title="Anidados y formatos"] .g3,
+.slide[data-title="Nombres Azure"] .g3{counter-reset:s16concept}
+.slide[data-title="BigQuery físico"] .g3>.card,
+.slide[data-title="Anidados y formatos"] .g3>.card,
+.slide[data-title="Nombres Azure"] .g3>.card{counter-increment:s16concept}
+.slide[data-title="BigQuery físico"] .g3>.card:before,
+.slide[data-title="Anidados y formatos"] .g3>.card:before,
+.slide[data-title="Nombres Azure"] .g3>.card:before{
+  content:"0" counter(s16concept);
+  display:inline-grid;place-items:center;
+  min-width:2.2em;height:2.2em;margin-bottom:.55em;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font:.8em/1 "Segoe UI",Arial,sans-serif;font-weight:900;
+}
+
+/* --- tres casos: el diseño se comporta como una actividad del curso - */
+.cases{counter-reset:s16case}
+.case{counter-increment:s16case;padding-left:4.1em}
+.case:before{
+  content:counter(s16case);
+  position:absolute;left:1.05em;top:1.05em;
+  width:2.15em;height:2.15em;display:grid;place-items:center;
+  border-radius:50%;background:var(--ink);color:var(--y);
+  font-weight:950;box-shadow:var(--sh);
+}
+.case.green:before{background:var(--g);color:#fff}
+
+/* --- mapa DP-900: estados más legibles ------------------------------ */
+.mapcard .chip{margin-top:.45em;background:var(--g);color:#fff;font-family:"Segoe UI",Arial,sans-serif}
+.mapcard:nth-child(even) .chip{background:var(--b)}
+.mapcard{min-height:8.4em}
+
+/* --- KPIs del examen ------------------------------------------------ */
+.slide[data-title="DP900 práctico"] .card{
+  text-align:center;border-left:0;border-top:.38em solid var(--y);
+}
+.slide[data-title="DP900 práctico"] .card:nth-child(even){border-top-color:var(--b)}
+.slide[data-title="DP900 práctico"] .result{font-variant-numeric:tabular-nums}
+
+/* --- recurso final: objeto visual más tangible ---------------------- */
+.resource.blue{
+  position:relative;overflow:hidden;padding-right:4.6em;
+}
+.resource.blue:after{
+  content:"";position:absolute;right:1.2em;top:1.2em;
+  width:2.55em;height:3.45em;border-radius:.2em;
+  background:#fff;border:1px solid #cdd9e2;
+  box-shadow:-.38em .38em 0 #eef4f8,-.76em .76em 0 #dce8f0;
+  transform:rotate(2deg);
+}
+
+/* --- pausa dentro del mismo lenguaje del curso ---------------------- */
+.slide[data-title="Pausa"] .clock{color:#fff}
+.slide[data-title="Pausa"] .lead{margin-left:auto;margin-right:auto;text-align:center}
+
+/* --- cierre: revelado con jerarquía, sin modificar el texto -------- */
+.slide[data-title="Cierre"] .closing{position:relative;padding-left:1.1em;border-left:.18em solid rgba(255,214,0,.55)}
+.slide[data-title="Cierre"] .closing+ .closing{border-left-color:rgba(121,199,255,.5)}
+
+/* --- móvil: mismo criterio de tema-v2; nada fijo abajo -------------- */
+@media (max-aspect-ratio:1/1),(max-width:700px){
+  .journey:before{display:none}
+  .journey .step,.case{padding-left:3.7rem}
+  .journey .step:before,.case:before{left:.85rem;top:.85rem}
+  .logic{grid-template-columns:1fr}
+  .logic i{display:none}
+  pre.sqlviz{font-size:.82em;overflow-x:auto;white-space:pre-wrap}
+  pre.sqlviz:before{left:4rem}
+  .resource.blue{padding-right:1.15em}
+  .resource.blue:after{display:none}
+  .slide[data-title="DP900 práctico"] .card{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  pre.sqlviz .copybtn{transition:none}
+}
+
 </style></head><body><main class="stage">
 
 <section class="slide dark active" data-title="Portada"><div class="ey">Sesión 16 · cierre del diplomado</div>
@@ -152,7 +381,7 @@ pre.sqlviz:before{content:attr(data-label);position:absolute;left:1.15em;top:.62
 <div class="g3"><div class="card"><b>CSV</b><p>Tabular simple.</p></div><div class="card"><b>JSON</b><p>Jerarquía flexible.</p></div><div class="card"><b>Parquet</b><p>Columnar, eficiente para analítica.</p></div></div>
 <div class="micro" data-r><b>Antes de UNNEST:</b> un pedido tiene 4 ítems. ¿Cuántas filas esperas después de expandir solo ese arreglo? ¿Qué representa cada fila?</div><div class="brand"><span>S14</span><span>forma + grano + costo</span></div></section>
 
-<section class="slide dense" data-title="S15 integró"><div class="ey">Desafío final</div><h2>S15 convirtió lo anterior en una solución integrada</h2>
+<section class="slide dense yellow" data-title="S15 integró"><div class="ey">Desafío final</div><h2>S15 convirtió lo anterior en una solución integrada</h2>
 <div class="s16-g4">
 <div class="card"><b>SQL</b><p>Consultas que sobreviven casos borde.</p></div>
 <div class="card"><b>Modelo</b><p>ER, 3FN y restricciones con comportamiento verificable.</p></div>
@@ -162,7 +391,7 @@ pre.sqlviz:before{content:attr(data-label);position:absolute;left:1.15em;top:.62
 <div class="checkpoint">Tres ideas para conservar: <b>último evento ≠ fila con ese estado</b> · <b>JOIN puede cambiar el grano</b> · <b>una restricción se valida por comportamiento</b>.</div>
 <div class="brand"><span>S15</span><span>integración, no contenido nuevo</span></div></section>
 
-<section class="slide dark" data-title="Pausa"><div class="break"><div><div class="ey">Pausa</div><h2>15 min</h2><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p></div></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
+<section class="slide dark" data-title="Pausa"><div class="break"><div><div class="ey">Pausa</div><h2 class="clock">15 min</h2><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p></div></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
 
 <section class="slide dense" data-title="Tres casos"><div class="ey">Transferencia final · sin nota</div><h2>Tres decisiones que ya puedes razonar</h2>
 <div class="cases">
