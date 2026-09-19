@@ -58,7 +58,8 @@ for flow_title in ["Recorrido","De reglas a modelo","OLTP a analítica","BigQuer
     block=re.search(rf'<section class="slide[^"]*" data-title="{re.escape(flow_title)}".*?</section>',html,re.S)
     assert block and 's16-flowviz' in block.group(0), flow_title
 assert "function openZoom" in html and "function closeZoom" in html
-assert html.count("<input")==1 and 'id="minLibre"' in html, "El único input permitido es el del temporizador docente"\nfor old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
+assert html.count("<input")==1 and 'id="minLibre"' in html, "El único input permitido es el del temporizador docente"
+for old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
     assert old_class not in html, old_class
 
 # La sesión final no vuelve a ser formulario/examen.
