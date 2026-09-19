@@ -78,9 +78,9 @@ async function boot({reset=false}={}){
   click(window,q2sol);
   assert.equal(q2.value,queryBefore,'Ver solución no debe sobrescribir SQL');
   assert.equal(document.querySelector('#score-sql').textContent,scoreBefore,'Ver solución no debe alterar puntuación');
-  assert.equal(document.querySelector('#solution-q2').classList.contains('hidden'),false);
+  assert.equal(document.querySelector('#solution-q2').hidden,false);
   click(window,q2sol);
-  assert.equal(document.querySelector('#solution-q2').classList.contains('hidden'),true);
+  assert.equal(document.querySelector('#solution-q2').hidden,true);
   await sleep(330);
   assert.ok(window.sessionStorage.getItem('andesdb.s15.solution.v7'));
   assert.notEqual(window.sessionStorage.getItem('andesdb.s15.solution.v7'),sessionBefore);
