@@ -232,4 +232,24 @@ p2.dom.window.close();
   dom.window.close();
 }
 
+// 6) Regresión exacta de la captura: un Mutation Hunter válido no puede mantener 0.7 con DDL roto.
+{
+  const s=structuredClone(legacy);
+  s.checked={...s.checked,ddl:1};
+  s.checkedScore={...s.checkedScore,ddl:0.7};
+  s.ddlChecks={dup_case:false,dup_event:false,orphan:false,null_tipo:false,neg:false,null_minutes:false,zero_valid:false};
+  s.mutation={no_case_pk:{probe:"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(9001,'2026-09-02','Ruido','Alta','Abierto','Prueba');",correct:'reject',mutant:'accept',pass:true}};
+  s.domainMigrationResult={beforeFails:true,afterPass:true,pass:true};
+  const raw=JSON.stringify(s);
+  const {dom,window,document}=await boot('evaluacion',raw);
+  assert.equal(document.querySelector('#score-ddl').textContent,'0','El 0.7 histórico no debe seguir mostrándose si no hay restricciones DDL válidas');
+  assert.equal(JSON.parse(window.localStorage.getItem(STORE)).checkedScore.ddl,0.7,'Corregir la vista no debe borrar ni reescribir el dato histórico');
+  click(window,document.querySelector('.tile[data-kind="mutant"][data-id="no_case_pk"]'));
+  click(window,document.querySelector('#runMutation'));
+  await waitFor(()=>document.querySelector('#mutationState').textContent.includes('Esquema correcto'),'mutation preparada no score');
+  assert.equal(document.querySelector('#score-ddl').textContent,'0');
+  assert.match(document.querySelector('#mutationState').textContent,/no suma puntaje/i);
+  dom.window.close();
+}
+
 console.log('OK · S15 persistencia: práctica → evaluación → práctica conserva datos; pistas y soluciones no alteran nota ni respuestas');
