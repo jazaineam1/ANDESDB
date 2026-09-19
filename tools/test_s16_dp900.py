@@ -38,6 +38,12 @@ assert 'class="toolbar"' in html
 assert 'class="progress"' in html
 assert 'class="ctlbar"' not in html
 assert html.count('pre class="sqlviz"')==8
+assert "pre.sqlviz .copybtn" in html
+assert ".journey:before" in html and ".journey .step:before" in html
+assert ".case:before" in html
+assert 'class="clock">15 min</h2>' in html
+assert 'class="slide dense yellow" data-title="S15 integró"' in html
+assert "slide[data-title=\"SQL que escribes\"] .card:nth-child(1) .chip" in html
 assert 'class="kw"' in html and 'class="fn"' in html and 'class="type"' in html and 'class="op"' in html
 assert "className='copybtn'" in html
 assert html.count("data-r")>=10
