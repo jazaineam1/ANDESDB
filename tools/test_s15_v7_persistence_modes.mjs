@@ -106,7 +106,7 @@ assert.equal(p1.raw,legacyRaw,'Abrir práctica no debe reescribir el localStorag
 assert.match(p1.document.querySelector('#modePill').textContent,/Práctica guiada/);
 assert.equal(p1.document.querySelector('#q2').value,legacy.queries.q2);
 assert.equal(p1.document.querySelector('#ddl').value,legacy.ddl);
-assert.equal(p1.document.querySelector('#domainMigration').value,legacy.domainMigration);
+assert.equal(p1.document.querySelector('#domainMigration').readOnly,true); assert.match(p1.document.querySelector('#domainMigration').value,/Escalado/);
 assert.equal(p1.document.querySelector('#mutationProbe').value,legacy.mutationProbe);
 assert.equal(p1.document.querySelector('[data-solution="q1"]').disabled,false,'3 pistas previas deben desbloquear solución inmediatamente');
 assert.equal(p1.document.querySelector('[data-solution="q2"]').disabled,true,'2 pistas previas no deben desbloquear solución');
@@ -135,6 +135,8 @@ assert.equal(p1.document.querySelector('[data-study-solution="s2"]').disabled,fa
 await sleep(330);
 const afterPracticeRaw=p1.window.localStorage.getItem(STORE);
 const afterPractice=JSON.parse(afterPracticeRaw);
+assert.equal(afterPractice.domainMigration,legacy.domainMigration,'El INSERT preparado no debe sobrescribir el texto histórico');
+assert.equal(afterPractice.mutationProbe,legacy.mutationProbe,'La prueba preparada no debe borrar el probe histórico');
 assert.deepEqual(critical(afterPractice),critical({...legacy,hints:{...legacy.hints,q2:3}}));
 assert.equal(afterPractice.hints.q1,3);
 assert.equal(afterPractice.hints.q2,3);
@@ -167,7 +169,7 @@ e1.dom.window.close();
 // 3) Volver a práctica restaura intactos datos históricos y desbloqueos ya usados.
 const p2=await boot('practica',afterEvalSave);
 assert.equal(p2.document.querySelector('#q2').value,legacy.queries.q2);
-assert.equal(p2.document.querySelector('#domainMigration').value,legacy.domainMigration);
+assert.equal(p2.document.querySelector('#domainMigration').readOnly,true); assert.match(p2.document.querySelector('#domainMigration').value,/Escalado/);
 assert.equal(p2.document.querySelector('#mutationProbe').value,legacy.mutationProbe);
 assert.equal(p2.document.querySelector('[data-solution="q1"]').disabled,false);
 assert.equal(p2.document.querySelector('[data-solution="q2"]').disabled,false);
