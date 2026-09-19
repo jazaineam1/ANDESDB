@@ -44,6 +44,8 @@ HAVING COUNT(*) &gt; 1;</textarea><div class="actions"><button id="runDiag" clas
 </main></div>
 <script type="importmap">{"imports":{"apache-arrow":"./assets/vendor/apache-arrow/apache-arrow.mjs"}}</script>
 <script src="assets/vendor/sqljs/sql-wasm.js?v=s15v7-fast1"></script>
-<script src="assets/learning/s15-autograder-v7.js?v=s15v7-cohort1"></script>
+<script>
+(()=>{const practice=new URLSearchParams(location.search).get('modo')==='practica';const s=document.createElement('script');s.src='assets/learning/'+(practice?'s15-autograder-v7-practice.js?v=s15v7-cohort2':'s15-autograder-v7.js?v=s15v7-cohort2');document.body.appendChild(s)})();
+</script>
 <script src="assets/analytics-config.js?v=20260912a"></script><script src="assets/analytics.js?v=20260912a"></script>
 </body></html>
