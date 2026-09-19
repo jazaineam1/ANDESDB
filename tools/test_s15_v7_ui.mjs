@@ -76,6 +76,23 @@ for(const id of ['q1','q2','q3','q4','q5']){
 click(document.querySelector('#runDdl'));
 await waitFor(()=>document.querySelectorAll('#ddlTests .pill').length===7,'pruebas DDL starter');
 assert.equal(document.querySelectorAll('#ddlTests .pill.ok').length,1);
+
+// Regresión de la captura: las demos preparadas pueden ser válidas, pero con el DDL roto no regalan 0.7 puntos.
+assert.equal(document.querySelector('#mutationProbe').readOnly,true);
+assert.equal(document.querySelector('#domainMigration').readOnly,true);
+for(const id of ['no_case_pk','wrong_fk','weak_minutes']){
+  click(tile('mutant',id));
+  assert.notEqual(document.querySelector('#mutationProbe').value.trim(),'');
+  click(document.querySelector('#runMutation'));
+  await waitFor(()=>document.querySelector('#mutationState').textContent.includes('Esquema correcto'),id+' mutation outcome');
+  assert.match(document.querySelector('#mutationState').textContent,/no suma puntaje/i);
+}
+click(document.querySelector('#runDomainMigration'));
+await waitFor(()=>document.querySelector('#domainMigrationFeedback').classList.contains('ok'),'migración preparada');
+assert.match(document.querySelector('#domainMigrationFeedback').textContent,/no suma puntaje/i);
+click(document.querySelector('[data-check="ddl"]'));
+assert.equal(document.querySelector('#score-ddl').textContent,'0','Mutation/Escalado no pueden sumar con las restricciones DDL rotas');
+
 const ddlExtra=[
  'CREATE TABLE caso(',
  ' caso_id INTEGER PRIMARY KEY,',
@@ -99,22 +116,8 @@ const ddlExtra=[
 ].join('\n');
 setText('#ddl',ddlExtra);click(document.querySelector('#runDdl'));
 await waitFor(()=>document.querySelectorAll('#ddlTests .pill.ok').length===7,'DDL extra 7/7');
-
-// Mutation Hunter 2.0: el INSERT lo escribe el estudiante y debe diferenciar esquema correcto/mutante.
-const mutationCases=[
- ['no_case_pk',"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(1010,'2026-08-20','Ruido','Alta','Abierto','Suba'),(1010,'2026-08-20','Ruido','Alta','Abierto','Suba')"],
- ['wrong_fk',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9001,9999,'2026-09-02 10:00','Abierto',0)"],
- ['weak_minutes',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9205,9001,'2026-09-02 11:00','Abierto',0)"]
-];
-for(const [id,probe] of mutationCases){
-  click(tile('mutant',id));setText('#mutationProbe',probe);click(document.querySelector('#runMutation'));
-  await waitFor(()=>document.querySelector('#mutationState').textContent.includes('Esquema correcto'),id+' mutation outcome');
-}
-setText('#domainMigration',"INSERT INTO estado_catalogo(estado) VALUES('Escalado')");
-click(document.querySelector('#runDomainMigration'));
-await waitFor(()=>document.querySelector('#domainMigrationFeedback').classList.contains('ok'),'migración de dominio');
 click(document.querySelector('[data-check="ddl"]'));
-assert.equal(document.querySelector('#score-ddl').textContent,'10');
+assert.equal(document.querySelector('#score-ddl').textContent,'10','Los 10 puntos provienen solo del comportamiento del DDL');
 
 for(const id of ['snapshot_estado','evidencias'])await place('doc',id,'doc:embed');
 await place('doc','ciudadano_ref','doc:refid');

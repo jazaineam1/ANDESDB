@@ -106,8 +106,10 @@ assert.equal(p1.raw,legacyRaw,'Abrir práctica no debe reescribir el localStorag
 assert.match(p1.document.querySelector('#modePill').textContent,/Práctica guiada/);
 assert.equal(p1.document.querySelector('#q2').value,legacy.queries.q2);
 assert.equal(p1.document.querySelector('#ddl').value,legacy.ddl);
-assert.equal(p1.document.querySelector('#domainMigration').value,legacy.domainMigration);
-assert.equal(p1.document.querySelector('#mutationProbe').value,legacy.mutationProbe);
+assert.equal(p1.document.querySelector('#domainMigration').readOnly,true); assert.match(p1.document.querySelector('#domainMigration').value,/Escalado/);
+assert.equal(p1.document.querySelector('#mutationProbe').readOnly,true);
+assert.equal(p1.document.querySelector('#mutationProbe').value,'','Sin seleccionar mutante no se debe mostrar el probe histórico');
+assert.equal(JSON.parse(p1.window.localStorage.getItem(STORE)).mutationProbe,legacy.mutationProbe,'El probe histórico permanece guardado');
 assert.equal(p1.document.querySelector('[data-solution="q1"]').disabled,false,'3 pistas previas deben desbloquear solución inmediatamente');
 assert.equal(p1.document.querySelector('[data-solution="q2"]').disabled,true,'2 pistas previas no deben desbloquear solución');
 assert.ok(p1.document.querySelector('[data-study-guide="s2"]'),'Práctica debe incluir ayuda guiada por estación');
@@ -135,6 +137,8 @@ assert.equal(p1.document.querySelector('[data-study-solution="s2"]').disabled,fa
 await sleep(330);
 const afterPracticeRaw=p1.window.localStorage.getItem(STORE);
 const afterPractice=JSON.parse(afterPracticeRaw);
+assert.equal(afterPractice.domainMigration,legacy.domainMigration,'El INSERT preparado no debe sobrescribir el texto histórico');
+assert.equal(afterPractice.mutationProbe,legacy.mutationProbe,'La prueba preparada no debe borrar el probe histórico');
 assert.deepEqual(critical(afterPractice),critical({...legacy,hints:{...legacy.hints,q2:3}}));
 assert.equal(afterPractice.hints.q1,3);
 assert.equal(afterPractice.hints.q2,3);
@@ -167,8 +171,10 @@ e1.dom.window.close();
 // 3) Volver a práctica restaura intactos datos históricos y desbloqueos ya usados.
 const p2=await boot('practica',afterEvalSave);
 assert.equal(p2.document.querySelector('#q2').value,legacy.queries.q2);
-assert.equal(p2.document.querySelector('#domainMigration').value,legacy.domainMigration);
-assert.equal(p2.document.querySelector('#mutationProbe').value,legacy.mutationProbe);
+assert.equal(p2.document.querySelector('#domainMigration').readOnly,true); assert.match(p2.document.querySelector('#domainMigration').value,/Escalado/);
+assert.equal(p2.document.querySelector('#mutationProbe').readOnly,true);
+assert.equal(p2.document.querySelector('#mutationProbe').value,'');
+assert.equal(JSON.parse(p2.window.localStorage.getItem(STORE)).mutationProbe,legacy.mutationProbe);
 assert.equal(p2.document.querySelector('[data-solution="q1"]').disabled,false);
 assert.equal(p2.document.querySelector('[data-solution="q2"]').disabled,false);
 assert.equal(p2.document.querySelector('[data-study-solution="s2"]').disabled,false);
@@ -227,6 +233,26 @@ p2.dom.window.close();
   const after=JSON.parse(window.localStorage.getItem(STORE));
   assert.deepEqual(critical(after),domainBefore,'Las guías no-SQL solo pueden añadir studyHints/solutionView');
   for(const id of ['s0','s2','s3','s4','s5','s6','s7','boss'])assert.equal(after.studyHints[id],3);
+  dom.window.close();
+}
+
+// 6) Regresión exacta de la captura: un Mutation Hunter válido no puede mantener 0.7 con DDL roto.
+{
+  const s=structuredClone(legacy);
+  s.checked={...s.checked,ddl:1};
+  s.checkedScore={...s.checkedScore,ddl:0.7};
+  s.ddlChecks={dup_case:false,dup_event:false,orphan:false,null_tipo:false,neg:false,null_minutes:false,zero_valid:false};
+  s.mutation={no_case_pk:{probe:"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(9001,'2026-09-02','Ruido','Alta','Abierto','Prueba');",correct:'reject',mutant:'accept',pass:true}};
+  s.domainMigrationResult={beforeFails:true,afterPass:true,pass:true};
+  const raw=JSON.stringify(s);
+  const {dom,window,document}=await boot('evaluacion',raw);
+  assert.equal(document.querySelector('#score-ddl').textContent,'0','El 0.7 histórico no debe seguir mostrándose si no hay restricciones DDL válidas');
+  assert.equal(JSON.parse(window.localStorage.getItem(STORE)).checkedScore.ddl,0.7,'Corregir la vista no debe borrar ni reescribir el dato histórico');
+  click(window,document.querySelector('.tile[data-kind="mutant"][data-id="no_case_pk"]'));
+  click(window,document.querySelector('#runMutation'));
+  await waitFor(()=>document.querySelector('#mutationState').textContent.includes('Esquema correcto'),'mutation preparada no score');
+  assert.equal(document.querySelector('#score-ddl').textContent,'0');
+  assert.match(document.querySelector('#mutationState').textContent,/no suma puntaje/i);
   dom.window.close();
 }
 

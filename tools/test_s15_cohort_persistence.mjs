@@ -97,12 +97,9 @@ function assertCommonData(document,expected,{guided=false}={}){
   assert.equal(document.querySelector('#q1').value,expected.queries.q1);
   assert.equal(document.querySelector('#q2').value,expected.queries.q2);
   assert.equal(document.querySelector('#ddl').value,expected.ddl);
-  if(guided){
-    assert.equal(document.querySelector('#domainMigration').value,"INSERT INTO estado_catalogo(estado) VALUES ('Escalado');");
-    assert.equal(document.querySelector('#domainMigration').readOnly,true);
-  }else{
-    assert.equal(document.querySelector('#domainMigration').value,expected.domainMigration);
-  }
+  assert.equal(document.querySelector('#domainMigration').readOnly,true);
+  assert.match(document.querySelector('#domainMigration').value,/Escalado/);
+  assert.equal(document.querySelector('#mutationProbe').readOnly,true);
   assert.equal(document.querySelector('#unnestQuery').value,expected.unnestQuery);
   assert.equal(document.querySelector('#bossUnnest').value,expected.boss.unnestQuery);
   assert.equal(document.querySelector('#docStoreCase').value,expected.doc.storeCase);
