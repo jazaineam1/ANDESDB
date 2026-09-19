@@ -64,7 +64,7 @@ assert "no representa necesariamente la longitud o dificultad exacta" in HTML.ca
 assert "state.confidence[q.id]" in HTML
 assert "high_confidence_errors" in HTML
 assert HTML.count('<section class="slide')==27
-for token in ["último evento vs", "aceptar lo válido", "No mezclar granos", "Google Cloud Data Analytics", "HackerRank SQL"]:
+for token in ["Último evento vs.", "aceptar lo válido", "No mezclar granos", "Google Cloud Data Analytics", "HackerRank SQL"]:
     assert token in HTML, token
 assert "0–15" not in HTML and "15–35" not in HTML and "65–110" not in HTML
 
