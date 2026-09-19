@@ -70,13 +70,13 @@ async function boot({reset=false}={}){
 
   click(window,q2hint);
   assert.equal(q2sol.disabled,true);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 1\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 1\/3/);
   click(window,q2hint);
   assert.equal(q2sol.disabled,true);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 2\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 2\/3/);
   click(window,q2hint);
   assert.equal(q2sol.disabled,false);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 3\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 3\/3/);
 
   const queryBefore=q2.value;
   const scoreBefore=document.querySelector('#score-sql').textContent;
