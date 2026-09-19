@@ -576,7 +576,7 @@
           "modo": "consolidacion",
           "titulo": "Cierre del curso + puente DP-900",
           "estado": "pendiente",
-          "desc": "Cierre de 180 min totales (165 útiles + pausa): consolidación del SQL y del pensamiento de consulta, diseño relacional, integridad, SQL/NoSQL, warehouse, BigQuery y datos anidados; tres casos finales sin nota; puente conceptual a DP-900; 5 preguntas oficiales en vivo; Cheat Sheet final y cierre antes de la encuesta institucional.",
+          "desc": "Cierre de 180 min totales (165 útiles + pausa): consolidación del SQL y del pensamiento de consulta, diseño relacional, integridad, SQL/NoSQL, warehouse, BigQuery y datos anidados; tres casos finales sin nota; puente conceptual a DP-900; 5 preguntas oficiales en vivo; Cheat Sheet final de 4 páginas con referentes de industria y cierre antes de la encuesta institucional.",
           "tags": [
             "cierre del curso",
             "SQL",
@@ -596,7 +596,8 @@
             "DP-900",
             "Practice Assessment",
             "voucher",
-            "Cheat Sheet"
+            "Cheat Sheet",
+            "referentes de industria"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [
@@ -631,9 +632,13 @@
               "externo": true
             },
             {
-              "txt": "⬇ Cheat Sheet final · 3 páginas",
+              "txt": "⬇ Cheat Sheet final · 4 páginas + referentes de industria",
               "href": "Presentaciones/M6/glosario-cierre-s16.html",
               "download": false
+            },
+            {
+              "txt": "🧭 Referentes de industria · concepto → fuente",
+              "href": "Presentaciones/M6/glosario-cierre-s16.html#referentes-industria"
             }
           ]
         }

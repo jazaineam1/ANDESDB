@@ -655,7 +655,8 @@
           "resuelve tres casos finales de transferencia sin puntuación",
           "separa conceptos ya trabajados de nombres Azure nuevos",
           "practica 5 preguntas oficiales de Microsoft en vivo",
-          "sale con Cheat Sheet final y ruta de voucher, sin formulario adicional ni segunda evaluación"
+          "sale con Cheat Sheet final y ruta de voucher, sin formulario adicional ni segunda evaluación",
+          "usa el mapa de referentes de industria del Cheat Sheet para identificar dónde profundizar cada concepto"
         ]
       },
       "diagnostico": {
@@ -683,7 +684,22 @@
           "DP-900 por voucher",
           "Google Cloud Data Analytics como complemento",
           "HackerRank SQL como práctica opcional"
-        ]
+        ],
+        "referentes_industria": {
+          "objetivo": "Conectar cada concepto central del diplomado con una fuente primaria o ruta de aprendizaje reconocida.",
+          "fuentes": [
+            "PostgreSQL Documentation",
+            "Microsoft Learn",
+            "MongoDB Documentation",
+            "Neo4j GraphAcademy",
+            "AWS Architecture/Whitepapers",
+            "Kimball Group",
+            "Google Cloud BigQuery Documentation",
+            "Apache Parquet",
+            "Databricks Documentation"
+          ],
+          "regla": "Fuente primaria primero; blogs y videos como complemento."
+        }
       }
     }
   }
