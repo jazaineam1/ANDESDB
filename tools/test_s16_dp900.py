@@ -12,6 +12,10 @@ RPLAN=json.loads((ROOT/"revision/assets/learning/learning-plan.json").read_text(
 GUIDE=(ROOT/"revision/docs/instructor/S16.md").read_text(encoding="utf-8")
 GLOSS=(ROOT/"Presentaciones/M6/glosario-cierre-s16.html").read_text(encoding="utf-8")
 RGLOSS=(ROOT/"revision/Presentaciones/M6/glosario-cierre-s16.html").read_text(encoding="utf-8")
+S16_ANALYTICS=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
+RS16_ANALYTICS=(ROOT/"revision/s16-analytics.html").read_text(encoding="utf-8")
+S16_EDGE=(ROOT/"supabase/functions/learning-s16-analytics/index.ts").read_text(encoding="utf-8")
+TEACHER=(ROOT/"revision/teacher-dashboard.html").read_text(encoding="utf-8")
 
 def need(token:str):
     assert token in HTML, token
@@ -104,4 +108,14 @@ assert GLOSS==RGLOSS
 for token in ["Grano","Partición","Clustering","UNNEST","OLTP","OLAP","ETL","ELT","Parquet","CAP","0 · Diagnóstico","1 · SQL Arena","2 · Modelo + 3FN","3 · DDL Mutation","4 · Document Lab","5 · Warehouse","6 · BigQuery físico","7 · Nested BigQuery","8 · Boss Transfer"]:
     assert token in GLOSS, token
 
-print("OK · S16: cierre honesto + todo SQL + DP900 + 24 escenarios + glosario + portafolio + encuesta")
+# El diagnóstico llega a un panel docente específico, no queda enterrado en lms_events.
+assert S16_ANALYTICS==RS16_ANALYTICS
+for token in ["learning-s16-analytics","Resultados por dominio","Errores C / T / L","Portafolio marcado","Detalle por estudiante","portfolio_count"]:
+    assert token in S16_ANALYTICS, token
+for token in ['eq("session_number",16)','eq("activity_code","s16-dp900")','eq("event_type","challenge_completed")',"latest.size","target_after_expiry"]:
+    assert token in S16_EDGE, token
+assert '../s16-analytics.html' in TEACHER
+assert '../s15-analytics.html' in TEACHER
+assert "s16-analytics.html" in GUIDE
+
+print("OK · S16: cierre honesto + todo SQL + DP900 + 24 escenarios + glosario + portafolio + encuesta + analítica docente")
