@@ -216,9 +216,13 @@ def check_generators_do_not_add_changes() -> None:
             return
     after = git_diff_generated()
     if before != after:
+        diff = after
+        if len(diff) > 12000:
+            diff = diff[:12000] + "\n... [diff truncado]"
         err(
             "Los generadores modificaron index.html o Presentaciones. "
-            "Revisa esos cambios, inclúyelos si son correctos y vuelve a ejecutar el pre-push."
+            "Revisa esos cambios, inclúyelos si son correctos y vuelve a ejecutar el pre-push.\n"
+            + diff
         )
 
 
