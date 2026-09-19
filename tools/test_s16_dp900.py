@@ -79,7 +79,7 @@ for url in [
     assert url in html, url
 
 # Cheat Sheet de cuatro páginas, con mapa de referentes por concepto.
-assert sheet.count('<section class="page">')==4
+assert len(re.findall(r'<section class="page"(?:\s|>)',sheet))==4
 assert 'id="referentes-industria"' in sheet
 for token in [
     "Cheat Sheet final · SQL y pensamiento de consulta",
