@@ -43,11 +43,17 @@ def test_acceptance_22():
     assert "checkedScore:{}" in JS and "k==='ddl'?ddlScore():state.checkedScore[k]" in JS
     assert "exact(p,['fecha_evento'])" in JS and "c.length===2&&!c.includes('caso_id')" in JS
 
-    # 2-4. Banco ER: toque/drag válidos, FK explícita y homónimos identificables.
+    # 2-4. Banco ER: toque/drag válidos, FK explícita y homónimos sin identidad oculta evaluable.
     assert 'data-drop="model:caso"' in HTML and 'data-drop="model:evento"' in HTML
     assert 'id="pkCaseSelect"' in HTML and 'id="pkEventSelect"' in HTML
     assert 'id="fkSelect"' in HTML and 'value="evento.caso_id"' in HTML and 'id="cardinalitySelect"' in HTML
     assert "caso_id · CASO" in JS and "caso_id · EVENTO" in JS and "estado · CASO" in JS and "estado · EVENTO" in JS
+    assert "Las dos fichas homónimas son intercambiables" in HTML
+    assert "const normColumn=id=>String(id||'').split('.').pop()" in JS
+    assert "agente_id · FK → AGENTE" in JS and "agente_id · PK" in JS
+    assert "caso_id · FK → CASO" in JS and "caso_id · PK" in JS
+    assert "state.norm.caso.map(normColumn)" in JS and "state.norm.evento.map(normColumn)" in JS and "state.norm.agente.map(normColumn)" in JS
+    assert 'cols=(x:any)=>arr(x).map(v=>String(v).split(".").pop())' in EDGE_FN
 
     # 5. Los starters típicos fallan ya en el dataset base: no hay crédito por no tocar.
     starters={
