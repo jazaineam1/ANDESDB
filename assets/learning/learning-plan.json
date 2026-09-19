@@ -607,173 +607,83 @@
     },
     "16": {
       "fecha": "2026-09-22",
-      "titulo": "Cierre del curso + primer contacto DP-900",
+      "titulo": "Cierre del curso + puente DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Cerrar el curso primero y abrir DP-900 después: reconstruir todo el SQL y las decisiones S2–S15, resolver dudas de guía/vocabulario, diagnosticar 24 escenarios con 48 componentes evaluables y salir con plan, portafolio, glosario y fecha ligados al voucher.",
+      "objetivo": "Consolidar lo aprendido en SQL, diseño, integridad, NoSQL y analítica; hacer visible el progreso del diplomado; transferir ese razonamiento a tres casos finales sin nota y conectar después con DP-900 mediante nomenclatura Azure y práctica oficial.",
       "dp900": [
         {
           "dominio": "Core data concepts",
-          "pregunta": "Una API devuelve JSON con campos opcionales y arreglos. ¿Cómo se clasifica mejor?",
-          "opciones": [
-            "Estructurado tabular",
-            "Semiestructurado",
-            "No estructurado",
-            "Relacional por definición"
-          ],
-          "correcta": 1,
-          "explicacion": "JSON conserva estructura flexible sin exigir esquema tabular rígido."
+          "uso": "puente conceptual",
+          "ya_trabajado": "datos estructurados/semiestructurados, OLTP/OLAP, batch/streaming y roles de datos",
+          "nuevo": "nombres y formulación Microsoft"
         },
         {
           "dominio": "Relational data on Azure",
-          "pregunta": "Necesitas alta compatibilidad con una instancia SQL Server sin administrar una VM. ¿Qué servicio comparas primero?",
-          "opciones": [
-            "Azure SQL Database",
-            "Azure SQL Managed Instance",
-            "SQL Server on Azure VM",
-            "Azure Database for PostgreSQL"
-          ],
-          "correcta": 1,
-          "explicacion": "Managed Instance prioriza compatibilidad de instancia manteniendo PaaS."
+          "uso": "puente conceptual",
+          "ya_trabajado": "normalización, SQL común, objetos, PK/FK/CHECK y PostgreSQL",
+          "nuevo": "Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL administrado"
         },
         {
           "dominio": "Non-relational data on Azure",
-          "pregunta": "Documentos distribuidos globalmente y baja latencia: ¿qué servicio reconoces?",
-          "opciones": [
-            "Azure Files",
-            "Azure Cosmos DB",
-            "Azure Table Storage",
-            "Azure Blob Storage"
-          ],
-          "correcta": 1,
-          "explicacion": "Cosmos DB está orientado a cargas NoSQL distribuidas globalmente."
+          "uso": "puente conceptual",
+          "ya_trabajado": "documentos, embeber/referenciar, patrón de acceso y almacenamiento de objetos",
+          "nuevo": "Blob, Files, Table y Cosmos DB"
         },
         {
           "dominio": "Analytics workload on Azure",
-          "pregunta": "Tu equipo ya trabaja con Databricks Runtime y Delta Lake y necesita workloads Spark administrados en Azure. ¿Qué servicio encaja mejor?",
-          "opciones": [
-            "Microsoft Fabric",
-            "Azure Databricks",
-            "Azure SQL Database",
-            "Azure Blob Storage"
-          ],
-          "correcta": 1,
-          "explicacion": "La condición diferenciadora es el ecosistema Databricks/Databricks Runtime, no Spark por sí solo."
+          "uso": "puente conceptual",
+          "ya_trabajado": "warehouse, hechos/dimensiones, batch/streaming, BigQuery y visualización",
+          "nuevo": "Databricks, Fabric y Power BI"
         }
       ],
       "solucion": {
-        "modo": "manual"
+        "modo": "discusion_guiada"
       },
       "actividad": {
-        "titulo": "Cierre + diagnóstico DP-900 con plan de examen",
-        "minutos": 100,
-        "instrucciones": "Abre con las tres dudas del grupo; devuelve S15 con guía; recorre todo el SQL S2–S15; registra la reflexión actual sobre S1; explica DP-900 y el voucher; traduce el vocabulario Azure; resuelve 24 escenarios 7–6–4–7 con 48 componentes y crédito parcial; clasifica todo error C/T/L; haz 5 preguntas oficiales en vivo; define fecha objetivo; marca portafolio, descarga glosario y completa encuesta.",
+        "titulo": "Cierre integrador + puente DP-900",
+        "minutos": 165,
+        "instrucciones": "Recorre el progreso S2–S15; consolida SQL y pensamiento de consulta; conecta reglas con modelado e integridad; recupera SQL/NoSQL, warehouse, BigQuery y anidados; resuelve tres casos finales sin nota; muestra qué conceptos se transfieren a DP-900; abre 5 preguntas del Practice Assessment oficial; entrega el Cheat Sheet final y cierra antes de la encuesta institucional.",
         "criterios": [
-          "registra cinco respuestas actuales a las preguntas de S1 y solo las compara con una respuesta original cuando esa evidencia existe",
-          "explica los tres patrones críticos de S15 sin tratarlos como un ranking estadístico no observado",
-          "distingue DP-900, Google Cloud Path 420 y HackerRank SQL por propósito",
-          "explica cómo funciona un examen Fundamentals sin confundir 45 minutos de examen con 65 minutos de seat time",
-          "responde 24 escenarios distribuidos 7-6-4-7 y conserva crédito parcial en sus 48 componentes evaluables",
-          "marca confianza previa y clasifica cada escenario incorrecto como concepto, transferencia o lectura",
-          "identifica uno o varios dominios prioritarios sin desempatar arbitrariamente y explora recursos oficiales en vivo",
-          "define fecha objetivo anterior al vencimiento del voucher",
-          "marca un portafolio de evidencias, puede registrar un enlace opcional y completa la autopercepción de salida",
-          "envía un resumen diagnóstico al docente cuando está autenticado"
+          "hace visible un repertorio SQL amplio: filtros, agregaciones, JOIN, UNION, CTE, CASE, COALESCE, DDL y DML",
+          "explica orden de escritura y orden lógico de una consulta",
+          "usa grano, llaves y validación para razonar JOIN y agregaciones",
+          "conecta reglas de negocio con entidades, cardinalidad, normalización y restricciones",
+          "elige SQL/NoSQL por relaciones y patrón de acceso",
+          "distingue OLTP, OLAP, warehouse, batch y streaming",
+          "explica partición, clustering, pruning, ARRAY, STRUCT, UNNEST y formatos",
+          "resuelve tres casos finales de transferencia sin puntuación",
+          "separa conceptos ya trabajados de nombres Azure nuevos",
+          "practica 5 preguntas oficiales de Microsoft en vivo",
+          "sale con Cheat Sheet final y ruta de voucher, sin formulario adicional ni segunda evaluación"
         ]
       },
       "diagnostico": {
-        "version": "dp900-2026-07-v3",
-        "total": 24,
-        "distribucion": {
-          "conceptos": 7,
-          "relacional": 6,
-          "no_relacional": 4,
-          "analitica": 7
-        },
-        "formatos": [
-          "selección única",
-          "sí/no por enunciado",
-          "emparejar",
-          "completar idea"
-        ],
-        "errores": [
-          "C · concepto",
-          "T · transferencia",
-          "L · lectura"
-        ],
-        "reporte_docente": [
-          "respuestas actuales de la reflexión S1",
-          "exactitud por componente y escenarios completos por dominio",
-          "exactitud total sobre 48 componentes y 24 escenarios",
-          "C/T/L sin pendientes",
-          "dominio o dominios prioritarios",
-          "errores de alta confianza",
-          "fecha objetivo",
-          "vencimiento del voucher",
-          "avance y enlace opcional del portafolio"
-        ],
-        "live_practice_assessment": 5,
-        "keep_24_items": true,
-        "componentes_total": 48,
-        "distribucion_componentes": {
-          "conceptos": 15,
-          "relacional": 12,
-          "no_relacional": 8,
-          "analitica": 13
-        },
-        "scoring": "Crédito parcial por componente en Sí/No y emparejar; se conservan también escenarios completamente correctos.",
-        "require_error_classification": true,
-        "tie_policy": "Si dos o más dominios comparten la menor exactitud por componente, todos se reportan como prioritarios; 100% en todos se reporta como sin brecha clara.",
-        "item_analytics": "Envía por ítem solo conteos de componentes, escenario correcto, confianza y C/T/L; no envía la opción elegida."
+        "en_clase": false,
+        "motivo": "S15 ya es la evaluación integradora. Repetir un diagnóstico custom de 24 ítems en S16 produciría fatiga evaluativa y desplazaría el cierre del diplomado.",
+        "practice_assessment_oficial_en_vivo": 5,
+        "opcional_despues_de_clase": "El banco histórico S16 puede conservarse fuera de la presentación, pero no forma parte del cierre."
       },
       "cierre": {
-        "post_s1": 5,
-        "devolucion_s15": [
-          "último evento vs fila con ese estado",
-          "restricciones por comportamiento",
-          "mezcla de granos"
+        "sintesis": "pregunta → grano → tablas/relaciones → integridad → almacenamiento → analítica → validación → decisión",
+        "casos_finales": [
+          "reporte inflado por JOIN 1:N",
+          "pedido completo y patrón de acceso documental",
+          "tablero histórico: separar OLTP y analítica"
         ],
-        "sintesis": "problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión",
-        "certificaciones": [
-          "DP-900 · Azure Data Fundamentals",
-          "Google Cloud Data Analytics · Path 420",
-          "HackerRank SQL"
+        "cheat_sheet": "Presentaciones/M6/glosario-cierre-s16.html",
+        "encuesta": "institucional, después de la diapositiva final",
+        "no_recopilar": [
+          "respuestas abiertas S1",
+          "mini encuesta adicional",
+          "URL de portafolio",
+          "diagnóstico S16 al docente"
         ],
-        "portafolio": [
-          "SQL explicable",
-          "modelo ER/3FN",
-          "PostgreSQL/Supabase con DDL e integridad",
-          "NoSQL documental",
-          "BigQuery/Google Skills",
-          "S15 Workbench",
-          "HackerRank SQL",
-          "glosario de cierre"
-        ],
-        "encuesta": [
-          "modelo relacional",
-          "SQL con criterio",
-          "transferencia SQL/NoSQL/analítica",
-          "siguiente paso concreto"
-        ],
-        "todo_sql": [
-          "S2–S3 SELECT/WHERE/GROUP BY/HAVING",
-          "S4 LEFT JOIN + ausencia",
-          "S5 CTE + COUNT(DISTINCT)",
-          "S6 SQL para demostrar reglas",
-          "S9 CREATE TABLE + PK/FK/CHECK",
-          "S12 SQL sobre modelo estrella",
-          "S13 PARTITION BY + CLUSTER BY",
-          "S14 CROSS JOIN UNNEST",
-          "S15 integración"
-        ],
-        "workbench_vocab": {
-          "arena": "depuración SQL con casos borde",
-          "mutation": "contraste de esquema correcto vs defectuoso",
-          "boss": "transferencia a un caso nuevo"
-        },
-        "glossary": "Presentaciones/M6/glosario-cierre-s16.html",
-        "portfolio_url_optional": true,
-        "reflexion_s1": "No se denomina pre/post salvo que exista una respuesta original individual almacenada."
+        "recursos_posteriores": [
+          "DP-900 por voucher",
+          "Google Cloud Data Analytics como complemento",
+          "HackerRank SQL como práctica opcional"
+        ]
       }
     }
   }
