@@ -107,7 +107,9 @@ assert.match(p1.document.querySelector('#modePill').textContent,/Práctica guiad
 assert.equal(p1.document.querySelector('#q2').value,legacy.queries.q2);
 assert.equal(p1.document.querySelector('#ddl').value,legacy.ddl);
 assert.equal(p1.document.querySelector('#domainMigration').readOnly,true); assert.match(p1.document.querySelector('#domainMigration').value,/Escalado/);
-assert.equal(p1.document.querySelector('#mutationProbe').value,legacy.mutationProbe);
+assert.equal(p1.document.querySelector('#mutationProbe').readOnly,true);
+assert.equal(p1.document.querySelector('#mutationProbe').value,'','Sin seleccionar mutante no se debe mostrar el probe histórico');
+assert.equal(JSON.parse(p1.window.localStorage.getItem(STORE)).mutationProbe,legacy.mutationProbe,'El probe histórico permanece guardado');
 assert.equal(p1.document.querySelector('[data-solution="q1"]').disabled,false,'3 pistas previas deben desbloquear solución inmediatamente');
 assert.equal(p1.document.querySelector('[data-solution="q2"]').disabled,true,'2 pistas previas no deben desbloquear solución');
 assert.ok(p1.document.querySelector('[data-study-guide="s2"]'),'Práctica debe incluir ayuda guiada por estación');
