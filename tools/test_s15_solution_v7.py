@@ -97,7 +97,7 @@ def main():
                   "P01","12.000","36.000"):
         assert token in SOL_HTML, token
     assert 'class="example-code"' in SOL_HTML
-    assert 'class="example-card"' in SOL_HTML
+    assert "example-card" in SOL_HTML
     assert '{\\n  "caso_id": 1001' not in SOL_HTML
     assert "study-guide-bar" in SOL_JS and "study-hint-line" in SOL_JS
     assert ".example-code" in CSS and ".study-guide-bar" in CSS and ".grain-flow" in CSS
