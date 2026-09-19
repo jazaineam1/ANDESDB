@@ -607,71 +607,67 @@
     },
     "16": {
       "fecha": "2026-09-22",
-      "titulo": "Cierre del curso + puente DP-900",
+      "titulo": "Cierre del curso + preparación DP-900",
       "duracion_util": 165,
-      "modo": "consolidacion",
-      "objetivo": "Consolidar lo aprendido en SQL, diseño, integridad, NoSQL y analítica; hacer visible el progreso del diplomado; transferir ese razonamiento a tres casos finales sin nota y conectar después con DP-900 mediante nomenclatura Azure y práctica oficial.",
+      "modo": "consolidacion_y_preparacion_dp900",
+      "objetivo": "Cerrar el diplomado en 65 minutos de consolidación y dedicar la segunda mitad a una preparación inicial real de DP-900: blueprint vigente, cuatro dominios, servicios Azure, estrategia de preguntas, Practice Assessment oficial y plan de voucher.",
       "dp900": [
         {
           "dominio": "Core data concepts",
-          "uso": "puente conceptual",
-          "ya_trabajado": "datos estructurados/semiestructurados, OLTP/OLAP, batch/streaming y roles de datos",
-          "nuevo": "nombres y formulación Microsoft"
+          "peso": "25–30%",
+          "ya_trabajado": "formas de datos, OLTP/OLAP, batch/streaming",
+          "nuevo": "opciones de almacenamiento Azure y responsabilidades de DBA/Data Engineer/Data Analyst"
         },
         {
           "dominio": "Relational data on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "normalización, SQL común, objetos, PK/FK/CHECK y PostgreSQL",
-          "nuevo": "Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL administrado"
+          "peso": "20–25%",
+          "ya_trabajado": "normalización, SQL común, objetos y restricciones",
+          "nuevo": "Azure SQL Database, Managed Instance, SQL Server on Azure VM y Azure Database for PostgreSQL"
         },
         {
           "dominio": "Non-relational data on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "documentos, embeber/referenciar, patrón de acceso y almacenamiento de objetos",
-          "nuevo": "Blob, Files, Table y Cosmos DB"
+          "peso": "15–20%",
+          "ya_trabajado": "documentos, patrón de acceso, objetos y clave/valor",
+          "nuevo": "Blob, Files, Table Storage, casos de uso de Cosmos DB y APIs de Cosmos DB"
         },
         {
           "dominio": "Analytics workload on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "warehouse, hechos/dimensiones, batch/streaming, BigQuery y visualización",
-          "nuevo": "Databricks, Fabric y Power BI"
+          "peso": "25–30%",
+          "ya_trabajado": "warehouse, batch/streaming, BigQuery, Spark como categoría y visualización",
+          "nuevo": "Azure Databricks, Microsoft Fabric, servicios de real-time analytics y Power BI"
         }
       ],
       "solucion": {
         "modo": "discusion_guiada"
       },
       "actividad": {
-        "titulo": "Cierre integrador + puente DP-900",
+        "titulo": "Cierre del diplomado + preparación DP-900",
         "minutos": 165,
-        "instrucciones": "Recorre el progreso S2–S15; consolida SQL y pensamiento de consulta; conecta reglas con modelado e integridad; recupera SQL/NoSQL, warehouse, BigQuery y anidados; resuelve tres casos finales sin nota; muestra qué conceptos se transfieren a DP-900; abre 5 preguntas del Practice Assessment oficial; entrega el Cheat Sheet final y cierra antes de la encuesta institucional.",
+        "instrucciones": "Condensa S2–S15 en 65 minutos y dedica 100 minutos útiles a DP-900: blueprint del 21-jul-2026, los cuatro dominios, diferencias entre servicios Azure, estrategia de descarte y seis preguntas del Practice Assessment oficial.",
         "criterios": [
-          "hace visible un repertorio SQL amplio: filtros, agregaciones, JOIN, UNION, CTE, CASE, COALESCE, DDL y DML",
-          "explica orden de escritura y orden lógico de una consulta",
-          "usa grano, llaves y validación para razonar JOIN y agregaciones",
-          "conecta reglas de negocio con entidades, cardinalidad, normalización y restricciones",
-          "elige SQL/NoSQL por relaciones y patrón de acceso",
-          "distingue OLTP, OLAP, warehouse, batch y streaming",
-          "explica partición, clustering, pruning, ARRAY, STRUCT, UNNEST y formatos",
-          "resuelve tres casos finales de transferencia sin puntuación",
-          "separa conceptos ya trabajados de nombres Azure nuevos",
-          "practica 5 preguntas oficiales de Microsoft en vivo",
-          "sale con Cheat Sheet final y ruta de voucher, sin formulario adicional ni segunda evaluación",
-          "usa el mapa de referentes de industria del Cheat Sheet para identificar dónde profundizar cada concepto"
+          "cierra el diplomado sin repetir el Workbench S15",
+          "mantiene SQL, grano, modelado, integridad, SQL/NoSQL, OLTP/OLAP, BigQuery y anidados como anclas de transferencia",
+          "explica los cuatro dominios DP-900 con sus pesos vigentes",
+          "distingue structured/semi-structured/unstructured y OLTP/OLAP",
+          "distingue responsabilidades de DBA, Data Engineer y Data Analyst",
+          "diferencia Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL administrado por requisito",
+          "diferencia Blob, Files y Table Storage",
+          "explica casos de uso y APIs de Azure Cosmos DB",
+          "ubica Azure Databricks, Microsoft Fabric y Power BI dentro de una carga analítica",
+          "distingue batch y streaming y reconoce que el blueprint incluye real-time analytics",
+          "practica seis preguntas oficiales razonando dominio, condición, descarte y explicación",
+          "sale con un plan concreto para usar Study Guide, Practice Assessment, Exam Sandbox y voucher"
         ]
       },
       "diagnostico": {
         "en_clase": false,
-        "motivo": "S15 ya es la evaluación integradora. Repetir un diagnóstico custom de 24 ítems en S16 produciría fatiga evaluativa y desplazaría el cierre del diplomado.",
-        "practice_assessment_oficial_en_vivo": 5,
-        "opcional_despues_de_clase": "El banco histórico S16 puede conservarse fuera de la presentación, pero no forma parte del cierre."
+        "motivo": "S15 ya es la evaluación integradora; S16 usa práctica oficial DP-900 para aprender formato y estrategia.",
+        "practice_assessment_oficial_en_vivo": 6,
+        "banco_custom_en_clase": false
       },
       "cierre": {
         "sintesis": "pregunta → grano → tablas/relaciones → integridad → almacenamiento → analítica → validación → decisión",
-        "casos_finales": [
-          "reporte inflado por JOIN 1:N",
-          "pedido completo y patrón de acceso documental",
-          "tablero histórico: separar OLTP y analítica"
-        ],
+        "casos_finales": [],
         "cheat_sheet": "Presentaciones/M6/glosario-cierre-s16.html",
         "encuesta": "institucional, después de la diapositiva final",
         "no_recopilar": [
@@ -681,9 +677,11 @@
           "diagnóstico S16 al docente"
         ],
         "recursos_posteriores": [
-          "DP-900 por voucher",
-          "Google Cloud Data Analytics como complemento",
-          "HackerRank SQL como práctica opcional"
+          "DP-900 Study Guide vigente",
+          "Practice Assessment oficial",
+          "Exam Sandbox",
+          "voucher DP-900",
+          "Cheat Sheet final + referentes de industria"
         ],
         "referentes_industria": {
           "objetivo": "Conectar cada concepto central del diplomado con una fuente primaria o ruta de aprendizaje reconocida.",
@@ -700,6 +698,22 @@
           ],
           "regla": "Fuente primaria primero; blogs y videos como complemento."
         }
+      },
+      "distribucion_tiempo": {
+        "cierre_diplomado_min": 65,
+        "pausa_min": 15,
+        "preparacion_dp900_min": 100,
+        "detalle": [
+          "0–65: cierre S2–S15 sin repetir Workbench",
+          "65–80: pausa",
+          "80–90: blueprint + transferencia",
+          "90–105: Core data concepts",
+          "105–125: Relational data on Azure",
+          "125–140: Non-relational data on Azure",
+          "140–160: Analytics workload on Azure",
+          "160–175: Practice Assessment oficial",
+          "175–180: voucher + cierre"
+        ]
       }
     }
   }
