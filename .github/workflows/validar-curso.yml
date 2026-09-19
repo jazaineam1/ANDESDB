@@ -51,6 +51,7 @@ jobs:
           node tools/test_s15_v7_ui.mjs
           node tools/test_s15_solution_v7_ui.mjs
           node tools/test_s15_cohort_persistence.mjs
+          node tools/test_s15_v7_persistence_modes.mjs
 
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
@@ -107,6 +108,8 @@ jobs:
           node --check assets/learning/learning-core.js
           node --check assets/learning/s15-autograder-v7.js
           node --check revision/assets/learning/s15-autograder-v7.js
+          node --check assets/learning/s15-autograder-v7-practice.js
+          node --check revision/assets/learning/s15-autograder-v7-practice.js
           node --check assets/learning/s15-autograder-v7-solution.js
           node --check revision/assets/learning/s15-autograder-v7-solution.js
           node --check assets/learning/s15-nested-duckdb-v1.mjs
