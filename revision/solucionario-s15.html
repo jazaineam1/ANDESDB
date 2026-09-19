@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="ANDESDB · Solucionario de la sesión 15 en modo práctica">
+<title>ANDESDB · Solucionario de sesión 15</title>
+<style>
+:root{--bg:#f4f6f8;--paper:#fff;--ink:#17202a;--muted:#5d6b78;--line:#dce2e8;--blue:#123c69;--gold:#c99700;--ok:#0d6b4f;--soft:#eef4f9;--warn:#fff7dc;--code:#111827}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:var(--blue)}header{background:linear-gradient(135deg,#0e2f53,#184e78);color:#fff;padding:42px 20px 34px}
+.wrap{max-width:1080px;margin:auto}.ey{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#f2cc50}
+h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.04;margin:.25rem 0 1rem}header p{max-width:800px;color:#e4edf5;font-size:1.05rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:750;background:#fff;color:#123c69}.btn.alt{background:transparent;color:#fff;border:1px solid #90abc3}
+main{padding:24px 16px 60px}.notice{background:var(--warn);border:1px solid #ead38a;border-radius:14px;padding:16px 18px;margin-bottom:20px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:22px;box-shadow:0 4px 16px #00000008}
+nav.toc a{display:inline-block;margin:5px 10px 5px 0;padding:7px 10px;border-radius:999px;background:var(--soft);text-decoration:none;font-size:.92rem}
+section{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #00000008}
+h2{margin:.1rem 0 .8rem;font-size:1.65rem;color:#123c69}h3{margin:1.4rem 0 .5rem;font-size:1.15rem}.tag{display:inline-block;background:#e8f0f7;color:#123c69;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:750;margin-bottom:8px}
+.answer{border-left:4px solid var(--ok);padding:12px 14px;background:#f2faf7;border-radius:0 10px 10px 0;margin:10px 0}.why{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+pre{background:var(--code);color:#e5edf7;padding:15px;border-radius:12px;overflow:auto;font-size:.88rem;line-height:1.5;white-space:pre}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.94rem}th,td{border:1px solid var(--line);padding:9px;vertical-align:top}th{background:#eef3f7;text-align:left}
+details{border:1px solid var(--line);border-radius:10px;margin:9px 0;background:#fff}summary{cursor:pointer;padding:11px 13px;font-weight:750}details>div{padding:0 13px 13px}
+.small{color:var(--muted);font-size:.92rem}.danger{color:#8a3900;font-weight:750}
+footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
+@media(max-width:700px){header{padding-top:30px}section{padding:17px}pre{font-size:.8rem}table{font-size:.84rem}th,td{padding:7px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="ey">ANDESDB · Sesión 15</div>
+    <h1>Solucionario de sesión 15</h1>
+    <p>Referencia para el <b>modo práctica</b> del Workbench integral v7. Las soluciones se escriben de la forma más simple posible con herramientas ya trabajadas en el diplomado. No son las únicas respuestas correctas.</p>
+    <div class="actions">
+      <a class="btn" href="evaluador-s15-v7.html?modo=practica">Abrir Workbench en práctica</a>
+      <a class="btn alt" href="index.html">Volver al curso</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="notice"><b>Cómo usar este solucionario.</b> Intenta primero cada estación, compara después con esta referencia y vuelve a ejecutarla. El objetivo es reconocer <b>qué representa una fila</b>, <b>qué regla protege el dato</b> y <b>por qué la decisión funciona</b>. El Boss explicado aquí corresponde al workload público del modo práctica; en evaluación debes leer el workload asignado.</div>
+
+  <nav class="toc">
+    <b>Ir a:</b><br>
+    <a href="#diagnostico">0 Diagnóstico</a>
+    <a href="#sql">1 SQL</a>
+    <a href="#modelo">2 Modelo + 3FN</a>
+    <a href="#ddl">3 DDL</a>
+    <a href="#documentos">4 Documentos</a>
+    <a href="#warehouse">5 Warehouse</a>
+    <a href="#bigquery">6 BigQuery</a>
+    <a href="#nested">7 Anidados</a>
+    <a href="#boss">8 Boss práctica</a>
+  </nav>
+
+  <section id="diagnostico">
+    <span class="tag">S6 · calidad y evidencia</span>
+    <h2>0 · Diagnóstico de datos imperfectos</h2>
+    <p>Esta estación no da puntos. Sirve para separar un <b>hallazgo observable</b> de una <b>explicación todavía hipotética</b>.</p>
+
+    <h3>Duplicados de caso</h3>
+<pre><code>SELECT caso_id, COUNT(*) AS filas
+FROM casos_dirty
+GROUP BY caso_id
+HAVING COUNT(*) &gt; 1;</code></pre>
+    <div class="why"><b>Por qué:</b> agrupar por identificador y pedir conteos mayores a 1 revela IDs repetidos.</div>
+
+    <h3>NULL en tipo</h3>
+<pre><code>SELECT *
+FROM casos_dirty
+WHERE tipo IS NULL;</code></pre>
+
+    <h3>Eventos huérfanos</h3>
+<pre><code>SELECT e.*
+FROM eventos_dirty e
+LEFT JOIN casos_dirty c
+  ON c.caso_id = e.caso_id
+WHERE c.caso_id IS NULL;</code></pre>
+    <div class="answer"><b>Clasificación correcta:</b> “Existe un evento cuyo caso no aparece en CASOS” = hallazgo confirmado. “Ocurrió por una falla de sincronización” = hipótesis.</div>
+  </section>
+
+  <section id="sql">
+    <span class="tag">S2–S5 · SQL y grano</span>
+    <h2>1 · SQL Arena</h2>
+    <p>Estas consultas priorizan claridad. Antes de cada una pregunta: <b>¿qué debe representar una fila del resultado?</b></p>
+
+    <h3>Q1 · Casos de prioridad Alta por barrio</h3>
+<pre><code>SELECT barrio,
+       COUNT(*) AS casos_alta
+FROM casos_src
+WHERE prioridad = 'Alta'
+GROUP BY barrio;</code></pre>
+    <div class="why"><b>Por qué:</b> primero filtras exactamente la población “Alta” y después cuentas dentro de cada barrio.</div>
+
+    <h3>Q2 · Último evento temporal</h3>
+<pre><code>WITH ultima_fecha AS (
+  SELECT caso_id,
+         MAX(fecha_evento) AS fecha_evento
+  FROM eventos_src
+  GROUP BY caso_id
+)
+SELECT c.caso_id,
+       c.estado AS estado_actual,
+       e.estado AS ultimo_estado
+FROM casos_src c
+LEFT JOIN ultima_fecha u
+  ON u.caso_id = c.caso_id
+LEFT JOIN eventos_src e
+  ON e.caso_id = u.caso_id
+ AND e.fecha_evento = u.fecha_evento;</code></pre>
+    <div class="why"><b>Por qué:</b> <code>MAX(estado)</code> ordena texto; no busca el último estado en el tiempo. Primero encuentras la fecha más reciente y luego recuperas el estado de esa fila.</div>
+
+    <h3>Q3 · Minutos acumulados de casos cuyo último evento es Cerrado</h3>
+<pre><code>WITH ultima_fecha AS (
+  SELECT caso_id,
+         MAX(fecha_evento) AS fecha_evento
+  FROM eventos_src
+  GROUP BY caso_id
+),
+cerrados AS (
+  SELECT u.caso_id
+  FROM ultima_fecha u
+  JOIN eventos_src e
+    ON e.caso_id = u.caso_id
+   AND e.fecha_evento = u.fecha_evento
+  WHERE e.estado = 'Cerrado'
+)
+SELECT e.caso_id,
+       SUM(e.minutos_desde_anterior) AS minutos_hasta_cierre
+FROM eventos_src e
+JOIN cerrados c
+  ON c.caso_id = e.caso_id
+GROUP BY e.caso_id;</code></pre>
+    <div class="why"><b>Por qué:</b> primero decides qué casos <i>terminan</i> cerrados. Después vuelves a todo su historial y sumas la trayectoria completa. Un caso que se cerró y luego se reabrió no entra.</div>
+
+    <h3>Q4 · Totales sin inflar por un JOIN 1:N</h3>
+<pre><code>SELECT
+  (SELECT COUNT(*) FROM casos_src) AS total_casos,
+  (SELECT COUNT(*) FROM eventos_src) AS total_eventos,
+  (SELECT COUNT(*)
+   FROM casos_src
+   WHERE prioridad = 'Alta') AS casos_alta;</code></pre>
+    <div class="why"><b>Por qué:</b> es la solución más directa. Cada métrica se cuenta en su tabla y en su grano original. Así evitas que un caso con varios eventos aparezca varias veces.</div>
+
+    <h3>Q5 · Promedio de minutos por caso y tipo</h3>
+<pre><code>WITH por_caso AS (
+  SELECT c.caso_id,
+         c.tipo,
+         COALESCE(SUM(e.minutos_desde_anterior), 0) AS total_minutos
+  FROM casos_src c
+  LEFT JOIN eventos_src e
+    ON e.caso_id = c.caso_id
+  GROUP BY c.caso_id, c.tipo
+)
+SELECT tipo,
+       COUNT(*) AS casos,
+       ROUND(AVG(total_minutos), 1) AS promedio_minutos
+FROM por_caso
+GROUP BY tipo;</code></pre>
+    <div class="why"><b>Por qué:</b> primero vuelves a una fila por caso. Luego promedias casos, no eventos. <code>COALESCE(...,0)</code> hace que un caso sin eventos aporte 0 minutos.</div>
+  </section>
+
+  <section id="modelo">
+    <span class="tag">S6–S8 · entidades, relaciones y 3FN</span>
+    <h2>2 · Modelo ER + 3FN</h2>
+    <table>
+      <tr><th>Elemento</th><th>Solución mínima</th><th>Por qué</th></tr>
+      <tr><td>CASO</td><td>caso_id, fecha_creacion, tipo, prioridad, estado, barrio</td><td>Son atributos propios del caso.</td></tr>
+      <tr><td>EVENTO</td><td>evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior</td><td>Cada evento pertenece a un caso y tiene identidad/tiempo propios.</td></tr>
+      <tr><td>PK CASO</td><td>caso_id</td><td>Identifica un caso.</td></tr>
+      <tr><td>PK EVENTO</td><td>evento_id</td><td>Identifica un evento.</td></tr>
+      <tr><td>FK</td><td>EVENTO.caso_id → CASO.caso_id</td><td>Evita eventos sin caso válido.</td></tr>
+      <tr><td>Cardinalidad</td><td>CASO 1:N EVENTO</td><td>Un caso puede tener muchos eventos; un evento corresponde a un caso.</td></tr>
+    </table>
+
+    <h3>Normalización de agente</h3>
+    <div class="answer"><b>CASO:</b> caso_id, barrio<br><b>EVENTO:</b> evento_id, caso_id, fecha_evento, agente_id<br><b>AGENTE:</b> agente_id, agente_nombre</div>
+    <div class="why"><b>Por qué:</b> el nombre del agente depende de <code>agente_id</code>, no del evento. Separarlo evita repetir el mismo nombre en muchos eventos.</div>
+  </section>
+
+  <section id="ddl">
+    <span class="tag">S9 · integridad</span>
+    <h2>3 · DDL Mutation Lab</h2>
+    <p>Una versión mínima y suficiente es:</p>
+<pre><code>CREATE TABLE caso(
+  caso_id INTEGER PRIMARY KEY,
+  fecha_creacion TEXT NOT NULL,
+  tipo TEXT NOT NULL,
+  prioridad TEXT NOT NULL,
+  estado TEXT NOT NULL,
+  barrio TEXT NOT NULL
+);
+
+CREATE TABLE evento(
+  evento_id TEXT PRIMARY KEY,
+  caso_id INTEGER NOT NULL,
+  fecha_evento TEXT NOT NULL,
+  estado TEXT NOT NULL,
+  minutos_desde_anterior INTEGER NOT NULL
+    CHECK (minutos_desde_anterior &gt;= 0),
+  FOREIGN KEY (caso_id) REFERENCES caso(caso_id)
+);</code></pre>
+    <div class="why"><b>Por qué:</b> PK rechaza duplicados; FK rechaza huérfanos; NOT NULL protege campos obligatorios; CHECK acepta 0 pero rechaza negativos.</div>
+
+    <h3>Evolución del dominio</h3>
+<pre><code>INSERT INTO estado_catalogo (estado)
+VALUES ('Escalado');</code></pre>
+    <div class="why"><b>Por qué:</b> si los estados válidos viven en un catálogo, un estado nuevo se incorpora con una migración explícita. No necesitas quitar la validación.</div>
+
+    <h3>Mutation Hunter · INSERT más simple para cada mutante</h3>
+    <details open><summary>Mutante: CASO perdió su PRIMARY KEY</summary><div>
+<pre><code>INSERT INTO caso(
+  caso_id, fecha_creacion, tipo, prioridad, estado, barrio
+)
+VALUES (
+  9001, '2026-09-02', 'Ruido', 'Alta', 'Abierto', 'Prueba'
+);</code></pre>
+      <p class="small">El esquema correcto rechaza el segundo <code>caso_id=9001</code>; el mutante sin PK lo acepta.</p>
+    </div></details>
+
+    <details><summary>Mutante: la FK de EVENTO está en la columna equivocada</summary><div>
+<pre><code>INSERT INTO evento(
+  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
+)
+VALUES (
+  9001, 9999, '2026-09-01 09:00', 'Abierto', 0
+);</code></pre>
+      <p class="small">El esquema correcto rechaza <code>caso_id=9999</code> porque no existe. El mutante mira por error <code>evento_id=9001</code>, que sí coincide con el caso de prueba.</p>
+    </div></details>
+
+    <details><summary>Mutante: minutos usa CHECK &gt; 0 en vez de &gt;= 0</summary><div>
+<pre><code>INSERT INTO evento(
+  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
+)
+VALUES (
+  9101, 9001, '2026-09-01 10:00', 'Abierto', 0
+);</code></pre>
+      <p class="small">Cero es válido según la regla del ejercicio. El esquema correcto lo acepta; el mutante lo rechaza.</p>
+    </div></details>
+  </section>
+
+  <section id="documentos">
+    <span class="tag">S10–S11 · SQL/NoSQL y documentos</span>
+    <h2>4 · Document Lab</h2>
+    <table>
+      <tr><th>Decisión</th><th>Respuesta</th><th>Razón</th></tr>
+      <tr><td>Embeber completo</td><td>estado actual + evidencias[]</td><td>Se necesitan al abrir el caso y forman parte del agregado consultado junto.</td></tr>
+      <tr><td>Guardar referencia ID</td><td>ciudadano_id</td><td>El caso necesita saber quién es el ciudadano, pero el perfil tiene vida propia.</td></tr>
+      <tr><td>Mantener fuera</td><td>historial de eventos + perfil ciudadano</td><td>El historial puede crecer sin límite y el perfil tiene ciclo de vida independiente.</td></tr>
+      <tr><td>Datastore CASO</td><td>Documental</td><td>El agregado se consulta junto y contiene una colección de evidencias.</td></tr>
+      <tr><td>Libro contable</td><td>Relacional SQL</td><td>Importan transacciones y FK estrictas.</td></tr>
+      <tr><td>Partition key Cosmos</td><td>/caso_id</td><td>Distribuye por la identidad natural del documento de caso y evita usar estados/tipos muy repetidos como llave principal.</td></tr>
+    </table>
+    <div class="why"><b>Idea clave:</b> JSON no significa automáticamente NoSQL. La elección sale del patrón de acceso, crecimiento y consistencia.</div>
+  </section>
+
+  <section id="warehouse">
+    <span class="tag">S12 · operación y analítica</span>
+    <h2>5 · Warehouse Builder</h2>
+    <table>
+      <tr><th>Elemento</th><th>Respuesta</th></tr>
+      <tr><td>Grano del hecho</td><td>evento</td></tr>
+      <tr><td>Medidas</td><td>conteo de eventos, minutos</td></tr>
+      <tr><td>Dimensiones</td><td>fecha, barrio, tipo, prioridad, estado</td></tr>
+      <tr><td>OLTP</td><td>casos/eventos actuales</td></tr>
+      <tr><td>OLAP</td><td>fact_evento histórico</td></tr>
+      <tr><td>Eventos en menos de 30 s</td><td>Streaming</td></tr>
+      <tr><td>Dimensiones una vez por noche</td><td>Batch</td></tr>
+      <tr><td>Cargar crudo y transformar dentro</td><td>ELT</td></tr>
+    </table>
+    <div class="why"><b>Por qué:</b> una fila del hecho representa un evento. Las medidas deben tener sentido a ese grano. La latencia, no la moda tecnológica, decide batch o streaming.</div>
+  </section>
+
+  <section id="bigquery">
+    <span class="tag">S13 · diseño físico</span>
+    <h2>6 · BigQuery Physical Lab</h2>
+    <div class="answer"><b>PARTITION BY:</b> fecha_evento<br><b>CLUSTER BY:</b> barrio, tipo — en ese orden.</div>
+    <div class="why"><b>Por qué:</b> 100% de las consultas acota fecha; 82% filtra barrio; 54% de esas también usa tipo. <code>caso_id</code> aparece en 0% de los filtros del workload, por lo que no debe desplazar columnas realmente usadas.</div>
+    <p>Una representación conceptual del diseño sería:</p>
+<pre><code>PARTITION BY DATE(fecha_evento)
+CLUSTER BY barrio, tipo</code></pre>
+    <p class="small">La sintaxis exacta depende de cómo esté declarada <code>fecha_evento</code> en la tabla. Lo evaluado en el Workbench es la decisión física.</p>
+  </section>
+
+  <section id="nested">
+    <span class="tag">S14 · ARRAY, STRUCT, UNNEST y formatos</span>
+    <h2>7 · Nested BigQuery</h2>
+    <table>
+      <tr><th>Zona</th><th>Respuesta</th></tr>
+      <tr><td>Campos raíz</td><td>caso_id, estado</td></tr>
+      <tr><td>ARRAY&lt;STRUCT&gt; evidencias</td><td>tipo, url, texto</td></tr>
+      <tr><td>Landing flexible</td><td>JSON</td></tr>
+      <tr><td>Analítica columnar</td><td>Parquet</td></tr>
+    </table>
+
+    <h3>UNNEST mínimo</h3>
+<pre><code>SELECT c.caso_id,
+       ev.tipo
+FROM `proyecto.dataset.casos_nested` AS c
+CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre>
+    <div class="why"><b>Por qué:</b> antes del <code>UNNEST</code> una fila representa un caso; después, una fila representa una evidencia del caso. Se conserva <code>caso_id</code> para no perder la identidad del registro padre.</div>
+  </section>
+
+  <section id="boss">
+    <span class="tag">Transferencia · modo práctica</span>
+    <h2>8 · Boss · pedidos omnicanal</h2>
+    <div class="notice"><b>Importante:</b> esta parte corresponde al workload fijo del enlace público <code>?modo=practica</code>: 100% fecha, 80% categoría, 35% además canal y 5% cliente. En evaluación autenticada el workload puede cambiar; allí debes recalcular el clustering.</div>
+
+    <table>
+      <tr><th>Decisión</th><th>Respuesta de práctica</th><th>Por qué</th></tr>
+      <tr><td>Estrategia</td><td>Dos hechos</td><td>ventas a grano línea y costo de envío a grano pedido no deben mezclarse y duplicarse.</td></tr>
+      <tr><td>Grano de ventas</td><td>línea de pedido</td><td>cantidad e importe existen por ítem/línea.</td></tr>
+      <tr><td>Medidas de ventas</td><td>cantidad, importe</td><td>son métricas aditivas de línea.</td></tr>
+      <tr><td>Partición</td><td>fecha_pedido</td><td>100% del workload acota fecha.</td></tr>
+      <tr><td>Clustering práctica</td><td>categoria, canal</td><td>categoría domina los filtros; canal es el segundo filtro frecuente.</td></tr>
+    </table>
+
+    <h3>UNNEST de items</h3>
+<pre><code>SELECT p.pedido_id,
+       i.categoria,
+       i.cantidad
+FROM `proyecto.dataset.pedidos_nested` AS p
+CROSS JOIN UNNEST(p.items) AS i;</code></pre>
+
+    <h3>Transferencia a Azure</h3>
+    <table>
+      <tr><th>Necesidad</th><th>Familia</th><th>Razón corta</th></tr>
+      <tr><td>Guardar JSON/CSV/Parquet como objetos</td><td>Azure Blob Storage / ADLS Gen2</td><td>almacenamiento de archivos/objetos</td></tr>
+      <tr><td>Documento operacional distribuido</td><td>Azure Cosmos DB</td><td>base documental operacional</td></tr>
+      <tr><td>Lakehouse, ingeniería y analítica</td><td>Microsoft Fabric / Azure Databricks</td><td>procesamiento y plataforma analítica</td></tr>
+      <tr><td>Consumo visual de BI</td><td>Power BI</td><td>visualización y consumo analítico</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <span class="tag">Resumen</span>
+    <h2>La lógica que conviene recordar</h2>
+    <p><b>SQL:</b> define población y grano antes de contar. <b>Modelo:</b> identidad, cardinalidad y dependencias. <b>DDL:</b> cada regla debe poder demostrarse con un dato inválido. <b>Documentos:</b> embeber o referenciar depende del acceso y ciclo de vida. <b>Warehouse:</b> grano antes que medidas. <b>BigQuery:</b> diseño físico desde el workload. <b>UNNEST:</b> declara qué representa una fila antes y después. <b>Cloud:</b> primero necesidad, después producto.</p>
+    <p class="small">Si puedes explicar esas ocho ideas sin mirar el código, el solucionario ya cumplió su propósito.</p>
+  </section>
+
+  <footer>ANDESDB · Solucionario de sesión 15 · referencia formativa para el modo práctica.</footer>
+</main>
+</body>
+</html>
