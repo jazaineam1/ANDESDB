@@ -83,6 +83,25 @@ for(const pair of [
 click(document.querySelector('[data-check="model"]'));
 assert.equal(document.querySelector('#score-model').textContent,'12');
 
+// Regresión visual: las dos copias homónimas no pueden cambiar la nota por un ID interno oculto.
+click(document.querySelector('[data-remove="norm|evento|evento.agente_id"]'));
+click(document.querySelector('[data-remove="norm|agente|agente.agente_id"]'));
+await place('norm','evento.agente_id','norm:agente');
+await place('norm','agente.agente_id','norm:evento');
+assert.match(document.querySelector('#norm-evento').textContent,/agente_id · FK → AGENTE/);
+assert.match(document.querySelector('#norm-agente').textContent,/agente_id · PK/);
+click(document.querySelector('[data-check="model"]'));
+assert.equal(document.querySelector('#score-model').textContent,'12','Intercambiar las dos fichas agente_id no cambia el esquema visible');
+
+click(document.querySelector('[data-remove="norm|caso|caso.caso_id"]'));
+click(document.querySelector('[data-remove="norm|evento|evento.caso_id"]'));
+await place('norm','caso.caso_id','norm:evento');
+await place('norm','evento.caso_id','norm:caso');
+assert.match(document.querySelector('#norm-caso').textContent,/caso_id · PK/);
+assert.match(document.querySelector('#norm-evento').textContent,/caso_id · FK → CASO/);
+click(document.querySelector('[data-check="model"]'));
+assert.equal(document.querySelector('#score-model').textContent,'12','Intercambiar las dos fichas caso_id no cambia el esquema visible');
+
 for(const id of ['q1','q2','q3','q4','q5']){
   click(document.querySelector('[data-run="'+id+'"]'));
   await waitFor(()=>/^0\/4 escenarios/.test(document.querySelector('#status-'+id).textContent),id+' starter 0/4');
