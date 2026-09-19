@@ -573,10 +573,10 @@
           "n": 16,
           "fecha": "2026-09-22",
           "duracionUtil": 165,
-          "modo": "consolidacion",
-          "titulo": "Cierre del curso + puente DP-900",
+          "modo": "consolidacion_y_preparacion_dp900",
+          "titulo": "Cierre del curso + preparación DP-900",
           "estado": "pendiente",
-          "desc": "Cierre de 180 min totales (165 útiles + pausa): consolidación del SQL y del pensamiento de consulta, diseño relacional, integridad, SQL/NoSQL, warehouse, BigQuery y datos anidados; tres casos finales sin nota; puente conceptual a DP-900; 5 preguntas oficiales en vivo; Cheat Sheet final de 4 páginas con referentes de industria y cierre antes de la encuesta institucional.",
+          "desc": "Cierre de 180 min: 65 min para consolidar el diplomado, 15 min de pausa y 100 min de preparación DP-900 alineada al blueprint del 21-jul-2026. Incluye los cuatro dominios, diferencias entre servicios Azure, estrategia de resolución, seis preguntas del Practice Assessment, voucher y Cheat Sheet con referentes de industria.",
           "tags": [
             "cierre del curso",
             "SQL",
@@ -597,7 +597,16 @@
             "Practice Assessment",
             "voucher",
             "Cheat Sheet",
-            "referentes de industria"
+            "referentes de industria",
+            "blueprint DP-900",
+            "Azure SQL Database",
+            "Managed Instance",
+            "Azure Storage",
+            "Cosmos DB APIs",
+            "Azure Databricks",
+            "Microsoft Fabric",
+            "Power BI",
+            "real-time analytics"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [
