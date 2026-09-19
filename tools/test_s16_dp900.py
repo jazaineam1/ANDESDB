@@ -89,7 +89,7 @@ for p in (PLAN,RPLAN):
     assert s["diagnostico"]["distribucion"]=={"conceptos":7,"relacional":6,"no_relacional":4,"analitica":7}
     assert "fecha objetivo" in " ".join(s["actividad"]["criterios"]).casefold()
     assert "cierre" in s and len(s["cierre"]["certificaciones"])==3
-    assert len(s["cierre"]["portafolio"])==6
+    assert len(s["cierre"]["portafolio"])==8
     assert len(s["cierre"]["encuesta"])==4
     assert len(s["cierre"]["todo_sql"])==9
     assert s["diagnostico"]["live_practice_assessment"]==5
