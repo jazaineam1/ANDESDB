@@ -48,7 +48,7 @@ async function boot({reset=false}={}){
 }
 
 {
-  const {window,document,sourceRaw}=await boot();
+  const {dom,window,document,sourceRaw}=await boot();
   assert.match(document.querySelector('#modePill').textContent,/Práctica guiada/);
 
   // Un estudiante que ya tenía 3 pistas en la práctica desbloquea Q1 inmediatamente.
