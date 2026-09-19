@@ -117,5 +117,8 @@ for token in ['eq("session_number",16)','eq("activity_code","s16-dp900")','eq("e
 assert '../s16-analytics.html' in TEACHER
 assert '../s15-analytics.html' in TEACHER
 assert "s16-analytics.html" in GUIDE
+assert "modo invitado queda guardado solo en este dispositivo" in HTML
+assert "Cobertura del reporte docente" in GUIDE
+assert "requiere una sesión LMS válida" in GUIDE
 
 print("OK · S16: cierre honesto + todo SQL + DP900 + 24 escenarios + glosario + portafolio + encuesta + analítica docente")
