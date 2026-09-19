@@ -17,7 +17,7 @@ def need(token:str):
 assert HTML==REV
 for token in [
     "Cierre del curso +", "primer contacto DP-900", "45 min", "65 min", "700+",
-    "40–60", "Online o centro", "voucher", "25–30%", "20–25%", "15–20%",
+    "40–60", "Online o centro", "voucher", "30 minutos adicionales", "25–30%", "20–25%", "15–20%",
     "24 escenarios", "7–6–4–7", "Practice Assessment", "Exam Sandbox",
     "Enviar diagnóstico al docente", "challenge_completed", "learning-track",
     "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"'
@@ -35,6 +35,8 @@ assert len(qs)==24
 counts={d:sum(q["d"]==d for q in qs) for d in ("core","rel","nonrel","ana")}
 assert counts=={"core":7,"rel":6,"nonrel":4,"ana":7}, counts
 assert {q["k"] for q in qs} >= {"single","yn","match"}
+assert sum(q["k"]=="single" for q in qs) <= 12, "Selección única debe ser <= 50%"
+assert sum(q["k"]!="single" for q in qs) >= 12
 assert len({q["id"] for q in qs})==24
 assert [q["id"] for q in qs]==list(range(1,25))
 
