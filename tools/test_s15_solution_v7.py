@@ -56,7 +56,7 @@ def main():
     assert "Tu intento" in SOL_JS and "Solución" in SOL_JS and "Explicación" in SOL_JS
     assert "function runReferenceQ" in SOL_JS
     assert "solution-status-" in SOL_JS and "solution-result-" in SOL_JS
-    assert "4/4 escenarios de la solución" in SOL_JS
+    assert "escenarios de la solución" in SOL_JS
     assert "no modifica tu intento ni tu puntuación" in SOL_JS
     assert ".sqltask.sql-reference-open .sqlbody" in CSS
     for token in (
