@@ -1,49 +1,132 @@
-<!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ANDESDB · Glosario de cierre S16</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ANDESDB · Cheat Sheet final</title>
 <style>
-@page{size:A4;margin:10mm}*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#17202a;font-family:Inter,Arial,sans-serif}
-.page{width:210mm;min-height:297mm;margin:12px auto;background:#fff;padding:12mm;box-shadow:0 8px 30px #0002}
-h1{margin:0;font-size:23px;line-height:1.08}h2{font-size:12px;margin:0 0 5px;text-transform:uppercase;letter-spacing:.07em;color:#124e78}
-.sub{margin:5px 0 10px;color:#5f6b76;font-size:10.5px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.box{border:1px solid #dce3e8;border-radius:9px;padding:7px 8px;break-inside:avoid}.box b{display:block;font-size:11px;margin-bottom:2px}.box p{margin:0;font-size:9.4px;line-height:1.3;color:#344054}
-.code{font-family:Consolas,ui-monospace,monospace;background:#f4f7fa;border-radius:4px;padding:1px 3px;color:#124e78}
-.band{margin:8px 0;padding:7px 9px;border-radius:8px;background:#101828;color:white;font-size:9.5px;line-height:1.35}
-.workbench{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px}.wb{border:1px solid #f2c94c;background:#fff9db;border-radius:8px;padding:6px;font-size:9px;line-height:1.25}.wb b{display:block;color:#7a4d00;font-size:10px}
-.azure{margin-top:7px;border:1px solid #b2ddff;background:#eff8ff;border-radius:8px;padding:7px;font-size:9.2px;line-height:1.3}.azure strong{color:#175cd3}
-.foot{margin-top:8px;display:flex;justify-content:space-between;gap:10px;color:#667085;font-size:8.7px;border-top:1px solid #e4e7ec;padding-top:5px}
-@media print{body{background:#fff}.page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:0}.no-print{display:none}}
-@media(max-width:800px){.page{width:auto;min-height:0;margin:0;padding:18px}.grid,.workbench{grid-template-columns:1fr}}
-</style></head><body><main class="page">
-<h1>Glosario de cierre · S16</h1>
-<p class="sub">Diseño y Gestión de Bases de Datos con SQL · una página para traducir el vocabulario del curso y del Workbench.</p>
-<div class="grid">
-<div class="box"><b>Grano</b><p>Qué representa exactamente una fila. Si cambia el grano, cambian conteos, promedios y joins.</p></div>
-<div class="box"><b>Partición</b><p>Divide físicamente/lógicamente los datos por una clave para reducir lectura o distribuir carga. En BigQuery suele basarse en fecha.</p></div>
-<div class="box"><b>Clustering</b><p>Organiza datos por columnas consultadas con frecuencia dentro de una partición. No reemplaza el filtro ni la partición.</p></div>
-<div class="box"><b><span class="code">UNNEST</span></b><p>Expande un arreglo anidado a filas. Antes: 1 fila = 1 entidad; después puede ser 1 fila = 1 elemento.</p></div>
-<div class="box"><b>OLTP</b><p>Carga transaccional: muchas operaciones pequeñas, actuales, con integridad y baja latencia.</p></div>
-<div class="box"><b>OLAP / analítica</b><p>Lectura y agregación de historia para comparar, resumir y decidir. Prioriza análisis sobre operación fila a fila.</p></div>
-<div class="box"><b>ETL</b><p>Extraer → transformar → cargar. La transformación ocurre antes de llegar al almacén analítico final.</p></div>
-<div class="box"><b>ELT</b><p>Extraer → cargar → transformar. Se aprovecha la capacidad del motor/plataforma destino para transformar.</p></div>
-<div class="box"><b>Parquet</b><p>Formato columnar. Conviene cuando analítica lee pocas columnas de archivos grandes y quiere reducir bytes leídos.</p></div>
-<div class="box"><b>CAP</b><p>En sistemas distribuidos, ayuda a razonar sobre consistencia, disponibilidad y tolerancia a particiones de red; no es una receta automática de producto.</p></div>
-<div class="box"><b>PK / FK / CHECK</b><p>PK identifica; FK protege referencias; CHECK protege reglas de dominio. Se validan por comportamiento: aceptar lo válido y rechazar lo inválido.</p></div>
-<div class="box"><b>Snapshot vs historial</b><p>Snapshot guarda el estado observado en un momento; historial conserva eventos. “Fila Cerrado” no implica “último estado Cerrado”.</p></div>
+@page{size:A4;margin:9mm}*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#17202a;font-family:Inter,Arial,sans-serif}.page{width:210mm;min-height:297mm;margin:12px auto;background:#fff;padding:10mm 11mm;box-shadow:0 8px 30px #0002;page-break-after:always}.page:last-child{page-break-after:auto}h1{font-size:22px;margin:0 0 3px}h2{font-size:13px;color:#124e78;margin:8px 0 4px;border-bottom:1px solid #dce3e8;padding-bottom:2px}h3{font-size:10.8px;margin:0 0 2px}.sub{font-size:9.5px;color:#667085;margin:0 0 7px}.grid2,.grid3{display:grid;gap:6px}.grid2{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:repeat(3,1fr)}.box{border:1px solid #dce3e8;border-radius:7px;padding:6px;break-inside:avoid}.box p,.box li{font-size:8.7px;line-height:1.28;margin:2px 0}.box ul{margin:3px 0 0;padding-left:14px}.code{font:8.2px/1.35 Consolas,ui-monospace,monospace;background:#f4f7fa;border-radius:5px;padding:5px;white-space:pre-wrap;margin:3px 0}.band{background:#101828;color:#fff;border-radius:7px;padding:6px 8px;font-size:8.8px;line-height:1.3;margin:6px 0}.blue{background:#eff8ff;border-color:#b2ddff}.gold{background:#fff9db;border-color:#f3d878}.green{background:#ecfdf3;border-color:#abefc6}.tbl{width:100%;border-collapse:collapse;font-size:8px}.tbl th,.tbl td{border:1px solid #dce3e8;padding:3.5px;vertical-align:top}.tbl th{background:#f8fafc;text-align:left}.pill{display:inline-block;background:#eef2f6;border-radius:99px;padding:1px 4px;margin:1px;font-size:7.8px;font-weight:700}.foot{display:flex;justify-content:space-between;border-top:1px solid #e4e7ec;margin-top:7px;padding-top:4px;font-size:7.8px;color:#667085}.warn{border-left:4px solid #fdb022;background:#fffaeb;padding:5px 7px;border-radius:6px;font-size:8.5px;line-height:1.3;margin:5px 0}
+@media print{body{background:#fff}.page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:0;page-break-after:always}.page:last-child{page-break-after:auto}}@media(max-width:800px){.page{width:auto;min-height:0;margin:0;padding:16px}.grid2,.grid3{grid-template-columns:1fr}.tbl{font-size:9px}}
+</style></head><body>
+
+<section class="page"><h1>Cheat Sheet final · SQL y pensamiento de consulta</h1><p class="sub">Diseño y Gestión de Bases de Datos con SQL · referencia de trabajo, no material para memorizar.</p>
+<h2>1 · Esqueleto de una consulta</h2>
+<div class="grid2"><div class="box blue"><h3>Orden de escritura</h3><div class="code">SELECT columnas
+FROM tabla
+WHERE condición
+GROUP BY columnas
+HAVING condición sobre agregados
+ORDER BY columnas
+LIMIT n;</div></div>
+<div class="box green"><h3>Orden lógico del motor</h3><div class="code">FROM
+→ WHERE
+→ GROUP BY
+→ agregación
+→ HAVING
+→ SELECT
+→ ORDER BY
+→ LIMIT</div><p><b>Idea clave:</b> WHERE actúa antes de calcular agregados; HAVING filtra grupos después.</p></div></div>
+<h2>2 · Consultar, filtrar y resumir</h2>
+<div class="grid3">
+<div class="box"><h3>Selección</h3><p><span class="pill">SELECT</span><span class="pill">DISTINCT</span><span class="pill">AS</span><span class="pill">ORDER BY</span><span class="pill">LIMIT</span></p><div class="code">SELECT DISTINCT rating
+FROM film
+ORDER BY rating;</div></div>
+<div class="box"><h3>Filtros</h3><p><span class="pill">WHERE</span><span class="pill">AND / OR</span><span class="pill">BETWEEN</span><span class="pill">IN</span><span class="pill">LIKE</span><span class="pill">IS NULL</span></p><div class="code">WHERE rating IN ('PG','G')
+  AND length BETWEEN 60 AND 120</div></div>
+<div class="box"><h3>Agregación</h3><p><span class="pill">COUNT</span><span class="pill">SUM</span><span class="pill">AVG</span><span class="pill">MIN/MAX</span><span class="pill">GROUP BY</span><span class="pill">HAVING</span></p><div class="code">GROUP BY customer_id
+HAVING COUNT(*) &gt; 3</div></div>
 </div>
-<div class="band"><b>Cadena de decisión:</b> problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión.</div>
-<h2>Traducción del Workbench S15</h2>
-<div class="workbench">
-<div class="wb"><b>0 · Diagnóstico</b>Explorar datos imperfectos y separar evidencia de hipótesis antes de modelar.</div>
-<div class="wb"><b>1 · SQL Arena</b>Consultas con bugs o casos borde. La meta es que la consulta sobreviva cuando cambian los datos.</div>
-<div class="wb"><b>2 · Modelo + 3FN</b>Entidades, PK/FK, cardinalidad y dependencias; separar lo que pertenece a entidades distintas.</div>
-<div class="wb"><b>3 · DDL Mutation</b>Contrastar un esquema correcto con uno defectuoso para hacer visible qué restricción falta.</div>
-<div class="wb"><b>4 · Document Lab</b>Decidir qué embeber, qué referenciar y cómo cambia el patrón de acceso.</div>
-<div class="wb"><b>5 · Warehouse</b>Definir grano, medidas, dimensiones y movimiento de datos hacia analítica.</div>
-<div class="wb"><b>6 · BigQuery físico</b>Derivar partición y clustering desde el patrón real de consultas.</div>
-<div class="wb"><b>7 · Nested BigQuery</b>Trabajar ARRAY/STRUCT y UNNEST sin perder de vista el cambio de grano.</div>
-<div class="wb"><b>8 · Boss Transfer</b>Caso nuevo que cambia el contexto: aplicar el razonamiento sin repetir exactamente la receta anterior.</div>
+<h2>3 · Combinar tablas y conjuntos</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Herramienta</th><th>Chequeo</th></tr></thead><tbody>
+<tr><td>Solo coincidencias</td><td><b>INNER JOIN</b></td><td>¿Está bien perder filas sin pareja?</td></tr>
+<tr><td>Conservar todo el lado izquierdo</td><td><b>LEFT JOIN</b></td><td>¿Los NULL del lado derecho significan ausencia?</td></tr>
+<tr><td>Conservar ambos lados</td><td><b>FULL OUTER JOIN</b></td><td>¿Necesito ver faltantes en ambos lados?</td></tr>
+<tr><td>Buscar “lo que no existe”</td><td><b>LEFT JOIN + IS NULL</b></td><td>¿Filtro la clave del lado correcto?</td></tr>
+<tr><td>Apilar resultados</td><td><b>UNION / UNION ALL</b></td><td>UNION elimina duplicados; UNION ALL los conserva.</td></tr>
+</tbody></table>
+<h2>4 · Construir por etapas</h2>
+<div class="grid3"><div class="box"><h3>WITH / CTE</h3><p>Divide un problema complejo en tablas intermedias legibles.</p><div class="code">WITH resumen AS (
+ SELECT id, SUM(valor) total
+ FROM detalle GROUP BY id
+)
+SELECT * FROM resumen;</div></div>
+<div class="box"><h3>CASE</h3><p>Convierte condiciones en categorías o indicadores.</p><div class="code">CASE
+ WHEN total &gt; 100 THEN 'alto'
+ ELSE 'normal'
+END</div></div>
+<div class="box"><h3>COALESCE</h3><p>Usa el primer valor no nulo.</p><div class="code">COALESCE(descuento,0)</div><p><b>COUNT(DISTINCT x)</b> cuenta valores únicos.</p></div></div>
+<div class="band"><b>Antes de ejecutar:</b> pregunta → grano esperado → tablas → llaves → JOIN → filtros → agregación → validación.</div>
+<div class="warn"><b>Error clásico:</b> si un JOIN 1:N multiplica filas, un total puede inflarse. Compara conteos antes/después y agrega al grano correcto antes de unir.</div>
+<div class="foot"><span>1 / 3 · SQL y pensamiento</span><span>ANDESDB · S16</span></div></section>
+
+<section class="page"><h1>Cheat Sheet final · diseño, integridad y NoSQL</h1><p class="sub">Del requerimiento de negocio a un esquema que protege reglas reales.</p>
+<h2>5 · De reglas a modelo</h2>
+<div class="band">regla de negocio → entidad → atributo → relación → cardinalidad → clave → tabla → restricción</div>
+<div class="grid3">
+<div class="box"><h3>Entidad / atributo</h3><p>Entidad = cosa con identidad propia. Atributo = dato que describe esa entidad.</p></div>
+<div class="box"><h3>PK / FK</h3><p><b>PK</b> identifica una fila. <b>FK</b> referencia otra entidad y protege la relación.</p></div>
+<div class="box"><h3>Cardinalidad</h3><p>1:1 · 1:N · N:N. Una N:N normalmente requiere una tabla puente.</p></div>
 </div>
-<div class="azure"><strong>Puente DP-900:</strong> Azure SQL Database = base SQL PaaS; Managed Instance = PaaS con alta compatibilidad de instancia; SQL Server on Azure VM = control de VM/SO; Blob = objetos; Files = archivos compartidos; Table = clave/atributo; Cosmos DB = NoSQL distribuido; Databricks = Spark/ingeniería; Fabric = plataforma analítica SaaS integrada; Power BI = modelo semántico y visualización.</div>
-<div class="foot"><span>ANDESDB · S16 · recurso de cierre</span><span>Tip: imprime o guarda esta página como PDF.</span></div>
-</main></body></html>
+<h2>6 · Normalización</h2>
+<table class="tbl"><thead><tr><th>Forma</th><th>Idea práctica</th><th>Pregunta útil</th></tr></thead><tbody>
+<tr><td><b>1FN</b></td><td>Valores atómicos; no listas repetidas dentro de una celda.</td><td>¿Cada campo contiene un valor del dominio esperado?</td></tr>
+<tr><td><b>2FN</b></td><td>En clave compuesta, los atributos dependen de la clave completa.</td><td>¿Algo depende solo de una parte de la clave?</td></tr>
+<tr><td><b>3FN</b></td><td>Los atributos no clave dependen de la clave, no de otro atributo no clave.</td><td>¿Estoy guardando información de otra entidad?</td></tr>
+</tbody></table>
+<div class="warn"><b>Objetivo:</b> reducir redundancia, anomalías de inserción/actualización/borrado y mantener una reconstrucción coherente mediante relaciones.</div>
+<h2>7 · DDL, DML e integridad</h2>
+<div class="grid2">
+<div class="box blue"><h3>DDL · estructura</h3><div class="code">CREATE TABLE
+ALTER TABLE
+DROP TABLE</div><p>Define o cambia el esquema.</p></div>
+<div class="box green"><h3>DML · datos</h3><div class="code">INSERT
+UPDATE
+DELETE</div><p>Cambia filas dentro del esquema.</p></div></div>
+<div class="grid3">
+<div class="box"><h3>PRIMARY KEY</h3><p>Identidad única y no nula.</p></div><div class="box"><h3>FOREIGN KEY</h3><p>Impide referencias hacia registros inexistentes.</p></div><div class="box"><h3>NOT NULL / UNIQUE / CHECK</h3><p>Presencia, unicidad y reglas de dominio.</p></div></div>
+<div class="band"><b>Una restricción se prueba por comportamiento:</b> acepta lo válido + rechaza lo inválido.</div>
+<h2>8 · Elegir SQL o NoSQL</h2>
+<table class="tbl"><thead><tr><th>Patrón</th><th>Úsalo cuando…</th><th>Pregunta principal</th></tr></thead><tbody>
+<tr><td><b>Relacional</b></td><td>Relaciones e integridad son centrales; necesitas joins y reglas explícitas.</td><td>¿Las relaciones entre entidades deben hacerse cumplir?</td></tr>
+<tr><td><b>Documento</b></td><td>Lees un agregado completo y su forma cambia con frecuencia.</td><td>¿Qué conviene embeber y qué referenciar?</td></tr>
+<tr><td><b>Clave-valor</b></td><td>Acceso muy directo por clave.</td><td>¿La consulta dominante es “dame el valor de esta clave”?</td></tr>
+<tr><td><b>Grafo</b></td><td>Las relaciones y recorridos son la consulta principal.</td><td>¿La pregunta depende de caminos/conexiones?</td></tr>
+<tr><td><b>Serie de tiempo</b></td><td>Eventos ordenados temporalmente dominan el uso.</td><td>¿Consulto ventanas y evolución por tiempo?</td></tr>
+</tbody></table>
+<h2>9 · Documentos y CAP</h2>
+<div class="grid2"><div class="box"><h3>Embeber</h3><p>Conviene cuando los datos se leen juntos, tienen ciclo de vida cercano y el agregado no crece sin control.</p></div><div class="box"><h3>Referenciar</h3><p>Conviene cuando una entidad se comparte, cambia por separado o crecería/repetiría demasiado.</p></div></div>
+<p class="warn"><b>CAP</b> ayuda a razonar sobre consistencia, disponibilidad y tolerancia a particiones de red en sistemas distribuidos. No significa “elige dos productos”.</p>
+<div class="foot"><span>2 / 3 · diseño e integridad</span><span>ANDESDB · S16</span></div></section>
+
+<section class="page"><h1>Cheat Sheet final · analítica, BigQuery y puente Azure</h1><p class="sub">De operación a warehouse, datos anidados y vocabulario cloud.</p>
+<h2>10 · OLTP, OLAP y warehouse</h2>
+<div class="grid2"><div class="box"><h3>OLTP</h3><p>Operación actual, muchas transacciones pequeñas, integridad y baja latencia.</p></div><div class="box blue"><h3>OLAP</h3><p>Historia, agregaciones, comparaciones y lectura analítica.</p></div></div>
+<div class="grid3"><div class="box"><h3>Hecho</h3><p>Evento o medición en un <b>grano</b> definido.</p></div><div class="box"><h3>Dimensión</h3><p>Contexto descriptivo: cliente, producto, fecha, lugar.</p></div><div class="box"><h3>Modelo estrella</h3><p>Hechos al centro y dimensiones alrededor para análisis comprensible.</p></div></div>
+<div class="grid3"><div class="box"><h3>ETL</h3><p>Extraer → transformar → cargar.</p></div><div class="box"><h3>ELT</h3><p>Extraer → cargar → transformar en destino.</p></div><div class="box"><h3>Batch / streaming</h3><p>Lotes acumulados vs eventos procesados conforme llegan.</p></div></div>
+<h2>11 · BigQuery y diseño físico</h2>
+<table class="tbl"><thead><tr><th>Concepto</th><th>Qué hace</th><th>Qué mirar</th></tr></thead><tbody>
+<tr><td><b>Partición</b></td><td>Divide datos por una clave, comúnmente fecha.</td><td>Filtros frecuentes y volumen por partición.</td></tr>
+<tr><td><b>Clustering</b></td><td>Organiza por columnas de consulta frecuentes.</td><td>Predicados repetidos dentro de la tabla/partición.</td></tr>
+<tr><td><b>Pruning</b></td><td>Evita leer bloques irrelevantes.</td><td>Que el filtro permita descartar datos.</td></tr>
+<tr><td><b>Bytes procesados</b></td><td>Aproximan trabajo/costo de lectura.</td><td>Misma lógica puede tener distinto costo físico.</td></tr>
+</tbody></table>
+<h2>12 · Datos anidados y formatos</h2>
+<div class="grid3"><div class="box"><h3>ARRAY</h3><p>Lista de valores/estructuras dentro de un registro.</p></div><div class="box"><h3>STRUCT</h3><p>Objeto con varios campos relacionados.</p></div><div class="box"><h3>UNNEST</h3><p>Expande elementos del arreglo a filas; <b>cambia el grano</b>.</p></div></div>
+<table class="tbl"><thead><tr><th>Formato</th><th>Idea</th></tr></thead><tbody><tr><td><b>CSV</b></td><td>Tabular simple; poca semántica de tipos/anidamiento.</td></tr><tr><td><b>JSON</b></td><td>Semiestructurado y jerárquico.</td></tr><tr><td><b>Parquet</b></td><td>Columnar; eficiente para analítica y lectura selectiva de columnas.</td></tr></tbody></table>
+<h2>13 · Puente conceptual hacia Azure / DP-900</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Nombre Azure a reconocer</th></tr></thead><tbody>
+<tr><td>Base SQL administrada</td><td><b>Azure SQL Database</b></td></tr>
+<tr><td>Alta compatibilidad de instancia SQL Server sin VM</td><td><b>Azure SQL Managed Instance</b></td></tr>
+<tr><td>Control del sistema operativo</td><td><b>SQL Server on Azure VM</b></td></tr>
+<tr><td>PostgreSQL administrado</td><td><b>Azure Database for PostgreSQL</b></td></tr>
+<tr><td>Objetos/archivos grandes</td><td><b>Blob Storage</b></td></tr>
+<tr><td>Archivos compartidos</td><td><b>Azure Files</b></td></tr>
+<tr><td>Clave/atributo simple</td><td><b>Table Storage</b></td></tr>
+<tr><td>NoSQL distribuido</td><td><b>Cosmos DB</b></td></tr>
+<tr><td>Ingeniería/Spark</td><td><b>Azure Databricks</b></td></tr>
+<tr><td>Plataforma analítica integrada</td><td><b>Microsoft Fabric</b></td></tr>
+<tr><td>Modelo semántico y visualización</td><td><b>Power BI</b></td></tr>
+</tbody></table>
+<h2>14 · Checklist antes de confiar en un resultado</h2>
+<div class="grid2"><div class="box green"><ul><li>¿Qué representa una fila antes de consultar?</li><li>¿Qué representa una fila después del JOIN/UNNEST?</li><li>¿La llave de unión corresponde a la relación real?</li><li>¿Aumentó inesperadamente el número de filas?</li><li>¿Estoy filtrando filas con WHERE o grupos con HAVING?</li></ul></div>
+<div class="box green"><ul><li>¿Hay NULL relevantes?</li><li>¿COUNT(*) y COUNT(DISTINCT id) cuentan lo mismo?</li><li>¿Un estado observado es realmente el último estado?</li><li>¿La tabla física coincide con el patrón de consultas?</li><li>¿Puedo explicar el resultado sin mirar el código?</li></ul></div></div>
+<div class="band"><b>Idea final:</b> problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión.</div>
+<div class="foot"><span>3 / 3 · analítica y cloud</span><span>ANDESDB · S16</span></div></section>
+
+</body></html>

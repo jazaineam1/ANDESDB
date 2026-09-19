@@ -574,34 +574,29 @@
           "fecha": "2026-09-22",
           "duracionUtil": 165,
           "modo": "consolidacion",
-          "titulo": "Cierre del curso + primer contacto DP-900",
+          "titulo": "Cierre del curso + puente DP-900",
           "estado": "pendiente",
-          "desc": "Cierre de 180 min totales (165 útiles + pausa): apertura honesta, devolución guiada de S15, recorrido «Todo el SQL que escribiste», reflexión S1, explicación del DP-900 y voucher, cápsula Azure, diagnóstico de 24 escenarios 7–6–4–7 con 48 componentes y crédito parcial, C/T/L obligatorio, exploración oficial, plan con fecha, portafolio, glosario y autopercepción/encuesta de salida.",
+          "desc": "Cierre de 180 min totales (165 útiles + pausa): consolidación del SQL y del pensamiento de consulta, diseño relacional, integridad, SQL/NoSQL, warehouse, BigQuery y datos anidados; tres casos finales sin nota; puente conceptual a DP-900; 5 preguntas oficiales en vivo; Cheat Sheet final y cierre antes de la encuesta institucional.",
           "tags": [
+            "cierre del curso",
+            "SQL",
+            "pensamiento SQL",
+            "orden lógico",
+            "JOIN",
+            "grano",
+            "modelado",
+            "normalización",
+            "DDL/DML",
+            "integridad",
+            "SQL vs NoSQL",
+            "OLTP/OLAP",
+            "data warehouse",
+            "BigQuery",
+            "ARRAY STRUCT UNNEST",
             "DP-900",
-            "voucher",
-            "devolución S15",
-            "certificaciones",
-            "24 escenarios",
-            "7-6-4-7",
-            "C / T / L",
-            "confianza",
             "Practice Assessment",
-            "Exam Sandbox",
-            "plan con fecha",
-            "portafolio",
-            "encuesta",
-            "diagnóstico docente",
-            "apertura honesta",
-            "todo el SQL",
-            "glosario",
-            "Azure SQL",
-            "Blob Files Table Cosmos",
-            "Workbench traducido",
-            "reflexión S1",
-            "48 componentes",
-            "crédito parcial",
-            "C/T/L obligatorio"
+            "voucher",
+            "Cheat Sheet"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [
@@ -636,9 +631,9 @@
               "externo": true
             },
             {
-              "txt": "⬇ Glosario de cierre S16 · una página",
+              "txt": "⬇ Cheat Sheet final · 3 páginas",
               "href": "Presentaciones/M6/glosario-cierre-s16.html",
-              "download": true
+              "download": false
             }
           ]
         }
