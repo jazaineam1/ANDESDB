@@ -628,12 +628,12 @@
           {
             "dominio": "Non-relational data on Azure",
             "peso": "15–20%",
-            "foco": "Blob, Files, Table, Cosmos DB y APIs"
+            "foco": "Blob, Files, Table, Cosmos DB y APIs (NoSQL, MongoDB, Cassandra, Gremlin, Table)"
           },
           {
             "dominio": "Analytics workload",
             "peso": "25–30%",
-            "foco": "ingesta/procesamiento, Databricks, Fabric, real time, Power BI"
+            "foco": "ingesta/procesamiento, Databricks, Fabric, Event Hubs, Stream Analytics, Real-Time Intelligence y Power BI"
           }
         ],
         "practice_assessment_en_vivo": "5–6 preguntas oficiales razonadas",
@@ -660,11 +660,12 @@
           "enseña requisito → concepto → servicio → descarte de distractores",
           "distingue Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL",
           "distingue Blob, Files, Table Storage y Cosmos DB",
-          "incluye casos de uso/APIs de Cosmos DB al nivel Fundamentals",
+          "incluye casos de uso y APIs de Cosmos DB al nivel Fundamentals: NoSQL, MongoDB, Cassandra, Gremlin y Table",
           "incluye Databricks, Fabric, real-time analytics y Power BI",
           "incluye roles DBA, Data Engineer y Data Analyst",
           "usa 5–6 preguntas del Practice Assessment oficial",
-          "usa el temporizador compartido de S15 v7"
+          "usa el temporizador compartido de S15 v7",
+          "distingue Event Hubs (ingesta), Stream Analytics (procesamiento) y Fabric Real-Time Intelligence (analítica integrada)"
         ]
       },
       "diagnostico": {

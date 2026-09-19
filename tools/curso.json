@@ -595,7 +595,11 @@
             "Practice Assessment",
             "voucher",
             "Cheat Sheet",
-            "referentes de industria"
+            "referentes de industria",
+            "Cosmos DB APIs",
+            "Azure Event Hubs",
+            "Azure Stream Analytics",
+            "Fabric Real-Time Intelligence"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [

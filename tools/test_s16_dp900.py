@@ -73,7 +73,8 @@ for token in [
     "DBA","Data Engineer","Data Analyst",
     "Azure SQL Database","Azure SQL Managed Instance","SQL Server on Azure VM","Azure Database for PostgreSQL",
     "Blob Storage","Azure Files","Table Storage","Cosmos DB",
-    "Azure Databricks","Microsoft Fabric","Power BI",
+    "API for NoSQL","Apache Cassandra","Apache Gremlin",
+    "Azure Databricks","Microsoft Fabric","Power BI","Azure Event Hubs","Azure Stream Analytics","Fabric Real-Time Intelligence",
     "Batch","Streaming / real time","Línea","Barras","Card/KPI",
     "5–6 preguntas oficiales"
 ]:
@@ -103,7 +104,7 @@ for token in [
     "Core data concepts","Relational data on Azure","Non-relational data on Azure","Analytics workload",
     "25–30%","20–25%","15–20%",
     "Azure SQL Database","Azure SQL Managed Instance","SQL Server on Azure VM","Azure Database for PostgreSQL",
-    "Blob Storage","Azure Files","Table Storage","Cosmos DB","Azure Databricks","Microsoft Fabric","Power BI",
+    "Blob Storage","Azure Files","Table Storage","Cosmos DB","API for NoSQL","Apache Cassandra","Apache Gremlin","Azure Databricks","Microsoft Fabric","Power BI","Azure Event Hubs","Azure Stream Analytics","Fabric Real-Time Intelligence",
     "Rutas de profundización · referentes de industria"
 ]:
     assert token in sheet, token
@@ -122,6 +123,7 @@ cs=next(x for m in course["modulos"] for x in m.get("sesiones",[]) if x["n"]==16
 assert cs["titulo"]=="Cierre del curso + preparación DP-900"
 assert "~65 min" in cs["desc"] and "~100 min" in cs["desc"]
 assert "blueprint 2026" in cs["tags"]
+assert all(x in cs["tags"] for x in ["Cosmos DB APIs","Azure Event Hubs","Azure Stream Analytics","Fabric Real-Time Intelligence"])
 
 # Guía docente: la nueva intención debe quedar protegida.
 for token in [
@@ -131,7 +133,9 @@ for token in [
     "110–175 · DP-900",
     "July 21, 2026",
     "5–6 preguntas oficiales",
-    "temporizador de la presentación es el componente compartido de S15 v7"
+    "temporizador de la presentación es el componente compartido de S15 v7",
+    "API for NoSQL, MongoDB, Apache Cassandra, Apache Gremlin y Table",
+    "Azure Event Hubs", "Azure Stream Analytics", "Fabric Real-Time Intelligence"
 ]:
     assert token in guide, token
 
