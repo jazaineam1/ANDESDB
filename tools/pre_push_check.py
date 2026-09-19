@@ -143,6 +143,8 @@ def check_javascript() -> None:
         "Presentaciones/M3/sql-lab-s6.js",
         "Presentaciones/M5/sql-lab-s12.js",
         "assets/learning/analytics-fallback-link.js",
+        "assets/learning/s15-autograder-v7.js",
+        "revision/assets/learning/s15-autograder-v7.js",
         "assets/learning/s15-autograder-v7-solution.js",
         "revision/assets/learning/s15-autograder-v7-solution.js",
     ]
