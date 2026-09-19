@@ -2,7 +2,7 @@
 <!-- S16 strong-course-closure v1 · cierre de aprendizaje, no nueva evaluación -->
 <!-- presentation-pacing-cleanup-v1.js · política aplicada en autoría: sin minutaje visible salvo la pausa -->
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Sesión 16 · Cierre del curso y puente hacia DP-900"><title>Sesión 16 · Cierre del curso + puente DP-900</title>
+<meta name="description" content="Sesión 16 · Cierre del curso y preparación DP-900"><title>Sesión 16 · Cierre del curso + preparación DP-900</title>
 <link rel="stylesheet" href="../../tools/tema-v2.css">
 <style>
 /* S16 · solo composición específica. La identidad visual proviene de tema-v2.css */
@@ -326,8 +326,28 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
   .s16-zoom{display:none!important}
 }
 
-</style></head><body><main class="stage">
 
+/* ===== S16 v4 · cierre 65 min + DP-900 100 min ====================== */
+.dp900-band{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:.8em 0}
+.dp900-domain{position:relative;background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1em 1.05em;border-top:.38em solid var(--y)}
+.dp900-domain:nth-child(2){border-top-color:var(--b)}.dp900-domain:nth-child(3){border-top-color:var(--o)}.dp900-domain:nth-child(4){border-top-color:var(--g)}
+.dp900-domain .weight{font-size:1.5em;font-weight:950;color:var(--b);display:block;line-height:1}.dp900-domain:nth-child(3) .weight{color:#b45d00}.dp900-domain:nth-child(4) .weight{color:var(--g)}
+.dp900-domain h3{margin:.35em 0 .25em;font-size:.95em}.dp900-domain p{font-size:.73em;line-height:1.35;margin:0;color:var(--ink-soft)}
+.transfer-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:.8em}.transfer-grid ul{margin:.25em 0 0;padding-left:1.15em}.transfer-grid li{margin:.28em 0}
+.choice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:.8em}
+.choice{background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1em;border-left:.38em solid var(--b)}
+.choice:nth-child(2){border-left-color:var(--g)}.choice:nth-child(3){border-left-color:var(--o)}.choice:nth-child(4){border-left-color:#6a4bb8}
+.choice h3{font-size:.92em;margin:0 0 .3em}.choice p{font-size:.75em;line-height:1.35;margin:.15em 0}.choice .when{display:block;margin-top:.45em;font-weight:900;color:var(--b);font-size:.72em}
+.exam-step{display:grid;grid-template-columns:auto 1fr;gap:.65em;align-items:start;margin:.45em 0;padding:.55em .7em;background:var(--s);border-radius:var(--r-sm);box-shadow:var(--sh)}
+.exam-step b{display:grid;place-items:center;width:2em;height:2em;border-radius:50%;background:var(--ink);color:var(--y)}.exam-step p{margin:.15em 0;font-size:.82em}
+.scenario{background:var(--yl);border-left:.4em solid var(--y);border-radius:var(--r-md);padding:1em 1.1em;margin:.7em 0;box-shadow:var(--sh)}
+.scenario .q{font-size:1.02em;font-weight:900;line-height:1.35}.scenario .answer{margin-top:.55em;color:var(--b);font-weight:850}
+.pipe{display:flex;align-items:stretch;gap:.45em;margin:.85em 0;flex-wrap:nowrap}.pipe .node{flex:1;background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:.8em;text-align:center;border-top:.32em solid var(--b)}.pipe .node:nth-child(3){border-top-color:var(--o)}.pipe .node:nth-child(5){border-top-color:#6a4bb8}.pipe .node:nth-child(7){border-top-color:var(--g)}.pipe .arrow{align-self:center;font-weight:950;color:var(--ink-soft)}
+.rolegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:.75em}.role{background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1em;border-left:.38em solid var(--y)}.role:nth-child(2){border-left-color:var(--b)}.role:nth-child(3){border-left-color:var(--g)}.role h3{margin:0 0 .3em;font-size:.95em}.role p{margin:0;font-size:.78em;line-height:1.4}
+.vizgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:.75em}.viz{background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:.8em;text-align:center}.viz b{display:block;color:var(--b);margin-bottom:.25em}.viz span{font-size:.72em;color:var(--ink-soft)}
+@media(max-aspect-ratio:1/1),(max-width:700px){.dp900-band,.choice-grid,.vizgrid{grid-template-columns:1fr 1fr}.transfer-grid,.rolegrid{grid-template-columns:1fr}.pipe{display:grid;grid-template-columns:1fr}.pipe .arrow{transform:rotate(90deg);justify-self:center}}
+
+</style></head><body><main class="stage">
 <section class="slide dark active" data-title="Portada"><div class="ey">Sesión 16 · cierre del diplomado</div>
 <h1>De consultar datos a <span class="accent">diseñar soluciones</span></h1>
 <p class="lead">Hoy vas a ordenar lo que construiste, conectar las piezas y salir con una ruta clara para seguir aprendiendo.</p>
@@ -398,17 +418,6 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 </div>
 <div class="micro" data-r><b>Predice antes de ver código:</b> ¿por qué WHERE no puede filtrar directamente un COUNT(*)? Explícalo con el orden lógico.</div><div class="brand"><span>Razonamiento</span><span>pensar antes de ejecutar</span></div></section>
 
-<section class="slide dense" data-title="JOIN y conjuntos"><div class="ey">Relacionar información</div><h2>Una tabla casi nunca responde sola</h2>
-<table class="tbl"><thead><tr><th>Necesidad</th><th>Patrón</th><th>Pregunta de control</th></tr></thead><tbody>
-<tr><td>Solo coincidencias</td><td><b>INNER JOIN</b></td><td>¿La pérdida de filas sin pareja es intencional?</td></tr>
-<tr><td>Conservar todo un lado</td><td><b>LEFT JOIN</b></td><td>¿Los NULL significan “sin coincidencia”?</td></tr>
-<tr><td>Encontrar ausencias</td><td><b>LEFT JOIN … WHERE derecha.id IS NULL</b></td><td>¿Estoy filtrando la tabla correcta?</td></tr>
-<tr><td>Apilar resultados compatibles</td><td><b>UNION / UNION ALL</b></td><td>¿Quiero eliminar duplicados o conservarlos?</td></tr>
-<tr><td>Evitar doble conteo</td><td><b>agregar antes de unir</b></td><td>¿Las dos fuentes están en el mismo grano?</td></tr>
-</tbody></table>
-<div class="checkpoint">El JOIN correcto no es “el que ejecuta”: es el que conserva el significado de cada fila.</div>
-<div class="brand"><span>JOIN</span><span>relación + grano</span></div></section>
-
 <section class="slide dense" data-title="De reglas a modelo"><div class="ey">Diseño de bases de datos</div><h2>Pasaste de una conversación de negocio a un modelo defendible</h2>
 <svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 225" role="img" tabindex="0" aria-label="Flujo desde una regla de negocio hasta entidades, relaciones, cardinalidad y un esquema implementable"><defs><marker id="s16arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
 <text x="6" y="18" class="s16-svg-label">DE UNA FRASE DEL NEGOCIO A UN ESQUEMA</text>
@@ -454,106 +463,12 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="chain">reglas → ER → claves → cardinalidad → 1FN/2FN/3FN → esquema implementable</div>
 <div class="micro" data-r><b>Microcaso:</b> “un pedido tiene muchas líneas y cada línea pertenece a un pedido”. ¿Qué cardinalidad ves y dónde quedaría la FK?</div><div class="brand"><span>Modelado</span><span>de lenguaje natural a tablas</span></div></section>
 
-<section class="slide dense" data-title="Integridad y DDL"><div class="ey">Implementar el modelo</div><h2>Una base correcta también debe impedir datos imposibles</h2>
-<div class="g2">
-<div class="card"><h3>DDL</h3><pre class="sqlviz" data-label="DDL"><code><span class="kw">CREATE TABLE</span> <span class="op">·</span> <span class="kw">ALTER TABLE</span> <span class="op">·</span> <span class="kw">DROP TABLE</span></code></pre><p>Define la estructura que soporta el modelo.</p></div>
-<div class="card"><h3>DML</h3><pre class="sqlviz" data-label="DML"><code><span class="kw">INSERT</span> <span class="op">·</span> <span class="kw">UPDATE</span> <span class="op">·</span> <span class="kw">DELETE</span></code></pre><p>Cambia el estado de los datos dentro del esquema.</p></div>
-</div>
-<div class="s16-g4">
-<div class="card"><b>PRIMARY KEY</b><p>Identidad y unicidad.</p></div><div class="card"><b>FOREIGN KEY</b><p>Integridad referencial.</p></div><div class="card"><b>NOT NULL / UNIQUE</b><p>Presencia y no repetición.</p></div><div class="card"><b>CHECK</b><p>Reglas del dominio.</p></div>
-</div>
-<div class="checkpoint"><b>Prueba de calidad:</b> una restricción se demuestra intentando insertar algo válido y algo inválido.</div>
-<div class="brand"><span>PostgreSQL / Supabase</span><span>modelo que se hace cumplir</span></div></section>
-
-<section class="slide dense" data-title="SQL o NoSQL"><div class="ey">Elegir almacenamiento</div><h2>Aprendiste a elegir SQL o NoSQL por el problema</h2>
-<div class="g3">
-<div class="card blue"><h3>Relacional</h3><p>Relaciones claras, reglas fuertes, joins, transacciones y esquema controlado.</p><span class="decision">Pregunta: ¿la integridad entre entidades manda?</span></div>
-<div class="card gold"><h3>Documentos</h3><p>Estructura flexible, lectura por agregado y decisión entre embeber o referenciar.</p><span class="decision">Pregunta: ¿cómo se lee y actualiza el agregado?</span></div>
-<div class="card"><h3>Otros patrones</h3><p>Clave-valor, grafos y series de tiempo aparecen cuando el patrón de acceso cambia.</p><span class="decision">Pregunta: ¿qué consulta debe ser barata?</span></div>
-</div>
-<div class="checkpoint">CAP, consistencia y disponibilidad ayudan a razonar en sistemas distribuidos; no son una receta automática de producto.</div>
-<div class="micro" data-r><b>Decide rápido:</b> si siempre lees un pedido completo con sus ítems y la forma cambia con frecuencia, ¿qué patrón de almacenamiento compararías primero?</div><div class="brand"><span>SQL / NoSQL</span><span>problema antes que tecnología</span></div></section>
-
-<section class="slide dense" data-title="OLTP a analítica"><div class="ey">De operación a analítica</div><h2>La misma empresa necesita estructuras distintas para operar y analizar</h2>
-<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 175" role="img" tabindex="0" aria-label="Flujo desde sistemas OLTP a procesos batch o streaming y luego a un modelo estrella para análisis"><defs><marker id="s16arr3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
-<text x="6" y="18" class="s16-svg-label">OPERAR Y ANALIZAR SON CARGAS DISTINTAS</text>
-<rect x="18" y="48" width="225" height="84" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="130" y="73" text-anchor="middle" class="s16-svg-title">OLTP · operar ahora</text><text x="130" y="95" text-anchor="middle" class="s16-svg-small">pedido · cliente · reserva</text><text x="130" y="115" text-anchor="middle" class="s16-svg-small">integridad · baja latencia</text>
-<rect x="342" y="48" width="225" height="84" rx="12" fill="#fff8e1" stroke="#c7a600" stroke-width="2.4"/><text x="454" y="73" text-anchor="middle" class="s16-svg-title">mover y transformar</text><text x="454" y="95" text-anchor="middle" class="s16-svg-small">batch · streaming</text><text x="454" y="115" text-anchor="middle" class="s16-svg-small">ETL / ELT</text>
-<rect x="666" y="48" width="325" height="84" rx="12" fill="#e8f1f8" stroke="#124e78" stroke-width="2.4"/><text x="828" y="73" text-anchor="middle" class="s16-svg-title">OLAP · entender historia</text><text x="828" y="95" text-anchor="middle" class="s16-svg-small">hecho + dimensiones + medidas + tiempo</text><text x="828" y="115" text-anchor="middle" class="s16-svg-small">modelo estrella · agregaciones</text>
-<line x1="247" y1="90" x2="337" y2="90" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16arr3)"/><line x1="571" y1="90" x2="661" y2="90" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16arr3)"/>
-</svg>
-<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 360" role="img" aria-label="Flujo vertical desde OLTP a procesos batch o streaming y luego a OLAP">
-<defs><marker id="s16marr3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
-<text x="24" y="24" class="s16-svg-label">OPERAR → MOVER → ANALIZAR</text>
-<rect x="34" y="48" width="292" height="72" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="180" y="74" text-anchor="middle" class="s16-svg-title">OLTP · operar ahora</text><text x="180" y="96" text-anchor="middle" class="s16-svg-small">pedido · cliente · reserva · integridad</text>
-<line x1="180" y1="122" x2="180" y2="146" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr3)"/>
-<rect x="34" y="152" width="292" height="72" rx="12" fill="#fff8e1" stroke="#c7a600" stroke-width="2.4"/><text x="180" y="178" text-anchor="middle" class="s16-svg-title">mover y transformar</text><text x="180" y="200" text-anchor="middle" class="s16-svg-small">batch · streaming · ETL / ELT</text>
-<line x1="180" y1="226" x2="180" y2="250" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr3)"/>
-<rect x="34" y="256" width="292" height="78" rx="12" fill="#e8f1f8" stroke="#124e78" stroke-width="2.4"/><text x="180" y="282" text-anchor="middle" class="s16-svg-title">OLAP · entender historia</text><text x="180" y="304" text-anchor="middle" class="s16-svg-small">hecho + dimensiones + medidas + tiempo</text><text x="180" y="322" text-anchor="middle" class="s16-svg-small">modelo estrella · agregaciones</text>
-</svg>
-<div class="g2">
-<div class="card"><h3>OLTP · operar ahora</h3><p>Muchas operaciones pequeñas, integridad, estado actual y baja latencia.</p><pre class="sqlviz" data-label="OLTP"><code><span class="obj">pedido</span> <span class="op">·</span> <span class="obj">cliente</span> <span class="op">·</span> <span class="obj">reserva</span> <span class="op">·</span> <span class="obj">transacción</span></code></pre></div>
-<div class="card blue"><h3>OLAP · entender historia</h3><p>Lecturas amplias, agregaciones, comparaciones y decisiones sobre periodos; el <b>modelo estrella</b> organiza hechos y dimensiones.</p><pre class="sqlviz" data-label="Modelo estrella"><code><span class="obj">hecho</span> <span class="op">+</span> <span class="type">dimensiones</span> <span class="op">+</span> <span class="fn">medidas</span> <span class="op">+</span> <span class="obj">tiempo</span></code></pre></div>
-</div>
-<div class="g3"><div class="card"><h3>Modelo estrella</h3><p>Una tabla de hechos en un grano definido se relaciona con dimensiones descriptivas.</p></div><div class="card"><b>Batch</b><p>Procesa lotes acumulados.</p></div><div class="card"><b>Streaming</b><p>Procesa eventos conforme llegan.</p></div></div>
-<div class="brand"><span>Data warehouse</span><span>estrella + grano + carga</span></div></section>
-
-<section class="slide dense" data-title="BigQuery físico"><div class="ey">Analítica cloud</div><h2>No solo escribiste SQL: aprendiste que leer datos también cuesta</h2>
-<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 185" role="img" tabindex="0" aria-label="Comparación visual entre una tabla completa, una tabla particionada y bloques podados por filtros"><defs><marker id="s16arr4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
-<text x="6" y="18" class="s16-svg-label">MISMA RESPUESTA LÓGICA · DISTINTO TRABAJO FÍSICO</text>
-<g transform="translate(24 42)">
-<text x="132" y="14" text-anchor="middle" class="s16-svg-title">Partición</text><rect x="0" y="28" width="264" height="88" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/>
-<rect x="14" y="43" width="50" height="58" rx="5" fill="#dce8f0"/><rect x="70" y="43" width="50" height="58" rx="5" fill="#dce8f0"/><rect x="126" y="43" width="50" height="58" rx="5" fill="#ffd600"/><rect x="182" y="43" width="50" height="58" rx="5" fill="#dce8f0"/>
-<text x="157" y="78" text-anchor="middle" font-family="Segoe UI,Arial" font-size="10.5" font-weight="900" fill="#3a2f00">fecha</text><text x="132" y="137" text-anchor="middle" class="s16-svg-small">leer solo la partición candidata</text>
-</g>
-<g transform="translate(373 42)">
-<text x="132" y="14" text-anchor="middle" class="s16-svg-title">Clustering</text><rect x="0" y="28" width="264" height="88" rx="10" fill="#fff" stroke="#6a4bb8" stroke-width="2"/>
-<rect x="14" y="43" width="72" height="24" rx="5" fill="#d4b5ff"/><rect x="92" y="43" width="72" height="24" rx="5" fill="#efe7ff"/><rect x="170" y="43" width="72" height="24" rx="5" fill="#efe7ff"/>
-<rect x="14" y="75" width="72" height="24" rx="5" fill="#d4b5ff"/><rect x="92" y="75" width="72" height="24" rx="5" fill="#efe7ff"/><rect x="170" y="75" width="72" height="24" rx="5" fill="#efe7ff"/>
-<text x="50" y="59" text-anchor="middle" font-family="Segoe UI,Arial" font-size="9.5" font-weight="900" fill="#493178">filtro</text><text x="132" y="137" text-anchor="middle" class="s16-svg-small">organizar bloques por columnas útiles</text>
-</g>
-<g transform="translate(722 42)">
-<text x="132" y="14" text-anchor="middle" class="s16-svg-title">Pruning</text><rect x="0" y="28" width="264" height="88" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
-<rect x="14" y="43" width="50" height="58" rx="5" fill="#eef2f5" opacity=".4"/><rect x="70" y="43" width="50" height="58" rx="5" fill="#eef2f5" opacity=".4"/><rect x="126" y="43" width="50" height="58" rx="5" fill="#9be3a8"/><rect x="182" y="43" width="50" height="58" rx="5" fill="#eef2f5" opacity=".4"/>
-<path d="M22 50 L56 94 M56 50 L22 94 M78 50 L112 94 M112 50 L78 94 M190 50 L224 94 M224 50 L190 94" stroke="#9ca8b2" stroke-width="2" opacity=".75"/>
-<text x="151" y="78" text-anchor="middle" font-family="Segoe UI,Arial" font-size="10.5" font-weight="900" fill="#155d3d">leer</text><text x="132" y="137" text-anchor="middle" class="s16-svg-small">saltar bloques que no pueden responder</text>
-</g>
-<line x1="292" y1="92" x2="365" y2="92" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16arr4)"/><line x1="641" y1="92" x2="714" y2="92" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16arr4)"/>
-</svg>
-<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 500" role="img" aria-label="Flujo vertical de BigQuery con partición, clustering y pruning">
-<defs><marker id="s16marr4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
-<text x="24" y="24" class="s16-svg-label">MISMA RESPUESTA · DISTINTO COSTO</text>
-<g transform="translate(30 46)">
-<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#124e78" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Partición</text>
-<rect x="24" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="76" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="128" y="42" width="44" height="42" rx="5" fill="#ffd600"/><rect x="180" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="232" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">recorta por una clave, normalmente fecha</text>
-</g>
-<line x1="180" y1="166" x2="180" y2="190" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr4)"/>
-<g transform="translate(30 196)">
-<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#6a4bb8" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Clustering</text>
-<rect x="24" y="42" width="72" height="20" rx="5" fill="#d4b5ff"/><rect x="104" y="42" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="184" y="42" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="24" y="68" width="72" height="20" rx="5" fill="#d4b5ff"/><rect x="104" y="68" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="184" y="68" width="72" height="20" rx="5" fill="#efe7ff"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">organiza bloques por columnas consultadas</text>
-</g>
-<line x1="180" y1="316" x2="180" y2="340" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr4)"/>
-<g transform="translate(30 346)">
-<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Pruning</text>
-<rect x="24" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="76" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="128" y="42" width="44" height="42" rx="5" fill="#9be3a8"/><rect x="180" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="232" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><path d="M30 48 L62 78 M62 48 L30 78 M82 48 L114 78 M114 48 L82 78 M186 48 L218 78 M218 48 L186 78 M238 48 L270 78 M270 48 L238 78" stroke="#9ca8b2" stroke-width="2"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">salta bloques que no pueden responder</text>
-</g>
-</svg>
-<div class="g3">
-<div class="card"><h3>Partición</h3><p>Recorta bloques por una clave —frecuentemente fecha— para evitar leer datos innecesarios.</p></div>
-<div class="card"><h3>Clustering</h3><p>Organiza por columnas consultadas con frecuencia dentro de la tabla/partición.</p></div>
-<div class="card"><h3>Pruning</h3><p>El motor evita bloques que no pueden satisfacer el filtro.</p></div>
-</div>
-<div class="chain">misma respuesta lógica ≠ mismo costo físico</div>
-<p class="evidence">La decisión física nace del patrón de consultas: filtros frecuentes, volumen, distribución y bytes procesados.</p><div class="micro" data-r><b>Predicción:</b> si casi todas las consultas filtran por fecha, ¿qué columna candidata a partición revisarías primero y por qué?</div>
-<div class="brand"><span>BigQuery</span><span>SQL + diseño físico</span></div></section>
-
-<section class="slide dense" data-title="Anidados y formatos"><div class="ey">Datos semiestructurados</div><h2>También cambiaste la forma de representar una fila</h2>
-<div class="g2">
-<div class="card"><h3>JSON / ARRAY / STRUCT</h3><p>Un registro puede contener objetos y listas. La estructura existe, pero no tiene que ser una tabla plana.</p><pre class="sqlviz" data-label="Estructura anidada"><code><span class="obj">pedido.items[]</span> <span class="op">→</span> <span class="type">ARRAY</span> de <span class="type">STRUCT</span></code></pre></div>
-<div class="card blue"><h3>UNNEST</h3><p>Expande un arreglo a filas. La pregunta obligatoria es: ¿qué representa una fila antes y después?</p><pre class="sqlviz" data-label="UNNEST"><code><span class="kw">FROM</span> <span class="obj">pedidos</span> p <span class="kw">CROSS JOIN</span> <span class="fn">UNNEST</span>(p.items) i</code></pre></div>
-</div>
-<div class="g3"><div class="card"><b>CSV</b><p>Tabular simple.</p></div><div class="card"><b>JSON</b><p>Jerarquía flexible.</p></div><div class="card"><b>Parquet</b><p>Columnar, eficiente para analítica.</p></div></div>
-<div class="micro" data-r><b>Antes de UNNEST:</b> un pedido tiene 4 ítems. ¿Cuántas filas esperas después de expandir solo ese arreglo? ¿Qué representa cada fila?</div><div class="brand"><span>S14</span><span>forma + grano + costo</span></div></section>
+<section class="slide dense" data-title="Mapa consolidado"><div class="ey">Cierre del diplomado</div><h2>En una hora: consulta, modelo, integridad, almacenamiento y analítica</h2>
+<div class="g3"><div class="card"><h3>Relacional</h3><p><b>grano · JOIN · normalización · PK/FK · restricciones</b></p><p class="evidence">Preguntar qué representa una fila antes de unir o agregar.</p></div>
+<div class="card blue"><h3>NoSQL</h3><p><b>documentos · embeber/referenciar · patrón de acceso · CAP</b></p><p class="evidence">Elegir por cómo se lee y actualiza, no por moda tecnológica.</p></div>
+<div class="card green"><h3>Analítica</h3><p><b>OLTP/OLAP · estrella · batch/streaming · BigQuery · Parquet</b></p><p class="evidence">Separar operar de analizar y controlar costo físico.</p></div></div>
+<div class="chain">problema → evidencia → grano → modelo → integridad → almacenamiento → analítica → validación → decisión</div>
+<div class="brand"><span>Cierre</span><span>recuperar, no volver a enseñar todo</span></div></section>
 
 <section class="slide dense yellow" data-title="S15 integró"><div class="ey">Desafío final</div><h2>S15 convirtió lo anterior en una solución integrada</h2>
 <div class="s16-g4">
@@ -565,131 +480,112 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="checkpoint">Tres ideas para conservar: <b>último evento ≠ fila con ese estado</b> · <b>JOIN puede cambiar el grano</b> · <b>una restricción se valida por comportamiento</b>.</div>
 <div class="brand"><span>S15</span><span>integración, no contenido nuevo</span></div></section>
 
-<section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p><button class="btn" data-start-break>Iniciar los 15 minutos</button></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
+<section class="slide dense" data-title="Caso puente"><div class="ey">Transferencia final · sin nota</div><h2>Un caso basta para comprobar que las piezas siguen conectadas</h2>
+<div class="scenario"><div class="q">Una empresa recibe pedidos en PostgreSQL, guarda imágenes de productos, necesita un tablero histórico y además quiere alertas cuando llega un evento crítico. ¿Qué decisiones separarías antes de nombrar tecnologías?</div></div>
+<div class="g3"><div class="card"><h3>1 · operación</h3><p>¿Qué debe ser transaccional y consistente?</p></div><div class="card blue"><h3>2 · almacenamiento</h3><p>¿Qué es fila, documento, archivo/objeto o evento?</p></div><div class="card gold"><h3>3 · analítica</h3><p>¿Qué necesita historia, agregación o tiempo real?</p></div></div>
+<div class="micro"><b>90 segundos:</b> decide primero por requisito. Después compara tecnologías.</div><div class="brand"><span>Transferencia</span><span>requisito antes que producto</span></div></section>
 
-<section class="slide dense" data-title="Tres casos"><div class="ey">Transferencia final · sin nota</div><h2>Tres decisiones que ya puedes razonar</h2>
-<div class="cases">
-<div class="case"><h3>A · Reporte inflado</h3><p>Ventas tiene una fila por venta; detalle tiene varias líneas. El total se duplica después de unir.</p><b>¿Qué revisarías primero?</b></div>
-<div class="case"><h3>B · Pedido completo</h3><p>Una app consulta siempre el pedido con todos sus ítems y cambia la estructura con frecuencia.</p><b>¿Relacional o documento? ¿Qué patrón manda?</b></div>
-<div class="case"><h3>C · Tablero histórico</h3><p>Millones de transacciones operativas alimentan un tablero de años de historia.</p><b>¿Usarías la misma estructura para operar y analizar?</b></div>
-</div>
-<div class="checkpoint">Primero decide individualmente. Luego compara con otra persona. No buscamos una palabra: buscamos el razonamiento.</div>
-<div class="brand"><span>Casos</span><span>grano · patrón de acceso · carga</span></div></section>
+<section class="slide dense" data-title="Caso resuelto"><div class="ey">Resolución</div><h2>La arquitectura aparece cuando separas cargas de trabajo</h2>
+<div class="pipe"><div class="node"><b>OLTP</b><br><span>pedidos relacionales</span></div><div class="arrow">→</div><div class="node"><b>objetos</b><br><span>imágenes/archivos</span></div><div class="arrow">→</div><div class="node"><b>analítica histórica</b><br><span>warehouse / modelo</span></div><div class="arrow">→</div><div class="node"><b>streaming</b><br><span>alertas en movimiento</span></div></div>
+<div class="checkpoint"><b>Ese razonamiento ya lo tienes.</b> Desde aquí la segunda mitad de S16 cambia de objetivo: reconocer cómo Microsoft Azure nombra y organiza esas decisiones para DP-900.</div>
+<div class="brand"><span>Puente</span><span>concepto conocido → servicio nuevo</span></div></section>
 
-<section class="slide dense" data-title="Resolución casos"><div class="ey">Cómo se razonan</div><h2>La respuesta aparece después de identificar la condición que manda</h2>
-<div class="cases">
-<div class="case green" data-r><h3>A · Grano</h3><p>Antes de sumar, verifica qué representa cada fila. Agrega detalle al grano de venta antes de unir o usa la medida en su tabla correcta.</p></div>
-<div class="case green" data-r><h3>B · Patrón de acceso</h3><p>Si el agregado se lee junto y cambia de forma, un documento puede ser natural; luego decides qué embeber y qué referenciar.</p></div>
-<div class="case green" data-r><h3>C · Carga</h3><p>Separa operación y analítica: modelo transaccional para el día a día; estructura analítica para historia y agregaciones.</p></div>
-</div>
-<div class="chain">la tecnología llega después de comprender grano, relaciones, patrón de acceso, latencia y volumen</div>
-<div class="brand"><span>Transferencia</span><span>criterio antes que producto</span></div></section>
+<section class="slide dark" data-title="DP900 empieza"><div class="ey">Segunda mitad de S16</div><h2>Ahora sí: <span class="accent">DP-900</span> ocupa el centro</h2>
+<p class="lead">No vamos a memorizar un catálogo. Vamos a convertir requisitos que ya conoces en decisiones dentro del ecosistema Azure.</p>
+<div class="flowline"><span>requisito</span><b>→</b><span>concepto</span><b>→</b><span>servicio Azure</span><b>→</b><span>descartar distractores</span></div>
+<p class="small">Blueprint oficial vigente desde el 21 de julio de 2026.</p><div class="brand"><span>DP-900</span><span>100 min de preparación guiada</span></div></section>
 
-<section class="slide dense" data-title="Curso a DP900"><div class="ey">Puente hacia DP-900</div><h2>Gran parte del razonamiento ya lo trabajaste</h2>
-<div class="mapgrid">
-<div class="mapcard"><h3>Conceptos de datos</h3><p>estructurado / semiestructurado · OLTP / OLAP · batch / streaming · roles de datos</p><span class="chip">trabajado</span></div>
-<div class="mapcard"><h3>Datos relacionales</h3><p>normalización · SQL común · objetos y restricciones · servicios relacionales como categoría</p><span class="chip">base fuerte</span></div>
-<div class="mapcard"><h3>No relacional</h3><p>documentos · clave/atributo · almacenamiento de objetos · patrones de acceso</p><span class="chip">trabajado</span></div>
-<div class="mapcard"><h3>Analítica</h3><p>warehouse · hechos/dimensiones · ingestión · transformación · visualización · Spark como categoría</p><span class="chip">base construida</span></div>
-</div>
-<div class="checkpoint"><b>DP-900 añade vocabulario y servicios Microsoft.</b> Lo aprendido con PostgreSQL, Firebase/MongoDB y BigQuery aporta la base conceptual para reconocerlos.</div>
-<div class="brand"><span>Transferencia</span><span>concepto conocido, nombre de proveedor nuevo</span></div></section>
+<section class="slide dense" data-title="Blueprint DP900"><div class="ey">Blueprint oficial</div><h2>Los cuatro dominios no pesan lo mismo</h2>
+<div class="dp900-band"><div class="dp900-domain"><span class="weight">25–30%</span><h3>1 · Core data concepts</h3><p>formas de datos · stores · OLTP/OLAP · roles</p></div><div class="dp900-domain"><span class="weight">20–25%</span><h3>2 · Relational on Azure</h3><p>relacional · normalización · SQL · objetos · familia Azure SQL</p></div><div class="dp900-domain"><span class="weight">15–20%</span><h3>3 · Non-relational</h3><p>Blob · Files · Table · Cosmos DB · APIs</p></div><div class="dp900-domain"><span class="weight">25–30%</span><h3>4 · Analytics</h3><p>ingesta · stores analíticos · Databricks/Fabric · real time · Power BI</p></div></div>
+<div class="checkpoint"><b>Lectura útil:</b> Core + Analytics pueden representar hasta 60% del blueprint. No conviene estudiar solo nombres de bases de datos.</div><div class="brand"><span>DP-900</span><span>skills measured · 21-jul-2026</span></div></section>
 
-<section class="slide dense" data-title="Nombres Azure"><div class="ey">Lo específico que sí debes estudiar</div><h2>El hueco principal es reconocer nombres y diferencias de Azure</h2>
-<div class="g3">
-<div class="card"><h3>Relacional</h3><p><b>Azure SQL Database</b> · PaaS de base SQL<br><b>Managed Instance</b> · mayor compatibilidad de instancia<br><b>SQL Server on Azure VM</b> · control de VM/SO<br><b>Azure Database for PostgreSQL</b> · PostgreSQL administrado</p></div>
-<div class="card"><h3>Storage / NoSQL</h3><p><b>Blob</b> · objetos<br><b>Files</b> · archivos compartidos<br><b>Table</b> · clave/atributo<br><b>Cosmos DB</b> · NoSQL distribuido</p></div>
-<div class="card blue"><h3>Analítica</h3><p><b>Databricks</b> · ingeniería/Spark<br><b>Fabric</b> · plataforma analítica integrada<br><b>Power BI</b> · modelado semántico y visualización</p></div>
-</div>
-<div class="checkpoint">Primero identifica requisito y patrón de acceso; después compara qué servicio Azure encaja.</div>
-<div class="brand"><span>Azure</span><span>nomenclatura específica, no curso nuevo</span></div></section>
+<section class="slide dense" data-title="Razonar DP900"><div class="ey">Método de resolución</div><h2>Una pregunta DP-900 se resuelve buscando la condición que manda</h2>
+<div class="exam-step"><b>1</b><p><strong>Clasifica el dominio:</strong> core, relacional, no relacional o analítica.</p></div><div class="exam-step"><b>2</b><p><strong>Subraya el requisito:</strong> PaaS/IaaS, archivo/objeto, compatibilidad, streaming, Spark, visualización…</p></div><div class="exam-step"><b>3</b><p><strong>Descarta por incompatibilidad:</strong> no elijas por una palabra conocida.</p></div><div class="exam-step"><b>4</b><p><strong>Elige la opción que satisface el requisito diferencial.</strong></p></div>
+<div class="micro"><b>Regla:</b> “JSON” no significa automáticamente Cosmos DB y “SQL” no significa automáticamente Azure SQL Database.</div><div class="brand"><span>Estrategia</span><span>condición diferencial &gt; palabra clave</span></div></section>
 
-<section class="slide dense" data-title="DP900 práctico"><div class="ey">Voucher + preparación</div><h2>Conoce el formato y practica con el recurso oficial</h2>
-<div class="s16-g4">
-<div class="card"><span class="result">45 min</span><p>tiempo de examen Fundamentals</p></div>
-<div class="card"><span class="result">65 min</span><p>seat duration / reserva total</p></div>
-<div class="card"><span class="result">700+</span><p>puntaje escalado de aprobación</p></div>
-<div class="card"><span class="result">5</span><p>preguntas oficiales para hacer juntos hoy</p></div>
-</div>
-<div class="dlrow">
-<a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">📘 Study Guide</a>
-<a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications" target="_blank" rel="noopener">🧪 Practice Assessment</a>
-<a href="https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam" target="_blank" rel="noopener">🧭 Exam Sandbox</a>
-<a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam" target="_blank" rel="noopener">📅 Programar</a>
-</div>
-<p class="smallnote">Haz 5 preguntas oficiales del Practice Assessment en vivo: primero razona el concepto, luego identifica el nombre Azure y por último lee la explicación oficial. Si hay tiempo, continúa hasta 10.</p>
-<div class="brand"><span>DP-900</span><span>familiarización, no otra evaluación del diplomado</span></div></section>
+<section class="slide dense" data-title="DP900 dominio1 datos"><div class="ey">Dominio 1 · Core data concepts</div><h2>Primero: reconocer cómo se representa y almacena un dato</h2>
+<div class="g3"><div class="card"><h3>Estructurado</h3><p>filas/columnas, esquema definido, tipos consistentes.</p><span class="decision">Ej.: tabla relacional</span></div><div class="card blue"><h3>Semiestructurado</h3><p>estructura interna flexible con claves/etiquetas.</p><span class="decision">Ej.: JSON</span></div><div class="card gold"><h3>No estructurado</h3><p>no encaja naturalmente en filas/campos.</p><span class="decision">Ej.: imagen, audio, video</span></div></div>
+<table class="tbl"><thead><tr><th>Formato</th><th>Idea DP-900</th></tr></thead><tbody><tr><td>CSV</td><td>tabular simple</td></tr><tr><td>JSON</td><td>semiestructurado / jerárquico</td></tr><tr><td>Parquet</td><td>columnar para analítica</td></tr></tbody></table>
+<div class="micro"><b>Decide:</b> ¿qué característica del dato necesitas reconocer antes de escoger un store?</div><div class="brand"><span>Dominio 1</span><span>representación + almacenamiento</span></div></section>
 
-<section class="slide dense" data-title="Cheat sheet"><div class="ey">Recurso para llevarte</div><h2>Tu referencia final no es un glosario: es una hoja de trabajo</h2>
-<div class="resource-grid">
-<div class="resource blue"><h3>Cheat Sheet final · 4 páginas</h3><p>SQL · orden lógico · JOIN · agregación · CTE/CASE/COALESCE · modelado · normalización · DDL/DML · restricciones · NoSQL · warehouse · BigQuery · anidados · formatos · mapa Azure · checklist de validación.</p>
-<a class="btn" href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Abrir / imprimir Cheat Sheet</a><div class="dlrow"><a class="secondary" href="glosario-cierre-s16.html#referentes-industria" target="_blank" rel="noopener">↗ Referentes por concepto</a></div></div>
-<div class="resource"><h3>Referentes para seguir aprendiendo</h3><p><b>PostgreSQL · MongoDB · Neo4j · AWS · Kimball Group · Google Cloud · Apache · Databricks · Microsoft Learn.</b></p><p>La página 4 conecta cada concepto del curso con una fuente primaria o ruta hands-on.</p></div>
-</div>
-<div class="checkpoint"><b>Cómo profundizar:</b> empieza por la fuente primaria del concepto que te costó; usa blogs y videos después como complemento. Prioridad inmediata: voucher DP-900.</div>
-<div class="brand"><span>Referencia final</span><span>usar > memorizar</span></div></section>
+<section class="slide dense" data-title="DP900 dominio1 roles"><div class="ey">Dominio 1 · Core data concepts</div><h2>Workload y rol también son parte del examen</h2>
+<div class="g2"><div class="card"><h3>OLTP</h3><p>muchas transacciones pequeñas · estado actual · integridad · baja latencia.</p></div><div class="card blue"><h3>OLAP</h3><p>historia · agregaciones · exploración · lectura analítica.</p></div></div>
+<div class="rolegrid"><div class="role"><h3>DBA</h3><p>administra, protege, mantiene disponibilidad y rendimiento de bases de datos.</p></div><div class="role"><h3>Data Engineer</h3><p>integra, transforma y mueve datos; construye pipelines y plataformas.</p></div><div class="role"><h3>Data Analyst</h3><p>modela para análisis, crea métricas, visualizaciones e insights.</p></div></div>
+<div class="checkpoint">No necesitas programar para responder este dominio: necesitas distinguir <b>tipo de carga + responsabilidad</b>.</div><div class="brand"><span>Dominio 1</span><span>workload + responsabilidades</span></div></section>
 
-<section class="slide dark" data-title="Cierre"><div class="ey">Fin del recorrido</div>
-<h2>Lo que te llevas es más grande que una lista de comandos</h2>
-<p class="closing">Empezaste consultando una tabla. Hoy puedes decidir <strong>qué representa una fila</strong>, cómo relacionar tablas, cómo evitar duplicaciones, cómo proteger reglas con restricciones, cuándo una tabla relacional deja de ser suficiente y cómo organizar datos para analítica.</p>
-<p class="closing" data-r>DP-900 es el siguiente contexto: pone nombres Microsoft a parte de ese razonamiento.</p>
-<p class="small">Ahora sí: responde la encuesta institucional con tu experiencia real del diplomado.</p>
-<div class="brand"><span>Curso cerrado</span><span>criterio para seguir aprendiendo</span></div></section>
+<section class="slide yellow" data-title="Pausa"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div><p class="lead">Al volver: Azure SQL, Azure Storage, Cosmos DB y analítica.</p></div><div class="brand"><span>Pausa</span><span>el temporizador aparece automáticamente</span></div></section>
 
-<div class="progress"><div class="bar" id="bar"></div></div></main>
-<nav class="toolbar" aria-label="Controles">
-<span class="count" id="count">1 / 20</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-16-cierre-dp900.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button>
-</nav>
-<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close aria-label="Cerrar">×</button><h2>Temporizador</h2><div class="timer" id="timer">15:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button></div><div class="libre"><label for="minLibre">O el que necesites:</label><input type="text" id="minLibre" maxlength="5" value="14" inputmode="decimal" aria-label="Minutos" placeholder="14"><span>min</span><button id="ponLibre">Poner en marcha</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
-<div class="minitimer" id="mini" role="group" aria-label="Temporizador flotante"><span class="lbl" id="miniLbl">Reto</span><span class="mt" id="miniT">15:00</span><button id="miniPP" title="Pausar o reanudar" aria-label="Pausar o reanudar">❚❚</button><button id="miniUp" title="Abrir el panel del temporizador" aria-label="Abrir el panel">⏳</button><button id="miniX" title="Ocultar" aria-label="Ocultar el temporizador">×</button></div>
+<section class="slide dense" data-title="DP900 relacional conceptos"><div class="ey">Dominio 2 · Relational data on Azure</div><h2>Esta parte empieza con conceptos que ya dominaste</h2>
+<div class="transfer-grid"><div class="card"><h3>Ya trabajado</h3><ul><li>filas y tablas</li><li>PK / FK</li><li>normalización</li><li>SELECT / INSERT / UPDATE / DELETE</li><li>VIEW y otros objetos</li></ul></div><div class="card blue"><h3>Lo nuevo para DP-900</h3><ul><li>qué miembro de Azure SQL conviene</li><li>PaaS vs IaaS</li><li>compatibilidad a nivel de instancia</li><li>servicios administrados para motores open source</li></ul></div></div>
+<div class="checkpoint"><b>No repitas normalización.</b> Úsala como base para concentrarte en las diferencias Azure.</div><div class="brand"><span>Dominio 2</span><span>relacional conocido → oferta Azure</span></div></section>
+
+<section class="slide dense" data-title="Familia Azure SQL"><div class="ey">Dominio 2 · familia Azure SQL</div><h2>La pregunta correcta es: ¿cuánto control y compatibilidad necesitas?</h2>
+<div class="choice-grid"><div class="choice"><h3>Azure SQL Database</h3><p>PaaS de base de datos SQL administrada.</p><span class="when">CUANDO: aplicación nueva / mínimo manejo de infraestructura.</span></div><div class="choice"><h3>Azure SQL Managed Instance</h3><p>PaaS con mayor compatibilidad de instancia SQL Server.</p><span class="when">CUANDO: migración necesita características de instancia.</span></div><div class="choice"><h3>SQL Server on Azure VM</h3><p>IaaS: control sobre VM, SO y SQL Server.</p><span class="when">CUANDO: necesitas control de infraestructura.</span></div><div class="choice"><h3>Azure Database for PostgreSQL</h3><p>PostgreSQL administrado en Azure.</p><span class="when">CUANDO: el motor requerido es PostgreSQL.</span></div></div>
+<div class="micro"><b>Atajo mental:</b> más administración Azure → PaaS; más control tuyo → VM/IaaS.</div><div class="brand"><span>Dominio 2</span><span>Database · Managed Instance · VM · PostgreSQL</span></div></section>
+
+<section class="slide dense" data-title="Caso Azure SQL"><div class="ey">Dominio 2 · práctica guiada</div><h2>No elijas “SQL”: identifica la condición diferencial</h2>
+<div class="scenario"><div class="q">Una empresa quiere migrar SQL Server y conservar alta compatibilidad con características a nivel de instancia, pero no quiere administrar una máquina virtual.</div><div class="answer">→ Azure SQL Managed Instance</div></div>
+<div class="g2"><div class="card"><h3>¿Por qué no SQL Database?</h3><p>El requisito diferencial es la compatibilidad de instancia.</p></div><div class="card blue"><h3>¿Por qué no Azure VM?</h3><p>El enunciado dice explícitamente que no quiere administrar la VM/SO.</p></div></div>
+<div class="micro"><b>Ahora cambia una sola condición:</b> “necesito controlar el sistema operativo”. ¿Qué opción cambia?</div><div class="brand"><span>Dominio 2</span><span>leer requisito antes de producto</span></div></section>
+
+<section class="slide dense" data-title="Azure Storage"><div class="ey">Dominio 3 · Non-relational data</div><h2>Storage y base NoSQL no son lo mismo</h2>
+<div class="choice-grid"><div class="choice"><h3>Blob Storage</h3><p>objetos: imágenes, video, backups, archivos de datos.</p><span class="when">PIENSA: object storage.</span></div><div class="choice"><h3>Azure Files</h3><p>file shares administrados accesibles mediante protocolos de archivos.</p><span class="when">PIENSA: carpeta compartida.</span></div><div class="choice"><h3>Table Storage</h3><p>store NoSQL simple de clave/atributo.</p><span class="when">PIENSA: key/attribute sencillo.</span></div><div class="choice"><h3>Cosmos DB</h3><p>base NoSQL distribuida para aplicaciones que requieren características de base de datos.</p><span class="when">PIENSA: datos NoSQL operacionales.</span></div></div>
+<div class="checkpoint">Un archivo JSON puede vivir en Blob. Que un dato sea JSON no basta para decidir Cosmos DB.</div><div class="brand"><span>Dominio 3</span><span>storage ≠ database</span></div></section>
+
+<section class="slide dense" data-title="Cosmos DB"><div class="ey">Dominio 3 · Azure Cosmos DB</div><h2>DP-900 pide reconocer casos de uso y APIs de Cosmos DB</h2>
+<div class="g2"><div class="card"><h3>Cuándo aparece Cosmos DB</h3><p>aplicaciones NoSQL distribuidas, escala, baja latencia y patrones de acceso no relacionales.</p><p class="evidence">La decisión sigue comenzando por el patrón de acceso.</p></div><div class="card blue"><h3>Qué significa “API” aquí</h3><p>la interfaz/modelo con el que la aplicación interactúa con Cosmos DB. En DP-900 debes reconocer que existen distintas APIs y que no todas las cargas se modelan igual.</p></div></div>
+<div class="micro"><b>Evita el atajo:</b> documento flexible → “automáticamente Cosmos”. Primero pregunta por el store y por las necesidades de la aplicación.</div><div class="brand"><span>Dominio 3</span><span>caso de uso + API</span></div></section>
+
+<section class="slide dense" data-title="Caso NoSQL Azure"><div class="ey">Dominio 3 · práctica guiada</div><h2>Cuatro necesidades que suenan parecidas, cuatro respuestas distintas</h2>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Primera opción a reconocer</th></tr></thead><tbody><tr><td>guardar millones de imágenes de producto</td><td><b>Blob Storage</b></td></tr><tr><td>reemplazar una carpeta de red compartida</td><td><b>Azure Files</b></td></tr><tr><td>clave/atributo simple y económico</td><td><b>Table Storage</b></td></tr><tr><td>aplicación NoSQL distribuida</td><td><b>Cosmos DB</b></td></tr></tbody></table>
+<div class="micro"><b>Predicción:</b> si el enunciado dice “archivos compartidos SMB”, ¿qué dos opciones puedes descartar inmediatamente?</div><div class="brand"><span>Dominio 3</span><span>necesidad → store</span></div></section>
+
+<section class="slide dense" data-title="Pipeline analítico Microsoft"><div class="ey">Dominio 4 · Analytics on Azure</div><h2>Piensa la carga analítica como un flujo, no como una lista de marcas</h2>
+<div class="pipe"><div class="node"><b>ingerir</b><br><span>datos batch o streaming</span></div><div class="arrow">→</div><div class="node"><b>procesar</b><br><span>transformar / Spark / SQL</span></div><div class="arrow">→</div><div class="node"><b>almacenar</b><br><span>store analítico</span></div><div class="arrow">→</div><div class="node"><b>servir</b><br><span>modelo + visualización</span></div></div>
+<div class="checkpoint">El blueprint actual incluye explícitamente <b>ingesta/procesamiento, stores analíticos, Databricks, Fabric, real-time y Power BI</b>.</div><div class="brand"><span>Dominio 4</span><span>25–30% del blueprint</span></div></section>
+
+<section class="slide dense" data-title="Databricks Fabric PowerBI"><div class="ey">Dominio 4 · servicios principales</div><h2>Databricks, Fabric y Power BI no son sinónimos</h2>
+<div class="g3"><div class="card"><h3>Azure Databricks</h3><p><b>ingeniería y analítica basada en Spark</b></p><p>notebooks · procesamiento distribuido · pipelines de transformación.</p></div><div class="card blue"><h3>Microsoft Fabric</h3><p><b>plataforma SaaS analítica integrada</b></p><p>integra varias cargas de datos y analítica en una experiencia común.</p></div><div class="card green"><h3>Power BI</h3><p><b>modelo semántico + visualización</b></p><p>informes, dashboards y comunicación de resultados.</p></div></div>
+<div class="micro"><b>Pregunta tipo examen:</b> si el requisito menciona notebooks Spark y procesamiento distribuido, ¿qué condición te separa de Power BI?</div><div class="brand"><span>Dominio 4</span><span>procesar · integrar · visualizar</span></div></section>
+
+<section class="slide dense" data-title="Tiempo real y PowerBI"><div class="ey">Dominio 4 · real time + visualización</div><h2>Batch y streaming cambian la arquitectura; la visualización cambia la lectura</h2>
+<div class="g2"><div class="card"><h3>Batch</h3><p>procesa datos acumulados en lotes.</p><span class="decision">Adecuado cuando no necesitas reaccionar evento a evento.</span></div><div class="card blue"><h3>Streaming / real time</h3><p>procesa datos en movimiento con baja latencia.</p><span class="decision">En Microsoft debes reconocer servicios/capacidades de analítica en tiempo real.</span></div></div>
+<div class="vizgrid"><div class="viz"><b>Línea</b><span>tendencia en el tiempo</span></div><div class="viz"><b>Barras</b><span>comparar categorías</span></div><div class="viz"><b>Card/KPI</b><span>un indicador principal</span></div><div class="viz"><b>Tabla</b><span>detalle exacto</span></div></div>
+<div class="checkpoint">Power BI también evalúa <b>modelos de datos</b> y la elección de una visualización apropiada.</div><div class="brand"><span>Dominio 4</span><span>batch/streaming + Power BI</span></div></section>
+
+<section class="slide dense" data-title="Casos analítica Azure"><div class="ey">Dominio 4 · práctica guiada</div><h2>Tres escenarios: identifica la condición que manda</h2>
+<div class="cases"><div class="case"><h3>Spark</h3><p>“Ya usamos notebooks Spark y necesitamos transformación distribuida.”</p><span class="decision">→ Azure Databricks</span></div><div class="case"><h3>Plataforma integrada</h3><p>“Queremos una experiencia SaaS unificada para varias cargas analíticas.”</p><span class="decision">→ Microsoft Fabric</span></div><div class="case green"><h3>Consumo de negocio</h3><p>“Necesitamos modelo semántico, informes y dashboards.”</p><span class="decision">→ Power BI</span></div></div>
+<div class="micro"><b>Transferencia:</b> BigQuery te enseñó el problema analítico; DP-900 te pide reconocer cómo Microsoft organiza las opciones.</div><div class="brand"><span>Dominio 4</span><span>requisito → servicio</span></div></section>
+
+<section class="slide dense" data-title="Practice Assessment"><div class="ey">Práctica oficial</div><h2>Ahora sí: 5–6 preguntas oficiales, razonadas juntas</h2>
+<div class="flowline"><span>dominio</span><b>→</b><span>palabra decisiva</span><b>→</b><span>descartar</span><b>→</b><span>elegir</span><b>→</b><span>leer explicación</span></div>
+<div class="dlrow"><a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications" target="_blank" rel="noopener">🧪 Abrir Practice Assessment</a><a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">📘 Study Guide vigente</a></div>
+<div class="checkpoint"><b>No buscamos velocidad.</b> Cada pregunta debe dejar una regla transferible. Si el error fue nomenclatura, se corrige la nomenclatura; si fue concepto, se vuelve al concepto.</div><div class="brand"><span>DP-900</span><span>practicar el razonamiento del examen</span></div></section>
+
+<section class="slide dense" data-title="Examen y voucher"><div class="ey">Examen + voucher</div><h2>Sal con un plan, no solo con enlaces</h2>
+<div class="s16-g4"><div class="card"><span class="result">45 min</span><p>tiempo de examen Fundamentals</p></div><div class="card"><span class="result">65 min</span><p>seat duration total</p></div><div class="card"><span class="result">700+</span><p>puntaje escalado de aprobación</p></div><div class="card"><span class="result">4</span><p>dominios del blueprint</p></div></div>
+<div class="dlrow"><a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-data-fundamentals/" target="_blank" rel="noopener">🎓 Certificación DP-900</a><a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam" target="_blank" rel="noopener">🧭 Exam Sandbox</a><a href="https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam" target="_blank" rel="noopener">📅 Programar</a></div>
+<div class="micro"><b>Plan mínimo:</b> Practice Assessment → revisar dominio débil → volver a Microsoft Learn → repetir → agendar antes del vencimiento real del voucher.</div><div class="brand"><span>Voucher</span><span>estudiar → practicar → agendar</span></div></section>
+
+<section class="slide dense" data-title="Cheat sheet"><div class="ey">Recursos posteriores</div><h2>Tu referencia final conecta el diplomado con DP-900 y con fuentes de industria</h2>
+<div class="resource-grid"><div class="resource blue"><h3>Cheat Sheet final · 4 páginas</h3><p>SQL · modelado · NoSQL · warehouse · BigQuery · mapa Azure · checklist de validación · blueprint DP-900.</p><a class="btn" href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Abrir / imprimir</a></div><div class="resource"><h3>Fuentes primarias</h3><p><b>Microsoft Learn · PostgreSQL · MongoDB · Neo4j · Kimball · Google Cloud · Apache · Databricks.</b></p><div class="dlrow"><a class="secondary" href="glosario-cierre-s16.html#referentes-industria" target="_blank" rel="noopener">↗ Referentes por concepto</a></div></div></div>
+<div class="checkpoint">Para DP-900, prioriza el <b>Study Guide inglés vigente</b> cuando haya diferencias de actualización con versiones localizadas.</div><div class="brand"><span>Continuidad</span><span>fuente primaria primero</span></div></section>
+
+<section class="slide dark" data-title="Cierre"><div class="ey">Fin del diplomado</div><h2>Terminaste el curso y ya sabes <span class="accent">qué estudiar después</span></h2>
+<p class="closing">Empezaste consultando una tabla. Hoy puedes razonar grano, relaciones, integridad, almacenamiento y analítica; y ahora también puedes traducir esos requisitos al mapa de servicios que DP-900 espera que reconozcas.</p>
+<p class="closing" data-r>El examen añade nomenclatura Microsoft. Tu ventaja es que la decisión de datos ya tiene fundamento.</p><p class="small">Ahora sí: responde la encuesta institucional con tu experiencia real del diplomado.</p>
+<div class="brand"><span>Curso cerrado</span><span>DP-900: siguiente paso con criterio</span></div></section>
+<div class="progress"><div class="bar" id="bar"></div></div></main><nav class="toolbar" aria-label="Controles"><span class="count" id="count">1 / 29</span><button class="ctl" id="prev" aria-label="Anterior">←</button><button class="ctl" id="next" aria-label="Siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" href="sesion-16-cierre-dp900.html" download aria-label="Descargar" style="display:grid;place-items:center;text-decoration:none">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa">F</button></nav>
 <div class="sr" id="announce" aria-live="polite"></div>
-<script>
-(()=>{'use strict';
-const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),announce=document.getElementById('announce'),timeOv=document.getElementById('timeOv'),clock=document.querySelector('.clock');let i=0;
-const mini=document.getElementById('mini'),miniT=document.getElementById('miniT'),miniPP=document.getElementById('miniPP'),miniLbl=document.getElementById('miniLbl');
-function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length;bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;history.replaceState(null,'','#s'+(i+1));if(ss[i].dataset.break==='15'){setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa'}window.scrollTo(0,0);render()}
+<script>(()=>{'use strict';const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),announce=document.getElementById('announce');let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length;bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;history.replaceState(null,'','#s'+(i+1));window.scrollTo(0,0)}
 function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
-function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
-function go(n){i=Math.max(0,Math.min(ss.length-1,n));upd()}
-function closeAll(){timeOv.classList.remove('open')}
-async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(_){announce.textContent='Pantalla completa no disponible'}}
-document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
-document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(e.key==='Escape'){closeAll();closeZoom();return}if(timeOv.classList.contains('open'))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(ss.length-1)}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open');else if(e.key.toLowerCase()==='m'&&mini)mini.classList.toggle('on')});
-
-let remain=900000,initial=remain,end=0,running=false,tick=null;const timer=document.getElementById('timer');
-function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function cur(){return running?Math.max(0,end-Date.now()):remain}
-function render(){const q=cur(),v=fmt(q);timer.textContent=v;if(miniT){miniT.textContent=v;mini.classList.toggle('avisa',running&&q>0&&q<=60000);mini.classList.toggle('fin',q<=0&&mini.classList.contains('on'));miniPP.textContent=running?'❚❚':'▶';miniPP.setAttribute('aria-label',running?'Pausar':'Reanudar')}if(clock&&ss[i]?.dataset.break==='15')clock.textContent=v;if(running&&q<=0){pause();announce.textContent='Se acabó el tiempo';if(mini)mini.classList.add('fin')}}
-function verMini(si){if(mini)mini.classList.toggle('on',si!==false)}
-function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}
-function setTimer(m,open=true){pause();initial=remain=m*60000;if(mini)mini.classList.remove('fin');render();if(open)timeOv.classList.add('open')}
-function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,200);if(mini)mini.classList.remove('fin');verMini(true);timeOv.classList.remove('open');render()}
-function reset(){pause();remain=initial;if(mini)mini.classList.remove('fin');render()}
-document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min),false);if(miniLbl)miniLbl.textContent=b.dataset.min+' min';start()});
-const inpLibre=document.getElementById('minLibre'),btnLibre=document.getElementById('ponLibre');
-if(inpLibre&&btnLibre){const ponLibre=()=>{let m=parseFloat(String(inpLibre.value).replace(',','.'));if(!isFinite(m)||m<=0)return inpLibre.focus();m=Math.min(180,m);inpLibre.value=m;setTimer(m,false);if(miniLbl)miniLbl.textContent=m+' min';start()};btnLibre.onclick=ponLibre;inpLibre.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ponLibre()}})}
-const brk=document.querySelector('[data-start-break]');if(brk)brk.onclick=()=>{setTimer(15,false);if(miniLbl)miniLbl.textContent='Pausa';start()};
-document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
-if(mini){miniPP.onclick=e=>{e.stopPropagation();running?pause():start()};document.getElementById('miniUp').onclick=e=>{e.stopPropagation();timeOv.classList.add('open')};document.getElementById('miniX').onclick=e=>{e.stopPropagation();pause();verMini(false)};
- let ax=0,ay=0,px=0,py=0,mov=false;
- mini.addEventListener('pointerdown',e=>{if(e.target.tagName==='BUTTON')return;const r=mini.getBoundingClientRect();ax=e.clientX-r.left;ay=e.clientY-r.top;px=e.clientX;py=e.clientY;mov=false;try{mini.setPointerCapture(e.pointerId)}catch(_){}mini.classList.add('arrastrando')});
- mini.addEventListener('pointermove',e=>{if(!mini.classList.contains('arrastrando'))return;if(Math.abs(e.clientX-px)+Math.abs(e.clientY-py)>3)mov=true;if(!mov)return;const r=mini.getBoundingClientRect(),x=Math.min(Math.max(0,e.clientX-ax),innerWidth-r.width),y=Math.min(Math.max(0,e.clientY-ay),innerHeight-r.height);mini.style.left=x+'px';mini.style.top=y+'px';mini.style.right='auto';mini.style.bottom='auto'});
- mini.addEventListener('pointerup',e=>{mini.classList.remove('arrastrando');try{mini.releasePointerCapture(e.pointerId)}catch(_){}});
- addEventListener('resize',()=>{const r=mini.getBoundingClientRect();if(r.right>innerWidth||r.bottom>innerHeight){mini.style.left='';mini.style.top='';mini.style.right='';mini.style.bottom=''}})
-}
-
-document.querySelectorAll('pre.sqlviz').forEach(pre=>{const b=document.createElement('button');b.type='button';b.className='copybtn';b.textContent='copiar';b.setAttribute('aria-label','Copiar código');b.onclick=async e=>{e.stopPropagation();const txt=pre.querySelector('code').textContent.trim();try{await navigator.clipboard.writeText(txt);b.textContent='copiado';b.classList.add('ok');setTimeout(()=>{b.textContent='copiar';b.classList.remove('ok')},1300)}catch(_){b.textContent='no se pudo'}};pre.appendChild(b)});
-
-let zoom=null,zoomBox=null;
-function ensureZoom(){if(zoom)return;zoom=document.createElement('div');zoom.className='s16-zoom';zoom.innerHTML='<div class="zoom-box"></div><div class="zoom-note">Clic o Escape para cerrar</div>';document.body.appendChild(zoom);zoomBox=zoom.querySelector('.zoom-box');zoom.onclick=()=>closeZoom()}
-function openZoom(svg){if(matchMedia('(max-aspect-ratio:1/1),(max-width:700px)').matches)return;ensureZoom();zoomBox.innerHTML='';const clone=svg.cloneNode(true);clone.removeAttribute('tabindex');clone.classList.remove('s16-flowviz');zoomBox.appendChild(clone);zoom.classList.add('on')}
-function closeZoom(){if(zoom){zoom.classList.remove('on');if(zoomBox)zoomBox.innerHTML=''}}
-document.querySelectorAll('svg.s16-flowviz').forEach(svg=>{svg.onclick=e=>{e.stopPropagation();openZoom(svg)};svg.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openZoom(svg)}}});
-
-let tx=null;document.addEventListener('touchstart',e=>tx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].screenX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
-const m=location.hash.match(/s(\d+)/);if(m)i=Math.max(0,Math.min(ss.length-1,Number(m[1])-1));upd();render();
-})();
-</script>
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a[a.length-1].classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(_){}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('fullBtn').onclick=full;document.getElementById('timeBtn').onclick=()=>{const tr=document.getElementById('andes-presentation-timer');if(!tr)return;const target=tr.classList.contains('is-icon')?tr.querySelector('.apt-icon-only'):tr.querySelector('.apt-toggle');target?.click()};
+document.addEventListener('keydown',e=>{if(['BUTTON','A','INPUT'].includes(e.target.tagName)&&[' ','Enter'].includes(e.key))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key.toLowerCase()==='f')full()});
+document.querySelectorAll('pre.sqlviz').forEach(pre=>{if(pre.querySelector('.copybtn'))return;const b=document.createElement('button');b.type='button';b.className='copybtn';b.textContent='copiar';b.onclick=async()=>{try{await navigator.clipboard.writeText(pre.querySelector('code').textContent.trim());b.textContent='copiado';setTimeout(()=>b.textContent='copiar',1200)}catch(_){}};pre.appendChild(b)});
+const m=location.hash.match(/s(\d+)/);if(m)i=Math.max(0,Math.min(ss.length-1,Number(m[1])-1));upd();})();</script>
 <script src="../../assets/analytics-config.js?v=20260912a"></script>
 <script src="../../assets/analytics.js?v=20260912a"></script>
-</body></html>
+<script src="../../assets/learning/presentation-timer.js?v=20260919a"></script></body></html>
