@@ -20,7 +20,7 @@ for token in [
     "40–60", "Online o centro", "voucher", "30 minutos adicionales", "25–30%", "20–25%", "15–20%",
     "24 escenarios", "7–6–4–7", "Practice Assessment", "Exam Sandbox",
     "Enviar diagnóstico al docente", "challenge_completed", "learning-track",
-    "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"'
+    "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"', "Confianza antes de ver feedback", "Marca tu confianza 1–3"
 ]:
     need(token)
 assert "puede variar" in HTML.casefold()
@@ -59,6 +59,8 @@ for link in [
 assert "no es una nota" in HTML.casefold()
 assert "predice" in HTML.casefold() and "aprobar" in HTML.casefold()
 assert "no representa necesariamente la longitud o dificultad exacta" in HTML.casefold()
+assert "state.confidence[q.id]" in HTML
+assert "high_confidence_errors" in HTML
 
 # Manifiesto y plan.
 def session16(course):
