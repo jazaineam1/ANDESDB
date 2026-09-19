@@ -97,7 +97,7 @@ for p in (PLAN,RPLAN):
     assert "respuestas actuales de la reflexión S1" in s["diagnostico"]["reporte_docente"]
 
 # Guía docente.
-for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","voucher","Practice Assessment","Exam Sandbox","C/T/L","0–10","10–35","35–50","50–60","60–75","75–93","93–103","103–148","148–162","162–177","177–180","Certificaciones trasladadas desde S7","Todo el SQL que escribiste","Cápsula de vocabulario DP-900","Portafolio","Encuesta"]:
+for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","voucher","Practice Assessment","Exam Sandbox","C/T/L","0–10","10–35","35–50","50–60","60–75","75–93","93–103","103–148","148–162","162–177","177–180","Certificaciones trasladadas desde S7","Todo el SQL que escribiste","Cápsula de vocabulario DP-900","s15-analytics.html","Portafolio","Encuesta"]:
     assert token.casefold() in GUIDE.casefold(), token
 
 assert GLOSS==RGLOSS
