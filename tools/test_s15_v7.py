@@ -15,6 +15,9 @@ JS=(ROOT/"assets/learning/s15-autograder-v7.js").read_text(encoding="utf-8")
 CSS=(ROOT/"assets/learning/s15-workbench-v7.css").read_text(encoding="utf-8")
 CRIT=(ROOT/"Plantillas/proyecto-final/criterios.md").read_text(encoding="utf-8")
 PLAN=(ROOT/"assets/learning/learning-plan.json").read_text(encoding="utf-8")
+REV_HTML=(ROOT/"revision/evaluador-s15-v7.html").read_text(encoding="utf-8")
+REV_JS=(ROOT/"revision/assets/learning/s15-autograder-v7.js").read_text(encoding="utf-8")
+SOL_JS=(ROOT/"assets/learning/s15-autograder-v7-solution.js").read_text(encoding="utf-8")
 
 def csvrows(name):
     with (DATA/name).open(encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
@@ -187,8 +190,54 @@ def test_routes_and_pwa():
     sw=(ROOT/"service-worker.js").read_text(encoding="utf-8")
     for x in ("evaluador-s15-v7.html","s15-autograder-v7.js","s15-nested-duckdb-v1.mjs","s15-workbench-v7.css","casos_dirty.csv","eventos_dirty.csv"):assert x in sw
 
+
+def test_cohort_persistence_contract():
+    # Clave y versión históricas: cualquier cambio aquí dejaría huérfano el avance local existente.
+    assert "const VERSION='s15-workbench-v7',STORE='andesdb.s15.workbench.v7'" in JS
+    assert "SOURCE_STORE='andesdb.s15.workbench.v7'" in SOL_JS
+    assert "localStorage.clear(" not in JS
+    assert JS.count("localStorage.removeItem(STORE)") == 1  # solo el botón Reiniciar explícito
+    assert "localStorage.removeItem(SOURCE_STORE)" not in SOL_JS
+    assert "localStorage.setItem(SOURCE_STORE" not in SOL_JS
+
+    # La estructura v7 se conserva y las preguntas existentes siguen siendo q1-q5.
+    initial=JS[JS.index("const initial=()=>"):JS.index("let state=initial()")]
+    for token in ("checked:{}","checkedScore:{}","queryAttempts:{}","ddlRuns:0","mutationRuns:{}",
+                  "timing:{}","model:{","norm:{","ddl:''","ddlChecks:{}","domainMigration:''",
+                  "domainMigrationResult:{}","mutation:{}","mutationProbe:''","queryChecks:{}",
+                  "hints:{}","doc:{","dw:{","pipe:{","bq:{","nested:{","format:{",
+                  "unnestQuery:","diag:{","boss:{","attempts:[]"):
+        assert token in initial, token
+    for qid in ("q1","q2","q3","q4","q5"):
+        assert f"{qid}:" in JS
+        assert f'id="{qid}"' not in HTML  # SQL textareas se generan manteniendo estos IDs desde JS
+    assert "q6:" not in JS
+
+    # Controles existentes que pueden contener trabajo del estudiante no se renombran.
+    for cid in ("ddl","domainMigration","mutationProbe","unnestQuery","bossUnnest","diagSql",
+                "pkCaseSelect","pkEventSelect","fkSelect","cardinalitySelect","docStoreCase",
+                "docStoreLedger","docPartitionKey","eventLatency","dimLatency","transformMode",
+                "bossStrategy","az-object","az-document","az-lakehouse","az-bi"):
+        assert f'id="{cid}"' in HTML, cid
+
+    # La actualización solo mejora la presentación de pistas: 3 en práctica, 2 en evaluación,
+    # usando el mismo state.hints que ya existía y restaurando lo previamente usado.
+    assert "function sqlHintLimit(){return MODE==='evaluacion'?2:3}" in JS
+    assert "state.hints[id]" in JS and 'id="hints-' in JS
+    assert "Pista 3/3 · Orden para resolver" in JS
+
+    # El evaluador raíz y el espejo revision deben quedar byte-a-byte alineados.
+    assert REV_HTML == HTML
+    assert REV_JS == JS
+
+    # Mejoras pedagógicas añadidas sin introducir nuevas preguntas ni respuestas automáticas.
+    for token in ("foto-1.jpg","Se verificó el lugar","E01","E02","Chapinero",
+                  "Patrón de consultas","Antes de UNNEST","Después de UNNEST",
+                  "P01","12.000","36.000","s15v7-cohort1"):
+        assert token in HTML, token
+
 def main():
-    test_acceptance_22();test_methodology_and_security_regressions();test_routes_and_pwa()
-    print("OK · S15 v7: 22/22 criterios de aceptación deterministas + fase 1/2 + rutas/PWA")
+    test_acceptance_22();test_methodology_and_security_regressions();test_routes_and_pwa();test_cohort_persistence_contract()
+    print("OK · S15 v7: 22/22 + metodología + rutas/PWA + contrato de cohorte/persistencia")
 
 if __name__=="__main__":main()
