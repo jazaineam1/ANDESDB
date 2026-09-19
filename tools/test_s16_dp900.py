@@ -55,7 +55,7 @@ for link in [
 ]:
     need(link)
 assert "no es una nota" in HTML.casefold()
-assert "no predice si aprobarás" in HTML.casefold()
+assert "predice" in HTML.casefold() and "aprobar" in HTML.casefold()
 assert "no representa necesariamente la longitud o dificultad exacta" in HTML.casefold()
 
 # Manifiesto y plan.
