@@ -688,7 +688,22 @@
           "Exam Sandbox",
           "programación del examen",
           "referentes de industria"
-        ]
+        ],
+        "referentes_industria": {
+          "objetivo": "Conectar cada concepto central con una fuente primaria o ruta de aprendizaje reconocida.",
+          "fuentes": [
+            "PostgreSQL Documentation",
+            "Microsoft Learn",
+            "MongoDB Documentation",
+            "Neo4j GraphAcademy",
+            "AWS Architecture/Whitepapers",
+            "Kimball Group",
+            "Google Cloud BigQuery Documentation",
+            "Apache Parquet",
+            "Databricks Documentation"
+          ],
+          "regla": "Fuente primaria primero; blogs y videos como complemento."
+        }
       }
     }
   }
