@@ -168,7 +168,7 @@ def test_methodology_and_security_regressions():
     assert "if(state.bq.cluster.length&&filters.has(state.bq.cluster[0]))" in JS
     # Phase 2: mutation testing diferencial, migración real y telemetría por estación.
     assert 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML
-    assert "function runMutationProbe()" in JS and "mutationOutcome(MUTANT_DDL[selectedMutant],probe)" in JS
+    assert "function runMutationProbe()" in JS and "mutationOutcome(MUTANT_DDL[selectedMutant],probe,!isolatePk)" in JS
     assert "function runDomainMigration()" in JS and "beforeFails&&out.afterPass" in JS
     assert "minutesRule=state.ddlChecks.neg&&state.ddlChecks.null_minutes&&state.ddlChecks.zero_valid" in JS
     assert "function initStationTiming()" in JS and "station_seconds:stationSeconds()" in JS
