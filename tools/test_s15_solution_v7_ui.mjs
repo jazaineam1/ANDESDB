@@ -35,6 +35,7 @@ async function boot({reset=false}={}){
     return{ok:true,status:200,text:async()=>body,json:async()=>JSON.parse(body)};
   };
   Object.defineProperty(document,'currentScript',{configurable:true,get:()=>({src:'https://example.test/assets/learning/s15-autograder-v7-solution.js'})});
+  Object.defineProperty(document,'readyState',{configurable:true,get:()=> 'complete'});
 
   const source={version:'s15-workbench-v7',hints:{q1:3},queries:{q2:"SELECT 'BORRADOR ORIGINAL' AS marca;"}};
   const sourceRaw=JSON.stringify(source);
@@ -42,7 +43,6 @@ async function boot({reset=false}={}){
   if(reset)window.sessionStorage.setItem('andesdb.s15.solution.reset.v7','1');
 
   window.eval(js);
-  if(document.readyState==='loading')document.dispatchEvent(new window.Event('DOMContentLoaded',{bubbles:true}));
   await waitFor(()=>document.querySelector('#engineStatus')?.textContent.startsWith('Listo:'),'inicialización solucionario');
   return{dom,window,document,sourceRaw};
 }
