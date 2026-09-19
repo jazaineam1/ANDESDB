@@ -26,6 +26,7 @@ const ESSENTIAL = [
   './assets/learning/s15-workbench-v7.css',
   './assets/learning/s15-nested-duckdb-v1.mjs',
   './assets/learning/s15-autograder-v7.js',
+  './assets/learning/s15-autograder-v7-practice.js',
   './evaluador-s15-v7.html',
   './Plantillas/proyecto-final/Datos/casos.csv',
   './Plantillas/proyecto-final/Datos/eventos.csv',
@@ -120,7 +121,7 @@ self.addEventListener('fetch', event => {
   if (!shouldCache(url)) return;
 
   const isDocument = request.mode === 'navigate' || /\.html?$/i.test(url.pathname);
-  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder-v7(?:-solution)?)\.js|learning\/(?:s15-workbench-v7\.css|learning-plan\.json)|pwa-install\.js)$/i.test(url.pathname) || /\/assets\/learning\/s15-nested-duckdb-v1\.mjs$/i.test(url.pathname);
+  const isLearningRuntime = /\/assets\/(?:analytics(?:-config)?\.js|learning\/(?:learning-core|presentation-timer|analytics-fallback-link|s15-autograder-v7(?:-solution|-practice)?)\.js|learning\/(?:s15-workbench-v7\.css|learning-plan\.json)|pwa-install\.js)$/i.test(url.pathname) || /\/assets\/learning\/s15-nested-duckdb-v1\.mjs$/i.test(url.pathname);
   const isAsset = /\.(js|mjs|css|json|webmanifest|wasm|db|svg|png|jpg|jpeg|webp|csv|parquet|sql)$/i.test(url.pathname);
 
   if (isDocument || isLearningRuntime) event.respondWith(networkFirst(request));

@@ -9,6 +9,7 @@ const HERE=path.dirname(fileURLToPath(import.meta.url));
 const ROOT=path.resolve(HERE,'..');
 const evalHtml=fs.readFileSync(path.join(ROOT,'evaluador-s15-v7.html'),'utf8');
 const evalJs=fs.readFileSync(path.join(ROOT,'assets/learning/s15-autograder-v7.js'),'utf8');
+const practiceJs=fs.readFileSync(path.join(ROOT,'assets/learning/s15-autograder-v7-practice.js'),'utf8');
 const solHtml=fs.readFileSync(path.join(ROOT,'solucionario-s15.html'),'utf8');
 const solJs=fs.readFileSync(path.join(ROOT,'assets/learning/s15-autograder-v7-solution.js'),'utf8');
 const dataDir=path.join(ROOT,'Plantillas/proyecto-final/Datos');
@@ -65,7 +66,7 @@ function critical(x){
 }
 
 async function boot({kind='eval',mode='practica',sourceState,solutionSession=null}){
-  const isSolution=kind==='solution',html=isSolution?solHtml:evalHtml,js=isSolution?solJs:evalJs;
+  const isSolution=kind==='solution',isPractice=!isSolution&&mode==='practica',html=isSolution?solHtml:evalHtml,js=isSolution?solJs:(isPractice?practiceJs:evalJs);
   const url=isSolution?'https://example.test/solucionario-s15.html':'https://example.test/evaluador-s15-v7.html?modo='+mode;
   const dom=new JSDOM(html,{url,runScripts:'outside-only',pretendToBeVisual:true});
   const {window}=dom,document=window.document;
@@ -82,7 +83,7 @@ async function boot({kind='eval',mode='practica',sourceState,solutionSession=nul
     const body=fs.readFileSync(p,'utf8');
     return{ok:true,status:200,text:async()=>body,json:async()=>JSON.parse(body)};
   };
-  Object.defineProperty(document,'currentScript',{configurable:true,get:()=>({src:'https://example.test/assets/learning/'+(isSolution?'s15-autograder-v7-solution.js':'s15-autograder-v7.js')})});
+  Object.defineProperty(document,'currentScript',{configurable:true,get:()=>({src:'https://example.test/assets/learning/'+(isSolution?'s15-autograder-v7-solution.js':(isPractice?'s15-autograder-v7-practice.js':'s15-autograder-v7.js'))})});
   Object.defineProperty(document,'readyState',{configurable:true,get:()=> 'complete'});
   const raw=JSON.stringify(sourceState);
   window.localStorage.setItem(STORE,raw);

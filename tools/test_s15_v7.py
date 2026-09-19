@@ -17,6 +17,8 @@ CRIT=(ROOT/"Plantillas/proyecto-final/criterios.md").read_text(encoding="utf-8")
 PLAN=(ROOT/"assets/learning/learning-plan.json").read_text(encoding="utf-8")
 REV_HTML=(ROOT/"revision/evaluador-s15-v7.html").read_text(encoding="utf-8")
 REV_JS=(ROOT/"revision/assets/learning/s15-autograder-v7.js").read_text(encoding="utf-8")
+PRACTICE_JS=(ROOT/"assets/learning/s15-autograder-v7-practice.js").read_text(encoding="utf-8")
+REV_PRACTICE_JS=(ROOT/"revision/assets/learning/s15-autograder-v7-practice.js").read_text(encoding="utf-8")
 SOL_JS=(ROOT/"assets/learning/s15-autograder-v7-solution.js").read_text(encoding="utf-8")
 
 def csvrows(name):
@@ -188,52 +190,84 @@ def test_routes_and_pwa():
     assert "evaluador-s15-v7.html" in (ROOT/"evaluador-s15.html").read_text(encoding="utf-8")
     assert "sesion-15-desafio-final-v7.html" in (ROOT/"Presentaciones/M6/sesion-15-desafio-final.html").read_text(encoding="utf-8")
     sw=(ROOT/"service-worker.js").read_text(encoding="utf-8")
-    for x in ("evaluador-s15-v7.html","s15-autograder-v7.js","s15-nested-duckdb-v1.mjs","s15-workbench-v7.css","casos_dirty.csv","eventos_dirty.csv"):assert x in sw
+    for x in ("evaluador-s15-v7.html","s15-autograder-v7.js","s15-autograder-v7-practice.js","s15-nested-duckdb-v1.mjs","s15-workbench-v7.css","casos_dirty.csv","eventos_dirty.csv"):assert x in sw
 
 
 def test_cohort_persistence_contract():
     # Clave y versión históricas: cualquier cambio aquí dejaría huérfano el avance local existente.
-    assert "const VERSION='s15-workbench-v7',STORE='andesdb.s15.workbench.v7'" in JS
+    historical="const VERSION='s15-workbench-v7',STORE='andesdb.s15.workbench.v7'"
+    assert historical in JS
+    assert historical in PRACTICE_JS
     assert "SOURCE_STORE='andesdb.s15.workbench.v7'" in SOL_JS
-    assert "localStorage.clear(" not in JS
-    assert JS.count("localStorage.removeItem(STORE)") == 1  # solo el botón Reiniciar explícito
+    assert "localStorage.clear(" not in JS and "localStorage.clear(" not in PRACTICE_JS
+    assert JS.count("localStorage.removeItem(STORE)") == 1       # solo Reiniciar explícito
+    assert PRACTICE_JS.count("localStorage.removeItem(STORE)") == 1
+    assert "sessionStorage.setItem(STORE" not in PRACTICE_JS
+    assert "sessionStorage.getItem(STORE" not in PRACTICE_JS
     assert "localStorage.removeItem(SOURCE_STORE)" not in SOL_JS
     assert "localStorage.setItem(SOURCE_STORE" not in SOL_JS
 
-    # La estructura v7 se conserva y las preguntas existentes siguen siendo q1-q5.
+    # Evaluación queda sin respuestas embebidas; la práctica usa un runtime separado.
+    assert "SQL_SOLUTIONS" not in JS and "STATION_GUIDES" not in JS
+    assert "SQL_SOLUTIONS" in PRACTICE_JS and "STATION_GUIDES" in PRACTICE_JS
+    assert "s15-autograder-v7-practice.js?v=s15v7-cohort2" in HTML
+    assert "s15-autograder-v7.js?v=s15v7-cohort2" in HTML
+    assert "new URLSearchParams(location.search).get('modo')==='practica'" in HTML
+
+    # La estructura v7 histórica se conserva; los nuevos campos de guía son solo aditivos.
     initial=JS[JS.index("const initial=()=>"):JS.index("let state=initial()")]
-    for token in ("checked:{}","checkedScore:{}","queryAttempts:{}","ddlRuns:0","mutationRuns:{}",
+    practice_initial=PRACTICE_JS[PRACTICE_JS.index("const initial=()=>"):PRACTICE_JS.index("let state=initial()")]
+    legacy_tokens=("checked:{}","checkedScore:{}","queryAttempts:{}","ddlRuns:0","mutationRuns:{}",
                   "timing:{}","model:{","norm:{","ddl:''","ddlChecks:{}","domainMigration:''",
                   "domainMigrationResult:{}","mutation:{}","mutationProbe:''","queryChecks:{}",
                   "hints:{}","doc:{","dw:{","pipe:{","bq:{","nested:{","format:{",
-                  "unnestQuery:","diag:{","boss:{","attempts:[]"):
+                  "unnestQuery:","diag:{","boss:{","attempts:[]")
+    for token in legacy_tokens:
         assert token in initial, token
-    for qid in ("q1","q2","q3","q4","q5"):
-        assert f"{qid}:" in JS
-        assert f'id="{qid}"' not in HTML  # SQL textareas se generan manteniendo estos IDs desde JS
-    assert "q6:" not in JS
+        assert token in practice_initial, token
+    for token in ("solutionOpen:{}","solutionView:{}","studyHints:{}"):
+        assert token in practice_initial, token
 
-    # Controles existentes que pueden contener trabajo del estudiante no se renombran.
+    # Las preguntas e IDs existentes no cambian.
+    for qid in ("q1","q2","q3","q4","q5"):
+        assert f"{qid}:" in JS and f"{qid}:" in PRACTICE_JS
+        assert f'id="{qid}"' not in HTML
+    assert "q6:" not in JS and "q6:" not in PRACTICE_JS
     for cid in ("ddl","domainMigration","mutationProbe","unnestQuery","bossUnnest","diagSql",
                 "pkCaseSelect","pkEventSelect","fkSelect","cardinalitySelect","docStoreCase",
                 "docStoreLedger","docPartitionKey","eventLatency","dimLatency","transformMode",
                 "bossStrategy","az-object","az-document","az-lakehouse","az-bi"):
         assert f'id="{cid}"' in HTML, cid
 
-    # La actualización solo mejora la presentación de pistas: 3 en práctica, 2 en evaluación,
-    # usando el mismo state.hints que ya existía y restaurando lo previamente usado.
+    # Pistas ya usadas siguen en state.hints: evaluación muestra máximo 2 sin truncar el dato;
+    # práctica reconoce 3/3 y habilita solución/explicación sin tocar respuestas ni puntajes.
     assert "function sqlHintLimit(){return MODE==='evaluacion'?2:3}" in JS
     assert "state.hints[id]" in JS and 'id="hints-' in JS
     assert "Pista 3/3 · Orden para resolver" in JS
+    assert "state.hints[id]" in PRACTICE_JS
+    assert 'data-solution="' in PRACTICE_JS
+    assert "function runReferenceQ" in PRACTICE_JS
+    assert "no modifica tu intento ni tu puntuación" in PRACTICE_JS
+    assert "renderStudyGuides()" in PRACTICE_JS
+    assert "function prepareSolvedDdl(){}" in PRACTICE_JS  # no sobrescribir DDL/migración/probe existentes
 
-    # El evaluador raíz y el espejo revision deben quedar byte-a-byte alineados.
+    # Restore de práctica lee el STORE histórico y solo mezcla campos faltantes.
+    restore=PRACTICE_JS[PRACTICE_JS.index("function restore()"):PRACTICE_JS.index("function parseCSV")]
+    assert "localStorage.getItem(STORE)" in restore
+    assert "localStorage.removeItem(STORE)" not in restore
+    assert "queries:{...d.queries" in restore and "hints:{...d.hints" in restore
+    assert "solutionOpen:{...d.solutionOpen" in restore
+    assert "studyHints:{...d.studyHints" in restore
+
+    # El evaluador raíz y revision quedan alineados, incluida la nueva práctica.
     assert REV_HTML == HTML
     assert REV_JS == JS
+    assert REV_PRACTICE_JS == PRACTICE_JS
 
-    # Mejoras pedagógicas añadidas sin introducir nuevas preguntas ni respuestas automáticas.
+    # Mejoras pedagógicas/formato ya desplegadas sin preguntas nuevas.
     for token in ("foto-1.jpg","Se verificó el lugar","E01","E02","Chapinero",
                   "Patrón de consultas","Antes de UNNEST","Después de UNNEST",
-                  "P01","12.000","36.000","s15v7-cohort1"):
+                  "P01","12.000","36.000"):
         assert token in HTML, token
 
 def main():
