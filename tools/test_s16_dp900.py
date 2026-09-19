@@ -53,10 +53,14 @@ assert 'data-title="Pausa" data-break="15"' in html
 assert 'data-start-break' in html
 assert 'id="mini"' in html and 'id="miniT"' in html and 'id="miniPP"' in html
 assert 'id="minLibre"' in html and 'id="ponLibre"' in html
-assert html.count('class="joinviz s16-flowviz"')==4
+assert html.count('class="joinviz s16-flowviz s16-desktop-flowviz"')==4
+assert html.count('class="joinviz s16-flowviz s16-mobile-flowviz"')==4
+assert '.s16-flowviz{display:none}' not in html
+assert '.s16-mobile-flowviz{display:none}' in html
+assert 'display:block!important' in html
 for flow_title in ["Recorrido","De reglas a modelo","OLTP a analítica","BigQuery físico"]:
     block=re.search(rf'<section class="slide[^"]*" data-title="{re.escape(flow_title)}".*?</section>',html,re.S)
-    assert block and 's16-flowviz' in block.group(0), flow_title
+    assert block and 's16-desktop-flowviz' in block.group(0) and 's16-mobile-flowviz' in block.group(0), flow_title
 assert "function openZoom" in html and "function closeZoom" in html
 assert html.count("<input")==1 and 'id="minLibre"' in html, "El único input permitido es el del temporizador docente"
 for old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
