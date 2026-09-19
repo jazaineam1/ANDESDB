@@ -7,73 +7,67 @@ import {fileURLToPath} from 'node:url';
 const HERE=path.dirname(fileURLToPath(import.meta.url));
 const ROOT=path.resolve(HERE,'..');
 const html=fs.readFileSync(path.join(ROOT,'Presentaciones/M6/sesion-16-cierre-dp900.html'),'utf8');
+const timerJs=fs.readFileSync(path.join(ROOT,'assets/learning/presentation-timer.js'),'utf8');
 const dom=new JSDOM(html,{url:'https://example.test/Presentaciones/M6/sesion-16-cierre-dp900.html',runScripts:'outside-only',pretendToBeVisual:true});
 const w=dom.window,d=w.document;
-const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
-assert.equal(scripts.length,1);
 w.scrollTo=()=>{};
-w.eval(scripts[0]);
+w.matchMedia=()=>({matches:false,addListener(){},removeListener(){}});
+
+const inline=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
+assert.equal(inline.length,1);
+w.eval(inline[0]);
+w.eval(timerJs);
 
 const slides=[...d.querySelectorAll('.slide')];
-assert.equal(slides.length,20);
-assert.equal(d.querySelectorAll('.slide.active').length,1);
+assert.equal(slides.length,29);
 assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
-assert.equal(d.querySelector('#count').textContent,'1 / 20');
+assert.equal(d.querySelector('#count').textContent,'1 / 29');
+assert.ok(d.querySelector('.toolbar'));
+assert.ok(d.querySelector('.progress #bar'));
 
-// No formularios ni segundo examen.
+// No formularios pedagógicos / diagnóstico custom.
 assert.equal(d.querySelector('main').querySelectorAll('textarea,input,select,.qcard,[data-post],[data-portfolio]').length,0);
 assert.equal(d.querySelector('#send-report'),null);
 
-// Shell visual tradicional.
-assert.ok(d.querySelector('.toolbar'));
-assert.ok(d.querySelector('.progress #bar'));
-assert.equal(d.querySelector('.ctlbar'),null);
-assert.equal(d.querySelectorAll('pre.sqlviz').length,8);
-assert.equal(d.querySelectorAll('.copybtn').length,8);
-assert.ok(d.querySelector('#timeBtn'));
-assert.ok(d.querySelector('#fullBtn'));
-assert.ok(d.querySelector('#dlBtn'));
-assert.ok(d.querySelectorAll('[data-r]').length>=10);
+// Timer compartido exacto: presets, libre, personalizado, ajustes y acciones.
+const timer=d.querySelector('#andes-presentation-timer');
+assert.ok(timer);
+assert.ok(timer.classList.contains('is-icon'));
+for(const mins of ['5','10','15','20']) assert.ok(timer.querySelector('[data-min="'+mins+'"]'));
+assert.ok(timer.querySelector('[data-free]'));
+assert.equal(timer.querySelector('.apt-custom-input').getAttribute('placeholder'),'Personalizado · 7:30 o 25');
+assert.equal(timer.querySelector('[data-adjust="-300"]').textContent,'−5 min');
+assert.equal(timer.querySelector('[data-adjust="300"]').textContent,'+5 min');
+assert.match(timer.querySelector('.apt-start').textContent,/Iniciar/);
+assert.match(timer.querySelector('.apt-reset').textContent,/Reiniciar/);
 
-assert.equal(d.querySelectorAll('svg.s16-flowviz').length,8);
-assert.equal(d.querySelectorAll('svg.s16-desktop-flowviz').length,4);
-assert.equal(d.querySelectorAll('svg.s16-mobile-flowviz').length,4);
-assert.ok(d.querySelector('[data-start-break]'));
-assert.ok(d.querySelector('#mini'));
-assert.ok(d.querySelector('#miniT'));
-assert.ok(d.querySelector('#miniPP'));
-assert.ok(d.querySelector('#minLibre'));
+// T de la toolbar abre el mismo widget, no otro timer.
+d.querySelector('#timeBtn').click();
+assert.equal(timer.classList.contains('is-icon'),false);
 
-// Navegación: el primer clic avanza; en slides con data-r primero revela y luego avanza.
+// Navegación.
 d.querySelector('#next').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Recorrido');
-assert.equal(d.querySelector('#count').textContent,'2 / 20');
 d.querySelector('#prev').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
 
 let guard=0;
-while(d.querySelector('#count').textContent!=='20 / 20' && guard<80){d.querySelector('#next').click();guard++}
-assert.ok(guard<80,'debe alcanzar la última diapositiva');
+while(d.querySelector('#count').textContent!=='29 / 29' && guard<100){d.querySelector('#next').click();guard++}
+assert.ok(guard<100);
 assert.equal(d.querySelector('.slide.active').dataset.title,'Cierre');
-assert.equal(d.querySelector('#count').textContent,'20 / 20');
-while(d.querySelector('.slide.active').querySelector('[data-r]:not(.shown)')) d.querySelector('#next').click();
-d.querySelector('#next').click();
-assert.equal(d.querySelector('#count').textContent,'20 / 20');
 
-// Temporizador tradicional: el botón de pausa arranca 15 min y muestra la pastilla flotante.
-const breakBtn=d.querySelector('[data-start-break]');
-breakBtn.click();
-assert.ok(d.querySelector('#mini').classList.contains('on'));
-assert.match(d.querySelector('#miniT').textContent,/^1[45]:[0-5][0-9]$/);
-d.querySelector('#miniPP').click();
-assert.equal(d.querySelector('#miniPP').getAttribute('aria-label'),'Reanudar');
+// La pausa activa la pantalla de 15 min del timer compartido.
+let pauseIndex=slides.findIndex(s=>s.dataset.title==='Pausa');
+for(let k=0;k<slides.length;k++) slides[k].classList.toggle('active',k===pauseIndex);
+await new Promise(r=>setTimeout(r,0));
+assert.ok(d.querySelector('.apt-pause-stage').classList.contains('is-visible'));
+assert.equal(d.querySelector('.apt-pause-time').textContent,'15:00');
+assert.match(d.querySelector('.apt-pause-start').textContent,/Iniciar los 15 minutos/);
 
-// Recursos y elementos centrales.
-assert.ok(d.querySelector('a[href="glosario-cierre-s16.html"]'));
-assert.ok(d.querySelector('a[href*="practice-assessments-for-microsoft-certifications"]'));
-assert.ok([...d.querySelectorAll('.slide')].some(s=>s.dataset.title==='Pensamiento SQL'));
-assert.ok([...d.querySelectorAll('.slide')].some(s=>s.dataset.title==='Tres casos'));
-assert.ok([...d.querySelectorAll('.slide')].some(s=>s.dataset.title==='Curso a DP900'));
+// DP-900 visible.
+for(const title of ['Blueprint DP900','Familia Azure SQL','Azure Storage','Cosmos DB','Databricks Fabric PowerBI','Practice Assessment']){
+  assert.ok(slides.some(s=>s.dataset.title===title),title);
+}
 
 dom.window.close();
-console.log('OK · S16 UI: 20 slides + toolbar/progress tradicionales + código visual + cero formularios/examen custom');
+console.log('OK · S16 v4 UI: 29 slides + timer S15 v7 + pausa + bloque DP-900 ampliado');
