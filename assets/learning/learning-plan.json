@@ -607,73 +607,75 @@
     },
     "16": {
       "fecha": "2026-09-22",
-      "titulo": "Cierre del curso + puente DP-900",
+      "titulo": "Cierre del curso + preparación DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Consolidar lo aprendido en SQL, diseño, integridad, NoSQL y analítica; hacer visible el progreso del diplomado; transferir ese razonamiento a tres casos finales sin nota y conectar después con DP-900 mediante nomenclatura Azure y práctica oficial.",
-      "dp900": [
-        {
-          "dominio": "Core data concepts",
-          "uso": "puente conceptual",
-          "ya_trabajado": "datos estructurados/semiestructurados, OLTP/OLAP, batch/streaming y roles de datos",
-          "nuevo": "nombres y formulación Microsoft"
-        },
-        {
-          "dominio": "Relational data on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "normalización, SQL común, objetos, PK/FK/CHECK y PostgreSQL",
-          "nuevo": "Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL administrado"
-        },
-        {
-          "dominio": "Non-relational data on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "documentos, embeber/referenciar, patrón de acceso y almacenamiento de objetos",
-          "nuevo": "Blob, Files, Table y Cosmos DB"
-        },
-        {
-          "dominio": "Analytics workload on Azure",
-          "uso": "puente conceptual",
-          "ya_trabajado": "warehouse, hechos/dimensiones, batch/streaming, BigQuery y visualización",
-          "nuevo": "Databricks, Fabric y Power BI"
-        }
-      ],
+      "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a una preparación inicial real de DP-900: blueprint vigente, cuatro dominios, selección por requisito, práctica oficial y plan de voucher.",
+      "dp900": {
+        "version_blueprint": "2026-07-21",
+        "fuente": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
+        "dominios": [
+          {
+            "dominio": "Core data concepts",
+            "peso": "25–30%",
+            "foco": "representación, stores, OLTP/OLAP, roles"
+          },
+          {
+            "dominio": "Relational data on Azure",
+            "peso": "20–25%",
+            "foco": "relacional, SQL, objetos, familia Azure SQL y open source"
+          },
+          {
+            "dominio": "Non-relational data on Azure",
+            "peso": "15–20%",
+            "foco": "Blob, Files, Table, Cosmos DB y APIs"
+          },
+          {
+            "dominio": "Analytics workload",
+            "peso": "25–30%",
+            "foco": "ingesta/procesamiento, Databricks, Fabric, real time, Power BI"
+          }
+        ],
+        "practice_assessment_en_vivo": "5–6 preguntas oficiales razonadas",
+        "regla": "requisito → concepto → servicio Azure → descartar distractores"
+      },
       "solucion": {
         "modo": "discusion_guiada"
       },
       "actividad": {
-        "titulo": "Cierre integrador + puente DP-900",
+        "titulo": "Cierre integrador + preparación DP-900",
         "minutos": 165,
-        "instrucciones": "Recorre el progreso S2–S15; consolida SQL y pensamiento de consulta; conecta reglas con modelado e integridad; recupera SQL/NoSQL, warehouse, BigQuery y anidados; resuelve tres casos finales sin nota; muestra qué conceptos se transfieren a DP-900; abre 5 preguntas del Practice Assessment oficial; entrega el Cheat Sheet final y cierra antes de la encuesta institucional.",
+        "distribucion": {
+          "cierre_diplomado": 65,
+          "dp900_antes_pausa": 30,
+          "dp900_despues_pausa": 65,
+          "cierre_voucher": 5,
+          "total_dp900_y_continuidad": 100
+        },
+        "instrucciones": "Condensa S2–S15 en 65 min; usa un solo caso puente; enseña el blueprint DP-900 vigente; recorre los cuatro dominios con escenarios de selección de servicios; resuelve 5–6 preguntas del Practice Assessment oficial; cierra con voucher y recursos.",
         "criterios": [
-          "hace visible un repertorio SQL amplio: filtros, agregaciones, JOIN, UNION, CTE, CASE, COALESCE, DDL y DML",
-          "explica orden de escritura y orden lógico de una consulta",
-          "usa grano, llaves y validación para razonar JOIN y agregaciones",
-          "conecta reglas de negocio con entidades, cardinalidad, normalización y restricciones",
-          "elige SQL/NoSQL por relaciones y patrón de acceso",
-          "distingue OLTP, OLAP, warehouse, batch y streaming",
-          "explica partición, clustering, pruning, ARRAY, STRUCT, UNNEST y formatos",
-          "resuelve tres casos finales de transferencia sin puntuación",
-          "separa conceptos ya trabajados de nombres Azure nuevos",
-          "practica 5 preguntas oficiales de Microsoft en vivo",
-          "sale con Cheat Sheet final y ruta de voucher, sin formulario adicional ni segunda evaluación",
-          "usa el mapa de referentes de industria del Cheat Sheet para identificar dónde profundizar cada concepto"
+          "no repite la evaluación S15",
+          "dedica aproximadamente 100 minutos a DP-900 y continuidad",
+          "muestra los cuatro pesos oficiales del blueprint vigente al 21-jul-2026",
+          "enseña requisito → concepto → servicio → descarte de distractores",
+          "distingue Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL",
+          "distingue Blob, Files, Table Storage y Cosmos DB",
+          "incluye casos de uso/APIs de Cosmos DB al nivel Fundamentals",
+          "incluye Databricks, Fabric, real-time analytics y Power BI",
+          "incluye roles DBA, Data Engineer y Data Analyst",
+          "usa 5–6 preguntas del Practice Assessment oficial",
+          "usa el temporizador compartido de S15 v7"
         ]
       },
       "diagnostico": {
         "en_clase": false,
-        "motivo": "S15 ya es la evaluación integradora. Repetir un diagnóstico custom de 24 ítems en S16 produciría fatiga evaluativa y desplazaría el cierre del diplomado.",
-        "practice_assessment_oficial_en_vivo": 5,
-        "opcional_despues_de_clase": "El banco histórico S16 puede conservarse fuera de la presentación, pero no forma parte del cierre."
+        "motivo": "S15 ya es la evaluación integradora; S16 usa práctica oficial de DP-900 sin calificación."
       },
       "cierre": {
-        "sintesis": "pregunta → grano → tablas/relaciones → integridad → almacenamiento → analítica → validación → decisión",
-        "casos_finales": [
-          "reporte inflado por JOIN 1:N",
-          "pedido completo y patrón de acceso documental",
-          "tablero histórico: separar OLTP y analítica"
-        ],
+        "sintesis": "curso cerrado → blueprint → cuatro dominios → práctica oficial → voucher",
         "cheat_sheet": "Presentaciones/M6/glosario-cierre-s16.html",
-        "encuesta": "institucional, después de la diapositiva final",
+        "encuesta": "institucional después de la diapositiva final",
+        "temporizador": "assets/learning/presentation-timer.js",
         "no_recopilar": [
           "respuestas abiertas S1",
           "mini encuesta adicional",
@@ -681,25 +683,12 @@
           "diagnóstico S16 al docente"
         ],
         "recursos_posteriores": [
-          "DP-900 por voucher",
-          "Google Cloud Data Analytics como complemento",
-          "HackerRank SQL como práctica opcional"
-        ],
-        "referentes_industria": {
-          "objetivo": "Conectar cada concepto central del diplomado con una fuente primaria o ruta de aprendizaje reconocida.",
-          "fuentes": [
-            "PostgreSQL Documentation",
-            "Microsoft Learn",
-            "MongoDB Documentation",
-            "Neo4j GraphAcademy",
-            "AWS Architecture/Whitepapers",
-            "Kimball Group",
-            "Google Cloud BigQuery Documentation",
-            "Apache Parquet",
-            "Databricks Documentation"
-          ],
-          "regla": "Fuente primaria primero; blogs y videos como complemento."
-        }
+          "DP-900 Study Guide",
+          "Practice Assessment",
+          "Exam Sandbox",
+          "programación del examen",
+          "referentes de industria"
+        ]
       }
     }
   }
