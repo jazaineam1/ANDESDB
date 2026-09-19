@@ -5,16 +5,44 @@
 <meta name="description" content="Sesión 16 · Cierre del curso y puente hacia DP-900"><title>Sesión 16 · Cierre del curso + puente DP-900</title>
 <link rel="stylesheet" href="../../tools/tema-v2.css">
 <style>
-:root{--navy:#101828;--blue:#124e78;--soft:#f4f7fa;--line:#dce3e8;--gold:#a47b00}
-.ctlbar{position:fixed;left:50%;bottom:.55rem;transform:translateX(-50%);z-index:70;display:flex;gap:.35rem;align-items:center;background:#111e;padding:.3rem .45rem;border-radius:999px}.ctlbar button,.ctlbar a{border:0;border-radius:999px;background:#fff;color:#171717;padding:.38rem .62rem;font-weight:900;text-decoration:none}.ctlbar span{color:#fff;min-width:4.8em;text-align:center;font-weight:900}
-.grid2,.grid3,.grid4,.journey,.cases,.mapgrid,.resource-grid{display:grid;gap:.65em;margin-top:.7em}.grid2{grid-template-columns:repeat(2,1fr)}.grid3,.cases{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}.journey{grid-template-columns:repeat(3,1fr)}.mapgrid{grid-template-columns:repeat(2,1fr)}.resource-grid{grid-template-columns:1.4fr .6fr}
-.card,.step,.case,.mapcard,.resource{background:#fff;border:1px solid var(--line);border-radius:.85em;padding:.72em;box-shadow:var(--sh);color:var(--ink)}.card h3,.case h3,.mapcard h3,.resource h3{margin:.02em 0 .28em}.card p,.case p,.mapcard p,.resource p{margin:.18em 0;line-height:1.34}.blue{background:#eff8ff;border-color:#b2ddff}.gold{background:#fff9db;border-color:#f3d878}.green{background:#ecfdf3;border-color:#abefc6}
-.code{font-family:Consolas,ui-monospace,monospace;background:#f4f7fa;border-radius:.45em;padding:.42em .5em;font-size:.75em;line-height:1.3;display:block;margin-top:.28em;white-space:normal}.chips{display:flex;gap:.28em;flex-wrap:wrap;margin-top:.38em}.chip{display:inline-block;border-radius:999px;background:#eef2f6;padding:.22em .48em;font-size:.66em;font-weight:850}.chain{padding:.7em .8em;border-radius:.8em;background:#101828;color:#fff;font-weight:850;margin-top:.7em;line-height:1.45}.bigline{font-size:1.2em;font-weight:900;line-height:1.45}.logic{display:grid;grid-template-columns:repeat(8,auto);gap:.28em;align-items:center;margin-top:.65em}.logic span{background:#fff;border:1px solid var(--line);border-radius:.6em;padding:.45em .5em;text-align:center;font-weight:850;font-size:.72em}.logic i{font-style:normal;color:#667085;font-weight:900}.evidence{font-size:.82em;color:#475467}.compare{width:100%;border-collapse:collapse;margin-top:.55em;font-size:.75em}.compare th,.compare td{border:1px solid var(--line);padding:.42em;text-align:left;vertical-align:top}.compare th{background:#f8fafc}.decision{font-weight:900;color:var(--blue)}.callout{margin-top:.65em;border-left:5px solid #ffd400;background:#fffceb;border-radius:.7em;padding:.65em .75em}.official{display:flex;gap:.45em;flex-wrap:wrap;margin-top:.6em}.official a,.download{display:inline-flex;align-items:center;gap:.3em;text-decoration:none;border-radius:999px;background:#101828;color:#fff!important;padding:.5em .75em;font-weight:900}.secondary{background:#124e78!important}.smallnote{font-size:.7em;color:#667085;margin-top:.45em}.micro{margin-top:.55em;border:1px dashed #7f8c98;background:#f8fafc;border-radius:.65em;padding:.48em .6em;font-size:.72em;line-height:1.3}.micro b{color:#124e78}.result{font-size:1.65em;font-weight:950;color:var(--blue)}.closing{font-size:1.22em;line-height:1.55;font-weight:820;max-width:32em}.closing strong{color:#ffd400}.pausebox{display:grid;place-items:center;height:55vh;text-align:center}.pausebox h2{font-size:4em;margin:.1em}.compact li{margin:.22em 0}
-@media(max-width:800px),(max-aspect-ratio:1/1){
- .grid2,.grid3,.grid4,.journey,.cases,.mapgrid,.resource-grid{grid-template-columns:1fr}
- .logic{grid-template-columns:repeat(4,1fr)}.logic i{display:none}
- .slide{padding-bottom:5.3rem!important}.card,.case,.mapcard,.resource{padding:.62em}.code{font-size:.68em}.compare{font-size:.68em}
-}
+/* S16 · solo composición específica. La identidad visual proviene de tema-v2.css */
+.slide .g2,.slide .g3,.s16-g4,.journey,.cases,.mapgrid,.resource-grid{margin-top:.8em}
+.s16-g4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.journey{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.mapgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap)}
+.resource-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:var(--gap)}
+.journey .step,.case,.mapcard,.resource{position:relative;background:var(--s);color:var(--ink);border-radius:var(--r-md);box-shadow:var(--sh);padding:1.15em 1.2em 1.05em;border-left:.4em solid var(--y)}
+.journey .step:nth-child(even),.mapcard:nth-child(even){background:var(--bl);border-left-color:var(--b)}
+.journey .step.blue,.resource.blue{background:var(--bl);border-left-color:var(--b)}
+.case.green{background:var(--gl);border-left-color:var(--g)}
+.journey .step b,.case h3,.mapcard h3,.resource h3{color:var(--b)}
+.journey .step p,.case p,.mapcard p,.resource p{margin:.2em 0 0;line-height:1.4}
+.chip{display:inline-flex;align-items:center;border-radius:var(--pill);background:var(--ink);color:#fff;padding:.34em .68em;font:800 .72em/1 Consolas,"Cascadia Mono",monospace}
+.card.blue{background:var(--bl);border-left-color:var(--b)}
+.card.gold{background:var(--yl);border-left-color:var(--o)}
+.card.green{background:var(--gl);border-left-color:var(--g)}
+.chain{padding:.72em .9em;border-radius:var(--r-md);background:var(--ink);color:#fff;font-weight:850;margin-top:.8em;line-height:1.45;box-shadow:var(--sh)}
+.bigline{font-size:1.18em;font-weight:900;line-height:1.45}
+.logic{display:grid;grid-template-columns:repeat(9,auto);gap:.32em;align-items:center;margin-top:.8em}
+.logic span{background:var(--s);border-left:.28em solid var(--y);border-radius:var(--r-sm);padding:.5em .65em;text-align:center;font-weight:850;font-size:.76em;box-shadow:var(--sh)}
+.logic i{font-style:normal;color:var(--ink-soft);font-weight:900}
+.evidence{font-size:.82em;color:var(--ink-soft)}
+.decision{display:block;margin-top:.5em;font-weight:850;color:var(--b)}
+.micro{margin-top:.72em;background:var(--yl);border-left:.35em solid var(--y);border-radius:var(--r-sm);padding:.68em .8em;font-size:.78em;line-height:1.35;color:var(--ink)}
+.micro b{color:#7a6200}
+.result{font-size:1.7em;font-weight:950;color:var(--b)}
+.closing{font-size:1.2em;line-height:1.55;font-weight:820;max-width:33em}
+.closing strong{color:var(--y)}
+.smallnote{font-size:.72em;color:var(--ink-soft);margin-top:.6em}
+.dlrow a.secondary{background:var(--b)}
+.resource .btn{margin-top:.5em}
+pre.sqlviz{padding-top:2.25em;min-height:4.2em}
+pre.sqlviz:before{content:attr(data-label);position:absolute;left:1.15em;top:.62em;font:800 .66em/1 "Segoe UI",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--y)}
+.sqlviz .kw{color:#ffd600;font-weight:850}.sqlviz .fn{color:#79c7ff;font-weight:800}.sqlviz .str{color:#9be3a8}.sqlviz .num{color:#ffad66}.sqlviz .obj{color:#eef6fb;font-weight:700}.sqlviz .type{color:#d4b5ff;font-weight:800}.sqlviz .op{color:#ffb85c;font-weight:900}.sqlviz .cm{color:#8ea2b2;font-style:italic}
+.sqlviz .focus{display:inline-block;margin:0 -.45em;padding:0 .45em;background:rgba(255,214,0,.12);border-left:3px solid var(--y)}
+.s16-g4 .result{display:block;margin-bottom:.1em}
+@media (max-aspect-ratio:1/1),(max-width:700px){.s16-g4,.journey,.cases,.mapgrid,.resource-grid{grid-template-columns:1fr}.logic{grid-template-columns:1fr 1fr 1fr}.logic i{display:none}pre.sqlviz{font-size:.84em}}
 </style></head><body><main class="stage">
 
 <section class="slide dark active" data-title="Portada"><div class="ey">Sesión 16 · cierre del diplomado</div>
@@ -36,105 +64,105 @@
 <div class="brand"><span>48 horas</span><span>una cadena de decisiones</span></div></section>
 
 <section class="slide dense" data-title="SQL que escribes"><div class="ey">Lenguaje SQL</div><h2>Esto ya forma parte de tu caja de herramientas</h2>
-<div class="grid3">
+<div class="g3">
 <div class="card"><h3>Consultar y filtrar</h3><div class="chips"><span class="chip">SELECT</span><span class="chip">DISTINCT</span><span class="chip">WHERE</span><span class="chip">AND/OR</span><span class="chip">BETWEEN</span><span class="chip">IN</span><span class="chip">LIKE</span><span class="chip">IS NULL</span><span class="chip">ORDER BY</span><span class="chip">LIMIT</span></div></div>
 <div class="card"><h3>Resumir y construir</h3><div class="chips"><span class="chip">COUNT</span><span class="chip">SUM</span><span class="chip">AVG</span><span class="chip">MIN/MAX</span><span class="chip">GROUP BY</span><span class="chip">HAVING</span><span class="chip">COUNT DISTINCT</span><span class="chip">WITH / CTE</span><span class="chip">CASE</span><span class="chip">COALESCE</span></div></div>
 <div class="card"><h3>Combinar y modificar</h3><div class="chips"><span class="chip">INNER JOIN</span><span class="chip">LEFT JOIN</span><span class="chip">RIGHT JOIN</span><span class="chip">FULL OUTER</span><span class="chip">UNION / ALL</span><span class="chip">INSERT</span><span class="chip">UPDATE</span><span class="chip">DELETE</span></div></div>
 </div>
-<div class="callout"><b>La ganancia central:</b> poder leer una pregunta y construir una consulta que produzca la tabla correcta.</div><div class="micro"><b>Activación · 30 s:</b> sin mirar apuntes, nombra tres operaciones SQL que hoy usarías para responder una pregunta de negocio.</div>
+<div class="checkpoint"><b>La ganancia central:</b> poder leer una pregunta y construir una consulta que produzca la tabla correcta.</div><div class="micro" data-r><b>Activación · 30 s:</b> sin mirar apuntes, nombra tres operaciones SQL que hoy usarías para responder una pregunta de negocio.</div>
 <div class="brand"><span>SQL</span><span>sintaxis + intención</span></div></section>
 
 <section class="slide dense" data-title="Pensamiento SQL"><div class="ey">Pensamiento SQL</div><h2>Aprendiste a pensar antes de ejecutar</h2>
 <p class="bigline">Pregunta → grano esperado → tablas → llaves → unión → filtros → agregación → validación.</p>
-<div class="grid2">
-<div class="card blue"><h3>Orden que escribes</h3><code class="code">SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT</code></div>
-<div class="card green"><h3>Orden lógico del motor</h3><code class="code">FROM → WHERE → GROUP BY → agregación → HAVING → SELECT → ORDER BY → LIMIT</code></div>
+<div class="g2">
+<div class="card blue"><h3>Orden que escribes</h3><pre class="sqlviz" data-label="Orden de escritura"><code><span class="kw">SELECT</span> <span class="op">→</span> <span class="kw">FROM</span> <span class="op">→</span> <span class="kw">WHERE</span> <span class="op">→</span> <span class="kw">GROUP BY</span> <span class="op">→</span> <span class="kw">HAVING</span> <span class="op">→</span> <span class="kw">ORDER BY</span> <span class="op">→</span> <span class="kw">LIMIT</span></code></pre></div>
+<div class="card green"><h3>Orden lógico del motor</h3><pre class="sqlviz" data-label="Orden lógico"><code><span class="kw">FROM</span> <span class="op">→</span> <span class="kw">WHERE</span> <span class="op">→</span> <span class="kw">GROUP BY</span> <span class="op">→</span> <span class="fn">agregación</span> <span class="op">→</span> <span class="kw">HAVING</span> <span class="op">→</span> <span class="kw">SELECT</span> <span class="op">→</span> <span class="kw">ORDER BY</span> <span class="op">→</span> <span class="kw">LIMIT</span></code></pre></div>
 </div>
-<div class="grid3">
+<div class="g3">
 <div class="card"><b>Antes del JOIN</b><p>¿Qué representa una fila en cada tabla?</p></div>
 <div class="card"><b>Después del JOIN</b><p>¿Multipliqué filas o cambié el grano?</p></div>
 <div class="card"><b>Antes de creer el resultado</b><p>¿Conteos, nulos y duplicados tienen sentido?</p></div>
 </div>
-<div class="micro"><b>Predice antes de ver código:</b> ¿por qué WHERE no puede filtrar directamente un COUNT(*)? Explícalo con el orden lógico.</div><div class="brand"><span>Razonamiento</span><span>pensar antes de ejecutar</span></div></section>
+<div class="micro" data-r><b>Predice antes de ver código:</b> ¿por qué WHERE no puede filtrar directamente un COUNT(*)? Explícalo con el orden lógico.</div><div class="brand"><span>Razonamiento</span><span>pensar antes de ejecutar</span></div></section>
 
 <section class="slide dense" data-title="JOIN y conjuntos"><div class="ey">Relacionar información</div><h2>Una tabla casi nunca responde sola</h2>
-<table class="compare"><thead><tr><th>Necesidad</th><th>Patrón</th><th>Pregunta de control</th></tr></thead><tbody>
+<table class="tbl"><thead><tr><th>Necesidad</th><th>Patrón</th><th>Pregunta de control</th></tr></thead><tbody>
 <tr><td>Solo coincidencias</td><td><b>INNER JOIN</b></td><td>¿La pérdida de filas sin pareja es intencional?</td></tr>
 <tr><td>Conservar todo un lado</td><td><b>LEFT JOIN</b></td><td>¿Los NULL significan “sin coincidencia”?</td></tr>
 <tr><td>Encontrar ausencias</td><td><b>LEFT JOIN … WHERE derecha.id IS NULL</b></td><td>¿Estoy filtrando la tabla correcta?</td></tr>
 <tr><td>Apilar resultados compatibles</td><td><b>UNION / UNION ALL</b></td><td>¿Quiero eliminar duplicados o conservarlos?</td></tr>
 <tr><td>Evitar doble conteo</td><td><b>agregar antes de unir</b></td><td>¿Las dos fuentes están en el mismo grano?</td></tr>
 </tbody></table>
-<div class="callout">El JOIN correcto no es “el que ejecuta”: es el que conserva el significado de cada fila.</div>
+<div class="checkpoint">El JOIN correcto no es “el que ejecuta”: es el que conserva el significado de cada fila.</div>
 <div class="brand"><span>JOIN</span><span>relación + grano</span></div></section>
 
 <section class="slide dense" data-title="De reglas a modelo"><div class="ey">Diseño de bases de datos</div><h2>Pasaste de una conversación de negocio a un modelo defendible</h2>
 <div class="logic"><span>regla</span><i>→</i><span>entidad</span><i>→</i><span>atributo</span><i>→</i><span>relación</span><i>→</i><span>cardinalidad</span></div>
-<div class="grid3">
+<div class="g3">
 <div class="card"><h3>Identidad</h3><p>PK identifica una fila. Una clave no es “porque sí”: representa identidad estable.</p></div>
 <div class="card"><h3>Relaciones</h3><p>FK conecta entidades y protege referencias. 1:1, 1:N y N:N cambian el diseño.</p></div>
 <div class="card"><h3>Dependencias</h3><p>Separar atributos por dependencia reduce redundancia y anomalías.</p></div>
 </div>
 <div class="chain">reglas → ER → claves → cardinalidad → 1FN/2FN/3FN → esquema implementable</div>
-<div class="micro"><b>Microcaso:</b> “un pedido tiene muchas líneas y cada línea pertenece a un pedido”. ¿Qué cardinalidad ves y dónde quedaría la FK?</div><div class="brand"><span>Modelado</span><span>de lenguaje natural a tablas</span></div></section>
+<div class="micro" data-r><b>Microcaso:</b> “un pedido tiene muchas líneas y cada línea pertenece a un pedido”. ¿Qué cardinalidad ves y dónde quedaría la FK?</div><div class="brand"><span>Modelado</span><span>de lenguaje natural a tablas</span></div></section>
 
 <section class="slide dense" data-title="Integridad y DDL"><div class="ey">Implementar el modelo</div><h2>Una base correcta también debe impedir datos imposibles</h2>
-<div class="grid2">
-<div class="card"><h3>DDL</h3><code class="code">CREATE TABLE · ALTER TABLE · DROP TABLE</code><p>Define la estructura que soporta el modelo.</p></div>
-<div class="card"><h3>DML</h3><code class="code">INSERT · UPDATE · DELETE</code><p>Cambia el estado de los datos dentro del esquema.</p></div>
+<div class="g2">
+<div class="card"><h3>DDL</h3><pre class="sqlviz" data-label="DDL"><code><span class="kw">CREATE TABLE</span> <span class="op">·</span> <span class="kw">ALTER TABLE</span> <span class="op">·</span> <span class="kw">DROP TABLE</span></code></pre><p>Define la estructura que soporta el modelo.</p></div>
+<div class="card"><h3>DML</h3><pre class="sqlviz" data-label="DML"><code><span class="kw">INSERT</span> <span class="op">·</span> <span class="kw">UPDATE</span> <span class="op">·</span> <span class="kw">DELETE</span></code></pre><p>Cambia el estado de los datos dentro del esquema.</p></div>
 </div>
-<div class="grid4">
+<div class="s16-g4">
 <div class="card"><b>PRIMARY KEY</b><p>Identidad y unicidad.</p></div><div class="card"><b>FOREIGN KEY</b><p>Integridad referencial.</p></div><div class="card"><b>NOT NULL / UNIQUE</b><p>Presencia y no repetición.</p></div><div class="card"><b>CHECK</b><p>Reglas del dominio.</p></div>
 </div>
-<div class="callout"><b>Prueba de calidad:</b> una restricción se demuestra intentando insertar algo válido y algo inválido.</div>
+<div class="checkpoint"><b>Prueba de calidad:</b> una restricción se demuestra intentando insertar algo válido y algo inválido.</div>
 <div class="brand"><span>PostgreSQL / Supabase</span><span>modelo que se hace cumplir</span></div></section>
 
 <section class="slide dense" data-title="SQL o NoSQL"><div class="ey">Elegir almacenamiento</div><h2>Aprendiste a elegir SQL o NoSQL por el problema</h2>
-<div class="grid3">
+<div class="g3">
 <div class="card blue"><h3>Relacional</h3><p>Relaciones claras, reglas fuertes, joins, transacciones y esquema controlado.</p><span class="decision">Pregunta: ¿la integridad entre entidades manda?</span></div>
 <div class="card gold"><h3>Documentos</h3><p>Estructura flexible, lectura por agregado y decisión entre embeber o referenciar.</p><span class="decision">Pregunta: ¿cómo se lee y actualiza el agregado?</span></div>
 <div class="card"><h3>Otros patrones</h3><p>Clave-valor, grafos y series de tiempo aparecen cuando el patrón de acceso cambia.</p><span class="decision">Pregunta: ¿qué consulta debe ser barata?</span></div>
 </div>
-<div class="callout">CAP, consistencia y disponibilidad ayudan a razonar en sistemas distribuidos; no son una receta automática de producto.</div>
-<div class="micro"><b>Decide rápido:</b> si siempre lees un pedido completo con sus ítems y la forma cambia con frecuencia, ¿qué patrón de almacenamiento compararías primero?</div><div class="brand"><span>SQL / NoSQL</span><span>problema antes que tecnología</span></div></section>
+<div class="checkpoint">CAP, consistencia y disponibilidad ayudan a razonar en sistemas distribuidos; no son una receta automática de producto.</div>
+<div class="micro" data-r><b>Decide rápido:</b> si siempre lees un pedido completo con sus ítems y la forma cambia con frecuencia, ¿qué patrón de almacenamiento compararías primero?</div><div class="brand"><span>SQL / NoSQL</span><span>problema antes que tecnología</span></div></section>
 
 <section class="slide dense" data-title="OLTP a analítica"><div class="ey">De operación a analítica</div><h2>La misma empresa necesita estructuras distintas para operar y analizar</h2>
-<div class="grid2">
-<div class="card"><h3>OLTP · operar ahora</h3><p>Muchas operaciones pequeñas, integridad, estado actual y baja latencia.</p><code class="code">pedido · cliente · reserva · transacción</code></div>
-<div class="card blue"><h3>OLAP · entender historia</h3><p>Lecturas amplias, agregaciones, comparaciones y decisiones sobre periodos; el <b>modelo estrella</b> organiza hechos y dimensiones.</p><code class="code">hecho + dimensiones + medidas + tiempo</code></div>
+<div class="g2">
+<div class="card"><h3>OLTP · operar ahora</h3><p>Muchas operaciones pequeñas, integridad, estado actual y baja latencia.</p><pre class="sqlviz" data-label="OLTP"><code><span class="obj">pedido</span> <span class="op">·</span> <span class="obj">cliente</span> <span class="op">·</span> <span class="obj">reserva</span> <span class="op">·</span> <span class="obj">transacción</span></code></pre></div>
+<div class="card blue"><h3>OLAP · entender historia</h3><p>Lecturas amplias, agregaciones, comparaciones y decisiones sobre periodos; el <b>modelo estrella</b> organiza hechos y dimensiones.</p><pre class="sqlviz" data-label="Modelo estrella"><code><span class="obj">hecho</span> <span class="op">+</span> <span class="type">dimensiones</span> <span class="op">+</span> <span class="fn">medidas</span> <span class="op">+</span> <span class="obj">tiempo</span></code></pre></div>
 </div>
-<div class="grid3"><div class="card"><h3>Modelo estrella</h3><p>Una tabla de hechos en un grano definido se relaciona con dimensiones descriptivas.</p></div><div class="card"><b>Batch</b><p>Procesa lotes acumulados.</p></div><div class="card"><b>Streaming</b><p>Procesa eventos conforme llegan.</p></div></div>
+<div class="g3"><div class="card"><h3>Modelo estrella</h3><p>Una tabla de hechos en un grano definido se relaciona con dimensiones descriptivas.</p></div><div class="card"><b>Batch</b><p>Procesa lotes acumulados.</p></div><div class="card"><b>Streaming</b><p>Procesa eventos conforme llegan.</p></div></div>
 <div class="brand"><span>Data warehouse</span><span>estrella + grano + carga</span></div></section>
 
 <section class="slide dense" data-title="BigQuery físico"><div class="ey">Analítica cloud</div><h2>No solo escribiste SQL: aprendiste que leer datos también cuesta</h2>
-<div class="grid3">
+<div class="g3">
 <div class="card"><h3>Partición</h3><p>Recorta bloques por una clave —frecuentemente fecha— para evitar leer datos innecesarios.</p></div>
 <div class="card"><h3>Clustering</h3><p>Organiza por columnas consultadas con frecuencia dentro de la tabla/partición.</p></div>
 <div class="card"><h3>Pruning</h3><p>El motor evita bloques que no pueden satisfacer el filtro.</p></div>
 </div>
 <div class="chain">misma respuesta lógica ≠ mismo costo físico</div>
-<p class="evidence">La decisión física nace del patrón de consultas: filtros frecuentes, volumen, distribución y bytes procesados.</p><div class="micro"><b>Predicción:</b> si casi todas las consultas filtran por fecha, ¿qué columna candidata a partición revisarías primero y por qué?</div>
+<p class="evidence">La decisión física nace del patrón de consultas: filtros frecuentes, volumen, distribución y bytes procesados.</p><div class="micro" data-r><b>Predicción:</b> si casi todas las consultas filtran por fecha, ¿qué columna candidata a partición revisarías primero y por qué?</div>
 <div class="brand"><span>BigQuery</span><span>SQL + diseño físico</span></div></section>
 
 <section class="slide dense" data-title="Anidados y formatos"><div class="ey">Datos semiestructurados</div><h2>También cambiaste la forma de representar una fila</h2>
-<div class="grid2">
-<div class="card"><h3>JSON / ARRAY / STRUCT</h3><p>Un registro puede contener objetos y listas. La estructura existe, pero no tiene que ser una tabla plana.</p><code class="code">pedido.items[] → ARRAY de STRUCT</code></div>
-<div class="card blue"><h3>UNNEST</h3><p>Expande un arreglo a filas. La pregunta obligatoria es: ¿qué representa una fila antes y después?</p><code class="code">FROM pedidos p CROSS JOIN UNNEST(p.items) i</code></div>
+<div class="g2">
+<div class="card"><h3>JSON / ARRAY / STRUCT</h3><p>Un registro puede contener objetos y listas. La estructura existe, pero no tiene que ser una tabla plana.</p><pre class="sqlviz" data-label="Estructura anidada"><code><span class="obj">pedido.items[]</span> <span class="op">→</span> <span class="type">ARRAY</span> de <span class="type">STRUCT</span></code></pre></div>
+<div class="card blue"><h3>UNNEST</h3><p>Expande un arreglo a filas. La pregunta obligatoria es: ¿qué representa una fila antes y después?</p><pre class="sqlviz" data-label="UNNEST"><code><span class="kw">FROM</span> <span class="obj">pedidos</span> p <span class="kw">CROSS JOIN</span> <span class="fn">UNNEST</span>(p.items) i</code></pre></div>
 </div>
-<div class="grid3"><div class="card"><b>CSV</b><p>Tabular simple.</p></div><div class="card"><b>JSON</b><p>Jerarquía flexible.</p></div><div class="card"><b>Parquet</b><p>Columnar, eficiente para analítica.</p></div></div>
-<div class="micro"><b>Antes de UNNEST:</b> un pedido tiene 4 ítems. ¿Cuántas filas esperas después de expandir solo ese arreglo? ¿Qué representa cada fila?</div><div class="brand"><span>S14</span><span>forma + grano + costo</span></div></section>
+<div class="g3"><div class="card"><b>CSV</b><p>Tabular simple.</p></div><div class="card"><b>JSON</b><p>Jerarquía flexible.</p></div><div class="card"><b>Parquet</b><p>Columnar, eficiente para analítica.</p></div></div>
+<div class="micro" data-r><b>Antes de UNNEST:</b> un pedido tiene 4 ítems. ¿Cuántas filas esperas después de expandir solo ese arreglo? ¿Qué representa cada fila?</div><div class="brand"><span>S14</span><span>forma + grano + costo</span></div></section>
 
 <section class="slide dense" data-title="S15 integró"><div class="ey">Desafío final</div><h2>S15 convirtió lo anterior en una solución integrada</h2>
-<div class="grid4">
+<div class="s16-g4">
 <div class="card"><b>SQL</b><p>Consultas que sobreviven casos borde.</p></div>
 <div class="card"><b>Modelo</b><p>ER, 3FN y restricciones con comportamiento verificable.</p></div>
 <div class="card"><b>Arquitectura</b><p>SQL/NoSQL, warehouse y formatos según necesidad.</p></div>
 <div class="card blue"><b>Transferencia</b><p>Resolver un caso nuevo sin repetir una receta literal.</p></div>
 </div>
-<div class="callout">Tres ideas para conservar: <b>último evento ≠ fila con ese estado</b> · <b>JOIN puede cambiar el grano</b> · <b>una restricción se valida por comportamiento</b>.</div>
+<div class="checkpoint">Tres ideas para conservar: <b>último evento ≠ fila con ese estado</b> · <b>JOIN puede cambiar el grano</b> · <b>una restricción se valida por comportamiento</b>.</div>
 <div class="brand"><span>S15</span><span>integración, no contenido nuevo</span></div></section>
 
-<section class="slide dark" data-title="Pausa"><div class="pausebox"><div><div class="ey">Pausa</div><h2>15 min</h2><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p></div></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
+<section class="slide dark" data-title="Pausa"><div class="break"><div><div class="ey">Pausa</div><h2>15 min</h2><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p></div></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
 
 <section class="slide dense" data-title="Tres casos"><div class="ey">Transferencia final · sin nota</div><h2>Tres decisiones que ya puedes razonar</h2>
 <div class="cases">
@@ -142,14 +170,14 @@
 <div class="case"><h3>B · Pedido completo</h3><p>Una app consulta siempre el pedido con todos sus ítems y cambia la estructura con frecuencia.</p><b>¿Relacional o documento? ¿Qué patrón manda?</b></div>
 <div class="case"><h3>C · Tablero histórico</h3><p>Millones de transacciones operativas alimentan un tablero de años de historia.</p><b>¿Usarías la misma estructura para operar y analizar?</b></div>
 </div>
-<div class="callout">Primero decide individualmente. Luego compara con otra persona. No buscamos una palabra: buscamos el razonamiento.</div>
+<div class="checkpoint">Primero decide individualmente. Luego compara con otra persona. No buscamos una palabra: buscamos el razonamiento.</div>
 <div class="brand"><span>Casos</span><span>grano · patrón de acceso · carga</span></div></section>
 
 <section class="slide dense" data-title="Resolución casos"><div class="ey">Cómo se razonan</div><h2>La respuesta aparece después de identificar la condición que manda</h2>
 <div class="cases">
-<div class="case green"><h3>A · Grano</h3><p>Antes de sumar, verifica qué representa cada fila. Agrega detalle al grano de venta antes de unir o usa la medida en su tabla correcta.</p></div>
-<div class="case green"><h3>B · Patrón de acceso</h3><p>Si el agregado se lee junto y cambia de forma, un documento puede ser natural; luego decides qué embeber y qué referenciar.</p></div>
-<div class="case green"><h3>C · Carga</h3><p>Separa operación y analítica: modelo transaccional para el día a día; estructura analítica para historia y agregaciones.</p></div>
+<div class="case green" data-r><h3>A · Grano</h3><p>Antes de sumar, verifica qué representa cada fila. Agrega detalle al grano de venta antes de unir o usa la medida en su tabla correcta.</p></div>
+<div class="case green" data-r><h3>B · Patrón de acceso</h3><p>Si el agregado se lee junto y cambia de forma, un documento puede ser natural; luego decides qué embeber y qué referenciar.</p></div>
+<div class="case green" data-r><h3>C · Carga</h3><p>Separa operación y analítica: modelo transaccional para el día a día; estructura analítica para historia y agregaciones.</p></div>
 </div>
 <div class="chain">la tecnología llega después de comprender grano, relaciones, patrón de acceso, latencia y volumen</div>
 <div class="brand"><span>Transferencia</span><span>criterio antes que producto</span></div></section>
@@ -161,26 +189,26 @@
 <div class="mapcard"><h3>No relacional</h3><p>documentos · clave/atributo · almacenamiento de objetos · patrones de acceso</p><span class="chip">trabajado</span></div>
 <div class="mapcard"><h3>Analítica</h3><p>warehouse · hechos/dimensiones · ingestión · transformación · visualización · Spark como categoría</p><span class="chip">base construida</span></div>
 </div>
-<div class="callout"><b>DP-900 añade vocabulario y servicios Microsoft.</b> Lo aprendido con PostgreSQL, Firebase/MongoDB y BigQuery aporta la base conceptual para reconocerlos.</div>
+<div class="checkpoint"><b>DP-900 añade vocabulario y servicios Microsoft.</b> Lo aprendido con PostgreSQL, Firebase/MongoDB y BigQuery aporta la base conceptual para reconocerlos.</div>
 <div class="brand"><span>Transferencia</span><span>concepto conocido, nombre de proveedor nuevo</span></div></section>
 
 <section class="slide dense" data-title="Nombres Azure"><div class="ey">Lo específico que sí debes estudiar</div><h2>El hueco principal es reconocer nombres y diferencias de Azure</h2>
-<div class="grid3">
+<div class="g3">
 <div class="card"><h3>Relacional</h3><p><b>Azure SQL Database</b> · PaaS de base SQL<br><b>Managed Instance</b> · mayor compatibilidad de instancia<br><b>SQL Server on Azure VM</b> · control de VM/SO<br><b>Azure Database for PostgreSQL</b> · PostgreSQL administrado</p></div>
 <div class="card"><h3>Storage / NoSQL</h3><p><b>Blob</b> · objetos<br><b>Files</b> · archivos compartidos<br><b>Table</b> · clave/atributo<br><b>Cosmos DB</b> · NoSQL distribuido</p></div>
 <div class="card blue"><h3>Analítica</h3><p><b>Databricks</b> · ingeniería/Spark<br><b>Fabric</b> · plataforma analítica integrada<br><b>Power BI</b> · modelado semántico y visualización</p></div>
 </div>
-<div class="callout">Primero identifica requisito y patrón de acceso; después compara qué servicio Azure encaja.</div>
+<div class="checkpoint">Primero identifica requisito y patrón de acceso; después compara qué servicio Azure encaja.</div>
 <div class="brand"><span>Azure</span><span>nomenclatura específica, no curso nuevo</span></div></section>
 
 <section class="slide dense" data-title="DP900 práctico"><div class="ey">Voucher + preparación</div><h2>Conoce el formato y practica con el recurso oficial</h2>
-<div class="grid4">
+<div class="s16-g4">
 <div class="card"><span class="result">45 min</span><p>tiempo de examen Fundamentals</p></div>
 <div class="card"><span class="result">65 min</span><p>seat duration / reserva total</p></div>
 <div class="card"><span class="result">700+</span><p>puntaje escalado de aprobación</p></div>
 <div class="card"><span class="result">5</span><p>preguntas oficiales para hacer juntos hoy</p></div>
 </div>
-<div class="official">
+<div class="dlrow">
 <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">📘 Study Guide</a>
 <a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications" target="_blank" rel="noopener">🧪 Practice Assessment</a>
 <a href="https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam" target="_blank" rel="noopener">🧭 Exam Sandbox</a>
@@ -192,28 +220,42 @@
 <section class="slide dense" data-title="Cheat sheet"><div class="ey">Recurso para llevarte</div><h2>Tu referencia final no es un glosario: es una hoja de trabajo</h2>
 <div class="resource-grid">
 <div class="resource blue"><h3>Cheat Sheet final · 4 páginas</h3><p>SQL · orden lógico · JOIN · agregación · CTE/CASE/COALESCE · modelado · normalización · DDL/DML · restricciones · NoSQL · warehouse · BigQuery · anidados · formatos · mapa Azure · checklist de validación.</p>
-<a class="download" href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Abrir / imprimir Cheat Sheet</a><div class="official"><a class="secondary" href="glosario-cierre-s16.html#referentes-industria" target="_blank" rel="noopener">↗ Referentes por concepto</a></div></div>
+<a class="btn" href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Abrir / imprimir Cheat Sheet</a><div class="dlrow"><a class="secondary" href="glosario-cierre-s16.html#referentes-industria" target="_blank" rel="noopener">↗ Referentes por concepto</a></div></div>
 <div class="resource"><h3>Referentes para seguir aprendiendo</h3><p><b>PostgreSQL · MongoDB · Neo4j · AWS · Kimball Group · Google Cloud · Apache · Databricks · Microsoft Learn.</b></p><p>La página 4 conecta cada concepto del curso con una fuente primaria o ruta hands-on.</p></div>
 </div>
-<div class="callout"><b>Cómo profundizar:</b> empieza por la fuente primaria del concepto que te costó; usa blogs y videos después como complemento. Prioridad inmediata: voucher DP-900.</div>
+<div class="checkpoint"><b>Cómo profundizar:</b> empieza por la fuente primaria del concepto que te costó; usa blogs y videos después como complemento. Prioridad inmediata: voucher DP-900.</div>
 <div class="brand"><span>Referencia final</span><span>usar > memorizar</span></div></section>
 
 <section class="slide dark" data-title="Cierre"><div class="ey">Fin del recorrido</div>
 <h2>Lo que te llevas es más grande que una lista de comandos</h2>
 <p class="closing">Empezaste consultando una tabla. Hoy puedes decidir <strong>qué representa una fila</strong>, cómo relacionar tablas, cómo evitar duplicaciones, cómo proteger reglas con restricciones, cuándo una tabla relacional deja de ser suficiente y cómo organizar datos para analítica.</p>
-<p class="closing">DP-900 es el siguiente contexto: pone nombres Microsoft a parte de ese razonamiento.</p>
+<p class="closing" data-r>DP-900 es el siguiente contexto: pone nombres Microsoft a parte de ese razonamiento.</p>
 <p class="small">Ahora sí: responde la encuesta institucional con tu experiencia real del diplomado.</p>
 <div class="brand"><span>Curso cerrado</span><span>criterio para seguir aprendiendo</span></div></section>
 
-</main>
-<nav class="ctlbar" aria-label="Navegación"><button id="prev" aria-label="Anterior">←</button><span id="count">1 / 20</span><button id="next" aria-label="Siguiente">→</button><a href="../../index.html" aria-label="Volver al curso">↓</a></nav>
+<div class="progress"><div class="bar" id="bar"></div></div></main>
+<nav class="toolbar" aria-label="Controles">
+<span class="count" id="count">1 / 20</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-16-cierre-dp900.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button>
+</nav>
+<div class="overlay" id="timeOv" role="dialog" aria-modal="true" aria-label="Temporizador"><div class="panel"><button class="close" data-close aria-label="Cerrar">×</button><h2>Temporizador</h2><div class="timer" id="timer">05:00</div><div class="presets"><button data-min="1">1 min</button><button data-min="3">3 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button></div><div class="actions"><button id="start">Iniciar</button><button id="pause">Pausar</button><button id="reset">Reiniciar</button></div></div></div>
+<div class="sr" id="announce" aria-live="polite"></div>
 <script>
-(()=>{'use strict';const slides=[...document.querySelectorAll('.slide')],count=document.getElementById('count');let i=0;
-function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,j)=>s.classList.toggle('active',j===i));count.textContent=(i+1)+' / '+slides.length;history.replaceState(null,'','#s'+(i+1));window.scrollTo(0,0)}
-document.getElementById('prev').onclick=()=>show(i-1);document.getElementById('next').onclick=()=>show(i+1);
-addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}});
-const m=location.hash.match(/s(\d+)/);if(m)show(Number(m[1])-1);else show(0);
+(()=>{'use strict';
+const ss=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),count=document.getElementById('count'),announce=document.getElementById('announce'),timeOv=document.getElementById('timeOv');let i=0;
+function upd(){ss.forEach((s,n)=>s.classList.toggle('active',n===i));count.textContent=(i+1)+' / '+ss.length;bar.style.width=((i+1)/ss.length*100)+'%';document.title=(i+1)+'/'+ss.length+' · '+ss[i].dataset.title;announce.textContent='Diapositiva '+(i+1)+': '+ss[i].dataset.title;history.replaceState(null,'','#s'+(i+1));window.scrollTo(0,0)}
+function next(){const x=ss[i].querySelector('[data-r]:not(.shown)');if(x){x.classList.add('shown');return}if(i<ss.length-1){i++;upd()}}
+function prev(){const a=[...ss[i].querySelectorAll('[data-r].shown')];if(a.length){a.at(-1).classList.remove('shown');return}if(i>0){i--;ss[i].querySelectorAll('[data-r]').forEach(x=>x.classList.add('shown'));upd()}}
+function closeAll(){timeOv.classList.remove('open')}async function full(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(_){}}
+document.getElementById('prev').onclick=prev;document.getElementById('next').onclick=next;document.getElementById('timeBtn').onclick=()=>timeOv.classList.add('open');document.getElementById('fullBtn').onclick=full;document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeAll);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAll();return}if(timeOv.classList.contains('open'))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key.toLowerCase()==='f')full();else if(e.key.toLowerCase()==='t')timeOv.classList.add('open')});
+let remain=300000,initial=remain,end=0,running=false,tick=null;const timer=document.getElementById('timer');
+function fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function cur(){return running?Math.max(0,end-Date.now()):remain}
+function render(){timer.textContent=fmt(cur());if(running&&cur()<=0){pause();announce.textContent='Se acabó el tiempo'}}function pause(){if(running){remain=Math.max(0,end-Date.now());running=false;clearInterval(tick);tick=null}render()}function setTimer(m){pause();initial=remain=m*60000;render()}function start(){if(running||remain<=0)return;running=true;end=Date.now()+remain;tick=setInterval(render,250);timeOv.classList.remove('open');render()}function reset(){pause();remain=initial;render()}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{setTimer(Number(b.dataset.min));start()});document.getElementById('start').onclick=start;document.getElementById('pause').onclick=pause;document.getElementById('reset').onclick=reset;
+document.querySelectorAll('pre.sqlviz').forEach(pre=>{const b=document.createElement('button');b.type='button';b.className='copybtn';b.textContent='copiar';b.setAttribute('aria-label','Copiar código');b.onclick=async e=>{e.stopPropagation();const txt=pre.querySelector('code').textContent.trim();try{await navigator.clipboard.writeText(txt);b.textContent='copiado';b.classList.add('ok');setTimeout(()=>{b.textContent='copiar';b.classList.remove('ok')},1300)}catch(_){b.textContent='no se pudo'}};pre.appendChild(b)});
+const m=location.hash.match(/s(\d+)/);if(m)i=Math.max(0,Math.min(ss.length-1,Number(m[1])-1));upd();render();
 })();
-</script><script src="../../assets/analytics-config.js?v=20260912a"></script>
+</script>
+<script src="../../assets/analytics-config.js?v=20260912a"></script>
 <script src="../../assets/analytics.js?v=20260912a"></script>
 </body></html>
