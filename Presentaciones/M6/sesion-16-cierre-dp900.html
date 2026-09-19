@@ -2,7 +2,7 @@
 <!-- S16 strong-course-closure v1 · cierre de aprendizaje, no nueva evaluación -->
 <!-- presentation-pacing-cleanup-v1.js · política aplicada en autoría: sin minutaje visible salvo la pausa -->
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Sesión 16 · Cierre del curso y puente hacia DP-900"><title>Sesión 16 · Cierre del curso + puente DP-900</title>
+<meta name="description" content="Sesión 16 · Cierre del curso y preparación DP-900"><title>Sesión 16 · Cierre del curso + preparación DP-900</title>
 <link rel="stylesheet" href="../../tools/tema-v2.css">
 <style>
 /* S16 · solo composición específica. La identidad visual proviene de tema-v2.css */
@@ -598,78 +598,164 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 
 <section class="slide yellow" data-title="Pausa" data-break="15"><div class="break"><div class="ey">Pausa</div><div class="clock">15:00</div><p class="lead">Al volver, resolvemos tres decisiones completas y conectamos el curso con DP-900.</p><button class="btn" data-start-break>Iniciar los 15 minutos</button></div><div class="brand"><span>Pausa</span><span>regresa con una pregunta del curso</span></div></section>
 
-<section class="slide dense" data-title="Tres casos"><div class="ey">Transferencia final · sin nota</div><h2>Tres decisiones que ya puedes razonar</h2>
-<div class="cases">
-<div class="case"><h3>A · Reporte inflado</h3><p>Ventas tiene una fila por venta; detalle tiene varias líneas. El total se duplica después de unir.</p><b>¿Qué revisarías primero?</b></div>
-<div class="case"><h3>B · Pedido completo</h3><p>Una app consulta siempre el pedido con todos sus ítems y cambia la estructura con frecuencia.</p><b>¿Relacional o documento? ¿Qué patrón manda?</b></div>
-<div class="case"><h3>C · Tablero histórico</h3><p>Millones de transacciones operativas alimentan un tablero de años de historia.</p><b>¿Usarías la misma estructura para operar y analizar?</b></div>
+<section class="slide dense" data-title="DP900 blueprint"><div class="ey">DP-900 · mapa oficial vigente</div><h2>El examen tiene cuatro dominios y no pesan igual</h2>
+<div class="dp-weights">
+<div class="dp-weight"><span class="pct">25–30%</span><h3>1 · Core data concepts</h3><p>formas de datos · almacenamiento · workloads · roles</p></div>
+<div class="dp-weight"><span class="pct">20–25%</span><h3>2 · Relational on Azure</h3><p>conceptos relacionales · SQL · objetos · familia Azure SQL</p></div>
+<div class="dp-weight"><span class="pct">15–20%</span><h3>3 · Non-relational</h3><p>Blob · Files · Table · Cosmos DB y APIs</p></div>
+<div class="dp-weight"><span class="pct">25–30%</span><h3>4 · Analytics</h3><p>ingesta · analítica a escala · tiempo real · Power BI</p></div>
 </div>
-<div class="checkpoint">Primero decide individualmente. Luego compara con otra persona. No buscamos una palabra: buscamos el razonamiento.</div>
-<div class="brand"><span>Casos</span><span>grano · patrón de acceso · carga</span></div></section>
+<div class="checkpoint"><b>Blueprint vigente:</b> skills measured as of <b>21-jul-2026</b>. Conceptos y analítica pueden representar juntos hasta 60%.</div>
+<a class="dp-link" href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">↗ Abrir Study Guide oficial</a>
+<div class="brand"><span>DP-900</span><span>blueprint primero, servicios después</span></div></section>
 
-<section class="slide dense" data-title="Resolución casos"><div class="ey">Cómo se razonan</div><h2>La respuesta aparece después de identificar la condición que manda</h2>
-<div class="cases">
-<div class="case green" data-r><h3>A · Grano</h3><p>Antes de sumar, verifica qué representa cada fila. Agrega detalle al grano de venta antes de unir o usa la medida en su tabla correcta.</p></div>
-<div class="case green" data-r><h3>B · Patrón de acceso</h3><p>Si el agregado se lee junto y cambia de forma, un documento puede ser natural; luego decides qué embeber y qué referenciar.</p></div>
-<div class="case green" data-r><h3>C · Carga</h3><p>Separa operación y analítica: modelo transaccional para el día a día; estructura analítica para historia y agregaciones.</p></div>
-</div>
-<div class="chain">la tecnología llega después de comprender grano, relaciones, patrón de acceso, latencia y volumen</div>
-<div class="brand"><span>Transferencia</span><span>criterio antes que producto</span></div></section>
-
-<section class="slide dense" data-title="Curso a DP900"><div class="ey">Puente hacia DP-900</div><h2>Gran parte del razonamiento ya lo trabajaste</h2>
+<section class="slide dense" data-title="DP900 transferencia"><div class="ey">Del diplomado al examen</div><h2>No empiezas desde cero: ahora debes mapear requisitos a servicios Azure</h2>
 <div class="mapgrid">
-<div class="mapcard"><h3>Conceptos de datos</h3><p>estructurado / semiestructurado · OLTP / OLAP · batch / streaming · roles de datos</p><span class="chip">trabajado</span></div>
-<div class="mapcard"><h3>Datos relacionales</h3><p>normalización · SQL común · objetos y restricciones · servicios relacionales como categoría</p><span class="chip">base fuerte</span></div>
-<div class="mapcard"><h3>No relacional</h3><p>documentos · clave/atributo · almacenamiento de objetos · patrones de acceso</p><span class="chip">trabajado</span></div>
-<div class="mapcard"><h3>Analítica</h3><p>warehouse · hechos/dimensiones · ingestión · transformación · visualización · Spark como categoría</p><span class="chip">base construida</span></div>
+<div class="mapcard"><h3>Ya sabes razonar</h3><p>tipo de dato · grano · integridad · patrón de acceso · OLTP/OLAP · batch/streaming · warehouse · visualización</p><span class="chip">base conceptual</span></div>
+<div class="mapcard"><h3>Ahora debes reconocer</h3><p>familia Azure SQL · Azure Storage · Cosmos DB · Databricks · Fabric · Power BI</p><span class="chip">nomenclatura + decisión</span></div>
 </div>
-<div class="checkpoint"><b>DP-900 añade vocabulario y servicios Microsoft.</b> Lo aprendido con PostgreSQL, Firebase/MongoDB y BigQuery aporta la base conceptual para reconocerlos.</div>
-<div class="brand"><span>Transferencia</span><span>concepto conocido, nombre de proveedor nuevo</span></div></section>
+<div class="chain">situación → requisito dominante → concepto → servicio Azure → descartar distractores</div>
+<div class="checkpoint">La preparación DP-900 no consiste en memorizar marcas: consiste en reconocer <b>qué condición cambia la elección</b>.</div>
+<div class="brand"><span>Transferencia</span><span>concepto conocido → servicio correcto</span></div></section>
 
-<section class="slide dense" data-title="Nombres Azure"><div class="ey">Lo específico que sí debes estudiar</div><h2>El hueco principal es reconocer nombres y diferencias de Azure</h2>
+<section class="slide dense" data-title="Core datos"><div class="ey">Dominio 1 · Core data concepts</div><h2>Primero identifica la forma del dato y la carga de trabajo</h2>
 <div class="g3">
-<div class="card"><h3>Relacional</h3><p><b>Azure SQL Database</b> · PaaS de base SQL<br><b>Managed Instance</b> · mayor compatibilidad de instancia<br><b>SQL Server on Azure VM</b> · control de VM/SO<br><b>Azure Database for PostgreSQL</b> · PostgreSQL administrado</p></div>
-<div class="card"><h3>Storage / NoSQL</h3><p><b>Blob</b> · objetos<br><b>Files</b> · archivos compartidos<br><b>Table</b> · clave/atributo<br><b>Cosmos DB</b> · NoSQL distribuido</p></div>
-<div class="card blue"><h3>Analítica</h3><p><b>Databricks</b> · ingeniería/Spark<br><b>Fabric</b> · plataforma analítica integrada<br><b>Power BI</b> · modelado semántico y visualización</p></div>
+<div class="card"><h3>Estructurado</h3><p>esquema tabular estable · filas/columnas · tipos definidos.</p><span class="decision">Piensa: tablas relacionales.</span></div>
+<div class="card blue"><h3>Semiestructurado</h3><p>estructura autodescriptiva y flexible: JSON, documentos, eventos.</p><span class="decision">Piensa: campos variables.</span></div>
+<div class="card gold"><h3>No estructurado</h3><p>imágenes, audio, video y archivos sin esquema tabular interno.</p><span class="decision">Piensa: objetos.</span></div>
 </div>
-<div class="checkpoint">Primero identifica requisito y patrón de acceso; después compara qué servicio Azure encaja.</div>
-<div class="brand"><span>Azure</span><span>nomenclatura específica, no curso nuevo</span></div></section>
+<div class="g2"><div class="card"><h3>Transaccional · OLTP</h3><p>operación actual · cambios frecuentes · integridad · baja latencia.</p></div><div class="card blue"><h3>Analítico · OLAP</h3><p>historia · grandes lecturas · agregaciones · tendencias.</p></div></div>
+<div class="micro"><b>Pregunta rápida:</b> un payload JSON con campos opcionales es semiestructurado; que use llaves no lo convierte automáticamente en Cosmos DB.</div>
+<div class="brand"><span>Dominio 1</span><span>forma + almacenamiento + workload</span></div></section>
 
-<section class="slide dense" data-title="DP900 práctico"><div class="ey">Voucher + preparación</div><h2>Conoce el formato y practica con el recurso oficial</h2>
-<div class="s16-g4">
-<div class="card"><span class="result">45 min</span><p>tiempo de examen Fundamentals</p></div>
-<div class="card"><span class="result">65 min</span><p>seat duration / reserva total</p></div>
-<div class="card"><span class="result">700+</span><p>puntaje escalado de aprobación</p></div>
-<div class="card"><span class="result">5</span><p>preguntas oficiales para hacer juntos hoy</p></div>
+<section class="slide dense" data-title="Core roles"><div class="ey">Dominio 1 · Roles de datos</div><h2>DP-900 también pregunta quién hace qué</h2>
+<div class="role-grid">
+<div class="role-card"><h3>Database Administrator</h3><p>disponibilidad · seguridad · respaldo/recuperación · rendimiento · operación de bases.</p><span class="chip">protege y opera</span></div>
+<div class="role-card"><h3>Data Engineer</h3><p>ingesta · transformación · pipelines · integración · preparación de datos para analítica.</p><span class="chip">mueve y prepara</span></div>
+<div class="role-card"><h3>Data Analyst</h3><p>modelado para análisis · métricas · reportes · visualizaciones · comunicación con negocio.</p><span class="chip">interpreta y comunica</span></div>
 </div>
-<div class="dlrow">
-<a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">📘 Study Guide</a>
-<a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications" target="_blank" rel="noopener">🧪 Practice Assessment</a>
-<a href="https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam" target="_blank" rel="noopener">🧭 Exam Sandbox</a>
-<a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam" target="_blank" rel="noopener">📅 Programar</a>
+<div class="checkpoint">No confundas <b>administrar una base</b>, <b>construir un pipeline</b> y <b>crear un modelo/reporting analítico</b>.</div>
+<div class="brand"><span>Roles</span><span>DBA · Engineer · Analyst</span></div></section>
+
+<section class="slide dense" data-title="Relacional Azure"><div class="ey">Dominio 2 · Relational data on Azure</div><h2>La familia Azure SQL se distingue por cuánto administra Microsoft y cuánta compatibilidad necesitas</h2>
+<div class="azure-choice">
+<div class="card"><h3>Azure SQL Database</h3><p>PaaS de base de datos SQL administrada.</p><span class="when">App nueva o moderna; no administras sistema operativo.</span></div>
+<div class="card blue"><h3>Azure SQL Managed Instance</h3><p>PaaS con compatibilidad más amplia a nivel de instancia SQL Server.</p><span class="when">Migración que necesita características de instancia sin administrar VM.</span></div>
+<div class="card gold"><h3>SQL Server on Azure VM</h3><p>IaaS: control de VM, sistema operativo y SQL Server.</p><span class="when">El control del entorno es requisito.</span></div>
+<div class="card green"><h3>Azure Database for PostgreSQL</h3><p>PostgreSQL administrado en Azure.</p><span class="when">El motor requerido es PostgreSQL.</span></div>
 </div>
-<p class="smallnote">Haz 5 preguntas oficiales del Practice Assessment en vivo: primero razona el concepto, luego identifica el nombre Azure y por último lee la explicación oficial. Si hay tiempo, continúa hasta 10.</p>
-<div class="brand"><span>DP-900</span><span>familiarización, no otra evaluación del diplomado</span></div></section>
+<div class="brand"><span>Dominio 2</span><span>PaaS vs instancia vs VM vs open source</span></div></section>
 
-<section class="slide dense" data-title="Cheat sheet"><div class="ey">Recurso para llevarte</div><h2>Tu referencia final no es un glosario: es una hoja de trabajo</h2>
-<div class="resource-grid">
-<div class="resource blue"><h3>Cheat Sheet final · 4 páginas</h3><p>SQL · orden lógico · JOIN · agregación · CTE/CASE/COALESCE · modelado · normalización · DDL/DML · restricciones · NoSQL · warehouse · BigQuery · anidados · formatos · mapa Azure · checklist de validación.</p>
-<a class="btn" href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Abrir / imprimir Cheat Sheet</a><div class="dlrow"><a class="secondary" href="glosario-cierre-s16.html#referentes-industria" target="_blank" rel="noopener">↗ Referentes por concepto</a></div></div>
-<div class="resource"><h3>Referentes para seguir aprendiendo</h3><p><b>PostgreSQL · MongoDB · Neo4j · AWS · Kimball Group · Google Cloud · Apache · Databricks · Microsoft Learn.</b></p><p>La página 4 conecta cada concepto del curso con una fuente primaria o ruta hands-on.</p></div>
+<section class="slide dense" data-title="Relacional escenarios"><div class="ey">Dominio 2 · decisiones</div><h2>No memorices cuatro nombres: identifica la condición diferencial</h2>
+<div class="cases">
+<div class="case"><h3>A · App nueva</h3><p>Necesitas SQL administrado y no quieres administrar SO.</p><b>→ Azure SQL Database</b></div>
+<div class="case"><h3>B · Migración SQL Server</h3><p>Necesitas alta compatibilidad de instancia, pero no administrar una VM.</p><b>→ Managed Instance</b></div>
+<div class="case"><h3>C · Control total</h3><p>La aplicación exige acceso al sistema operativo y configuración de SQL Server.</p><b>→ SQL Server on Azure VM</b></div>
 </div>
-<div class="checkpoint"><b>Cómo profundizar:</b> empieza por la fuente primaria del concepto que te costó; usa blogs y videos después como complemento. Prioridad inmediata: voucher DP-900.</div>
-<div class="brand"><span>Referencia final</span><span>usar > memorizar</span></div></section>
+<div class="checkpoint">Este dominio también incluye <b>normalización, SQL común y objetos de base de datos</b>: ahí el diplomado ya te dio ventaja.</div>
+<div class="brand"><span>Azure SQL</span><span>la condición manda</span></div></section>
 
-<section class="slide dark" data-title="Cierre"><div class="ey">Fin del recorrido</div>
-<h2>Lo que te llevas es más grande que una lista de comandos</h2>
-<p class="closing">Empezaste consultando una tabla. Hoy puedes decidir <strong>qué representa una fila</strong>, cómo relacionar tablas, cómo evitar duplicaciones, cómo proteger reglas con restricciones, cuándo una tabla relacional deja de ser suficiente y cómo organizar datos para analítica.</p>
-<p class="closing" data-r>DP-900 es el siguiente contexto: pone nombres Microsoft a parte de ese razonamiento.</p>
-<p class="small">Ahora sí: responde la encuesta institucional con tu experiencia real del diplomado.</p>
-<div class="brand"><span>Curso cerrado</span><span>criterio para seguir aprendiendo</span></div></section>
+<section class="slide dense" data-title="Storage Azure"><div class="ey">Dominio 3 · Azure Storage</div><h2>Blob, Files y Table resuelven necesidades distintas</h2>
+<div class="g3">
+<div class="card"><h3>Blob Storage</h3><p>objetos: imágenes, video, backups, CSV, JSON, Parquet.</p><span class="decision">Objeto ≠ archivo compartido.</span></div>
+<div class="card blue"><h3>Azure Files</h3><p>file shares administrados accesibles mediante protocolos de archivos.</p><span class="decision">Piensa en compartir archivos como sistema de archivos.</span></div>
+<div class="card gold"><h3>Table Storage</h3><p>almacén NoSQL clave/atributo simple.</p><span class="decision">Piensa en acceso sencillo por clave.</span></div>
+</div>
+<div class="mini-scenario"><strong>Distractor típico:</strong> “es JSON” no basta para elegir Cosmos DB; primero pregunta si necesitas una base NoSQL distribuida o solo almacenar un objeto JSON.</div>
+<div class="brand"><span>Dominio 3</span><span>Blob · Files · Table</span></div></section>
 
+<section class="slide dense" data-title="Cosmos DB"><div class="ey">Dominio 3 · Azure Cosmos DB</div><h2>Cosmos DB es una base distribuida; la API define el modelo y protocolo que usas</h2>
+<div class="g2">
+<div class="card blue"><h3>Cuándo pensar en Cosmos DB</h3><p>aplicaciones cloud-native · distribución global · baja latencia · escalabilidad · datos NoSQL/multimodelo.</p></div>
+<div class="card"><h3>Qué NO significa</h3><p>JSON → Cosmos DB automáticamente. El patrón de acceso, la distribución y la necesidad de una base son los criterios.</p></div>
+</div>
+<div class="api-grid"><div class="api-pill">API for NoSQL</div><div class="api-pill">MongoDB</div><div class="api-pill">Cassandra</div><div class="api-pill">Gremlin</div><div class="api-pill">Table</div></div>
+<div class="checkpoint">En DP-900 debes <b>reconocer casos de uso y APIs</b>; no desarrollar una aplicación completa con cada API.</div>
+<a class="dp-link" href="https://learn.microsoft.com/en-us/azure/cosmos-db/account-overview" target="_blank" rel="noopener">↗ Mapa oficial de APIs y recursos</a>
+<div class="brand"><span>Cosmos DB</span><span>caso de uso + API</span></div></section>
+
+<section class="slide dense" data-title="Analytics Azure"><div class="ey">Dominio 4 · Analytics workload</div><h2>Piensa en una cadena: ingerir → procesar → almacenar → modelar → visualizar</h2>
+<div class="dp-pipeline">
+<div class="node">Fuentes<br><small>apps · archivos · eventos</small></div>
+<div class="node">Ingesta<br><small>batch / streaming</small></div>
+<div class="node">Procesamiento<br><small>transformar · Spark</small></div>
+<div class="node">Analítica<br><small>lakehouse / warehouse</small></div>
+<div class="node">Consumo<br><small>modelo · Power BI</small></div>
+</div>
+<div class="g3">
+<div class="card"><h3>Azure Databricks</h3><p>ingeniería/analítica con Apache Spark, notebooks y procesamiento distribuido.</p></div>
+<div class="card blue"><h3>Microsoft Fabric</h3><p>plataforma SaaS integrada para distintas cargas de datos y analítica.</p></div>
+<div class="card gold"><h3>Power BI</h3><p>modelos semánticos, informes, visualizaciones y consumo analítico.</p></div>
+</div>
+<div class="brand"><span>Dominio 4</span><span>flujo completo de una carga analítica</span></div></section>
+
+<section class="slide dense" data-title="Databricks Fabric"><div class="ey">Dominio 4 · servicios analíticos</div><h2>Databricks y Fabric se solapan en capacidades, pero la pregunta suele dar una pista</h2>
+<div class="g2">
+<div class="card"><h3>Azure Databricks</h3><p><b>Pista frecuente:</b> Spark, notebooks, Databricks Runtime, ingeniería/ML y workloads distribuidos.</p></div>
+<div class="card blue"><h3>Microsoft Fabric</h3><p><b>Pista frecuente:</b> plataforma analítica SaaS integrada, OneLake y cargas de trabajo conectadas.</p></div>
+</div>
+<div class="mini-scenario"><strong>Ejemplo:</strong> “el equipo ya trabaja con notebooks de Databricks y Delta Lake” hace a Databricks más específico que una respuesta genérica de “plataforma analítica”.</div>
+<div class="checkpoint">Busca la <b>condición más específica del escenario</b>, no la marca más familiar.</div>
+<div class="brand"><span>Analytics</span><span>pista específica > categoría genérica</span></div></section>
+
+<section class="slide dense" data-title="Tiempo real"><div class="ey">Dominio 4 · real-time analytics</div><h2>Batch y streaming cambian cuándo procesas los eventos</h2>
+<div class="g2">
+<div class="card"><h3>Batch</h3><p>acumula datos y procesa lotes en intervalos.</p><span class="decision">Ej.: cierre diario, carga nocturna.</span></div>
+<div class="card blue"><h3>Streaming / real time</h3><p>procesa eventos conforme llegan o con latencia muy baja.</p><span class="decision">Ej.: telemetría, fraude, eventos operativos.</span></div>
+</div>
+<div class="checkpoint">El blueprint vigente pide distinguir batch/streaming e <b>identificar servicios Microsoft para analítica en tiempo real</b>. Aprende primero el patrón; después reconoce el servicio.</div>
+<div class="brand"><span>Real time</span><span>cuándo llegan + cuándo procesas</span></div></section>
+
+<section class="slide dense" data-title="Power BI"><div class="ey">Dominio 4 · Power BI</div><h2>No es solo “hacer gráficos”: también hay modelo semántico y elección de visualización</h2>
+<div class="g3">
+<div class="card"><h3>Modelo</h3><p>tablas, relaciones, medidas y semántica para analizar de forma consistente.</p></div>
+<div class="card blue"><h3>Informe</h3><p>páginas y visualizaciones interactivas para explorar los datos.</p></div>
+<div class="card gold"><h3>Visual adecuada</h3><p>línea = tendencia temporal · barras = comparar categorías · card/KPI = una métrica.</p></div>
+</div>
+<div class="micro"><b>Pregunta rápida:</b> ventas mensuales durante 24 meses → línea; ventas por cinco categorías → barras; ventas totales de hoy → card/KPI.</div>
+<div class="brand"><span>Power BI</span><span>modelo + informe + visual</span></div></section>
+
+<section class="slide dense" data-title="Razonar DP900"><div class="ey">Estrategia de examen</div><h2>Cómo desmontar una pregunta sin memorizar un catálogo</h2>
+<div class="reason-steps">
+<div class="card"><h3>¿Qué dominio?</h3><p>core · relacional · NoSQL · analytics.</p></div>
+<div class="card"><h3>¿Qué palabra manda?</h3><p>SO · instancia · objeto · file share · Spark · streaming · visualización…</p></div>
+<div class="card"><h3>¿Qué descarto?</h3><p>elimina respuestas que resuelven otro patrón, aunque suenen “cloud”.</p></div>
+<div class="card"><h3>¿Qué concepto ya conozco?</h3><p>relación, documento, carga, grano, batch/streaming.</p></div>
+<div class="card"><h3>¿Cuál servicio es más específico?</h3><p>elige el que satisface la condición explícita.</p></div>
+<div class="card"><h3>¿Qué aprendí del error?</h3><p>concepto o nomenclatura Azure: no son el mismo problema.</p></div>
+</div>
+<div class="brand"><span>Estrategia</span><span>leer condición → mapear → descartar</span></div></section>
+
+<section class="slide dense" data-title="DP900 práctico"><div class="ey">Practice Assessment oficial</div><h2>Practica el formato y explica por qué las opciones incorrectas fallan</h2>
+<div class="exam-path">
+<div class="card"><span class="result">45 min</span><p>tiempo efectivo de un examen Fundamentals</p></div>
+<div class="card"><span class="result">65 min</span><p>seat duration total</p></div>
+<div class="card"><span class="result">700+</span><p>puntaje escalado requerido para aprobar</p></div>
+<div class="card"><span class="result">6</span><p>preguntas para razonar juntos hoy</p></div>
+</div>
+<div class="dlrow"><a href="https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications" target="_blank" rel="noopener">🧪 Abrir Practice Assessment</a><a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam" target="_blank" rel="noopener">🧭 Exam Sandbox</a></div>
+<div class="checkpoint">En cada pregunta: <b>dominio → condición decisiva → descarte → servicio → explicación oficial</b>.</div>
+<div class="brand"><span>Práctica</span><span>6 preguntas bien razonadas > 20 rápidas</span></div></section>
+
+<section class="slide dense" data-title="Plan voucher"><div class="ey">Después de hoy</div><h2>Convierte el voucher en un plan concreto de preparación</h2>
+<div class="steps">
+<div class="step"><b>1 · Revisa el Study Guide</b><span>marca dominio por dominio qué reconoces y qué nombre Azure todavía confundes.</span></div>
+<div class="step"><b>2 · Haz el Practice Assessment</b><span>usa el reporte para priorizar, no solo para mirar un porcentaje.</span></div>
+<div class="step"><b>3 · Refuerza el dominio más débil</b><span>Microsoft Learn + Cheat Sheet + referentes de industria.</span></div>
+<div class="step"><b>4 · Usa Exam Sandbox</b><span>familiarízate con la interfaz antes de usar el voucher.</span></div>
+</div>
+<div class="dlrow"><a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900" target="_blank" rel="noopener">📘 Study Guide</a><a class="secondary" href="https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam" target="_blank" rel="noopener">📅 Programar examen</a><a href="glosario-cierre-s16.html" target="_blank" rel="noopener">⬇ Cheat Sheet final</a></div>
+<div class="smallnote">Confirma por el canal oficial de Colsubsidio la entrega y vencimiento del voucher antes de agendar.</div>
+<div class="brand"><span>Plan</span><span>diagnosticar → reforzar → practicar → agendar</span></div></section>
+
+<section class="slide dark" data-title="Cierre"><div class="ey">Fin del recorrido</div><h2>Cierra el diplomado; abre la preparación DP-900</h2>
+<p class="closing">Empezaste consultando una tabla. Hoy puedes decidir <strong>qué representa una fila</strong>, cómo relacionar tablas, cómo proteger reglas, cuándo usar relacional o NoSQL y cómo organizar una carga analítica.</p>
+<p class="closing" data-r>Para DP-900, el siguiente trabajo es más específico: <strong>reconocer requisitos y mapearlos a servicios Azure</strong>.</p>
+<p class="small">Usa el Study Guide vigente, el Practice Assessment y el voucher como ruta de preparación; después responde la encuesta institucional con tu experiencia real del diplomado.</p>
+<div class="brand"><span>Curso cerrado</span><span>preparación DP-900 iniciada</span></div></section>
 <div class="progress"><div class="bar" id="bar"></div></div></main>
 <nav class="toolbar" aria-label="Controles">
-<span class="count" id="count">1 / 20</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-16-cierre-dp900.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button>
+<span class="count" id="count">1 / 29</span><button class="ctl" id="prev" aria-label="Anterior" title="Diapositiva anterior">←</button><button class="ctl" id="next" aria-label="Siguiente" title="Diapositiva siguiente">→</button><button class="ctl" id="timeBtn" aria-label="Temporizador" title="Temporizador (T)">T</button><a class="ctl" id="dlBtn" href="sesion-16-cierre-dp900.html" download title="Descargar esta presentación" aria-label="Descargar esta presentación" style="display:grid;place-items:center;text-decoration:none">↓</a><button class="ctl" id="fullBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">F</button>
 </nav>
 <div class="sr" id="announce" aria-live="polite"></div>
 <script>
