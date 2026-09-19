@@ -326,6 +326,37 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
   .s16-zoom{display:none!important}
 }
 
+/* =====================================================================
+   S16 · preparación DP-900 v2
+   Segunda mitad alineada al blueprint vigente 21-jul-2026.
+   ===================================================================== */
+.dp-weights{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:.8em}
+.dp-weight{background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1em;border-top:.38em solid var(--y)}
+.dp-weight:nth-child(2){border-top-color:var(--b)}.dp-weight:nth-child(3){border-top-color:var(--g)}.dp-weight:nth-child(4){border-top-color:var(--o)}
+.dp-weight .pct{font-size:1.65em;font-weight:950;color:var(--b);display:block;line-height:1}
+.dp-weight h3{margin:.35em 0 .2em;font-size:.96em}.dp-weight p{font-size:.75em;line-height:1.35;margin:.2em 0 0}
+.dp-link{display:inline-flex;align-items:center;gap:.35em;margin-top:.55em;font-weight:850;color:var(--b)}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:.8em}
+.role-card{background:var(--s);border-radius:var(--r-md);box-shadow:var(--sh);padding:1.05em 1.1em;border-left:.38em solid var(--y)}
+.role-card:nth-child(2){border-left-color:var(--b)}.role-card:nth-child(3){border-left-color:var(--g)}
+.role-card h3{margin:.05em 0 .25em;color:var(--b)}.role-card p{margin:.18em 0;line-height:1.4}
+.azure-choice{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap);margin-top:.75em}
+.azure-choice .card{min-height:8.2em}.azure-choice .when{display:block;margin-top:.38em;color:var(--b);font-weight:900;font-size:.78em}
+.mini-scenario{background:var(--yl);border-left:.4em solid var(--y);border-radius:var(--r-md);padding:.78em .9em;box-shadow:var(--sh);margin-top:.65em}
+.mini-scenario strong{color:#6a5600}
+.api-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.55em;margin-top:.7em}
+.api-pill{background:var(--s);border:1px solid var(--line);border-radius:var(--r-sm);padding:.62em .55em;text-align:center;font-weight:850;font-size:.72em;box-shadow:var(--sh)}
+.api-pill:nth-child(1){border-top:.3em solid var(--y)}.api-pill:nth-child(2){border-top:.3em solid var(--g)}.api-pill:nth-child(3){border-top:.3em solid var(--o)}.api-pill:nth-child(4){border-top:.3em solid #6a4bb8}.api-pill:nth-child(5){border-top:.3em solid var(--b)}
+.dp-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:.45em;align-items:stretch;margin-top:.8em}
+.dp-pipeline .node{position:relative;background:var(--s);border-radius:var(--r-sm);padding:.72em .62em;text-align:center;font-size:.76em;font-weight:850;box-shadow:var(--sh);border-top:.32em solid var(--y)}
+.dp-pipeline .node:nth-child(2){border-top-color:var(--b)}.dp-pipeline .node:nth-child(3){border-top-color:var(--o)}.dp-pipeline .node:nth-child(4){border-top-color:#6a4bb8}.dp-pipeline .node:nth-child(5){border-top-color:var(--g)}
+.dp-pipeline .node:not(:last-child):after{content:'→';position:absolute;right:-.52em;top:50%;transform:translateY(-50%);font-weight:950;color:var(--b);z-index:2}
+.reason-steps{counter-reset:dpstep;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-top:.8em}
+.reason-steps .card{counter-increment:dpstep;position:relative;padding-left:3.8em}
+.reason-steps .card:before{content:counter(dpstep);position:absolute;left:1em;top:1em;width:2em;height:2em;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--y);font-weight:950}
+.exam-path{display:grid;grid-template-columns:repeat(4,1fr);gap:.55em;margin-top:.75em}
+.exam-path .card{text-align:center;border-left:0;border-top:.35em solid var(--y)}.exam-path .card:nth-child(even){border-top-color:var(--b)}.exam-path .result{font-size:1.5em}
+@media (max-aspect-ratio:1/1),(max-width:700px){.dp-weights,.role-grid,.azure-choice,.api-grid,.dp-pipeline,.reason-steps,.exam-path{grid-template-columns:1fr}.dp-pipeline .node:not(:last-child):after{content:'↓';right:auto;left:50%;top:auto;bottom:-.85em;transform:translateX(-50%)}}
 </style></head><body><main class="stage">
 
 <section class="slide dark active" data-title="Portada"><div class="ey">Sesión 16 · cierre del diplomado</div>
