@@ -23,8 +23,8 @@ assert.equal(api.questions.length,24);
 assert.deepEqual(Object.fromEntries(['core','rel','nonrel','ana'].map(d=>[d,api.questions.filter(q=>q.d===d).length])),{core:7,rel:6,nonrel:4,ana:7});
 assert.equal(document.querySelectorAll('.qcard').length,24);
 
-function click(el){assert.ok(el);el.dispatchEvent(new window.MouseEvent('click',{bubbles:true,cancelable:true}))}
-function change(el){el.dispatchEvent(new window.Event('change',{bubbles:true}))}
+function click(el){assert.ok(el);el.click()}
+function change(el){el.dispatchEvent(new el.ownerDocument.defaultView.Event('change',{bubbles:true}))}
 
 // Responder correctamente todos los formatos.
 for(const q of api.questions){
@@ -95,11 +95,11 @@ w2.fetch=async()=>({ok:true,status:200,json:async()=>({})});
 w2.eval(scripts[0]);
 const q1=w2.S16DP900.questions[0],card=d2.querySelector('.qcard[data-qid="1"]');
 const wrong=q1.a===0?1:0;
-click.call(null,card.querySelector('.qopts button[data-choice="'+wrong+'"]'));
-click.call(null,card.querySelector('.qcheck'));
+click(card.querySelector('.qopts button[data-choice="'+wrong+'"]'));
+click(card.querySelector('.qcheck'));
 assert.equal(w2.S16DP900.state.answers[1].good,false);
 assert.equal(card.querySelector('.errclass').classList.contains('show'),true);
-click.call(null,card.querySelector('[data-error="T"]'));
+click(card.querySelector('[data-error="T"]'));
 assert.equal(w2.S16DP900.state.errors[1],'T');
 assert.equal(w2.S16DP900.summary().errors.T,1);
 
