@@ -607,59 +607,104 @@
     },
     "16": {
       "fecha": "2026-09-22",
-      "titulo": "Cierre + preparación DP-900",
-      "duracion_util": 145,
+      "titulo": "Cierre del curso + primer contacto DP-900",
+      "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Consolidar el mapa mental del curso, demostrar progreso y salir con un plan concreto para presentar DP-900.",
+      "objetivo": "Cerrar el aprendizaje del curso, comprender la experiencia real del DP-900 y salir con un diagnóstico por dominio y un plan con fecha ligado al voucher.",
       "dp900": [
         {
-          "dominio": "Relational data on Azure",
-          "pregunta": "¿Qué servicio escogerías si necesitas alta compatibilidad con características de una instancia SQL Server administrada como PaaS?",
+          "dominio": "Core data concepts",
+          "pregunta": "Una API devuelve JSON con campos opcionales y arreglos. ¿Cómo se clasifica mejor?",
           "opciones": [
-            "Azure SQL Managed Instance",
-            "Azure Blob Storage",
-            "Azure Files",
-            "Cosmos DB"
+            "Estructurado tabular",
+            "Semiestructurado",
+            "No estructurado",
+            "Relacional por definición"
           ],
-          "correcta": 0,
-          "explicacion": "Managed Instance está orientado a alta compatibilidad con SQL Server manteniendo un modelo PaaS administrado."
+          "correcta": 1,
+          "explicacion": "JSON conserva estructura flexible sin exigir esquema tabular rígido."
+        },
+        {
+          "dominio": "Relational data on Azure",
+          "pregunta": "Necesitas alta compatibilidad con una instancia SQL Server sin administrar una VM. ¿Qué servicio comparas primero?",
+          "opciones": [
+            "Azure SQL Database",
+            "Azure SQL Managed Instance",
+            "SQL Server on Azure VM",
+            "Azure Database for PostgreSQL"
+          ],
+          "correcta": 1,
+          "explicacion": "Managed Instance prioriza compatibilidad de instancia manteniendo PaaS."
         },
         {
           "dominio": "Non-relational data on Azure",
-          "pregunta": "¿Qué servicio escogerías para datos NoSQL globalmente distribuidos y de baja latencia?",
+          "pregunta": "Documentos distribuidos globalmente y baja latencia: ¿qué servicio reconoces?",
           "opciones": [
+            "Azure Files",
             "Azure Cosmos DB",
-            "Azure SQL Database exclusivamente",
-            "Power BI",
-            "Azure DNS"
+            "Azure Table Storage",
+            "Azure Blob Storage"
           ],
-          "correcta": 0,
+          "correcta": 1,
           "explicacion": "Cosmos DB está orientado a cargas NoSQL distribuidas globalmente."
         },
         {
           "dominio": "Analytics workload on Azure",
-          "pregunta": "¿Qué combinación distingue mejor el recorrido analítico?",
+          "pregunta": "Spark + notebooks + ingeniería distribuida: ¿qué servicio reconoces?",
           "opciones": [
-            "Ingestar/procesar → almacenar para análisis → modelar/visualizar",
-            "DNS → firewall → impresora",
-            "Solo SELECT sobre producción",
-            "Convertir todo a PDF"
+            "Power BI",
+            "Azure Databricks",
+            "Azure SQL Database",
+            "Azure Files"
           ],
-          "correcta": 0,
-          "explicacion": "Una carga analítica combina ingestión/procesamiento, almacenamiento analítico y consumo/visualización."
+          "correcta": 1,
+          "explicacion": "Azure Databricks es una plataforma administrada basada en Spark."
         }
       ],
       "solucion": {
         "modo": "manual"
       },
       "actividad": {
-        "titulo": "Demuestra el recorrido",
-        "minutos": 60,
-        "instrucciones": "Resuelve un conjunto acumulativo de escenarios que mezclan relacional, NoSQL, cargas analíticas y servicios Azure; revisa tus errores por dominio y construye tu plan personal de estudio.",
+        "titulo": "Cierre + diagnóstico DP-900 con plan de examen",
+        "minutos": 100,
+        "instrucciones": "Compara S1 con tu desempeño en S15; revisa cómo funciona el examen; resuelve 24 escenarios proporcionales al blueprint; clasifica errores C/T/L; explora Study Guide, Practice Assessment y Exam Sandbox; registra vencimiento del voucher y fecha objetivo; envía al docente el resumen por dominio.",
         "criterios": [
-          "responde escenarios acumulativos",
-          "identifica dominio débil",
-          "define siguiente paso de estudio"
+          "explica cómo funciona un examen Fundamentals sin confundir 45 minutos de examen con 65 minutos de seat time",
+          "responde 24 escenarios distribuidos 7-6-4-7",
+          "clasifica los errores como concepto, transferencia o lectura",
+          "identifica un dominio prioritario",
+          "explora recursos oficiales en vivo",
+          "define fecha objetivo anterior al vencimiento del voucher",
+          "envía un resumen diagnóstico al docente cuando está autenticado"
+        ]
+      },
+      "diagnostico": {
+        "version": "dp900-2026-07-v2",
+        "total": 24,
+        "distribucion": {
+          "conceptos": 7,
+          "relacional": 6,
+          "no_relacional": 4,
+          "analitica": 7
+        },
+        "formatos": [
+          "selección única",
+          "sí/no por enunciado",
+          "emparejar",
+          "completar idea"
+        ],
+        "errores": [
+          "C · concepto",
+          "T · transferencia",
+          "L · lectura"
+        ],
+        "reporte_docente": [
+          "resultado por dominio",
+          "resultado total",
+          "C/T/L",
+          "dominio prioritario",
+          "fecha objetivo",
+          "vencimiento del voucher"
         ]
       }
     }
