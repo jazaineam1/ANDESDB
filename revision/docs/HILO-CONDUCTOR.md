@@ -118,7 +118,7 @@ La regla narrativa es **hereda → pregunta → evidencia → limitación que ob
 
 ### S16
 - **Hereda:** S15 produjo evidencia auténtica de desempeño, no solo respuestas de opción múltiple.
-- **Pregunta:** ¿Qué aprendí, qué puedo transferir y qué me falta para demostrarlo en DP-900?
-- **Evidencia:** Pre/post + diagnóstico por dominio + transferencia por escenarios + plan personal de estudio.
-- **Puente:** Se cierra el ciclo: problema → evidencia → consulta → modelo → implementación → elección tecnológica → analítica → validación → decisión.
+- **Pregunta:** ¿Qué aprendí, cómo se traduce al lenguaje DP-900 y qué debo hacer antes de que venza mi voucher?
+- **Evidencia:** Pre/post + explicación operativa del examen + 24 escenarios 7–6–4–7 + C/T/L + Practice Assessment/Exam Sandbox + plan con fecha.
+- **Puente:** Se cierra el ciclo del curso y se abre una preparación específica: problema → evidencia → consulta → modelo → implementación → elección tecnológica → analítica → validación → decisión → certificación.
 
