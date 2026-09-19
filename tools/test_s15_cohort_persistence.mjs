@@ -92,11 +92,16 @@ async function boot({kind='eval',mode='practica',sourceState,solutionSession=nul
   return{dom,window,document,sourceRaw:raw};
 }
 
-function assertCommonData(document,expected){
+function assertCommonData(document,expected,{guided=false}={}){
   assert.equal(document.querySelector('#q1').value,expected.queries.q1);
   assert.equal(document.querySelector('#q2').value,expected.queries.q2);
   assert.equal(document.querySelector('#ddl').value,expected.ddl);
-  assert.equal(document.querySelector('#domainMigration').value,expected.domainMigration);
+  if(guided){
+    assert.equal(document.querySelector('#domainMigration').value,"INSERT INTO estado_catalogo(estado) VALUES ('Escalado');");
+    assert.equal(document.querySelector('#domainMigration').readOnly,true);
+  }else{
+    assert.equal(document.querySelector('#domainMigration').value,expected.domainMigration);
+  }
   assert.equal(document.querySelector('#unnestQuery').value,expected.unnestQuery);
   assert.equal(document.querySelector('#bossUnnest').value,expected.boss.unnestQuery);
   assert.equal(document.querySelector('#docStoreCase').value,expected.doc.storeCase);
@@ -172,7 +177,7 @@ const legacy=legacyState();
 {
   const source=legacyState(),sourceRaw=JSON.stringify(source);
   const {dom,window,document}=await boot({kind:'solution',sourceState:source});
-  assertCommonData(document,source);
+  assertCommonData(document,source,{guided:true});
   assert.equal(document.querySelector('[data-solution="q1"]').disabled,false,'q1 con 3 pistas previas debe desbloquearse');
   assert.equal(document.querySelector('[data-solution="q2"]').disabled,true,'q2 con 1 pista sigue bloqueada');
   click(window,document.querySelector('[data-hint="q2"]'));
