@@ -31,7 +31,8 @@ titles=re.findall(r'<section class="slide[^"]*" data-title="([^"]+)"',html)
 expected=["Portada","Recorrido","SQL que escribes","Pensamiento SQL","JOIN y conjuntos","De reglas a modelo","Integridad y DDL","SQL o NoSQL","OLTP a analítica","BigQuery físico","Anidados y formatos","S15 integró","Pausa","Tres casos","Resolución casos","Curso a DP900","Nombres Azure","DP900 práctico","Cheat sheet","Cierre"]
 assert titles==expected, titles
 assert len(titles)==20
-assert html.count('class="micro"')>=6, "S16 debe mantener microactivaciones frecuentes sin nota"\n
+assert html.count('class="micro"')>=6, "S16 debe mantener microactivaciones frecuentes sin nota"
+
 # La sesión final no vuelve a ser formulario/examen.
 for bad in [
     "<textarea","<input","<select","qcard","send-report","data-post=","data-portfolio=",
