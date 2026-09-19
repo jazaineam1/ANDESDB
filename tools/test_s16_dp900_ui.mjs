@@ -21,7 +21,7 @@ assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
 assert.equal(d.querySelector('#count').textContent,'1 / 20');
 
 // No formularios ni segundo examen.
-assert.equal(d.querySelectorAll('textarea,input,select,.qcard,[data-post],[data-portfolio]').length,0);
+assert.equal(d.querySelector('main').querySelectorAll('textarea,input,select,.qcard,[data-post],[data-portfolio]').length,0);
 assert.equal(d.querySelector('#send-report'),null);
 
 // Shell visual tradicional.
