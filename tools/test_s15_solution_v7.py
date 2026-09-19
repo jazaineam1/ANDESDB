@@ -77,6 +77,11 @@ def main():
     assert "Reto de transferencia" in SOL_JS and "Conexión adicional:" in SOL_JS
     assert ".transfer-badge" in CSS and ".transfer-note" in CSS
 
+    # 3FN: fichas homónimas se califican por el esquema visible, no por el ID interno.
+    assert "Las dos fichas homónimas son intercambiables" in SOL_HTML
+    assert "const normColumn=id=>String(id||'').split('.').pop()" in SOL_JS
+    assert "state.norm.evento.map(normColumn)" in SOL_JS and "state.norm.agente.map(normColumn)" in SOL_JS
+
     # Q3: último evento -> inclusión -> historial completo -> suma.
     for token in (
         "1. encontrar último evento",
@@ -111,7 +116,7 @@ def main():
     assert ".example-code" in CSS and ".study-guide-bar" in CSS and ".grain-flow" in CSS
 
     # El espejo revision debe ser ejecutable y usar exactamente el mismo runtime.
-    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-transfer1' in REV_HTML
+    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-norm1' in REV_HTML
     assert SOL_JS==REV_JS
 
     print("OK · S15 solucionario guiado: estructura, 3 pistas, ejemplos, DDL, sesión y espejo revision")
