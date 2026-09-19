@@ -35,6 +35,13 @@ assert.ok(d.querySelector('#fullBtn'));
 assert.ok(d.querySelector('#dlBtn'));
 assert.ok(d.querySelectorAll('[data-r]').length>=10);
 
+assert.equal(d.querySelectorAll('svg.s16-flowviz').length,4);
+assert.ok(d.querySelector('[data-start-break]'));
+assert.ok(d.querySelector('#mini'));
+assert.ok(d.querySelector('#miniT'));
+assert.ok(d.querySelector('#miniPP'));
+assert.ok(d.querySelector('#minLibre'));
+
 // Navegación: el primer clic avanza; en slides con data-r primero revela y luego avanza.
 d.querySelector('#next').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Recorrido');
@@ -50,6 +57,14 @@ assert.equal(d.querySelector('#count').textContent,'20 / 20');
 while(d.querySelector('.slide.active').querySelector('[data-r]:not(.shown)')) d.querySelector('#next').click();
 d.querySelector('#next').click();
 assert.equal(d.querySelector('#count').textContent,'20 / 20');
+
+// Temporizador tradicional: el botón de pausa arranca 15 min y muestra la pastilla flotante.
+const breakBtn=d.querySelector('[data-start-break]');
+breakBtn.click();
+assert.ok(d.querySelector('#mini').classList.contains('on'));
+assert.match(d.querySelector('#miniT').textContent,/^1[45]:[0-5][0-9]$/);
+d.querySelector('#miniPP').click();
+assert.equal(d.querySelector('#miniPP').getAttribute('aria-label'),'Reanudar');
 
 // Recursos y elementos centrales.
 assert.ok(d.querySelector('a[href="glosario-cierre-s16.html"]'));
