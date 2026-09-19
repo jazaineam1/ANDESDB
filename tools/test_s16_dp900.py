@@ -78,17 +78,40 @@ for url in [
 ]:
     assert url in html, url
 
-# Cheat Sheet de tres páginas, no glosario mínimo.
-assert sheet.count('<section class="page">')==3
+# Cheat Sheet de cuatro páginas, con mapa de referentes por concepto.
+assert sheet.count('<section class="page">')==4
 for token in [
     "Cheat Sheet final · SQL y pensamiento de consulta",
     "Orden lógico del motor","INNER JOIN","FULL OUTER JOIN","UNION ALL","WITH / CTE",
     "CASE","COALESCE","Normalización","1FN","2FN","3FN","DDL · estructura","DML · datos",
     "Clave-valor","Grafo","Serie de tiempo","CAP","OLTP","OLAP","Modelo estrella",
     "ETL","ELT","Partición","Clustering","Pruning","ARRAY","STRUCT","UNNEST","Parquet",
-    "Azure SQL Managed Instance","Blob Storage","Microsoft Fabric","Checklist antes de confiar"
+    "Azure SQL Managed Instance","Blob Storage","Microsoft Fabric","Checklist antes de confiar",
+    "Rutas de profundización · referentes de industria","PostgreSQL · Table Expressions","MongoDB · Data Modeling",
+    "Neo4j Fundamentals","CAP Theorem","Dimensional Modeling Techniques","Apache Parquet Overview"
 ]:
     assert token in sheet, token
+
+
+for ref in [
+    "https://www.postgresql.org/docs/current/queries-table-expressions.html",
+    "https://www.postgresql.org/docs/current/queries-with.html",
+    "https://www.postgresql.org/docs/current/functions-conditional.html",
+    "https://www.postgresql.org/docs/current/ddl-constraints.html",
+    "https://learn.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description",
+    "https://www.mongodb.com/docs/manual/data-modeling/",
+    "https://graphacademy.neo4j.com/courses/neo4j-fundamentals",
+    "https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/cap-theorem.html",
+    "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/",
+    "https://cloud.google.com/bigquery/docs/partitioned-tables",
+    "https://cloud.google.com/bigquery/docs/clustered-tables",
+    "https://cloud.google.com/bigquery/docs/nested-repeated",
+    "https://parquet.apache.org/docs/overview/",
+    "https://docs.databricks.com/aws/en/delta",
+    "https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview",
+    "https://learn.microsoft.com/en-us/power-bi/fundamentals/power-bi-overview"
+]:
+    assert ref in sheet, ref
 
 # Manifiestos: S16 ya no promete otro diagnóstico custom.
 s=plan["sesiones"]["16"]
@@ -97,6 +120,7 @@ assert s["diagnostico"]["en_clase"] is False
 assert s["diagnostico"]["practice_assessment_oficial_en_vivo"]==5
 assert s["cierre"]["no_recopilar"]==["respuestas abiertas S1","mini encuesta adicional","URL de portafolio","diagnóstico S16 al docente"]
 assert "tres casos finales sin nota" in s["objetivo"].casefold()
+assert s["cierre"]["referentes_industria"]["fuentes"]==["PostgreSQL Documentation","Microsoft Learn","MongoDB Documentation","Neo4j GraphAcademy","AWS Architecture/Whitepapers","Kimball Group","Google Cloud BigQuery Documentation","Apache Parquet","Databricks Documentation"]
 
 cs=next(x for m in course["modulos"] for x in m.get("sesiones",[]) if x["n"]==16)
 assert cs["titulo"]=="Cierre del curso + puente DP-900"
@@ -121,8 +145,8 @@ for token in [
     "No enviar diagnóstico docente",
     "Una idea cognitiva por diapositiva",
     "Practice Assessment oficial",
-    "Cheat Sheet final · 3 páginas"
+    "Cheat Sheet final · 4 páginas"
 ]:
     assert token in guide, token
 
-print("OK · S16: cierre fuerte + SQL completo + 3 casos sin nota + puente DP-900 + Cheat Sheet 3 páginas")
+print("OK · S16: cierre fuerte + SQL completo + 3 casos sin nota + puente DP-900 + Cheat Sheet 4 páginas + referentes de industria")
