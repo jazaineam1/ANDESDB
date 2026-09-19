@@ -5,3 +5,32 @@
 .mission,.final{content-visibility:auto;contain-intrinsic-size:auto 1050px}
 button,.tile,.chip,.tabs button{touch-action:manipulation}
 @media(max-width:760px),(pointer:coarse){.mission,.final{contain-intrinsic-size:auto 1250px}.mission{box-shadow:none}}
+
+/* S15 práctica guiada · solución contextual */
+.guided-workspace{border:1px solid #dfe5ea;border-radius:12px;background:#fff;overflow:hidden}
+.guided-tabs{display:flex;gap:4px;align-items:center;padding:7px;border-bottom:1px solid #e4e7ec;background:#f8fafc;overflow-x:auto}
+.guided-tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:8px;padding:7px 10px;font-size:.72rem;font-weight:900;white-space:nowrap;cursor:pointer}
+.guided-tab:hover{background:#eef2f6;color:var(--ink)}
+.guided-tab.active{background:var(--dark);border-color:var(--dark);color:#fff}
+.guided-tab.compact{padding-inline:9px}
+.guided-workspace>[data-sql-pane]{padding:10px}
+.guided-workspace>[data-sql-pane][hidden],.study-guide [data-study-pane][hidden],.guided-tabs[hidden]{display:none!important}
+.guided-answer,.guided-explanation{border:1px solid #d0d5dd;border-radius:11px;padding:12px;background:#fff;margin-top:8px;overflow:auto}
+.guided-answer{border-color:#b2ddff;background:#f5fbff}
+.guided-explanation{border-color:#d6bbfb;background:#fbf9ff}
+.guided-kicker{font-size:.68rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.guided-explanation .guided-kicker{color:var(--purple)}
+.guided-answer .code,.guided-explanation .code{min-height:0;height:auto;max-height:none;margin:8px 0;white-space:pre-wrap;overflow:auto}
+.guided-answer p,.guided-explanation p{margin:.55rem 0;font-size:.82rem;line-height:1.55}
+.guided-answer table,.guided-explanation table{width:100%;border-collapse:collapse;font-size:.76rem}
+.guided-answer th,.guided-answer td,.guided-explanation th,.guided-explanation td{padding:7px;border-bottom:1px solid #e4e7ec;text-align:left;vertical-align:top}
+.study-guide{scroll-margin-top:76px}
+.mission.study-answer-open>.mhead~*:not(.study-guide){display:none!important}
+.mission.study-answer-open>.study-guide{margin-bottom:14px}
+@media(max-width:760px){
+ .guided-tabs{padding:5px;gap:3px}
+ .guided-tab{font-size:.68rem;padding:7px 8px}
+ .guided-answer,.guided-explanation{padding:10px}
+ .guided-workspace>[data-sql-pane]{padding:8px}
+ .study-guide{margin:10px!important}
+}
