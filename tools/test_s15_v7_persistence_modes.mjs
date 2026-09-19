@@ -104,6 +104,9 @@ async function boot(mode,raw){
 const p1=await boot('practica',legacyRaw);
 assert.equal(p1.raw,legacyRaw,'Abrir práctica no debe reescribir el localStorage existente');
 assert.match(p1.document.querySelector('#modePill').textContent,/Práctica guiada/);
+const practiceTransfer=[...p1.document.querySelectorAll('#sqlTasks .sqltask')].filter(x=>x.querySelector('.transfer-badge'));
+assert.equal(practiceTransfer.length,2);
+assert.deepEqual(practiceTransfer.map(x=>x.querySelector('h3').textContent.slice(0,2)).sort(),['Q3','Q5']);
 assert.equal(p1.document.querySelector('#q2').value,legacy.queries.q2);
 assert.equal(p1.document.querySelector('#ddl').value,legacy.ddl);
 assert.equal(p1.document.querySelector('#domainMigration').readOnly,true); assert.match(p1.document.querySelector('#domainMigration').value,/Escalado/);

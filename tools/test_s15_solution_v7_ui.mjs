@@ -51,6 +51,14 @@ async function boot({reset=false}={}){
   const {dom,window,document,sourceRaw}=await boot();
   assert.match(document.querySelector('#modePill').textContent,/Práctica guiada/);
 
+  const transferTasks=[...document.querySelectorAll('#sqlTasks .sqltask')].filter(x=>x.querySelector('.transfer-badge'));
+  assert.equal(transferTasks.length,2);
+  assert.deepEqual(transferTasks.map(x=>x.querySelector('h3').textContent.slice(0,2)).sort(),['Q3','Q5']);
+  for(const q of ['Q1','Q2','Q4']){
+    const article=[...document.querySelectorAll('#sqlTasks .sqltask')].find(x=>x.querySelector('h3').textContent.startsWith(q));
+    assert.equal(article.querySelector('.transfer-badge'),null);
+  }
+
   // Formato: ejemplos legibles y ayuda compacta.
   const docExample=document.querySelector('#s4 .example-code');
   const nestedExample=document.querySelector('#s7 .example-code');
