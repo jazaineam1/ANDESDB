@@ -24,7 +24,7 @@ for token in [
     "Enviar diagnóstico al docente", "challenge_completed", "learning-track",
     "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"', "Confianza antes de ver feedback", "Marca tu confianza 1–3",
     "Apertura honesta", "Devolución S15", "Todo el SQL que escribiste", "Síntesis del curso", "Cápsula Azure", "Certificaciones", "Portafolio de evidencias", "Encuesta de cierre",
-    'data-post="q1"', 'data-portfolio="sql"', 'data-survey="rel"', "post_s1_completed", "portfolio:state.portfolio", "survey:state.survey"
+    'data-post="q1"', 'data-portfolio="sql"', 'data-survey="rel"', "post_s1_completed", "post_s1_responses", "portfolio:state.portfolio", "survey:state.survey"
 ]:
     need(token)
 assert "puede variar" in HTML.casefold()
@@ -94,6 +94,7 @@ for p in (PLAN,RPLAN):
     assert len(s["cierre"]["todo_sql"])==9
     assert s["diagnostico"]["live_practice_assessment"]==5
     assert s["diagnostico"]["keep_24_items"] is True
+    assert "respuestas actuales de la reflexión S1" in s["diagnostico"]["reporte_docente"]
 
 # Guía docente.
 for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","voucher","Practice Assessment","Exam Sandbox","C/T/L","0–10","10–35","35–50","50–60","60–75","75–93","93–103","103–148","148–162","162–177","177–180","Certificaciones trasladadas desde S7","Todo el SQL que escribiste","Cápsula de vocabulario DP-900","Portafolio","Encuesta"]:
