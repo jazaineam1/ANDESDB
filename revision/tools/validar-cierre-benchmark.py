@@ -193,6 +193,8 @@ def main() -> int:
         "25–30%", "20–25%", "15–20%", "Dominio 1", "Dominio 2", "Dominio 3", "Dominio 4",
         "24 escenarios", "7–6–4–7", "Clasifica el error", "Concepto", "Transferencia", "Lectura",
         "Practice Assessment", "Exam Sandbox", "Programar", "Fecha objetivo", "Enviar diagnóstico al docente",
+        "Devolución S15", "Síntesis del curso", "Certificaciones", "Google Cloud Data Analytics", "HackerRank SQL",
+        "Portafolio de evidencias", "Encuesta de cierre", "post_s1_completed",
         "Pausa · 15 minutos", 'href="sesion-16-cierre-dp900.html"', "presentation-timer.js"
     ], "S16")
     forbid(s16, [
@@ -222,7 +224,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 cierra curso + 24 escenarios + plan de voucher DP-900")
+    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 cierra S1/S15 + certificaciones + 24 escenarios + voucher + portafolio + encuesta")
     return 0
 
 

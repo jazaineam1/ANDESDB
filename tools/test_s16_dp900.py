@@ -20,7 +20,9 @@ for token in [
     "40–60", "Online o centro", "voucher", "30 minutos adicionales", "25–30%", "20–25%", "15–20%",
     "24 escenarios", "7–6–4–7", "Practice Assessment", "Exam Sandbox",
     "Enviar diagnóstico al docente", "challenge_completed", "learning-track",
-    "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"', "Confianza antes de ver feedback", "Marca tu confianza 1–3"
+    "andesdb.s16.dp900.v2", 'id="voucher-expiry"', 'id="exam-target"', "Confianza antes de ver feedback", "Marca tu confianza 1–3",
+    "Devolución S15", "Síntesis del curso", "Certificaciones", "Portafolio de evidencias", "Encuesta de cierre",
+    'data-post="q1"', 'data-portfolio="sql"', 'data-survey="rel"', "post_s1_completed", "portfolio:state.portfolio", "survey:state.survey"
 ]:
     need(token)
 assert "puede variar" in HTML.casefold()
@@ -53,7 +55,7 @@ for q in qs:
 # Fuentes oficiales y cautelas metodológicas.
 for link in [
     "exam-duration-exam-experience","register-schedule-exam","resources/study-guides/dp-900",
-    "practice-assessments-for-microsoft-certifications","prepare-exam","online-exams","certifications/accommodations"
+    "practice-assessments-for-microsoft-certifications","prepare-exam","online-exams","certifications/request-accommodations"
 ]:
     need(link)
 assert "no es una nota" in HTML.casefold()
@@ -61,6 +63,10 @@ assert "predice" in HTML.casefold() and "aprobar" in HTML.casefold()
 assert "no representa necesariamente la longitud o dificultad exacta" in HTML.casefold()
 assert "state.confidence[q.id]" in HTML
 assert "high_confidence_errors" in HTML
+assert HTML.count('<section class="slide')==27
+for token in ["Último evento vs.", "aceptar lo válido", "No mezclar granos", "Google Cloud Data Analytics", "HackerRank SQL"]:
+    assert token in HTML, token
+assert "0–15" not in HTML and "15–35" not in HTML and "65–110" not in HTML
 
 # Manifiesto y plan.
 def session16(course):
@@ -70,15 +76,22 @@ for c in (COURSE,RCOURSE):
     assert s["titulo"]=="Cierre del curso + primer contacto DP-900"
     assert "24 escenarios" in s["desc"]
     assert "voucher" in s["desc"]
+    assert "portafolio" in s["desc"].casefold()
+    assert "encuesta" in s["desc"].casefold()
+    assert any("skills.google/paths/420" in r.get("href","") for r in s.get("recursos",[]))
+    assert any("hackerrank.com/skills-verification/sql_basic" in r.get("href","") for r in s.get("recursos",[]))
 for p in (PLAN,RPLAN):
     s=p["sesiones"]["16"]
     assert s["titulo"]=="Cierre del curso + primer contacto DP-900"
     assert s["diagnostico"]["total"]==24
     assert s["diagnostico"]["distribucion"]=={"conceptos":7,"relacional":6,"no_relacional":4,"analitica":7}
     assert "fecha objetivo" in " ".join(s["actividad"]["criterios"]).casefold()
+    assert "cierre" in s and len(s["cierre"]["certificaciones"])==3
+    assert len(s["cierre"]["portafolio"])==6
+    assert len(s["cierre"]["encuesta"])==4
 
 # Guía docente.
-for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","voucher","Practice Assessment","Exam Sandbox","C/T/L"]:
+for token in ["45 minutos","65 minutos","700","24 escenarios","7–6–4–7","voucher","Practice Assessment","Exam Sandbox","C/T/L","0–15","15–35","65–110","140–165","Certificaciones trasladadas desde S7","Portafolio","Encuesta"]:
     assert token.casefold() in GUIDE.casefold(), token
 
-print("OK · S16: cierre + examen + 24 escenarios + voucher + reporte docente")
+print("OK · S16: cierre S1/S15 + examen + certificaciones + 24 escenarios + voucher + portafolio + encuesta + reporte docente")
