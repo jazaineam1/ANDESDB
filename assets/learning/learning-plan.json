@@ -610,7 +610,7 @@
       "titulo": "Cierre del curso + primer contacto DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Cerrar el aprendizaje del curso, comprender la experiencia real del DP-900 y salir con un diagnóstico por dominio y un plan con fecha ligado al voucher.",
+      "objetivo": "Cerrar el curso con evidencia S1→S15→S16, comprender el DP-900 y sus credenciales relacionadas, diagnosticar brechas por dominio y terminar con un plan, portafolio y fecha ligados al voucher.",
       "dp900": [
         {
           "dominio": "Core data concepts",
@@ -667,14 +667,17 @@
       "actividad": {
         "titulo": "Cierre + diagnóstico DP-900 con plan de examen",
         "minutos": 100,
-        "instrucciones": "Compara S1 con tu desempeño en S15; revisa cómo funciona el examen; resuelve 24 escenarios proporcionales al blueprint; clasifica errores C/T/L; explora Study Guide, Practice Assessment y Exam Sandbox; registra vencimiento del voucher y fecha objetivo; envía al docente el resumen por dominio.",
+        "instrucciones": "Registra el post de S1; revisa la devolución S15 y la síntesis del curso; entiende formato, voucher y certificaciones; resuelve 24 escenarios 7–6–4–7; marca confianza y C/T/L; explora recursos oficiales; define fecha objetivo; marca tu portafolio; completa la encuesta y envía el resumen al docente.",
         "criterios": [
+          "registra cinco respuestas post de S1 y las compara con la línea base disponible",
+          "explica los tres patrones críticos de S15 sin tratarlos como un ranking estadístico no observado",
+          "distingue DP-900, Google Cloud Path 420 y HackerRank SQL por propósito",
           "explica cómo funciona un examen Fundamentals sin confundir 45 minutos de examen con 65 minutos de seat time",
           "responde 24 escenarios distribuidos 7-6-4-7",
-          "clasifica los errores como concepto, transferencia o lectura",
-          "identifica un dominio prioritario",
-          "explora recursos oficiales en vivo",
+          "marca confianza previa y clasifica errores como concepto, transferencia o lectura",
+          "identifica un dominio prioritario y explora recursos oficiales en vivo",
           "define fecha objetivo anterior al vencimiento del voucher",
+          "marca un portafolio de evidencias y completa la encuesta de cierre",
           "envía un resumen diagnóstico al docente cuando está autenticado"
         ]
       },
@@ -705,6 +708,34 @@
           "dominio prioritario",
           "fecha objetivo",
           "vencimiento del voucher"
+        ]
+      },
+      "cierre": {
+        "post_s1": 5,
+        "devolucion_s15": [
+          "último evento vs fila con ese estado",
+          "restricciones por comportamiento",
+          "mezcla de granos"
+        ],
+        "sintesis": "problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión",
+        "certificaciones": [
+          "DP-900 · Azure Data Fundamentals",
+          "Google Cloud Data Analytics · Path 420",
+          "HackerRank SQL"
+        ],
+        "portafolio": [
+          "SQL",
+          "modelo",
+          "DDL e integridad",
+          "NoSQL",
+          "analítica cloud",
+          "S15"
+        ],
+        "encuesta": [
+          "modelo relacional",
+          "SQL con criterio",
+          "transferencia SQL/NoSQL/analítica",
+          "siguiente paso concreto"
         ]
       }
     }
