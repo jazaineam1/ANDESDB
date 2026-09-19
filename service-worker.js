@@ -31,6 +31,8 @@ const ESSENTIAL = [
   './Plantillas/proyecto-final/Datos/casos.csv',
   './Plantillas/proyecto-final/Datos/eventos.csv',
   './Plantillas/proyecto-final/Datos/evidencias.json',
+  './Presentaciones/M6/sesion-16-cierre-dp900.html',
+  './Presentaciones/M6/glosario-cierre-s16.html',
   './Presentaciones/M3/sesion-6-reglas-de-negocio.html',
   './Presentaciones/M3/sql-lab-s6.js',
   './Presentaciones/M3/sesion-7-de-las-reglas-al-modelo.html',
