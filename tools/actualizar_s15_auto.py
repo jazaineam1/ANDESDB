@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 
 FILES=(
-  'evaluador-s15.html','evaluador-s15-v7.html',
+  'evaluador-s15.html','evaluador-s15-v7.html','solucionario-s15.html',
   'assets/learning/s15-autograder-v7.js',
   'assets/learning/s15-nested-duckdb-v1.mjs',
   'assets/learning/s15-workbench-v7.css',
