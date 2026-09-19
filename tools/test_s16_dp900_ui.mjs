@@ -35,7 +35,9 @@ assert.ok(d.querySelector('#fullBtn'));
 assert.ok(d.querySelector('#dlBtn'));
 assert.ok(d.querySelectorAll('[data-r]').length>=10);
 
-assert.equal(d.querySelectorAll('svg.s16-flowviz').length,4);
+assert.equal(d.querySelectorAll('svg.s16-flowviz').length,8);
+assert.equal(d.querySelectorAll('svg.s16-desktop-flowviz').length,4);
+assert.equal(d.querySelectorAll('svg.s16-mobile-flowviz').length,4);
 assert.ok(d.querySelector('[data-start-break]'));
 assert.ok(d.querySelector('#mini'));
 assert.ok(d.querySelector('#miniT'));
