@@ -24,16 +24,30 @@ assert.equal(d.querySelector('#count').textContent,'1 / 20');
 assert.equal(d.querySelectorAll('textarea,input,select,.qcard,[data-post],[data-portfolio]').length,0);
 assert.equal(d.querySelector('#send-report'),null);
 
-// Navegación.
+// Shell visual tradicional.
+assert.ok(d.querySelector('.toolbar'));
+assert.ok(d.querySelector('.progress #bar'));
+assert.equal(d.querySelector('.ctlbar'),null);
+assert.equal(d.querySelectorAll('pre.sqlviz').length,8);
+assert.equal(d.querySelectorAll('.copybtn').length,8);
+assert.ok(d.querySelector('#timeBtn'));
+assert.ok(d.querySelector('#fullBtn'));
+assert.ok(d.querySelector('#dlBtn'));
+assert.ok(d.querySelectorAll('[data-r]').length>=10);
+
+// Navegación: el primer clic avanza; en slides con data-r primero revela y luego avanza.
 d.querySelector('#next').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Recorrido');
 assert.equal(d.querySelector('#count').textContent,'2 / 20');
 d.querySelector('#prev').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
 
-for(let i=1;i<20;i++)d.querySelector('#next').click();
+let guard=0;
+while(d.querySelector('#count').textContent!=='20 / 20' && guard<80){d.querySelector('#next').click();guard++}
+assert.ok(guard<80,'debe alcanzar la última diapositiva');
 assert.equal(d.querySelector('.slide.active').dataset.title,'Cierre');
 assert.equal(d.querySelector('#count').textContent,'20 / 20');
+while(d.querySelector('.slide.active').querySelector('[data-r]:not(.shown)')) d.querySelector('#next').click();
 d.querySelector('#next').click();
 assert.equal(d.querySelector('#count').textContent,'20 / 20');
 
@@ -45,4 +59,4 @@ assert.ok([...d.querySelectorAll('.slide')].some(s=>s.dataset.title==='Tres caso
 assert.ok([...d.querySelectorAll('.slide')].some(s=>s.dataset.title==='Curso a DP900'));
 
 dom.window.close();
-console.log('OK · S16 UI: 20 slides, navegación estable y cero formularios/examen custom');
+console.log('OK · S16 UI: 20 slides + toolbar/progress tradicionales + código visual + cero formularios/examen custom');

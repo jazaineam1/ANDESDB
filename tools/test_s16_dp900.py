@@ -33,6 +33,17 @@ assert titles==expected, titles
 assert len(titles)==20
 assert html.count('class="micro"')>=6, "S16 debe mantener microactivaciones frecuentes sin nota"
 
+# S16 debe usar el shell visual tradicional del curso, no un segundo sistema.
+assert 'class="toolbar"' in html
+assert 'class="progress"' in html
+assert 'class="ctlbar"' not in html
+assert html.count('pre class="sqlviz"')==8
+assert 'class="kw"' in html and 'class="fn"' in html and 'class="type"' in html and 'class="op"' in html
+assert "className='copybtn'" in html
+assert html.count("data-r")>=10
+for old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
+    assert old_class not in html, old_class
+
 # La sesión final no vuelve a ser formulario/examen.
 for bad in [
     "<textarea","<input","<select","qcard","send-report","data-post=","data-portfolio=",
