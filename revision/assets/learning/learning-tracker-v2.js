@@ -27,7 +27,7 @@
     [13,'M5','Laboratorio BigQuery','Presentaciones/M5/sesion-13-laboratorio-bigquery.html','bigquery-s13'],
     [14,'M5','BigQuery anidado y mapa Azure','Presentaciones/M5/sesion-14-bigquery-anidados-mapa-azure.html','unnest-s14'],
     [15,'M6','Desafío final','Presentaciones/M6/sesion-15-desafio-final.html','s15-integrador'],
-    [16,'M6','Cierre + DP-900','Presentaciones/M6/sesion-16-cierre-dp900.html','s16-dp900'],
+    [16,'M6','Cierre del curso + primer contacto DP-900','Presentaciones/M6/sesion-16-cierre-dp900.html','s16-dp900'],
   ].map(([n,module,title,path,activity]) => ({n,module,title,path,activity}));
 
   const MODULES = {
