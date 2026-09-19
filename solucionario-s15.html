@@ -31,7 +31,7 @@ footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
   <div class="wrap">
     <div class="ey">ANDESDB · Sesión 15</div>
     <h1>Solucionario de sesión 15</h1>
-    <p>Referencia para el <b>modo práctica</b> del Workbench integral v7. Las soluciones se escriben de la forma más simple posible con herramientas ya trabajadas en el diplomado. No son las únicas respuestas correctas.</p>
+    <p>Referencia para el <b>modo práctica</b> de la sesión 15. Usa únicamente ideas, palabras y herramientas trabajadas entre S2 y S14. Si el Workbench actual añade una exigencia que no fue enseñada antes, aquí se marca como <b>fuera del alcance del curso</b> en vez de presentarla como si el estudiante ya debiera conocerla.</p>
     <div class="actions">
       <a class="btn" href="evaluador-s15-v7.html?modo=practica">Abrir Workbench en práctica</a>
       <a class="btn alt" href="index.html">Volver al curso</a>
@@ -40,7 +40,7 @@ footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
 </header>
 
 <main class="wrap">
-  <div class="notice"><b>Cómo usar este solucionario.</b> Intenta primero cada estación, compara después con esta referencia y vuelve a ejecutarla. El objetivo es reconocer <b>qué representa una fila</b>, <b>qué regla protege el dato</b> y <b>por qué la decisión funciona</b>. El Boss explicado aquí corresponde al workload público del modo práctica; en evaluación debes leer el workload asignado.</div>
+  <div class="notice"><b>Cómo usar este solucionario.</b> Intenta primero cada estación, compara después con esta referencia y vuelve a ejecutarla. El objetivo es reconocer <b>qué representa una fila</b>, <b>qué regla protege el dato</b> y <b>por qué la decisión funciona</b>. El caso final explicado aquí corresponde al <b>patrón de consultas</b> visible en el modo práctica; si ese patrón cambia, la decisión física también puede cambiar.</div>
 
   <nav class="toc">
     <b>Ir a:</b><br>
@@ -58,7 +58,7 @@ footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
   <section id="diagnostico">
     <span class="tag">S6 · calidad y evidencia</span>
     <h2>0 · Diagnóstico de datos imperfectos</h2>
-    <p>Esta estación no da puntos. Sirve para separar un <b>hallazgo observable</b> de una <b>explicación todavía hipotética</b>.</p>
+    <p>Esta estación no da puntos. Retoma la idea de S6: separar <b>lo que los datos sí muestran</b> de una <b>suposición sobre la causa</b>.</p>
 
     <h3>Duplicados de caso</h3>
 <pre><code>SELECT caso_id, COUNT(*) AS filas
@@ -72,17 +72,17 @@ HAVING COUNT(*) &gt; 1;</code></pre>
 FROM casos_dirty
 WHERE tipo IS NULL;</code></pre>
 
-    <h3>Eventos huérfanos</h3>
+    <h3>Eventos cuyo caso no existe</h3>
 <pre><code>SELECT e.*
 FROM eventos_dirty e
 LEFT JOIN casos_dirty c
   ON c.caso_id = e.caso_id
 WHERE c.caso_id IS NULL;</code></pre>
-    <div class="answer"><b>Clasificación correcta:</b> “Existe un evento cuyo caso no aparece en CASOS” = hallazgo confirmado. “Ocurrió por una falla de sincronización” = hipótesis.</div>
+    <div class="answer"><b>Clasificación correcta:</b> “Existe un evento cuyo caso no aparece en CASOS” = lo muestran los datos. “Ocurrió por una falla de sincronización” = es una suposición que los datos no demuestran.</div>
   </section>
 
   <section id="sql">
-    <span class="tag">S2–S5 · SQL y grano</span>
+    <span class="tag">S2–S5 · SQL y nivel de agregación</span>
     <h2>1 · SQL Arena</h2>
     <p>Estas consultas priorizan claridad. Antes de cada una pregunta: <b>¿qué debe representar una fila del resultado?</b></p>
 
@@ -136,13 +136,15 @@ GROUP BY e.caso_id;</code></pre>
     <div class="why"><b>Por qué:</b> primero decides qué casos <i>terminan</i> cerrados. Después vuelves a todo su historial y sumas la trayectoria completa. Un caso que se cerró y luego se reabrió no entra.</div>
 
     <h3>Q4 · Totales sin inflar por un JOIN 1:N</h3>
-<pre><code>SELECT
-  (SELECT COUNT(*) FROM casos_src) AS total_casos,
-  (SELECT COUNT(*) FROM eventos_src) AS total_eventos,
-  (SELECT COUNT(*)
-   FROM casos_src
-   WHERE prioridad = 'Alta') AS casos_alta;</code></pre>
-    <div class="why"><b>Por qué:</b> es la solución más directa. Cada métrica se cuenta en su tabla y en su grano original. Así evitas que un caso con varios eventos aparezca varias veces.</div>
+<pre><code>SELECT COUNT(DISTINCT c.caso_id) AS total_casos,
+       COUNT(e.evento_id) AS total_eventos,
+       COUNT(DISTINCT CASE
+         WHEN c.prioridad = 'Alta' THEN c.caso_id
+       END) AS casos_alta
+FROM casos_src c
+LEFT JOIN eventos_src e
+  ON e.caso_id = c.caso_id;</code></pre>
+    <div class="why"><b>Por qué:</b> en S5 aprendiste que un <code>JOIN 1:N</code> puede repetir una entidad. <code>COUNT(DISTINCT c.caso_id)</code> protege el conteo de casos, <code>COUNT(e.evento_id)</code> cuenta eventos y <code>CASE</code> limita el tercer conteo a prioridad Alta. No hace falta introducir una técnica SQL nueva.</div>
 
     <h3>Q5 · Promedio de minutos por caso y tipo</h3>
 <pre><code>WITH por_caso AS (
@@ -182,7 +184,7 @@ GROUP BY tipo;</code></pre>
 
   <section id="ddl">
     <span class="tag">S9 · integridad</span>
-    <h2>3 · DDL Mutation Lab</h2>
+    <h2>3 · DDL y restricciones</h2>
     <p>Una versión mínima y suficiente es:</p>
 <pre><code>CREATE TABLE caso(
   caso_id INTEGER PRIMARY KEY,
@@ -204,61 +206,61 @@ CREATE TABLE evento(
 );</code></pre>
     <div class="why"><b>Por qué:</b> PK rechaza duplicados; FK rechaza huérfanos; NOT NULL protege campos obligatorios; CHECK acepta 0 pero rechaza negativos.</div>
 
-    <h3>Evolución del dominio</h3>
-<pre><code>INSERT INTO estado_catalogo (estado)
-VALUES ('Escalado');</code></pre>
-    <div class="why"><b>Por qué:</b> si los estados válidos viven en un catálogo, un estado nuevo se incorpora con una migración explícita. No necesitas quitar la validación.</div>
-
-    <h3>Mutation Hunter · INSERT más simple para cada mutante</h3>
-    <details open><summary>Mutante: CASO perdió su PRIMARY KEY</summary><div>
+    <h3>Cómo comprobar las reglas con lo visto en S9</h3>
+    <p>En S9 se trabajó una idea suficiente para esta parte: una restricción debe <b>aceptar lo válido y rechazar lo inválido</b>. Por eso puedes comprobar tu DDL con INSERT sencillos.</p>
+    <details open><summary>PRIMARY KEY · un ID repetido debe fallar</summary><div>
 <pre><code>INSERT INTO caso(
   caso_id, fecha_creacion, tipo, prioridad, estado, barrio
 )
 VALUES (
   9001, '2026-09-02', 'Ruido', 'Alta', 'Abierto', 'Prueba'
 );</code></pre>
-      <p class="small">El esquema correcto rechaza el segundo <code>caso_id=9001</code>; el mutante sin PK lo acepta.</p>
+      <p class="small">Si ya existe <code>caso_id=9001</code>, la PRIMARY KEY debe impedir otra fila con el mismo identificador.</p>
     </div></details>
-
-    <details><summary>Mutante: la FK de EVENTO está en la columna equivocada</summary><div>
+    <details><summary>FOREIGN KEY · un caso inexistente debe fallar</summary><div>
 <pre><code>INSERT INTO evento(
   evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
 )
 VALUES (
-  9001, 9999, '2026-09-01 09:00', 'Abierto', 0
+  9200, 9999, '2026-09-01 09:00', 'Abierto', 0
 );</code></pre>
-      <p class="small">El esquema correcto rechaza <code>caso_id=9999</code> porque no existe. El mutante mira por error <code>evento_id=9001</code>, que sí coincide con el caso de prueba.</p>
+      <p class="small">Si <code>caso_id=9999</code> no existe, la FOREIGN KEY debe impedir el INSERT.</p>
     </div></details>
-
-    <details><summary>Mutante: minutos usa CHECK &gt; 0 en vez de &gt;= 0</summary><div>
-<pre><code>INSERT INTO evento(
+    <details><summary>CHECK · cero debe pasar y un negativo debe fallar</summary><div>
+<pre><code>-- debe pasar
+INSERT INTO evento(
   evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
 )
-VALUES (
-  9101, 9001, '2026-09-01 10:00', 'Abierto', 0
-);</code></pre>
-      <p class="small">Cero es válido según la regla del ejercicio. El esquema correcto lo acepta; el mutante lo rechaza.</p>
+VALUES (9201, 9001, '2026-09-01 10:00', 'Abierto', 0);
+
+-- debe fallar
+INSERT INTO evento(
+  evento_id, caso_id, fecha_evento, estado, minutos_desde_anterior
+)
+VALUES (9202, 9001, '2026-09-01 10:10', 'Abierto', -1);</code></pre>
+      <p class="small">Es exactamente la lógica de S9: prueba un dato permitido y otro que viola la regla.</p>
     </div></details>
+    <div class="notice"><b>Fuera del alcance enseñado:</b> el Workbench actual también pide comparar esquemas alterados y agregar un estado nuevo mediante una tabla adicional de estados. Esas dos técnicas no aparecen en S9. Por eso este solucionario no las presenta como conocimiento previo del estudiante.</div>
   </section>
 
   <section id="documentos">
     <span class="tag">S10–S11 · SQL/NoSQL y documentos</span>
-    <h2>4 · Document Lab</h2>
+    <h2>4 · Documentos: embeber o referenciar</h2>
     <table>
       <tr><th>Decisión</th><th>Respuesta</th><th>Razón</th></tr>
-      <tr><td>Embeber completo</td><td>estado actual + evidencias[]</td><td>Se necesitan al abrir el caso y forman parte del agregado consultado junto.</td></tr>
+      <tr><td>Embeber</td><td>estado actual + evidencias[]</td><td>Se necesitan al abrir el caso y se consultan junto con él.</td></tr>
       <tr><td>Guardar referencia ID</td><td>ciudadano_id</td><td>El caso necesita saber quién es el ciudadano, pero el perfil tiene vida propia.</td></tr>
       <tr><td>Mantener fuera</td><td>historial de eventos + perfil ciudadano</td><td>El historial puede crecer sin límite y el perfil tiene ciclo de vida independiente.</td></tr>
-      <tr><td>Datastore CASO</td><td>Documental</td><td>El agregado se consulta junto y contiene una colección de evidencias.</td></tr>
+      <tr><td>Tipo de base para CASO</td><td>Documental</td><td>El caso y sus evidencias se leen juntos y los documentos permiten campos o listas que pueden variar.</td></tr>
       <tr><td>Libro contable</td><td>Relacional SQL</td><td>Importan transacciones y FK estrictas.</td></tr>
-      <tr><td>Partition key Cosmos</td><td>/caso_id</td><td>Distribuye por la identidad natural del documento de caso y evita usar estados/tipos muy repetidos como llave principal.</td></tr>
+      <tr><td>Clave de partición en Cosmos DB</td><td>/caso_id</td><td>Retoma la idea de S11: la clave de partición distribuye los documentos y ayuda a dirigir las consultas. En este caso cada caso tiene su propio identificador.</td></tr>
     </table>
     <div class="why"><b>Idea clave:</b> JSON no significa automáticamente NoSQL. La elección sale del patrón de acceso, crecimiento y consistencia.</div>
   </section>
 
   <section id="warehouse">
     <span class="tag">S12 · operación y analítica</span>
-    <h2>5 · Warehouse Builder</h2>
+    <h2>5 · Data warehouse</h2>
     <table>
       <tr><th>Elemento</th><th>Respuesta</th></tr>
       <tr><td>Grano del hecho</td><td>evento</td></tr>
@@ -270,14 +272,14 @@ VALUES (
       <tr><td>Dimensiones una vez por noche</td><td>Batch</td></tr>
       <tr><td>Cargar crudo y transformar dentro</td><td>ELT</td></tr>
     </table>
-    <div class="why"><b>Por qué:</b> una fila del hecho representa un evento. Las medidas deben tener sentido a ese grano. La latencia, no la moda tecnológica, decide batch o streaming.</div>
+    <div class="why"><b>Por qué:</b> una fila del hecho representa un evento. Las medidas deben tener sentido a ese grano. La pregunta sobre <b>qué tan rápido debe actualizarse la información</b> es la que permite decidir entre batch y streaming.</div>
   </section>
 
   <section id="bigquery">
     <span class="tag">S13 · diseño físico</span>
-    <h2>6 · BigQuery Physical Lab</h2>
+    <h2>6 · BigQuery: partición y clustering</h2>
     <div class="answer"><b>PARTITION BY:</b> fecha_evento<br><b>CLUSTER BY:</b> barrio, tipo — en ese orden.</div>
-    <div class="why"><b>Por qué:</b> 100% de las consultas acota fecha; 82% filtra barrio; 54% de esas también usa tipo. <code>caso_id</code> aparece en 0% de los filtros del workload, por lo que no debe desplazar columnas realmente usadas.</div>
+    <div class="why"><b>Por qué:</b> 100% de las consultas acota fecha; 82% filtra barrio; 54% de esas también usa tipo. En S13 la decisión se toma a partir del <b>patrón de consulta</b>. Como <code>caso_id</code> no aparece en esos filtros, no debe desplazar columnas que sí se usan.</div>
     <p>Una representación conceptual del diseño sería:</p>
 <pre><code>PARTITION BY DATE(fecha_evento)
 CLUSTER BY barrio, tipo</code></pre>
@@ -286,13 +288,13 @@ CLUSTER BY barrio, tipo</code></pre>
 
   <section id="nested">
     <span class="tag">S14 · ARRAY, STRUCT, UNNEST y formatos</span>
-    <h2>7 · Nested BigQuery</h2>
+    <h2>7 · BigQuery con datos anidados</h2>
     <table>
       <tr><th>Zona</th><th>Respuesta</th></tr>
       <tr><td>Campos raíz</td><td>caso_id, estado</td></tr>
       <tr><td>ARRAY&lt;STRUCT&gt; evidencias</td><td>tipo, url, texto</td></tr>
-      <tr><td>Landing flexible</td><td>JSON</td></tr>
-      <tr><td>Analítica columnar</td><td>Parquet</td></tr>
+      <tr><td>Datos semiestructurados</td><td>JSON</td></tr>
+      <tr><td>Formato columnar para analítica</td><td>Parquet</td></tr>
     </table>
 
     <h3>UNNEST mínimo</h3>
@@ -306,16 +308,16 @@ CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre>
   <section id="boss">
     <span class="tag">Transferencia · modo práctica</span>
     <h2>8 · Boss · pedidos omnicanal</h2>
-    <div class="notice"><b>Importante:</b> esta parte corresponde al workload fijo del enlace público <code>?modo=practica</code>: 100% fecha, 80% categoría, 35% además canal y 5% cliente. En evaluación autenticada el workload puede cambiar; allí debes recalcular el clustering.</div>
+    <div class="notice"><b>Importante:</b> esta parte corresponde al patrón de consultas fijo del enlace público <code>?modo=practica</code>: 100% fecha, 80% categoría, 35% además canal y 5% cliente. Si el patrón cambia, debes volver a decidir el orden del clustering.</div>
 
     <table>
       <tr><th>Decisión</th><th>Respuesta de práctica</th><th>Por qué</th></tr>
-      <tr><td>Estrategia</td><td>Dos hechos</td><td>ventas a grano línea y costo de envío a grano pedido no deben mezclarse y duplicarse.</td></tr>
-      <tr><td>Grano de ventas</td><td>línea de pedido</td><td>cantidad e importe existen por ítem/línea.</td></tr>
+      <tr><td>Grano de ventas</td><td>línea de pedido</td><td>cantidad e importe existen por cada línea.</td></tr>
       <tr><td>Medidas de ventas</td><td>cantidad, importe</td><td>son métricas aditivas de línea.</td></tr>
-      <tr><td>Partición</td><td>fecha_pedido</td><td>100% del workload acota fecha.</td></tr>
+      <tr><td>Partición</td><td>fecha_pedido</td><td>100% del patrón de consultas acota fecha.</td></tr>
       <tr><td>Clustering práctica</td><td>categoria, canal</td><td>categoría domina los filtros; canal es el segundo filtro frecuente.</td></tr>
     </table>
+    <div class="notice"><b>Fuera del alcance enseñado:</b> el caso actual añade <code>costo_envio</code> a nivel pedido y espera decidir cómo separarlo de las medidas de línea. En S12 se construyó una sola tabla de hechos (<code>fact_venta</code>); no se enseñó a diseñar varias tablas de hechos para medidas con niveles distintos. Por eso esa decisión no se presenta aquí como respuesta que un principiante ya debería conocer.</div>
 
     <h3>UNNEST de items</h3>
 <pre><code>SELECT p.pedido_id,
@@ -337,7 +339,7 @@ CROSS JOIN UNNEST(p.items) AS i;</code></pre>
   <section>
     <span class="tag">Resumen</span>
     <h2>La lógica que conviene recordar</h2>
-    <p><b>SQL:</b> define población y grano antes de contar. <b>Modelo:</b> identidad, cardinalidad y dependencias. <b>DDL:</b> cada regla debe poder demostrarse con un dato inválido. <b>Documentos:</b> embeber o referenciar depende del acceso y ciclo de vida. <b>Warehouse:</b> grano antes que medidas. <b>BigQuery:</b> diseño físico desde el workload. <b>UNNEST:</b> declara qué representa una fila antes y después. <b>Cloud:</b> primero necesidad, después producto.</p>
+    <p><b>SQL:</b> define la población y el nivel de agregación antes de contar. <b>Modelo:</b> entidades, relaciones, cardinalidad y dependencias. <b>DDL:</b> una restricción debe aceptar lo válido y rechazar lo inválido. <b>Documentos:</b> embeber o referenciar depende del patrón de acceso y del ciclo de vida. <b>Data warehouse:</b> grano antes que medidas. <b>BigQuery:</b> partición y clustering se deciden desde el patrón de consulta. <b>UNNEST:</b> explica qué representa una fila antes y después. <b>Azure:</b> primero la necesidad y después la familia de servicio.</p>
     <p class="small">Si puedes explicar esas ocho ideas sin mirar el código, el solucionario ya cumplió su propósito.</p>
   </section>
 
