@@ -610,7 +610,7 @@
       "titulo": "Cierre del curso + primer contacto DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Cerrar el curso con evidencia S1→S15→S16, comprender el DP-900 y sus credenciales relacionadas, diagnosticar brechas por dominio y terminar con un plan, portafolio y fecha ligados al voucher.",
+      "objetivo": "Cerrar el curso primero y abrir DP-900 después: reconstruir todo el SQL y las decisiones S2–S15, resolver dudas de guía/vocabulario, diagnosticar 24 escenarios y salir con plan, portafolio, glosario y fecha ligados al voucher.",
       "dp900": [
         {
           "dominio": "Core data concepts",
@@ -667,7 +667,7 @@
       "actividad": {
         "titulo": "Cierre + diagnóstico DP-900 con plan de examen",
         "minutos": 100,
-        "instrucciones": "Registra el post de S1; revisa la devolución S15 y la síntesis del curso; entiende formato, voucher y certificaciones; resuelve 24 escenarios 7–6–4–7; marca confianza y C/T/L; explora recursos oficiales; define fecha objetivo; marca tu portafolio; completa la encuesta y envía el resumen al docente.",
+        "instrucciones": "Abre con las tres dudas del grupo; devuelve S15 con guía; recorre todo el SQL S2–S15; registra la reflexión S1; explica DP-900 y el voucher; traduce el vocabulario Azure; resuelve 24 escenarios 7–6–4–7; clasifica C/T/L; haz 5 preguntas oficiales en vivo; define fecha objetivo; marca portafolio, descarga glosario y completa encuesta.",
         "criterios": [
           "registra cinco respuestas post de S1 y las compara con la línea base disponible",
           "explica los tres patrones críticos de S15 sin tratarlos como un ranking estadístico no observado",
@@ -702,13 +702,16 @@
           "L · lectura"
         ],
         "reporte_docente": [
+          "respuestas actuales de la reflexión S1",
           "resultado por dominio",
           "resultado total",
           "C/T/L",
           "dominio prioritario",
           "fecha objetivo",
           "vencimiento del voucher"
-        ]
+        ],
+        "live_practice_assessment": 5,
+        "keep_24_items": true
       },
       "cierre": {
         "post_s1": 5,
@@ -724,19 +727,38 @@
           "HackerRank SQL"
         ],
         "portafolio": [
-          "SQL",
-          "modelo",
-          "DDL e integridad",
-          "NoSQL",
-          "analítica cloud",
-          "S15"
+          "SQL explicable",
+          "modelo ER/3FN",
+          "PostgreSQL/Supabase con DDL e integridad",
+          "NoSQL documental",
+          "BigQuery/Google Skills",
+          "S15 Workbench",
+          "HackerRank SQL",
+          "glosario de cierre"
         ],
         "encuesta": [
           "modelo relacional",
           "SQL con criterio",
           "transferencia SQL/NoSQL/analítica",
           "siguiente paso concreto"
-        ]
+        ],
+        "todo_sql": [
+          "S2–S3 SELECT/WHERE/GROUP BY/HAVING",
+          "S4 LEFT JOIN + ausencia",
+          "S5 CTE + COUNT(DISTINCT)",
+          "S6 SQL para demostrar reglas",
+          "S9 CREATE TABLE + PK/FK/CHECK",
+          "S12 SQL sobre modelo estrella",
+          "S13 PARTITION BY + CLUSTER BY",
+          "S14 CROSS JOIN UNNEST",
+          "S15 integración"
+        ],
+        "workbench_vocab": {
+          "arena": "depuración SQL con casos borde",
+          "mutation": "contraste de esquema correcto vs defectuoso",
+          "boss": "transferencia a un caso nuevo"
+        },
+        "glossary": "Presentaciones/M6/glosario-cierre-s16.html"
       }
     }
   }

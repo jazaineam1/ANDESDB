@@ -189,12 +189,12 @@ def main() -> int:
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
     require(s16, [
         "Cierre del curso +", "primer contacto DP-900", "Repite las cinco preguntas de S1",
-        "45 min", "65 min", "700+", "40–60", "Online o centro", "voucher",
+        "45 min", "65 min", "700+", "Variable", "Online o centro", "voucher",
         "25–30%", "20–25%", "15–20%", "Dominio 1", "Dominio 2", "Dominio 3", "Dominio 4",
         "24 escenarios", "7–6–4–7", "Clasifica el error", "Concepto", "Transferencia", "Lectura",
         "Practice Assessment", "Exam Sandbox", "Programar", "Fecha objetivo", "Enviar diagnóstico al docente",
-        "Devolución S15", "Síntesis del curso", "Certificaciones", "Google Cloud Data Analytics", "HackerRank SQL",
-        "Portafolio de evidencias", "Encuesta de cierre", "post_s1_completed",
+        "Apertura honesta", "Devolución S15", "Todo el SQL que escribiste", "Síntesis del curso", "Cápsula Azure", "Certificaciones", "Google Cloud Data Analytics", "HackerRank SQL",
+        "Portafolio de evidencias", "Encuesta de cierre", "post_s1_completed", "glosario-cierre-s16.html",
         "Pausa · 15 minutos", 'href="sesion-16-cierre-dp900.html"', "presentation-timer.js"
     ], "S16")
     forbid(s16, [
@@ -224,7 +224,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 cierra S1/S15 + certificaciones + 24 escenarios + voucher + portafolio + encuesta")
+    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 cierra SQL/S15 + DP-900 + glosario + 24 escenarios + portafolio + encuesta")
     return 0
 
 

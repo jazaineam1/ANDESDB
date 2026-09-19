@@ -576,7 +576,7 @@
           "modo": "consolidacion",
           "titulo": "Cierre del curso + primer contacto DP-900",
           "estado": "pendiente",
-          "desc": "Cierre S1 → S15 con registro del post, devolución de tres patrones críticos y síntesis del curso. Explica DP-900 y el voucher, recupera el bloque de certificaciones, aplica diagnóstico de 24 escenarios 7–6–4–7 con C/T/L y confianza, explora Microsoft Learn en vivo y termina con plan con fecha, portafolio, encuesta y reporte docente.",
+          "desc": "Cierre de 180 min totales (165 útiles + pausa): apertura honesta, devolución guiada de S15, recorrido «Todo el SQL que escribiste», reflexión de S1, explicación del DP-900 y voucher, cápsula de vocabulario Azure, diagnóstico de 24 escenarios 7–6–4–7, exploración oficial, plan con fecha, portafolio, glosario y encuesta.",
           "tags": [
             "DP-900",
             "voucher",
@@ -592,7 +592,13 @@
             "plan con fecha",
             "portafolio",
             "encuesta",
-            "diagnóstico docente"
+            "diagnóstico docente",
+            "apertura honesta",
+            "todo el SQL",
+            "glosario",
+            "Azure SQL",
+            "Blob Files Table Cosmos",
+            "Workbench traducido"
           ],
           "href": "Presentaciones/M6/sesion-16-cierre-dp900.html",
           "recursos": [
@@ -625,6 +631,11 @@
               "txt": "🧩 HackerRank SQL Basic",
               "href": "https://www.hackerrank.com/skills-verification/sql_basic",
               "externo": true
+            },
+            {
+              "txt": "⬇ Glosario de cierre S16 · una página",
+              "href": "Presentaciones/M6/glosario-cierre-s16.html",
+              "download": true
             }
           ]
         }

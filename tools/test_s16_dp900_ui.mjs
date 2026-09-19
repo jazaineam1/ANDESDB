@@ -22,10 +22,13 @@ assert.ok(api);
 assert.equal(api.questions.length,24);
 assert.deepEqual(Object.fromEntries(['core','rel','nonrel','ana'].map(d=>[d,api.questions.filter(q=>q.d===d).length])),{core:7,rel:6,nonrel:4,ana:7});
 assert.equal(document.querySelectorAll('.qcard').length,24);
-assert.equal(document.querySelectorAll('.slide').length,27);
+assert.equal(document.querySelectorAll('.slide').length,30);
 assert.equal(document.querySelectorAll('[data-post]').length,5);
-assert.equal(document.querySelectorAll('[data-portfolio]').length,6);
+assert.equal(document.querySelectorAll('[data-portfolio]').length,8);
 assert.equal(document.querySelectorAll('[data-survey]').length,4);
+assert.ok([...document.querySelectorAll('.slide')].some(s=>s.dataset.title==='Todo el SQL'));
+assert.ok([...document.querySelectorAll('.slide')].some(s=>s.dataset.title==='Cápsula Azure'));
+assert.ok(document.querySelector('a[href="glosario-cierre-s16.html"][download]'));
 
 function click(el){assert.ok(el);el.click()}
 function change(el){el.dispatchEvent(new el.ownerDocument.defaultView.Event('change',{bubbles:true}))}
@@ -74,8 +77,8 @@ assert.match(document.querySelector('#post-count').textContent,/5 \/ 5/);
 
 // Portafolio y encuesta de cierre.
 for(const cb of document.querySelectorAll('[data-portfolio]')){cb.checked=true;change(cb)}
-assert.equal(Object.values(api.state.portfolio).filter(Boolean).length,6);
-assert.match(document.querySelector('#portfolio-count').textContent,/6 \/ 6/);
+assert.equal(Object.values(api.state.portfolio).filter(Boolean).length,8);
+assert.match(document.querySelector('#portfolio-count').textContent,/8 \/ 8/);
 for(const sel of document.querySelectorAll('[data-survey]')){sel.value='4';change(sel)}
 const surveyComment=document.querySelector('#survey-comment');surveyComment.value='Mantendría los laboratorios y más tiempo de práctica.';surveyComment.dispatchEvent(new window.Event('input',{bubbles:true}));
 assert.equal(Object.values(api.state.survey).filter(Boolean).length,4);
@@ -101,10 +104,12 @@ assert.equal(body.metadata.voucher_expiry,'2026-11-30');
 assert.equal(body.metadata.confidence.average,2);
 assert.equal(body.metadata.confidence.high_confidence_errors,0);
 assert.equal(body.metadata.post_s1_completed,5);
-assert.equal(Object.values(body.metadata.portfolio).filter(Boolean).length,6);
+assert.equal(Object.keys(body.metadata.post_s1_responses).length,5);
+assert.match(body.metadata.post_s1_responses.q1,/Respuesta de cierre 1/);
+assert.equal(Object.values(body.metadata.portfolio).filter(Boolean).length,8);
 assert.equal(Object.keys(body.metadata.survey).length,4);
 assert.match(body.metadata.survey_comment,/laboratorios/);
-assert.equal(body.slide_number,27);
+assert.equal(body.slide_number,30);
 assert.match(document.querySelector('#report-status').textContent,/enviado al docente/i);
 
 // Persistencia local.
@@ -113,7 +118,7 @@ assert.equal(Object.keys(saved.answers).length,24);
 assert.equal(saved.exam_target,'2026-11-20');
 assert.equal(saved.official.sandbox,true);
 assert.equal(Object.values(saved.post_s1).filter(Boolean).length,5);
-assert.equal(Object.values(saved.portfolio).filter(Boolean).length,6);
+assert.equal(Object.values(saved.portfolio).filter(Boolean).length,8);
 assert.equal(Object.values(saved.survey).filter(Boolean).length,4);
 assert.match(saved.survey_comment,/laboratorios/);
 
