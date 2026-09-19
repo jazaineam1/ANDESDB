@@ -31,7 +31,7 @@ footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
   <div class="wrap">
     <div class="ey">ANDESDB · Sesión 15</div>
     <h1>Solucionario de sesión 15</h1>
-    <p>Referencia para el <b>modo práctica</b> de la sesión 15. Usa únicamente ideas, palabras y herramientas trabajadas entre S2 y S14. Si el Workbench actual añade una exigencia que no fue enseñada antes, aquí se marca como <b>fuera del alcance del curso</b> en vez de presentarla como si el estudiante ya debiera conocerla.</p>
+    <p>Referencia para el <b>modo práctica</b> de la sesión 15. Las soluciones retoman las ideas, palabras y herramientas trabajadas entre S2 y S14 y buscan resolver cada ejercicio de la forma más directa posible.</p>
     <div class="actions">
       <a class="btn" href="evaluador-s15-v7.html?modo=practica">Abrir Workbench en práctica</a>
       <a class="btn alt" href="index.html">Volver al curso</a>
@@ -144,7 +144,7 @@ GROUP BY e.caso_id;</code></pre>
 FROM casos_src c
 LEFT JOIN eventos_src e
   ON e.caso_id = c.caso_id;</code></pre>
-    <div class="why"><b>Por qué:</b> en S5 aprendiste que un <code>JOIN 1:N</code> puede repetir una entidad. <code>COUNT(DISTINCT c.caso_id)</code> protege el conteo de casos, <code>COUNT(e.evento_id)</code> cuenta eventos y <code>CASE</code> limita el tercer conteo a prioridad Alta. No hace falta introducir una técnica SQL nueva.</div>
+    <div class="why"><b>Por qué:</b> un <code>JOIN 1:N</code> puede repetir una entidad. <code>COUNT(DISTINCT c.caso_id)</code> protege el conteo de casos, <code>COUNT(e.evento_id)</code> cuenta eventos y <code>CASE</code> limita el tercer conteo a prioridad Alta.</div>
 
     <h3>Q5 · Promedio de minutos por caso y tipo</h3>
 <pre><code>WITH por_caso AS (
@@ -240,39 +240,98 @@ INSERT INTO evento(
 VALUES (9202, 9001, '2026-09-01 10:10', 'Abierto', -1);</code></pre>
       <p class="small">Es exactamente la lógica de S9: prueba un dato permitido y otro que viola la regla.</p>
     </div></details>
-    <div class="notice"><b>Fuera del alcance enseñado:</b> el Workbench actual también pide comparar esquemas alterados y agregar un estado nuevo mediante una tabla adicional de estados. Esas dos técnicas no aparecen en S9. Por eso este solucionario no las presenta como conocimiento previo del estudiante.</div>
   </section>
 
   <section id="documentos">
     <span class="tag">S10–S11 · SQL/NoSQL y documentos</span>
-    <h2>4 · Documentos: embeber o referenciar</h2>
+    <h2>4 · Documentos: qué guardar junto y qué separar</h2>
+    <p><b>Pregunta guía:</b> cuando alguien abre un caso, ¿qué información necesita ver de inmediato y qué información puede vivir aparte porque crece o cambia por su cuenta?</p>
+
+    <h3>Ejemplo sencillo</h3>
+    <p>Imagina que abrimos el caso <code>1001</code>. Queremos ver su estado actual y sus evidencias sin tener que reconstruir todo desde varias partes.</p>
+<pre><code>{
+  "caso_id": 1001,
+  "estado": "En_revision",
+  "evidencias": [
+    {"tipo": "foto", "url": "foto-1.jpg"},
+    {"tipo": "comentario", "texto": "Se verificó el lugar"}
+  ],
+  "ciudadano_id": "C014"
+}</code></pre>
+
+    <div class="why"><b>Lectura del ejemplo:</b> dentro del documento del caso guardamos lo que normalmente queremos leer junto: <b>estado actual</b> y <b>evidencias</b>. Del ciudadano guardamos solo <code>ciudadano_id</code>, porque su perfil puede cambiar o usarse en otros casos.</div>
+
+    <h3>¿Dónde va cada cosa?</h3>
     <table>
-      <tr><th>Decisión</th><th>Respuesta</th><th>Razón</th></tr>
-      <tr><td>Embeber</td><td>estado actual + evidencias[]</td><td>Se necesitan al abrir el caso y se consultan junto con él.</td></tr>
-      <tr><td>Guardar referencia ID</td><td>ciudadano_id</td><td>El caso necesita saber quién es el ciudadano, pero el perfil tiene vida propia.</td></tr>
-      <tr><td>Mantener fuera</td><td>historial de eventos + perfil ciudadano</td><td>El historial puede crecer sin límite y el perfil tiene ciclo de vida independiente.</td></tr>
-      <tr><td>Tipo de base para CASO</td><td>Documental</td><td>El caso y sus evidencias se leen juntos y los documentos permiten campos o listas que pueden variar.</td></tr>
-      <tr><td>Libro contable</td><td>Relacional SQL</td><td>Importan transacciones y FK estrictas.</td></tr>
-      <tr><td>Clave de partición en Cosmos DB</td><td>/caso_id</td><td>Retoma la idea de S11: la clave de partición distribuye los documentos y ayuda a dirigir las consultas. En este caso cada caso tiene su propio identificador.</td></tr>
+      <tr><th>Dato</th><th>Decisión</th><th>Ejemplo del porqué</th></tr>
+      <tr><td>estado actual</td><td>Dentro del documento del caso</td><td>Si abres el caso 1001, necesitas saber inmediatamente si está Abierto, En_revision o Cerrado.</td></tr>
+      <tr><td>evidencias[]</td><td>Dentro del documento del caso</td><td>Las fotos y comentarios pertenecen al caso y normalmente se muestran junto con él.</td></tr>
+      <tr><td>ciudadano_id</td><td>Guardar solo la referencia</td><td>El caso necesita saber qué ciudadano está relacionado, pero no necesita copiar todo su perfil.</td></tr>
+      <tr><td>perfil ciudadano</td><td>Mantener aparte</td><td>Si cambia el teléfono del ciudadano, no queremos editar todos sus casos históricos.</td></tr>
+      <tr><td>historial de eventos</td><td>Mantener aparte</td><td>Puede seguir creciendo: evento 1, evento 2, evento 3… El documento principal no necesita crecer sin límite.</td></tr>
     </table>
-    <div class="why"><b>Idea clave:</b> JSON no significa automáticamente NoSQL. La elección sale del patrón de acceso, crecimiento y consistencia.</div>
+
+    <h3>¿Documental o relacional?</h3>
+    <div class="answer"><b>CASO:</b> documental.<br><b>Libro contable de pagos:</b> relacional SQL.</div>
+    <div class="why"><b>Por qué CASO puede ser documental:</b> estado y evidencias se consultan juntos y las evidencias pueden tener campos distintos. Una foto puede tener <code>url</code>; un comentario puede tener <code>texto</code>.</div>
+    <div class="why"><b>Por qué un libro contable conviene relacional:</b> allí importan reglas estrictas entre registros y transacciones consistentes. Ese fue precisamente el tipo de problema trabajado con tablas, PK y FK.</div>
+
+    <h3>Clave de partición en Cosmos DB</h3>
+    <div class="answer"><b>Respuesta:</b> <code>/caso_id</code>.</div>
+    <div class="why"><b>Ejemplo:</b> si una consulta pide “dame el caso 1001”, el valor <code>caso_id=1001</code> identifica directamente el grupo al que pertenece ese documento. En cambio, <code>estado</code> tendría muy pocos valores repetidos como Abierto o Cerrado.</div>
   </section>
 
   <section id="warehouse">
     <span class="tag">S12 · operación y analítica</span>
-    <h2>5 · Data warehouse</h2>
+    <h2>5 · Data warehouse: una fila, medidas y dimensiones</h2>
+    <p><b>Pregunta guía:</b> antes de escoger columnas, termina esta frase: <b>“una fila de mi tabla de hechos representa…”</b></p>
+
+    <h3>1 · El grano</h3>
+    <div class="answer"><b>Respuesta:</b> una fila de <code>fact_evento</code> representa <b>un evento de un caso</b>.</div>
+
+    <p>Por ejemplo, el caso 1001 puede tener dos eventos:</p>
     <table>
-      <tr><th>Elemento</th><th>Respuesta</th></tr>
-      <tr><td>Grano del hecho</td><td>evento</td></tr>
-      <tr><td>Medidas</td><td>conteo de eventos, minutos</td></tr>
-      <tr><td>Dimensiones</td><td>fecha, barrio, tipo, prioridad, estado</td></tr>
-      <tr><td>OLTP</td><td>casos/eventos actuales</td></tr>
-      <tr><td>OLAP</td><td>fact_evento histórico</td></tr>
-      <tr><td>Eventos en menos de 30 s</td><td>Streaming</td></tr>
-      <tr><td>Dimensiones una vez por noche</td><td>Batch</td></tr>
-      <tr><td>Cargar crudo y transformar dentro</td><td>ELT</td></tr>
+      <tr><th>evento</th><th>caso</th><th>estado</th><th>minutos</th></tr>
+      <tr><td>E01</td><td>1001</td><td>Abierto</td><td>0</td></tr>
+      <tr><td>E02</td><td>1001</td><td>Cerrado</td><td>60</td></tr>
     </table>
-    <div class="why"><b>Por qué:</b> una fila del hecho representa un evento. Las medidas deben tener sentido a ese grano. La pregunta sobre <b>qué tan rápido debe actualizarse la información</b> es la que permite decidir entre batch y streaming.</div>
+    <div class="why"><b>Por qué el grano es evento:</b> si el caso tuvo dos eventos, necesitamos dos filas para conservar ambos momentos. Si hiciéramos una sola fila por caso, perderíamos el detalle de la trayectoria.</div>
+
+    <h3>2 · Medidas</h3>
+    <table>
+      <tr><th>Medida</th><th>Qué significa en una fila</th><th>Qué puedo hacer después</th></tr>
+      <tr><td>conteo de eventos</td><td>cada fila aporta 1 evento</td><td>sumar para saber cuántos eventos hubo</td></tr>
+      <tr><td>minutos</td><td>minutos desde el evento anterior</td><td>sumar para conocer tiempo acumulado</td></tr>
+    </table>
+    <p>Con las dos filas del ejemplo: <b>2 eventos</b> y <b>60 minutos</b> acumulados.</p>
+
+    <h3>3 · Dimensiones</h3>
+    <p>Las dimensiones responden <b>cómo quiero cortar o agrupar esas medidas</b>.</p>
+    <table>
+      <tr><th>Dimensión</th><th>Pregunta que permite responder</th></tr>
+      <tr><td>fecha</td><td>¿cuántos eventos hubo por día o mes?</td></tr>
+      <tr><td>barrio</td><td>¿en qué barrios se acumulan más eventos o minutos?</td></tr>
+      <tr><td>tipo</td><td>¿qué tipos de caso generan más actividad?</td></tr>
+      <tr><td>prioridad</td><td>¿cómo se comportan Alta, Media y Baja?</td></tr>
+      <tr><td>estado</td><td>¿cuántos eventos terminan en cada estado?</td></tr>
+    </table>
+
+    <h3>4 · OLTP y OLAP</h3>
+    <div class="answer"><b>OLTP:</b> las tablas operacionales donde se crean y actualizan casos y eventos.<br><b>OLAP / warehouse:</b> <code>fact_evento</code> y sus dimensiones para analizar el histórico.</div>
+    <div class="why"><b>Ejemplo:</b> cuando un agente registra un nuevo evento está trabajando sobre la operación. Cuando la gerencia pregunta “¿qué barrios acumularon más minutos este mes?”, está haciendo análisis histórico.</div>
+
+    <h3>5 · Batch o streaming</h3>
+    <table>
+      <tr><th>Necesidad</th><th>Respuesta</th><th>Por qué</th></tr>
+      <tr><td>El tablero debe reflejar un evento en menos de 30 segundos</td><td>Streaming</td><td>el dato debe llegar casi inmediatamente</td></tr>
+      <tr><td>Las dimensiones pueden actualizarse una vez cada noche</td><td>Batch</td><td>se pueden procesar juntas en un lote programado</td></tr>
+    </table>
+
+    <h3>6 · ETL o ELT</h3>
+    <div class="answer"><b>Respuesta del ejercicio:</b> ELT.</div>
+    <div class="why"><b>Ejemplo:</b> primero cargas los datos crudos a la plataforma y después haces allí las transformaciones. La secuencia es <b>Extraer → Cargar → Transformar</b>.</div>
+
+    <div class="why"><b>Resumen del punto 5:</b> primero decides qué representa una fila; después eliges los números que quieres sumar y las categorías por las que quieres analizar. Solo al final decides cómo y cuándo mover los datos.</div>
   </section>
 
   <section id="bigquery">
@@ -317,7 +376,6 @@ CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre>
       <tr><td>Partición</td><td>fecha_pedido</td><td>100% del patrón de consultas acota fecha.</td></tr>
       <tr><td>Clustering práctica</td><td>categoria, canal</td><td>categoría domina los filtros; canal es el segundo filtro frecuente.</td></tr>
     </table>
-    <div class="notice"><b>Fuera del alcance enseñado:</b> el caso actual añade <code>costo_envio</code> a nivel pedido y espera decidir cómo separarlo de las medidas de línea. En S12 se construyó una sola tabla de hechos (<code>fact_venta</code>); no se enseñó a diseñar varias tablas de hechos para medidas con niveles distintos. Por eso esa decisión no se presenta aquí como respuesta que un principiante ya debería conocer.</div>
 
     <h3>UNNEST de items</h3>
 <pre><code>SELECT p.pedido_id,
