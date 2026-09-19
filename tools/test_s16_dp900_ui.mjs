@@ -65,9 +65,12 @@ assert.equal(d.querySelector('.apt-pause-time').textContent,'15:00');
 assert.match(d.querySelector('.apt-pause-start').textContent,/Iniciar los 15 minutos/);
 
 // DP-900 visible.
-for(const title of ['Blueprint DP900','Familia Azure SQL','Azure Storage','Cosmos DB','Databricks Fabric PowerBI','Practice Assessment']){
+for(const title of ['Blueprint DP900','Familia Azure SQL','Azure Storage','Cosmos DB','Databricks Fabric PowerBI','Tiempo real y PowerBI','Practice Assessment']){
   assert.ok(slides.some(s=>s.dataset.title===title),title);
 }
 
+for(const token of ['API for NoSQL','Apache Cassandra','Apache Gremlin','Azure Event Hubs','Azure Stream Analytics','Fabric Real-Time Intelligence']){
+  assert.ok(html.includes(token),token);
+}
 dom.window.close();
 console.log('OK · S16 v4 UI: 29 slides + timer S15 v7 + pausa + bloque DP-900 ampliado');
