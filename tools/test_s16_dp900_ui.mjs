@@ -37,6 +37,8 @@ for(const q of api.questions){
   }else if(q.k==='match'){
     [...card.querySelectorAll('.matchrow select')].forEach((sel,i)=>{sel.value=q.m[i][1];change(sel)});
   }
+  click(card.querySelector('[data-conf="2"]'));
+  assert.equal(api.state.confidence[q.id],2);
   click(card.querySelector('.qcheck'));
   assert.equal(api.state.answers[q.id].good,true,'q'+q.id+' debe quedar correcta');
 }
@@ -78,6 +80,8 @@ assert.deepEqual(body.metadata.scores.nonrel,{correct:4,total:4});
 assert.deepEqual(body.metadata.scores.ana,{correct:7,total:7});
 assert.equal(body.metadata.exam_target,'2026-11-20');
 assert.equal(body.metadata.voucher_expiry,'2026-11-30');
+assert.equal(body.metadata.confidence.average,2);
+assert.equal(body.metadata.confidence.high_confidence_errors,0);
 assert.match(document.querySelector('#report-status').textContent,/enviado al docente/i);
 
 // Persistencia local.
@@ -96,6 +100,10 @@ w2.eval(scripts[0]);
 const q1=w2.S16DP900.questions[0],card=d2.querySelector('.qcard[data-qid="1"]');
 const wrong=q1.a===0?1:0;
 click(card.querySelector('.qopts button[data-choice="'+wrong+'"]'));
+click(card.querySelector('.qcheck'));
+assert.equal(w2.S16DP900.state.answers[1],undefined,'Sin confianza no debe revelar ni guardar respuesta');
+assert.match(card.querySelector('.qfeedback').textContent,/confianza/i);
+click(card.querySelector('[data-conf="3"]'));
 click(card.querySelector('.qcheck'));
 assert.equal(w2.S16DP900.state.answers[1].good,false);
 assert.equal(card.querySelector('.errclass').classList.contains('show'),true);
