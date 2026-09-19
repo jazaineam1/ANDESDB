@@ -49,6 +49,11 @@ def main():
     assert "Math.min(3,(state.hints[id]||0)+1)" in SOL_JS
     assert "Pista 1/3" in SOL_JS and "Pista 2/3" in SOL_JS and "Pista 3/3" in SOL_JS
     assert "toggleSqlSolution" in SOL_JS
+    assert "data-sql-view=" in SOL_JS and "data-study-view=" in SOL_JS
+    assert "SQL_EXPLANATIONS" in SOL_JS and "STATION_EXPLANATIONS" in SOL_JS
+    assert "guided-tabs" in SOL_JS and "study-answer-open" in SOL_JS
+    assert ".mission.study-answer-open" in CSS
+    assert "Tu intento" in SOL_JS and "Solución" in SOL_JS and "Explicación" in SOL_JS
     for token in (
         "WHERE prioridad = 'Alta'",
         "MAX(fecha_evento) AS fecha_evento",

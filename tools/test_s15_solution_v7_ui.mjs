@@ -73,14 +73,22 @@ async function boot({reset=false}={}){
 
   const queryBefore=q2.value;
   const scoreBefore=document.querySelector('#score-sql').textContent;
+  assert.equal(document.querySelector('[data-sql-tabs="q2"]').hidden,false,'Tras 3 pistas aparecen las pestañas dentro de la pregunta');
   await sleep(330);
   const sessionBefore=window.sessionStorage.getItem('andesdb.s15.solution.v7');
   click(window,q2sol);
   assert.equal(q2.value,queryBefore,'Ver solución no debe sobrescribir SQL');
   assert.equal(document.querySelector('#score-sql').textContent,scoreBefore,'Ver solución no debe alterar puntuación');
   assert.equal(document.querySelector('#solution-q2').hidden,false);
-  click(window,q2sol);
+  assert.equal(document.querySelector('[data-sql-pane="q2|attempt"]').hidden,true,'La solución ocupa el área del intento sin modificarlo');
+  click(window,document.querySelector('[data-sql-view="q2|explanation"]'));
   assert.equal(document.querySelector('#solution-q2').hidden,true);
+  assert.equal(document.querySelector('#explanation-q2').hidden,false);
+  assert.match(document.querySelector('#explanation-q2').textContent,/MAX\(estado\).*fecha/i);
+  assert.equal(q2.value,queryBefore,'Abrir explicación tampoco modifica el SQL');
+  click(window,document.querySelector('[data-sql-view="q2|attempt"]'));
+  assert.equal(document.querySelector('[data-sql-pane="q2|attempt"]').hidden,false);
+  assert.equal(document.querySelector('#explanation-q2').hidden,true);
   await sleep(330);
   assert.ok(window.sessionStorage.getItem('andesdb.s15.solution.v7'));
   assert.notEqual(window.sessionStorage.getItem('andesdb.s15.solution.v7'),sessionBefore);
@@ -97,6 +105,16 @@ async function boot({reset=false}={}){
   assert.equal(s2sol.disabled,false);
   const modelScoreBefore=document.querySelector('#score-model').textContent;
   click(window,s2sol);
+  assert.equal(document.querySelector('#score-model').textContent,modelScoreBefore);
+  assert.equal(document.querySelector('#s2').classList.contains('study-answer-open'),true,'La respuesta sustituye el área de trabajo de la estación');
+  assert.equal(document.querySelector('#study-solution-s2').hidden,false);
+  click(window,document.querySelector('[data-study-view="s2|explanation"]'));
+  assert.equal(document.querySelector('#study-solution-s2').hidden,true);
+  assert.equal(document.querySelector('#study-explanation-s2').hidden,false);
+  assert.match(document.querySelector('#study-explanation-s2').textContent,/1:N.*AGENTE/i);
+  click(window,document.querySelector('[data-study-view="s2|attempt"]'));
+  assert.equal(document.querySelector('#s2').classList.contains('study-answer-open'),false);
+  assert.equal(document.querySelector('#study-explanation-s2').hidden,true);
   assert.equal(document.querySelector('#score-model').textContent,modelScoreBefore);
 
   // DDL: solo el DDL es editable; probes/migración vienen preparados.
