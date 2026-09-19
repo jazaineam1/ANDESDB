@@ -145,6 +145,8 @@ def check_javascript() -> None:
         "assets/learning/analytics-fallback-link.js",
         "assets/learning/s15-autograder-v7.js",
         "revision/assets/learning/s15-autograder-v7.js",
+        "assets/learning/s15-autograder-v7-practice.js",
+        "revision/assets/learning/s15-autograder-v7-practice.js",
         "assets/learning/s15-autograder-v7-solution.js",
         "revision/assets/learning/s15-autograder-v7-solution.js",
     ]
