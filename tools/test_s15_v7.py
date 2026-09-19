@@ -225,8 +225,8 @@ def test_cohort_persistence_contract():
     # Evaluación queda sin respuestas embebidas; la práctica usa un runtime separado.
     assert "SQL_SOLUTIONS" not in JS and "STATION_GUIDES" not in JS
     assert "SQL_SOLUTIONS" in PRACTICE_JS and "STATION_GUIDES" in PRACTICE_JS
-    assert "s15-autograder-v7-practice.js?v=s15v7-transfer1" in HTML
-    assert "s15-autograder-v7.js?v=s15v7-transfer1" in HTML
+    assert "s15-autograder-v7-practice.js?v=s15v7-norm1" in HTML
+    assert "s15-autograder-v7.js?v=s15v7-norm1" in HTML
     assert "new URLSearchParams(location.search).get('modo')==='practica'" in HTML
 
     # La estructura v7 histórica se conserva; los nuevos campos de guía son solo aditivos.
