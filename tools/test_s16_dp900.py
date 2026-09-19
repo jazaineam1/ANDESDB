@@ -41,7 +41,7 @@ assert html.count('pre class="sqlviz"')==8
 assert "pre.sqlviz .copybtn" in html
 assert ".journey:before" in html and ".journey .step:before" in html
 assert ".case:before" in html
-assert 'class="clock">15 min</h2>' in html
+assert 'class="clock">15:00</div>' in html
 assert 'class="slide dense yellow" data-title="S15 integró"' in html
 assert "slide[data-title=\"SQL que escribes\"] .card:nth-child(1) .chip" in html
 assert 'class="kw"' in html and 'class="fn"' in html and 'class="type"' in html and 'class="op"' in html
@@ -55,15 +55,15 @@ assert 'id="mini"' in html and 'id="miniT"' in html and 'id="miniPP"' in html
 assert 'id="minLibre"' in html and 'id="ponLibre"' in html
 assert html.count('class="joinviz s16-flowviz"')==4
 for flow_title in ["Recorrido","De reglas a modelo","OLTP a analítica","BigQuery físico"]:
-    block=re.search(rf'<section class="slide[^"]*" data-title="{re.escape(flow_title)}"[\\s\\S]*?</section>',html)
+    block=re.search(rf'<section class="slide[^"]*" data-title="{re.escape(flow_title)}".*?</section>',html,re.S)
     assert block and 's16-flowviz' in block.group(0), flow_title
 assert "function openZoom" in html and "function closeZoom" in html
-for old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
+assert html.count("<input")==1 and 'id="minLibre"' in html, "El único input permitido es el del temporizador docente"\nfor old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
     assert old_class not in html, old_class
 
 # La sesión final no vuelve a ser formulario/examen.
 for bad in [
-    "<textarea","<input","<select","qcard","send-report","data-post=","data-portfolio=",
+    "<textarea","<select","qcard","send-report","data-post=","data-portfolio=",
     "portfolio-url","24 escenarios","48 componentes","C / T / L","Me faltó guía",
     "¿Dónde estuvo SQL?","Hay vocabulario desconocido","La metodología trasladó",
     "Sin defensas","Autopercepción de salida","Enviar diagnóstico al docente","Hoy no vienes a demostrar otra vez que sabes","S15 no añadió otro tema"
