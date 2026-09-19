@@ -20,6 +20,7 @@ REV_JS=(ROOT/"revision/assets/learning/s15-autograder-v7.js").read_text(encoding
 PRACTICE_JS=(ROOT/"assets/learning/s15-autograder-v7-practice.js").read_text(encoding="utf-8")
 REV_PRACTICE_JS=(ROOT/"revision/assets/learning/s15-autograder-v7-practice.js").read_text(encoding="utf-8")
 SOL_JS=(ROOT/"assets/learning/s15-autograder-v7-solution.js").read_text(encoding="utf-8")
+EDGE_FN=(ROOT/"supabase/functions/learning-autograde-s15-v7/index.ts").read_text(encoding="utf-8")
 
 def csvrows(name):
     with (DATA/name).open(encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
@@ -39,7 +40,7 @@ def q(sql):
 
 def test_acceptance_22():
     # 1. Cargar no regala puntos / no hay oráculo continuo en evaluación.
-    assert "checkedScore:{}" in JS and "MODE==='practica'?live[k]:(state.checked[k]?state.checkedScore[k]:'—')" in JS
+    assert "checkedScore:{}" in JS and "k==='ddl'?ddlScore():state.checkedScore[k]" in JS
     assert "exact(p,['fecha_evento'])" in JS and "c.length===2&&!c.includes('caso_id')" in JS
 
     # 2-4. Banco ER: toque/drag válidos, FK explícita y homónimos identificables.
@@ -171,11 +172,19 @@ def test_methodology_and_security_regressions():
     # Simulador distingue estimación previa y procesamiento posterior.
     assert 'id="bqPreBytes"' in HTML and 'id="bqPostBytes"' in HTML
     assert "if(state.bq.cluster.length&&filters.has(state.bq.cluster[0]))" in JS
-    # Phase 2: mutation testing diferencial, migración real y telemetría por estación.
-    assert 'id="mutationProbe"' in HTML and 'id="runMutation"' in HTML
-    assert "function runMutationProbe()" in JS and "mutationOutcome(MUTANT_DDL[selectedMutant],probe,!isolatePk)" in JS
-    assert "function runDomainMigration()" in JS and "beforeFails&&out.afterPass" in JS
-    assert "minutesRule=state.ddlChecks.neg&&state.ddlChecks.null_minutes&&state.ddlChecks.zero_valid" in JS
+    # DDL: el estudiante solo edita el DDL; Mutation/Escalado son demos preparadas y no regalan puntaje.
+    assert 'id="mutationProbe" class="code smallcode" readonly' in HTML
+    assert 'id="domainMigration" class="code smallcode" readonly' in HTML
+    assert "esta demostración no suma puntaje" in HTML
+    assert "const MUTANT_PROBES=" in JS and "const DOMAIN_MIGRATION_SQL=" in JS
+    assert "function runMutationProbe()" in JS and "const probe=MUTANT_PROBES[selectedMutant]||''" in JS
+    assert "function runDomainMigration()" in JS and "const sql=DOMAIN_MIGRATION_SQL" in JS
+    assert "state.mutationProbe=probe" not in JS
+    assert "state.domainMigration=$('#domainMigration')" not in JS
+    assert "if(state.ddlChecks.dup_case)s+=1.5" in JS
+    assert "if(state.ddlChecks.neg&&state.ddlChecks.zero_valid)s+=3" in JS
+    assert "mut*2/3" not in JS and "mut*2/3" not in SOL_JS and "mut*2/3" not in EDGE_FN
+    assert "if(checks.d1)s+=1.5" in EDGE_FN and "if(checks.d5&&checks.d7_zero_valid)s+=3" in EDGE_FN
     assert "function initStationTiming()" in JS and "station_seconds:stationSeconds()" in JS
     # Runtime/performance: SQL.js is loaded explicitly, DuckDB is lazy and guest mode works without auth.
     assert 'assets/vendor/sqljs/sql-wasm.js?v=s15v7-fast1' in HTML
@@ -210,8 +219,8 @@ def test_cohort_persistence_contract():
     # Evaluación queda sin respuestas embebidas; la práctica usa un runtime separado.
     assert "SQL_SOLUTIONS" not in JS and "STATION_GUIDES" not in JS
     assert "SQL_SOLUTIONS" in PRACTICE_JS and "STATION_GUIDES" in PRACTICE_JS
-    assert "s15-autograder-v7-practice.js?v=s15v7-cohort2" in HTML
-    assert "s15-autograder-v7.js?v=s15v7-cohort2" in HTML
+    assert "s15-autograder-v7-practice.js?v=s15v7-cohort3" in HTML
+    assert "s15-autograder-v7.js?v=s15v7-cohort3" in HTML
     assert "new URLSearchParams(location.search).get('modo')==='practica'" in HTML
 
     # La estructura v7 histórica se conserva; los nuevos campos de guía son solo aditivos.
@@ -250,6 +259,9 @@ def test_cohort_persistence_contract():
     assert "no modifica tu intento ni tu puntuación" in PRACTICE_JS
     assert "renderStudyGuides()" in PRACTICE_JS
     assert "function prepareSolvedDdl(){}" in PRACTICE_JS  # no sobrescribir DDL/migración/probe existentes
+    assert "state.domainMigration=$('#domainMigration')" not in JS and "state.domainMigration=$('#domainMigration')" not in PRACTICE_JS
+    assert "state.mutationProbe=probe" not in JS and "state.mutationProbe=probe" not in PRACTICE_JS
+    assert "domain_migration:DOMAIN_MIGRATION_SQL" in JS and "domain_migration:DOMAIN_MIGRATION_SQL" in PRACTICE_JS
 
     # Restore de práctica lee el STORE histórico y solo mezcla campos faltantes.
     restore=PRACTICE_JS[PRACTICE_JS.index("function restore()"):PRACTICE_JS.index("function parseCSV")]
