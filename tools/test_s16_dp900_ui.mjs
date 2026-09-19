@@ -104,6 +104,8 @@ assert.equal(body.metadata.voucher_expiry,'2026-11-30');
 assert.equal(body.metadata.confidence.average,2);
 assert.equal(body.metadata.confidence.high_confidence_errors,0);
 assert.equal(body.metadata.post_s1_completed,5);
+assert.equal(Object.keys(body.metadata.post_s1_responses).length,5);
+assert.match(body.metadata.post_s1_responses.q1,/Respuesta de cierre 1/);
 assert.equal(Object.values(body.metadata.portfolio).filter(Boolean).length,6);
 assert.equal(Object.keys(body.metadata.survey).length,4);
 assert.match(body.metadata.survey_comment,/laboratorios/);
