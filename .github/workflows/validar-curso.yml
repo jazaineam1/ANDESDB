@@ -43,11 +43,13 @@ jobs:
       - name: Validar evaluación integral S15 v7
         run: |
           python tools/test_s15_v7.py
+          python tools/test_s15_solution_v7.py
 
       - name: S15 v7 · prueba UI jsdom + SQL.js
         run: |
           npm install --no-save --package-lock=false jsdom@26 sql.js@1.13.0
           node tools/test_s15_v7_ui.mjs
+          node tools/test_s15_solution_v7_ui.mjs
 
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
@@ -103,6 +105,8 @@ jobs:
         run: |
           node --check assets/learning/learning-core.js
           node --check assets/learning/s15-autograder-v7.js
+          node --check assets/learning/s15-autograder-v7-solution.js
+          node --check revision/assets/learning/s15-autograder-v7-solution.js
           node --check assets/learning/s15-nested-duckdb-v1.mjs
           node --check assets/learning/s15-azure-transfer-v1.js
           node --check assets/pwa-install.js
