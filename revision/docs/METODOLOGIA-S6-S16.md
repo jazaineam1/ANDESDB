@@ -229,7 +229,7 @@ sin coordinación docente ni fecha límite. Ninguna de las dos exige tarjeta.
   el DP-900, igual que Fabric — se nombra, no se instala una cuenta nueva
   para practicarlo.
 - **S15:** datos imperfectos sin herramienta prescrita.
-- **S16:** cierre fuerte del diplomado + puente DP-900: primero consolida SQL, pensamiento de consulta, diseño, integridad, SQL/NoSQL, warehouse, BigQuery y anidados; después resuelve tres casos de transferencia **sin nota** y conecta lo aprendido con el blueprint DP-900. No se repite un diagnóstico custom después del Workbench S15: en su lugar se hacen 5 preguntas del Practice Assessment oficial en vivo. La sesión no recopila respuestas abiertas S1, portafolios, mini encuesta ni diagnóstico adicional al docente.
+- **S16:** cierre + preparación DP-900: condensa el repaso S2–S15 a **65 minutos**, hace una pausa de 15 y dedica **100 minutos útiles** a DP-900. La segunda mitad sigue el blueprint vigente del 21-jul-2026: Core 25–30%, Relational 20–25%, Non-relational 15–20% y Analytics 25–30%; enseña diferencias entre servicios Azure, estrategia de descarte y 6 preguntas del Practice Assessment oficial. No se repite un diagnóstico custom ni el Workbench S15.
 
 **Lo que esto descarta a propósito:** un producto nuevo por sesión solo por
 variedad, repetir SQL básico bajo otro nombre, cambiar de caso de negocio a
