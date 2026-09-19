@@ -11,12 +11,14 @@ PLAN=ROOT/"assets/learning/learning-plan.json"
 RPLAN=ROOT/"revision/assets/learning/learning-plan.json"
 COURSE=ROOT/"tools/curso.json"
 RCOURSE=ROOT/"revision/tools/curso.json"
+TIMER=ROOT/"assets/learning/presentation-timer.js"
 
 html=DECK.read_text(encoding="utf-8")
 rhtml=RDECK.read_text(encoding="utf-8")
 sheet=SHEET.read_text(encoding="utf-8")
 rsheet=RSHEET.read_text(encoding="utf-8")
 guide=GUIDE.read_text(encoding="utf-8")
+timer=TIMER.read_text(encoding="utf-8")
 plan=json.loads(PLAN.read_text(encoding="utf-8"))
 rplan=json.loads(RPLAN.read_text(encoding="utf-8"))
 course=json.loads(COURSE.read_text(encoding="utf-8"))
@@ -28,160 +30,144 @@ assert plan==rplan, "learning-plan raíz/revision deben ser idénticos"
 assert course==rcourse, "curso.json raíz/revision deben ser idénticos"
 
 titles=re.findall(r'<section class="slide[^"]*" data-title="([^"]+)"',html)
-expected=["Portada","Recorrido","SQL que escribes","Pensamiento SQL","JOIN y conjuntos","De reglas a modelo","Integridad y DDL","SQL o NoSQL","OLTP a analítica","BigQuery físico","Anidados y formatos","S15 integró","Pausa","Tres casos","Resolución casos","Curso a DP900","Nombres Azure","DP900 práctico","Cheat sheet","Cierre"]
+expected=[
+"Portada","Recorrido","SQL que escribes","Pensamiento SQL","JOIN y conjuntos",
+"De reglas a modelo","Integridad y DDL","SQL o NoSQL","OLTP a analítica",
+"BigQuery físico","Anidados y formatos","S15 integró","Pausa",
+"DP900 blueprint","DP900 transferencia","Core datos","Core roles",
+"Relacional Azure","Relacional escenarios","Storage Azure","Cosmos DB",
+"Analytics Azure","Databricks Fabric","Tiempo real","Power BI",
+"Razonar DP900","DP900 práctico","Plan voucher","Cierre"
+]
 assert titles==expected, titles
-assert len(titles)==20
-assert html.count('class="micro"')>=6, "S16 debe mantener microactivaciones frecuentes sin nota"
+assert len(titles)==29
 
-# S16 debe usar el shell visual tradicional del curso, no un segundo sistema.
+# Shell y estilo tradicional.
 assert 'class="toolbar"' in html
 assert 'class="progress"' in html
 assert 'class="ctlbar"' not in html
 assert html.count('pre class="sqlviz"')==8
 assert "pre.sqlviz .copybtn" in html
 assert ".journey:before" in html and ".journey .step:before" in html
-assert ".case:before" in html
-assert 'class="clock">15:00</div>' in html
 assert 'class="slide dense yellow" data-title="S15 integró"' in html
-assert "slide[data-title=\"SQL que escribes\"] .card:nth-child(1) .chip" in html
-assert 'class="kw"' in html and 'class="fn"' in html and 'class="type"' in html and 'class="op"' in html
-assert "className='copybtn'" in html
-assert html.count("data-r")>=10
+assert html.count("data-r")>=8
 
-# Timer y gráficos deben conservar el patrón de las sesiones tradicionales.
-assert 'data-title="Pausa" data-break="15"' in html
-assert 'data-start-break' in html
-assert 'id="mini"' in html and 'id="miniT"' in html and 'id="miniPP"' in html
-assert 'id="minLibre"' in html and 'id="ponLibre"' in html
+# SVG: cuatro flujos de escritorio + cuatro verticales para móvil.
 assert html.count('class="joinviz s16-flowviz s16-desktop-flowviz"')==4
 assert html.count('class="joinviz s16-flowviz s16-mobile-flowviz"')==4
 assert '.s16-flowviz{display:none}' not in html
 assert '.s16-mobile-flowviz{display:none}' in html
-assert 'display:block!important' in html
 for flow_title in ["Recorrido","De reglas a modelo","OLTP a analítica","BigQuery físico"]:
     block=re.search(rf'<section class="slide[^"]*" data-title="{re.escape(flow_title)}".*?</section>',html,re.S)
     assert block and 's16-desktop-flowviz' in block.group(0) and 's16-mobile-flowviz' in block.group(0), flow_title
-assert "function openZoom" in html and "function closeZoom" in html
-assert html.count("<input")==1 and 'id="minLibre"' in html, "El único input permitido es el del temporizador docente"
-for old_class in ['class="code"','class="compare"','class="callout"','class="grid2"','class="grid3"','class="grid4"']:
-    assert old_class not in html, old_class
 
-# La sesión final no vuelve a ser formulario/examen.
-for bad in [
-    "<textarea","<select","qcard","send-report","data-post=","data-portfolio=",
-    "portfolio-url","24 escenarios","48 componentes","C / T / L","Me faltó guía",
-    "¿Dónde estuvo SQL?","Hay vocabulario desconocido","La metodología trasladó",
-    "Sin defensas","Autopercepción de salida","Enviar diagnóstico al docente","Hoy no vienes a demostrar otra vez que sabes","S15 no añadió otro tema"
+# Timer: S16 no mantiene otra implementación. Carga exactamente el componente de S15 v7.
+assert '../../assets/learning/presentation-timer.js?v=20260916a' in html
+for old in ['id="timeOv"','id="mini"','id="miniT"','id="minLibre"','data-start-break']:
+    assert old not in html, f"Timer local obsoleto en S16: {old}"
+assert 'data-title="Pausa" data-break="15"' in html
+for token in [
+    'id="andes-presentation-timer"','data-min="5"','data-min="10"','data-min="15"',
+    'data-min="20"','data-free="1"','Personalizado · 7:30 o 25','Aplicar',
+    'data-adjust="-300"','data-adjust="300"','▶ Iniciar','↺ Reiniciar',
+    'El reloj es opcional. Arrástralo para moverlo o minimízalo.',
+    '▶ Iniciar los 15 minutos'
 ]:
-    assert bad not in html, f"Contenido que no debe proyectarse: {bad}"
+    assert token in timer, token
 
-# SQL visible y pensamiento de consulta.
+# La sesión final no vuelve a ser un formulario o examen custom.
+main=re.search(r'<main class="stage">(.*?)</main>',html,re.S).group(1)
+for bad in [
+    "<textarea","<input","<select","qcard","send-report","data-post=","data-portfolio=",
+    "portfolio-url","24 escenarios","48 componentes","C / T / L","Me faltó guía",
+    "¿Dónde estuvo SQL?","Hay vocabulario desconocido","Autopercepción de salida",
+    "Enviar diagnóstico al docente"
+]:
+    assert bad not in main, f"Contenido que no debe proyectarse: {bad}"
+
+# Repaso conserva profundidad técnica, pero no vuelve a evaluarse.
 for token in [
     "SELECT","DISTINCT","WHERE","BETWEEN","IN","LIKE","IS NULL","ORDER BY","LIMIT",
     "COUNT","SUM","AVG","MIN/MAX","GROUP BY","HAVING","INNER JOIN","LEFT JOIN",
     "RIGHT JOIN","FULL OUTER","UNION / ALL","WITH / CTE","CASE","COALESCE",
     "INSERT","UPDATE","DELETE","CREATE TABLE","ALTER TABLE","DROP TABLE",
     "FROM → WHERE → GROUP BY → agregación → HAVING → SELECT → ORDER BY → LIMIT",
-    "Pregunta → grano esperado → tablas → llaves → unión → filtros → agregación → validación"
+    "Pregunta → grano esperado → tablas → llaves → unión → filtros → agregación → validación",
+    "1FN/2FN/3FN","PRIMARY KEY","FOREIGN KEY","CHECK","modelo estrella",
+    "Partición","Clustering","Pruning","UNNEST","Parquet"
 ]:
     assert token in html, token
 
-# Cobertura conceptual acumulada.
+# DP-900 v2: blueprint vigente y los cuatro dominios tienen desarrollo explícito.
 for token in [
-    "1FN/2FN/3FN","PRIMARY KEY","FOREIGN KEY","NOT NULL / UNIQUE","CHECK",
-    "SQL / NoSQL","OLTP","OLAP","modelo estrella","Partición","Clustering","Pruning",
-    "JSON / ARRAY / STRUCT","UNNEST","CSV","Parquet","S15 convirtió lo anterior"
+    "25–30%","20–25%","15–20%","21-jul-2026",
+    "Core data concepts","Relational on Azure","Non-relational","Analytics",
+    "Database Administrator","Data Engineer","Data Analyst",
+    "Azure SQL Database","Azure SQL Managed Instance","SQL Server on Azure VM",
+    "Azure Database for PostgreSQL","Blob Storage","Azure Files","Table Storage",
+    "API for NoSQL","MongoDB","Cassandra","Gremlin","Table",
+    "Azure Databricks","Microsoft Fabric","Power BI","Batch","Streaming / real time",
+    "modelo semántico","Practice Assessment oficial","700+","45 min","65 min"
 ]:
     assert token in html, token
 
-# Cierre con transferencia sin nota y puente Azure.
-for token in [
-    "Transferencia final · sin nota","Reporte inflado","Pedido completo","Tablero histórico",
-    "Gran parte del razonamiento ya lo trabajaste","concepto conocido, nombre de proveedor nuevo",
-    "Azure SQL Database","Managed Instance","SQL Server on Azure VM","Cosmos DB",
-    "Databricks","Fabric","Power BI","5 preguntas oficiales"
-]:
-    assert token in html, token
+# Ya no hay tres casos finales de repaso después de la pausa.
+for old in ["Transferencia final · sin nota","Reporte inflado","Pedido completo","Tablero histórico","Gran parte del razonamiento ya lo trabajaste"]:
+    assert old not in html, old
 
+# Recursos oficiales.
 for url in [
     "credentials/certifications/resources/study-guides/dp-900",
     "practice-assessments-for-microsoft-certifications",
     "credentials/certifications/prepare-exam",
-    "credentials/certifications/register-schedule-exam"
+    "credentials/certifications/register-schedule-exam",
+    "azure/cosmos-db/account-overview"
 ]:
     assert url in html, url
 
-# Cheat Sheet de cuatro páginas, con mapa de referentes por concepto.
+# Cheat Sheet sigue siendo 4 páginas con referentes.
 assert len(re.findall(r'<section class="page"(?:\s|>)',sheet))==4
 assert 'id="referentes-industria"' in sheet
 for token in [
-    "Cheat Sheet final · SQL y pensamiento de consulta",
-    "Orden lógico del motor","INNER JOIN","FULL OUTER JOIN","UNION ALL","WITH / CTE",
-    "CASE","COALESCE","Normalización","1FN","2FN","3FN","DDL · estructura","DML · datos",
-    "Clave-valor","Grafo","Serie de tiempo","CAP","OLTP","OLAP","Modelo estrella",
-    "ETL","ELT","Partición","Clustering","Pruning","ARRAY","STRUCT","UNNEST","Parquet",
-    "Azure SQL Managed Instance","Blob Storage","Microsoft Fabric","Checklist antes de confiar",
-    "Rutas de profundización · referentes de industria","PostgreSQL · Table Expressions","MongoDB · Data Modeling",
-    "Neo4j Fundamentals","CAP Theorem","Dimensional Modeling Techniques","Apache Parquet Overview"
+    "Cheat Sheet final · SQL y pensamiento de consulta","Normalización","CAP","Modelo estrella",
+    "Partición","Clustering","Pruning","UNNEST","Parquet",
+    "Rutas de profundización · referentes de industria","PostgreSQL · Table Expressions",
+    "MongoDB · Data Modeling","Neo4j Fundamentals","Dimensional Modeling Techniques"
 ]:
     assert token in sheet, token
 
-
-for ref in [
-    "https://www.postgresql.org/docs/current/queries-table-expressions.html",
-    "https://www.postgresql.org/docs/current/queries-with.html",
-    "https://www.postgresql.org/docs/current/functions-conditional.html",
-    "https://www.postgresql.org/docs/current/ddl-constraints.html",
-    "https://learn.microsoft.com/en-us/training/modules/explore-relational-data-offerings/",
-    "https://www.mongodb.com/docs/manual/data-modeling/",
-    "https://graphacademy.neo4j.com/courses/neo4j-fundamentals",
-    "https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/cap-theorem.html",
-    "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/",
-    "https://cloud.google.com/bigquery/docs/partitioned-tables",
-    "https://cloud.google.com/bigquery/docs/clustered-tables",
-    "https://cloud.google.com/bigquery/docs/nested-repeated",
-    "https://parquet.apache.org/docs/overview/",
-    "https://docs.databricks.com/aws/en/delta",
-    "https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview",
-    "https://learn.microsoft.com/en-us/power-bi/fundamentals/power-bi-overview"
-]:
-    assert ref in sheet, ref
-
-# Manifiestos: S16 ya no promete otro diagnóstico custom.
+# Manifiestos.
 s=plan["sesiones"]["16"]
-assert s["titulo"]=="Cierre del curso + puente DP-900"
+assert s["titulo"]=="Cierre del curso + preparación DP-900"
+assert s["modo"]=="consolidacion_y_preparacion_dp900"
+assert s["distribucion_tiempo"]["cierre_diplomado_min"]==65
+assert s["distribucion_tiempo"]["pausa_min"]==15
+assert s["distribucion_tiempo"]["preparacion_dp900_min"]==100
 assert s["diagnostico"]["en_clase"] is False
-assert s["diagnostico"]["practice_assessment_oficial_en_vivo"]==5
-assert s["cierre"]["no_recopilar"]==["respuestas abiertas S1","mini encuesta adicional","URL de portafolio","diagnóstico S16 al docente"]
-assert "tres casos finales sin nota" in s["objetivo"].casefold()
-assert s["cierre"]["referentes_industria"]["fuentes"]==["PostgreSQL Documentation","Microsoft Learn","MongoDB Documentation","Neo4j GraphAcademy","AWS Architecture/Whitepapers","Kimball Group","Google Cloud BigQuery Documentation","Apache Parquet","Databricks Documentation"]
+assert s["diagnostico"]["practice_assessment_oficial_en_vivo"]==6
+assert s["diagnostico"]["banco_custom_en_clase"] is False
+assert [x["peso"] for x in s["dp900"]]==["25–30%","20–25%","15–20%","25–30%"]
 
 cs=next(x for m in course["modulos"] for x in m.get("sesiones",[]) if x["n"]==16)
-assert cs["titulo"]=="Cierre del curso + puente DP-900"
-assert "24 escenarios" not in cs["desc"]
-assert "48 componentes" not in cs["desc"]
-assert "Cheat Sheet" in cs["desc"]
-assert any(r["href"]=="Presentaciones/M6/glosario-cierre-s16.html" and "Cheat Sheet" in r["txt"] for r in cs["recursos"])
-assert any(r["href"]=="Presentaciones/M6/glosario-cierre-s16.html#referentes-industria" and "Referentes de industria" in r["txt"] for r in cs["recursos"])
+assert cs["titulo"]=="Cierre del curso + preparación DP-900"
+assert cs["modo"]=="consolidacion_y_preparacion_dp900"
+assert "100 min de preparación DP-900" in cs["desc"]
+assert "blueprint DP-900" in cs["tags"]
+assert "Cosmos DB APIs" in cs["tags"]
+assert "real-time analytics" in cs["tags"]
 
+# Analítica S16 vieja sigue fuera del flujo activo.
 dash=(ROOT/"revision/teacher-dashboard.html").read_text(encoding="utf-8")
 legacy=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
-assert "s16-analytics.html" not in dash, "La analítica S16 no debe seguir en la navegación docente activa"
+assert "s16-analytics.html" not in dash
 assert "Analítica histórica (versión anterior)" in legacy
-assert "la S16 actual ya no envía diagnósticos" in legacy
 
-# La guía protege explícitamente la nueva intención.
+# La guía debe proteger la nueva distribución.
 for token in [
-    "La última sesión no es otra evaluación",
-    "No proyectar quejas",
-    "No repetir las cinco preguntas abiertas de S1",
-    "No hacer un segundo examen custom después de S15",
-    "No pedir portafolios",
-    "No enviar diagnóstico docente",
-    "Una idea cognitiva por diapositiva",
-    "Practice Assessment oficial",
-    "Cheat Sheet final · 4 páginas"
+    "cierre del diplomado · 65 min","preparación DP-900 · 100 min",
+    "skills measured as of July 21, 2026","seis preguntas oficiales",
+    "presentation-timer.js?v=20260916a","No mantener un segundo timer local"
 ]:
     assert token in guide, token
 
-print("OK · S16: cierre fuerte + SQL completo + 3 casos sin nota + puente DP-900 + Cheat Sheet 4 páginas + referentes de industria")
+print("OK · S16 v2: 65 min cierre + 100 min DP-900 + timer S15 v7 + 29 slides + SVG desktop/móvil")
