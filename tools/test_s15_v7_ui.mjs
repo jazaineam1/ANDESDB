@@ -102,7 +102,7 @@ await waitFor(()=>document.querySelectorAll('#ddlTests .pill.ok').length===7,'DD
 
 // Mutation Hunter 2.0: el INSERT lo escribe el estudiante y debe diferenciar esquema correcto/mutante.
 const mutationCases=[
- ['no_case_pk',"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(9001,'2026-09-02','Ruido','Alta','Abierto','Prueba')"],
+ ['no_case_pk',"INSERT INTO caso(caso_id,fecha_creacion,tipo,prioridad,estado,barrio) VALUES(1010,'2026-08-20','Ruido','Alta','Abierto','Suba'),(1010,'2026-08-20','Ruido','Alta','Abierto','Suba')"],
  ['wrong_fk',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9001,9999,'2026-09-02 10:00','Abierto',0)"],
  ['weak_minutes',"INSERT INTO evento(evento_id,caso_id,fecha_evento,estado,minutos_desde_anterior) VALUES(9205,9001,'2026-09-02 11:00','Abierto',0)"]
 ];
