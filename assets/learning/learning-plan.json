@@ -727,12 +727,14 @@
           "HackerRank SQL"
         ],
         "portafolio": [
-          "SQL",
-          "modelo",
-          "DDL e integridad",
-          "NoSQL",
-          "analítica cloud",
-          "S15"
+          "SQL explicable",
+          "modelo ER/3FN",
+          "PostgreSQL/Supabase con DDL e integridad",
+          "NoSQL documental",
+          "BigQuery/Google Skills",
+          "S15 Workbench",
+          "HackerRank SQL",
+          "glosario de cierre"
         ],
         "encuesta": [
           "modelo relacional",
