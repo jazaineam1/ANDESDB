@@ -34,9 +34,15 @@ h1{margin:0;font-size:23px;line-height:1.08}h2{font-size:12px;margin:0 0 5px;tex
 <div class="band"><b>Cadena de decisión:</b> problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión.</div>
 <h2>Traducción del Workbench S15</h2>
 <div class="workbench">
-<div class="wb"><b>SQL Arena</b>Consultas con un bug o un caso borde. La meta es que la consulta sobreviva cuando cambian los datos.</div>
-<div class="wb"><b>DDL Mutation</b>Un esquema defectuoso se usa como contraste para hacer visible qué restricción falta. “Mutation” = versión intencionalmente incorrecta.</div>
-<div class="wb"><b>Boss Transfer</b>Caso nuevo que cambia el contexto. “Boss” = transferencia: aplicar el razonamiento sin repetir exactamente la receta anterior.</div>
+<div class="wb"><b>0 · Diagnóstico</b>Explorar datos imperfectos y separar evidencia de hipótesis antes de modelar.</div>
+<div class="wb"><b>1 · SQL Arena</b>Consultas con bugs o casos borde. La meta es que la consulta sobreviva cuando cambian los datos.</div>
+<div class="wb"><b>2 · Modelo + 3FN</b>Entidades, PK/FK, cardinalidad y dependencias; separar lo que pertenece a entidades distintas.</div>
+<div class="wb"><b>3 · DDL Mutation</b>Contrastar un esquema correcto con uno defectuoso para hacer visible qué restricción falta.</div>
+<div class="wb"><b>4 · Document Lab</b>Decidir qué embeber, qué referenciar y cómo cambia el patrón de acceso.</div>
+<div class="wb"><b>5 · Warehouse</b>Definir grano, medidas, dimensiones y movimiento de datos hacia analítica.</div>
+<div class="wb"><b>6 · BigQuery físico</b>Derivar partición y clustering desde el patrón real de consultas.</div>
+<div class="wb"><b>7 · Nested BigQuery</b>Trabajar ARRAY/STRUCT y UNNEST sin perder de vista el cambio de grano.</div>
+<div class="wb"><b>8 · Boss Transfer</b>Caso nuevo que cambia el contexto: aplicar el razonamiento sin repetir exactamente la receta anterior.</div>
 </div>
 <div class="azure"><strong>Puente DP-900:</strong> Azure SQL Database = base SQL PaaS; Managed Instance = PaaS con alta compatibilidad de instancia; SQL Server on Azure VM = control de VM/SO; Blob = objetos; Files = archivos compartidos; Table = clave/atributo; Cosmos DB = NoSQL distribuido; Databricks = Spark/ingeniería; Fabric = plataforma analítica SaaS integrada; Power BI = modelo semántico y visualización.</div>
 <div class="foot"><span>ANDESDB · S16 · recurso de cierre</span><span>Tip: imprime o guarda esta página como PDF.</span></div>
