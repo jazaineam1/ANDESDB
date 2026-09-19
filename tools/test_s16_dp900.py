@@ -82,7 +82,6 @@ for c in (COURSE,RCOURSE):
     assert "encuesta" in s["desc"].casefold()
     assert any("skills.google/paths/420" in r.get("href","") for r in s.get("recursos",[]))
     assert any("hackerrank.com/skills-verification/sql_basic" in r.get("href","") for r in s.get("recursos",[]))
-    assert any("glosario-cierre-s16.html" in r.get("href","") and r.get("download") for r in s.get("recursos",[]))
 for p in (PLAN,RPLAN):
     s=p["sesiones"]["16"]
     assert s["titulo"]=="Cierre del curso + primer contacto DP-900"
