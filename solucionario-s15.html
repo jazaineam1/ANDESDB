@@ -31,7 +31,7 @@ footer{color:var(--muted);font-size:.9rem;margin-top:28px;padding:20px 0}
   <div class="wrap">
     <div class="ey">ANDESDB · Sesión 15</div>
     <h1>Solucionario de sesión 15</h1>
-    <p>Referencia para el <b>modo práctica</b> de la sesión 15. Usa únicamente ideas, palabras y herramientas trabajadas entre S2 y S14. Si el Workbench actual añade una exigencia que no fue enseñada antes, aquí se marca como <b>fuera del alcance del curso</b> en vez de presentarla como si el estudiante ya debiera conocerla.</p>
+    <p>Referencia para el <b>modo práctica</b> de la sesión 15. Las soluciones retoman las ideas, palabras y herramientas trabajadas entre S2 y S14 y buscan resolver cada ejercicio de la forma más directa posible.</p>
     <div class="actions">
       <a class="btn" href="evaluador-s15-v7.html?modo=practica">Abrir Workbench en práctica</a>
       <a class="btn alt" href="index.html">Volver al curso</a>
@@ -144,7 +144,7 @@ GROUP BY e.caso_id;</code></pre>
 FROM casos_src c
 LEFT JOIN eventos_src e
   ON e.caso_id = c.caso_id;</code></pre>
-    <div class="why"><b>Por qué:</b> en S5 aprendiste que un <code>JOIN 1:N</code> puede repetir una entidad. <code>COUNT(DISTINCT c.caso_id)</code> protege el conteo de casos, <code>COUNT(e.evento_id)</code> cuenta eventos y <code>CASE</code> limita el tercer conteo a prioridad Alta. No hace falta introducir una técnica SQL nueva.</div>
+    <div class="why"><b>Por qué:</b> un <code>JOIN 1:N</code> puede repetir una entidad. <code>COUNT(DISTINCT c.caso_id)</code> protege el conteo de casos, <code>COUNT(e.evento_id)</code> cuenta eventos y <code>CASE</code> limita el tercer conteo a prioridad Alta.</div>
 
     <h3>Q5 · Promedio de minutos por caso y tipo</h3>
 <pre><code>WITH por_caso AS (
@@ -240,7 +240,6 @@ INSERT INTO evento(
 VALUES (9202, 9001, '2026-09-01 10:10', 'Abierto', -1);</code></pre>
       <p class="small">Es exactamente la lógica de S9: prueba un dato permitido y otro que viola la regla.</p>
     </div></details>
-    <div class="notice"><b>Fuera del alcance enseñado:</b> el Workbench actual también pide comparar esquemas alterados y agregar un estado nuevo mediante una tabla adicional de estados. Esas dos técnicas no aparecen en S9. Por eso este solucionario no las presenta como conocimiento previo del estudiante.</div>
   </section>
 
   <section id="documentos">
@@ -317,7 +316,6 @@ CROSS JOIN UNNEST(c.evidencias) AS ev;</code></pre>
       <tr><td>Partición</td><td>fecha_pedido</td><td>100% del patrón de consultas acota fecha.</td></tr>
       <tr><td>Clustering práctica</td><td>categoria, canal</td><td>categoría domina los filtros; canal es el segundo filtro frecuente.</td></tr>
     </table>
-    <div class="notice"><b>Fuera del alcance enseñado:</b> el caso actual añade <code>costo_envio</code> a nivel pedido y espera decidir cómo separarlo de las medidas de línea. En S12 se construyó una sola tabla de hechos (<code>fact_venta</code>); no se enseñó a diseñar varias tablas de hechos para medidas con niveles distintos. Por eso esa decisión no se presenta aquí como respuesta que un principiante ya debería conocer.</div>
 
     <h3>UNNEST de items</h3>
 <pre><code>SELECT p.pedido_id,
