@@ -59,7 +59,7 @@ assert.equal(s.answered,24);
 assert.equal(s.scenarioCorrect,24);
 assert.equal(s.componentCorrect,48);
 assert.equal(s.componentTotal,48);
-assert.deepEqual(s.weakDomains,[]);
+assert.equal(Array.from(s.weakDomains).length,0);
 assert.equal(document.querySelector('#score-core').textContent,'15 / 15 comp.');
 assert.equal(document.querySelector('#score-rel').textContent,'12 / 12 comp.');
 assert.equal(document.querySelector('#score-nonrel').textContent,'8 / 8 comp.');
