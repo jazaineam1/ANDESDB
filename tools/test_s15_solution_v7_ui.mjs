@@ -51,6 +51,17 @@ async function boot({reset=false}={}){
   const {dom,window,document,sourceRaw}=await boot();
   assert.match(document.querySelector('#modePill').textContent,/Práctica guiada/);
 
+  // Formato: ejemplos legibles y ayuda compacta.
+  const docExample=document.querySelector('#s4 .example-code');
+  const nestedExample=document.querySelector('#s7 .example-code');
+  assert.ok(docExample && nestedExample,'Document y Nested deben tener bloques de ejemplo');
+  assert.equal(docExample.textContent.includes('\\n'),false,'El JSON documental no debe mostrar \\n literales');
+  assert.equal(nestedExample.textContent.includes('\\n'),false,'El JSON anidado no debe mostrar \\n literales');
+  assert.ok(docExample.textContent.includes('\n  "caso_id"'),'El JSON documental debe tener saltos reales');
+  assert.ok(nestedExample.textContent.includes('\n  "evidencias"'),'El JSON anidado debe tener saltos reales');
+  assert.ok(document.querySelector('#s2 .study-guide-bar'),'La ayuda de estación debe usar barra compacta');
+  assert.equal(document.querySelector('#study-hints-s2').hidden,true,'Sin pedir pistas no debe ocupar espacio un feedback vacío');
+
   // Un estudiante que ya tenía 3 pistas en la práctica desbloquea Q1 inmediatamente.
   const q1sol=document.querySelector('[data-solution="q1"]');
   assert.equal(q1sol.disabled,false);
@@ -135,7 +146,10 @@ async function boot({reset=false}={}){
   const s2sol=document.querySelector('[data-study-solution="s2"]');
   const s2hint=document.querySelector('[data-study-hint="s2"]');
   assert.equal(s2sol.disabled,true);
-  click(window,s2hint); click(window,s2hint);
+  click(window,s2hint);
+  assert.equal(document.querySelector('#study-hints-s2').hidden,false);
+  assert.match(document.querySelector('#study-hints-s2').textContent,/Pista 1\/3/);
+  click(window,s2hint);
   assert.equal(s2sol.disabled,true);
   click(window,s2hint);
   assert.equal(s2sol.disabled,false);
