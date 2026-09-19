@@ -310,10 +310,19 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 .slide[data-title="Pausa"] .break{gap:.65rem}
 .slide[data-title="Pausa"] .clock{color:#171717}
 .slide[data-title="Pausa"] .btn{justify-self:center;margin-top:.45rem}
+.s16-mobile-flowviz{display:none}
 @media (max-aspect-ratio:1/1),(max-width:700px){
-  .s16-flowviz{display:none}
-  .slide[data-title="Recorrido"] .journey{display:grid}
-  .slide[data-title="De reglas a modelo"] .logic{display:grid}
+  .s16-desktop-flowviz{display:none!important}
+  .s16-mobile-flowviz{
+    display:block!important;
+    width:100%;
+    height:auto;
+    max-height:none!important;
+    margin:.65rem auto 1rem;
+    cursor:default;
+  }
+  .slide[data-title="Recorrido"] .journey{display:none}
+  .slide[data-title="De reglas a modelo"] .logic{display:none}
   .s16-zoom{display:none!important}
 }
 
@@ -326,7 +335,7 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="brand"><span>ANDESDB · Sesión 16</span><span>consolidar → transferir → continuar</span></div></section>
 
 <section class="slide dense" data-title="Recorrido"><div class="ey">El recorrido completo</div><h2>Empezaste con una consulta; terminaste resolviendo un sistema de datos</h2>
-<svg class="joinviz s16-flowviz" viewBox="0 0 1010 202" role="img" tabindex="0" aria-label="Recorrido del diplomado desde consultar SQL hasta integrar una solución completa"><defs><marker id="s16arr1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 202" role="img" tabindex="0" aria-label="Recorrido del diplomado desde consultar SQL hasta integrar una solución completa"><defs><marker id="s16arr1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
 <text x="6" y="18" class="s16-svg-label">DEL SQL A UNA DECISIÓN DE DATOS COMPLETA</text>
 <g>
 <rect x="8" y="44" width="145" height="86" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="2.2"/><rect x="8" y="44" width="145" height="25" rx="10" fill="#2e7d32"/><text x="20" y="61" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">S2–S5 · Consultar</text><text x="20" y="87" class="s16-svg-small">filtrar · ordenar</text><text x="20" y="106" class="s16-svg-small">agrupar · unir</text>
@@ -338,6 +347,23 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <line x1="155" y1="87" x2="173" y2="87" stroke="#124e78" stroke-width="2.3" marker-end="url(#s16arr1)"/><line x1="324" y1="87" x2="342" y2="87" stroke="#124e78" stroke-width="2.3" marker-end="url(#s16arr1)"/><line x1="493" y1="87" x2="511" y2="87" stroke="#124e78" stroke-width="2.3" marker-end="url(#s16arr1)"/><line x1="662" y1="87" x2="680" y2="87" stroke="#124e78" stroke-width="2.3" marker-end="url(#s16arr1)"/><line x1="831" y1="87" x2="849" y2="87" stroke="#124e78" stroke-width="2.3" marker-end="url(#s16arr1)"/>
 </g>
 <rect x="162" y="154" width="686" height="31" rx="15.5" fill="#101820"/><text x="505" y="174.5" text-anchor="middle" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#ffd600">consulta → modelo → integridad → almacenamiento → analítica → validación → decisión</text>
+</svg>
+<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 520" role="img" aria-label="Recorrido vertical del diplomado desde consultar SQL hasta integrar una solución completa">
+<defs><marker id="s16marr1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<text x="24" y="24" class="s16-svg-label">DEL SQL A UNA DECISIÓN COMPLETA</text>
+<g>
+<rect x="28" y="44" width="304" height="56" rx="11" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><rect x="28" y="44" width="112" height="56" rx="11" fill="#2e7d32"/><text x="84" y="68" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#fff">S2–S5</text><text x="84" y="86" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="800" fill="#fff">Consultar</text><text x="154" y="66" class="s16-svg-small">filtrar · ordenar</text><text x="154" y="84" class="s16-svg-small">agrupar · unir</text>
+<line x1="180" y1="102" x2="180" y2="118" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr1)"/>
+<rect x="28" y="124" width="304" height="56" rx="11" fill="#fff" stroke="#124e78" stroke-width="2.4"/><rect x="28" y="124" width="112" height="56" rx="11" fill="#124e78"/><text x="84" y="148" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#fff">S6–S9</text><text x="84" y="166" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="800" fill="#fff">Diseñar</text><text x="154" y="146" class="s16-svg-small">reglas · entidades</text><text x="154" y="164" class="s16-svg-small">3FN · integridad</text>
+<line x1="180" y1="182" x2="180" y2="198" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr1)"/>
+<rect x="28" y="204" width="304" height="56" rx="11" fill="#fff" stroke="#ff8a24" stroke-width="2.4"/><rect x="28" y="204" width="112" height="56" rx="11" fill="#ff8a24"/><text x="84" y="228" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#171717">S10–S11</text><text x="84" y="246" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="800" fill="#171717">Elegir</text><text x="154" y="226" class="s16-svg-small">SQL / NoSQL</text><text x="154" y="244" class="s16-svg-small">patrón de acceso</text>
+<line x1="180" y1="262" x2="180" y2="278" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr1)"/>
+<rect x="28" y="284" width="304" height="56" rx="11" fill="#fff" stroke="#124e78" stroke-width="2.4"/><rect x="28" y="284" width="112" height="56" rx="11" fill="#124e78"/><text x="84" y="308" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#fff">S12</text><text x="84" y="326" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="800" fill="#fff">Analizar</text><text x="154" y="306" class="s16-svg-small">grano · estrella</text><text x="154" y="324" class="s16-svg-small">batch · streaming</text>
+<line x1="180" y1="342" x2="180" y2="358" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr1)"/>
+<rect x="28" y="364" width="304" height="56" rx="11" fill="#fff" stroke="#6a4bb8" stroke-width="2.4"/><rect x="28" y="364" width="112" height="56" rx="11" fill="#6a4bb8"/><text x="84" y="388" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#fff">S13–S14</text><text x="84" y="406" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="800" fill="#fff">Escalar</text><text x="154" y="386" class="s16-svg-small">BigQuery · pruning</text><text x="154" y="404" class="s16-svg-small">ARRAY · UNNEST</text>
+<line x1="180" y1="422" x2="180" y2="438" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr1)"/>
+<rect x="28" y="444" width="304" height="56" rx="11" fill="#fff8e1" stroke="#c7a600" stroke-width="2.6"/><rect x="28" y="444" width="112" height="56" rx="11" fill="#ffd600"/><text x="84" y="468" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="900" fill="#3a2f00">S15</text><text x="84" y="486" text-anchor="middle" font-family="Segoe UI,Arial" font-size="11" font-weight="900" fill="#3a2f00">Integrar</text><text x="154" y="466" class="s16-svg-small">modelo · DDL</text><text x="154" y="484" class="s16-svg-small">warehouse · transferencia</text>
+</g>
 </svg>
 <div class="journey">
 <div class="step"><b>S2–S5 · Consultar</b><p>Filtrar, ordenar, agrupar, unir y construir resultados por etapas.</p></div>
@@ -384,7 +410,7 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="brand"><span>JOIN</span><span>relación + grano</span></div></section>
 
 <section class="slide dense" data-title="De reglas a modelo"><div class="ey">Diseño de bases de datos</div><h2>Pasaste de una conversación de negocio a un modelo defendible</h2>
-<svg class="joinviz s16-flowviz" viewBox="0 0 1010 225" role="img" tabindex="0" aria-label="Flujo desde una regla de negocio hasta entidades, relaciones, cardinalidad y un esquema implementable"><defs><marker id="s16arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 225" role="img" tabindex="0" aria-label="Flujo desde una regla de negocio hasta entidades, relaciones, cardinalidad y un esquema implementable"><defs><marker id="s16arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
 <text x="6" y="18" class="s16-svg-label">DE UNA FRASE DEL NEGOCIO A UN ESQUEMA</text>
 <g>
 <rect x="12" y="42" width="154" height="58" rx="10" fill="#fff8e1" stroke="#c7a600" stroke-width="2.2"/><text x="89" y="67" text-anchor="middle" class="s16-svg-title">regla</text><text x="89" y="86" text-anchor="middle" class="s16-svg-small">qué debe cumplirse</text>
@@ -399,6 +425,25 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <rect x="565" y="0" width="205" height="76" rx="9" fill="#fff" stroke="#2e7d32" stroke-width="2.2"/><rect x="565" y="0" width="205" height="24" rx="9" fill="#2e7d32"/><text x="577" y="17" font-family="Consolas,monospace" font-size="13" font-weight="800" fill="#fff">LINEA_PEDIDO</text><text x="577" y="45" class="s16-svg-code">pedido_id</text><rect x="716" y="32" width="41" height="17" rx="8.5" fill="#6a4bb8"/><text x="736.5" y="44.5" text-anchor="middle" font-family="Segoe UI,Arial" font-size="9.5" font-weight="900" fill="#fff">FK</text><text x="577" y="65" class="s16-svg-code">cantidad</text>
 <line x1="210" y1="40" x2="560" y2="40" stroke="#2e7d32" stroke-width="2.4"/><rect x="357" y="27" width="56" height="24" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="1.8"/><text x="385" y="43" text-anchor="middle" font-family="Consolas,monospace" font-size="12" font-weight="900" fill="#2e7d32">1 : N</text>
 </g>
+</svg>
+<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 610" role="img" aria-label="Flujo vertical desde una regla de negocio hasta un esquema implementable con relación uno a muchos">
+<defs><marker id="s16marr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<text x="24" y="24" class="s16-svg-label">DE UNA REGLA A UN MODELO</text>
+<g>
+<rect x="44" y="44" width="272" height="54" rx="11" fill="#fff8e1" stroke="#c7a600" stroke-width="2.4"/><text x="180" y="67" text-anchor="middle" class="s16-svg-title">regla</text><text x="180" y="85" text-anchor="middle" class="s16-svg-small">qué debe cumplirse</text>
+<line x1="180" y1="100" x2="180" y2="118" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr2)"/>
+<rect x="44" y="124" width="272" height="54" rx="11" fill="#e8f1f8" stroke="#124e78" stroke-width="2.4"/><text x="180" y="147" text-anchor="middle" class="s16-svg-title">entidad</text><text x="180" y="165" text-anchor="middle" class="s16-svg-small">qué tiene identidad</text>
+<line x1="180" y1="180" x2="180" y2="198" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr2)"/>
+<rect x="44" y="204" width="272" height="54" rx="11" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="180" y="227" text-anchor="middle" class="s16-svg-title">atributo</text><text x="180" y="245" text-anchor="middle" class="s16-svg-small">qué describe a la entidad</text>
+<line x1="180" y1="260" x2="180" y2="278" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr2)"/>
+<rect x="44" y="284" width="272" height="54" rx="11" fill="#fff4e0" stroke="#ff8a24" stroke-width="2.4"/><text x="180" y="307" text-anchor="middle" class="s16-svg-title">relación</text><text x="180" y="325" text-anchor="middle" class="s16-svg-small">cómo se conectan las entidades</text>
+<line x1="180" y1="340" x2="180" y2="358" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16marr2)"/>
+<rect x="44" y="364" width="272" height="54" rx="11" fill="#f3ecff" stroke="#6a4bb8" stroke-width="2.4"/><text x="180" y="387" text-anchor="middle" class="s16-svg-title">cardinalidad</text><text x="180" y="405" text-anchor="middle" class="s16-svg-small">1:1 · 1:N · N:N</text>
+</g>
+<text x="24" y="452" class="s16-svg-label">EJEMPLO 1:N</text>
+<rect x="30" y="470" width="130" height="106" rx="10" fill="#fff" stroke="#124e78" stroke-width="2.4"/><rect x="30" y="470" width="130" height="28" rx="10" fill="#124e78"/><text x="42" y="489" font-family="Consolas,monospace" font-size="12" font-weight="900" fill="#fff">PEDIDO</text><text x="42" y="520" class="s16-svg-code">pedido_id</text><rect x="111" y="507" width="34" height="17" rx="8.5" fill="#ffd600"/><text x="128" y="519.5" text-anchor="middle" font-family="Segoe UI,Arial" font-size="9" font-weight="900" fill="#3a2f00">PK</text><text x="42" y="548" class="s16-svg-code">estado</text>
+<rect x="200" y="470" width="130" height="106" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><rect x="200" y="470" width="130" height="28" rx="10" fill="#2e7d32"/><text x="212" y="489" font-family="Consolas,monospace" font-size="11" font-weight="900" fill="#fff">LINEA_PEDIDO</text><text x="212" y="520" class="s16-svg-code">pedido_id</text><rect x="281" y="507" width="34" height="17" rx="8.5" fill="#6a4bb8"/><text x="298" y="519.5" text-anchor="middle" font-family="Segoe UI,Arial" font-size="9" font-weight="900" fill="#fff">FK</text><text x="212" y="548" class="s16-svg-code">cantidad</text>
+<line x1="162" y1="523" x2="198" y2="523" stroke="#2e7d32" stroke-width="2.4"/><rect x="166" y="508" width="28" height="28" rx="14" fill="#fff" stroke="#2e7d32" stroke-width="1.8"/><text x="180" y="526" text-anchor="middle" font-family="Consolas,monospace" font-size="10.5" font-weight="900" fill="#2e7d32">1:N</text>
 </svg>
 <div class="logic"><span>regla</span><i>→</i><span>entidad</span><i>→</i><span>atributo</span><i>→</i><span>relación</span><i>→</i><span>cardinalidad</span></div>
 <div class="g3">
@@ -430,12 +475,21 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="micro" data-r><b>Decide rápido:</b> si siempre lees un pedido completo con sus ítems y la forma cambia con frecuencia, ¿qué patrón de almacenamiento compararías primero?</div><div class="brand"><span>SQL / NoSQL</span><span>problema antes que tecnología</span></div></section>
 
 <section class="slide dense" data-title="OLTP a analítica"><div class="ey">De operación a analítica</div><h2>La misma empresa necesita estructuras distintas para operar y analizar</h2>
-<svg class="joinviz s16-flowviz" viewBox="0 0 1010 175" role="img" tabindex="0" aria-label="Flujo desde sistemas OLTP a procesos batch o streaming y luego a un modelo estrella para análisis"><defs><marker id="s16arr3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 175" role="img" tabindex="0" aria-label="Flujo desde sistemas OLTP a procesos batch o streaming y luego a un modelo estrella para análisis"><defs><marker id="s16arr3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
 <text x="6" y="18" class="s16-svg-label">OPERAR Y ANALIZAR SON CARGAS DISTINTAS</text>
 <rect x="18" y="48" width="225" height="84" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="130" y="73" text-anchor="middle" class="s16-svg-title">OLTP · operar ahora</text><text x="130" y="95" text-anchor="middle" class="s16-svg-small">pedido · cliente · reserva</text><text x="130" y="115" text-anchor="middle" class="s16-svg-small">integridad · baja latencia</text>
 <rect x="342" y="48" width="225" height="84" rx="12" fill="#fff8e1" stroke="#c7a600" stroke-width="2.4"/><text x="454" y="73" text-anchor="middle" class="s16-svg-title">mover y transformar</text><text x="454" y="95" text-anchor="middle" class="s16-svg-small">batch · streaming</text><text x="454" y="115" text-anchor="middle" class="s16-svg-small">ETL / ELT</text>
 <rect x="666" y="48" width="325" height="84" rx="12" fill="#e8f1f8" stroke="#124e78" stroke-width="2.4"/><text x="828" y="73" text-anchor="middle" class="s16-svg-title">OLAP · entender historia</text><text x="828" y="95" text-anchor="middle" class="s16-svg-small">hecho + dimensiones + medidas + tiempo</text><text x="828" y="115" text-anchor="middle" class="s16-svg-small">modelo estrella · agregaciones</text>
 <line x1="247" y1="90" x2="337" y2="90" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16arr3)"/><line x1="571" y1="90" x2="661" y2="90" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16arr3)"/>
+</svg>
+<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 360" role="img" aria-label="Flujo vertical desde OLTP a procesos batch o streaming y luego a OLAP">
+<defs><marker id="s16marr3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<text x="24" y="24" class="s16-svg-label">OPERAR → MOVER → ANALIZAR</text>
+<rect x="34" y="48" width="292" height="72" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="180" y="74" text-anchor="middle" class="s16-svg-title">OLTP · operar ahora</text><text x="180" y="96" text-anchor="middle" class="s16-svg-small">pedido · cliente · reserva · integridad</text>
+<line x1="180" y1="122" x2="180" y2="146" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr3)"/>
+<rect x="34" y="152" width="292" height="72" rx="12" fill="#fff8e1" stroke="#c7a600" stroke-width="2.4"/><text x="180" y="178" text-anchor="middle" class="s16-svg-title">mover y transformar</text><text x="180" y="200" text-anchor="middle" class="s16-svg-small">batch · streaming · ETL / ELT</text>
+<line x1="180" y1="226" x2="180" y2="250" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr3)"/>
+<rect x="34" y="256" width="292" height="78" rx="12" fill="#e8f1f8" stroke="#124e78" stroke-width="2.4"/><text x="180" y="282" text-anchor="middle" class="s16-svg-title">OLAP · entender historia</text><text x="180" y="304" text-anchor="middle" class="s16-svg-small">hecho + dimensiones + medidas + tiempo</text><text x="180" y="322" text-anchor="middle" class="s16-svg-small">modelo estrella · agregaciones</text>
 </svg>
 <div class="g2">
 <div class="card"><h3>OLTP · operar ahora</h3><p>Muchas operaciones pequeñas, integridad, estado actual y baja latencia.</p><pre class="sqlviz" data-label="OLTP"><code><span class="obj">pedido</span> <span class="op">·</span> <span class="obj">cliente</span> <span class="op">·</span> <span class="obj">reserva</span> <span class="op">·</span> <span class="obj">transacción</span></code></pre></div>
@@ -445,7 +499,7 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <div class="brand"><span>Data warehouse</span><span>estrella + grano + carga</span></div></section>
 
 <section class="slide dense" data-title="BigQuery físico"><div class="ey">Analítica cloud</div><h2>No solo escribiste SQL: aprendiste que leer datos también cuesta</h2>
-<svg class="joinviz s16-flowviz" viewBox="0 0 1010 185" role="img" tabindex="0" aria-label="Comparación visual entre una tabla completa, una tabla particionada y bloques podados por filtros"><defs><marker id="s16arr4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<svg class="joinviz s16-flowviz s16-desktop-flowviz" viewBox="0 0 1010 185" role="img" tabindex="0" aria-label="Comparación visual entre una tabla completa, una tabla particionada y bloques podados por filtros"><defs><marker id="s16arr4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
 <text x="6" y="18" class="s16-svg-label">MISMA RESPUESTA LÓGICA · DISTINTO TRABAJO FÍSICO</text>
 <g transform="translate(24 42)">
 <text x="132" y="14" text-anchor="middle" class="s16-svg-title">Partición</text><rect x="0" y="28" width="264" height="88" rx="10" fill="#fff" stroke="#124e78" stroke-width="2"/>
@@ -465,6 +519,24 @@ pre.sqlviz .copybtn.ok{background:var(--y);border-color:var(--y);color:#101820;o
 <text x="151" y="78" text-anchor="middle" font-family="Segoe UI,Arial" font-size="10.5" font-weight="900" fill="#155d3d">leer</text><text x="132" y="137" text-anchor="middle" class="s16-svg-small">saltar bloques que no pueden responder</text>
 </g>
 <line x1="292" y1="92" x2="365" y2="92" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16arr4)"/><line x1="641" y1="92" x2="714" y2="92" stroke="#124e78" stroke-width="2.4" marker-end="url(#s16arr4)"/>
+</svg>
+<svg class="joinviz s16-flowviz s16-mobile-flowviz" viewBox="0 0 360 500" role="img" aria-label="Flujo vertical de BigQuery con partición, clustering y pruning">
+<defs><marker id="s16marr4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#124e78"/></marker></defs>
+<text x="24" y="24" class="s16-svg-label">MISMA RESPUESTA · DISTINTO COSTO</text>
+<g transform="translate(30 46)">
+<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#124e78" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Partición</text>
+<rect x="24" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="76" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="128" y="42" width="44" height="42" rx="5" fill="#ffd600"/><rect x="180" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><rect x="232" y="42" width="44" height="42" rx="5" fill="#dce8f0"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">recorta por una clave, normalmente fecha</text>
+</g>
+<line x1="180" y1="166" x2="180" y2="190" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr4)"/>
+<g transform="translate(30 196)">
+<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#6a4bb8" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Clustering</text>
+<rect x="24" y="42" width="72" height="20" rx="5" fill="#d4b5ff"/><rect x="104" y="42" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="184" y="42" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="24" y="68" width="72" height="20" rx="5" fill="#d4b5ff"/><rect x="104" y="68" width="72" height="20" rx="5" fill="#efe7ff"/><rect x="184" y="68" width="72" height="20" rx="5" fill="#efe7ff"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">organiza bloques por columnas consultadas</text>
+</g>
+<line x1="180" y1="316" x2="180" y2="340" stroke="#124e78" stroke-width="2.6" marker-end="url(#s16marr4)"/>
+<g transform="translate(30 346)">
+<rect x="0" y="0" width="300" height="118" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/><text x="150" y="25" text-anchor="middle" class="s16-svg-title">Pruning</text>
+<rect x="24" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="76" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="128" y="42" width="44" height="42" rx="5" fill="#9be3a8"/><rect x="180" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><rect x="232" y="42" width="44" height="42" rx="5" fill="#eef2f5"/><path d="M30 48 L62 78 M62 48 L30 78 M82 48 L114 78 M114 48 L82 78 M186 48 L218 78 M218 48 L186 78 M238 48 L270 78 M270 48 L238 78" stroke="#9ca8b2" stroke-width="2"/><text x="150" y="104" text-anchor="middle" class="s16-svg-small">salta bloques que no pueden responder</text>
+</g>
 </svg>
 <div class="g3">
 <div class="card"><h3>Partición</h3><p>Recorta bloques por una clave —frecuentemente fecha— para evitar leer datos innecesarios.</p></div>
