@@ -53,6 +53,11 @@ jobs:
           node tools/test_s15_cohort_persistence.mjs
           node tools/test_s15_v7_persistence_modes.mjs
 
+      - name: S16 · cierre + primer contacto DP-900
+        run: |
+          python tools/test_s16_dp900.py
+          node tools/test_s16_dp900_ui.mjs
+
       - name: Auditar historia pregunta-respuesta de revision
         run: python revision/tools/auditar_preguntas.py
 
