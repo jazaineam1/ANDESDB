@@ -229,7 +229,7 @@ sin coordinación docente ni fecha límite. Ninguna de las dos exige tarjeta.
   el DP-900, igual que Fabric — se nombra, no se instala una cuenta nueva
   para practicarlo.
 - **S15:** datos imperfectos sin herramienta prescrita.
-- **S16:** cierre del curso + primer contacto DP-900: se explica el examen, se resuelven 24 escenarios proporcionales al blueprint, se exploran recursos oficiales y se construye un plan con fecha ligado al voucher.
+- **S16:** cierre del curso + primer contacto DP-900: se explica el examen, se resuelven 24 escenarios proporcionales al blueprint con **48 componentes evaluables y crédito parcial**, se clasifica cada error C/T/L, se exploran recursos oficiales y se construye un plan con fecha ligado al voucher. El diagnóstico conserva dos lecturas —exactitud por componente y escenarios completamente correctos—, no fuerza desempates entre dominios y no llama pre/post a la reflexión S1 si no existe una respuesta inicial individual almacenada.
 
 **Lo que esto descarta a propósito:** un producto nuevo por sesión solo por
 variedad, repetir SQL básico bajo otro nombre, cambiar de caso de negocio a
