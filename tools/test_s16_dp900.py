@@ -38,7 +38,7 @@ for bad in [
     "<textarea","<input","<select","qcard","send-report","data-post=","data-portfolio=",
     "portfolio-url","24 escenarios","48 componentes","C / T / L","Me faltó guía",
     "¿Dónde estuvo SQL?","Hay vocabulario desconocido","La metodología trasladó",
-    "Sin defensas","Autopercepción de salida","Enviar diagnóstico al docente","Hoy no vienes a demostrar otra vez que sabes","S15 no añadió otro tema"
+    "Sin defensas","Autopercepción de salida","Enviar diagnóstico al docente","Hoy no vienes a demostrar otra vez que sabes","S15 convirtió lo anterior"
 ]:
     assert bad not in html, f"Contenido que no debe proyectarse: {bad}"
 
