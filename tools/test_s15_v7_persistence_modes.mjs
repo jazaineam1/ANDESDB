@@ -177,4 +177,54 @@ assert.equal(finalState.hints.q2,3);
 assert.equal(finalState.studyHints.s2,3);
 p2.dom.window.close();
 
-console.log('OK · S15 persistencia: práctica → evaluación → práctica conserva datos, pistas, intentos, scores y respuestas');
+// 4) Las ayudas de la práctica original son demostrativas: 5 SQL pasan 4/4 sin alterar score/checks/intentos.
+{
+  const s=structuredClone(legacy);
+  s.hints={q1:3,q2:3,q3:3,q4:3,q5:3};
+  const {dom,window,document}=await boot('practica',JSON.stringify(s));
+  const before=JSON.parse(window.localStorage.getItem(STORE));
+  const scoreBefore=document.querySelector('#score-sql').textContent;
+  for(const id of ['q1','q2','q3','q4','q5']){
+    assert.equal(document.querySelector('[data-solution="'+id+'"]').disabled,false,id+' debe reconocer 3 pistas previas');
+    click(window,document.querySelector('[data-sql-view="'+id+'|solution"]'));
+    await waitFor(()=>document.querySelector('#solution-status-'+id)?.textContent.includes('4/4 escenarios de la solución'),'referencia '+id);
+    assert.ok(document.querySelector('#solution-result-'+id+' table'),'La solución '+id+' debe mostrar resultado ejecutado');
+  }
+  const after=JSON.parse(window.localStorage.getItem(STORE));
+  assert.deepEqual(after.queries,before.queries);
+  assert.deepEqual(after.queryChecks,before.queryChecks,'La referencia no puede registrar checks como si fueran del estudiante');
+  assert.deepEqual(after.queryAttempts,before.queryAttempts,'La referencia no consume intentos');
+  assert.deepEqual(after.checked,before.checked);
+  assert.deepEqual(after.checkedScore,before.checkedScore);
+  assert.equal(document.querySelector('#score-sql').textContent,scoreBefore);
+  dom.window.close();
+}
+
+// 5) Todas las estaciones no-SQL de práctica exigen 3 pistas y sus soluciones tampoco cambian el dominio.
+{
+  const s=structuredClone(legacy);
+  s.hints={q1:0,q2:0,q3:0,q4:0,q5:0};
+  const {dom,window,document}=await boot('practica',JSON.stringify(s));
+  const before=JSON.parse(window.localStorage.getItem(STORE));
+  const domainBefore=critical(before);
+  for(const id of ['s0','s2','s3','s4','s5','s6','s7','boss']){
+    const hb=document.querySelector('[data-study-hint="'+id+'"]');
+    const sb=document.querySelector('[data-study-solution="'+id+'"]');
+    assert.ok(hb&&sb,id+' debe tener guía');
+    assert.equal(sb.disabled,true);
+    click(window,hb);assert.equal(sb.disabled,true,id+' no abre con 1 pista');
+    click(window,hb);assert.equal(sb.disabled,true,id+' no abre con 2 pistas');
+    click(window,hb);assert.equal(sb.disabled,false,id+' abre tras 3 pistas');
+    click(window,sb);
+    assert.equal(document.querySelector('#study-solution-'+id).hidden,false,id+' debe mostrar solución en la misma estación');
+    click(window,document.querySelector('[data-study-view="'+id+'|explanation"]'));
+    assert.equal(document.querySelector('#study-explanation-'+id).hidden,false,id+' debe mostrar explicación separada');
+    click(window,document.querySelector('[data-study-view="'+id+'|attempt"]'));
+  }
+  const after=JSON.parse(window.localStorage.getItem(STORE));
+  assert.deepEqual(critical(after),domainBefore,'Las guías no-SQL solo pueden añadir studyHints/solutionView');
+  for(const id of ['s0','s2','s3','s4','s5','s6','s7','boss'])assert.equal(after.studyHints[id],3);
+  dom.window.close();
+}
+
+console.log('OK · S15 persistencia: práctica → evaluación → práctica conserva datos; pistas y soluciones no alteran nota ni respuestas');
