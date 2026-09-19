@@ -91,11 +91,16 @@ def main():
     assert "minutos = 0 válido" in SOL_HTML and "minutos = -1 inválido" in SOL_HTML
     assert "una restricción correcta acepta lo válido y rechaza lo inválido" in SOL_HTML
 
-    # Ejemplos concretos obligatorios de transferencia.
+    # Ejemplos concretos obligatorios de transferencia y formato legible.
     for token in ("foto-1.jpg","Se verificó el lugar","E01","E02","Chapinero",
                   "Patrón de consultas","Antes de UNNEST","1 fila = 1 caso",
                   "P01","12.000","36.000"):
         assert token in SOL_HTML, token
+    assert 'class="example-code"' in SOL_HTML
+    assert 'class="example-card"' in SOL_HTML
+    assert '{\\n  "caso_id": 1001' not in SOL_HTML
+    assert "study-guide-bar" in SOL_JS and "study-hint-line" in SOL_JS
+    assert ".example-code" in CSS and ".study-guide-bar" in CSS and ".grain-flow" in CSS
 
     # El espejo revision debe ser ejecutable y usar exactamente el mismo runtime.
     assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-run1' in REV_HTML
