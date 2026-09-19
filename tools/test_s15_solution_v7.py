@@ -103,7 +103,7 @@ def main():
     assert ".example-code" in CSS and ".study-guide-bar" in CSS and ".grain-flow" in CSS
 
     # El espejo revision debe ser ejecutable y usar exactamente el mismo runtime.
-    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-run1' in REV_HTML
+    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-format1' in REV_HTML
     assert SOL_JS==REV_JS
 
     print("OK · S15 solucionario guiado: estructura, 3 pistas, ejemplos, DDL, sesión y espejo revision")
