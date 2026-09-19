@@ -99,7 +99,7 @@ for ref in [
     "https://www.postgresql.org/docs/current/queries-with.html",
     "https://www.postgresql.org/docs/current/functions-conditional.html",
     "https://www.postgresql.org/docs/current/ddl-constraints.html",
-    "https://learn.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description",
+    "https://learn.microsoft.com/en-us/training/modules/explore-relational-data-offerings/",
     "https://www.mongodb.com/docs/manual/data-modeling/",
     "https://graphacademy.neo4j.com/courses/neo4j-fundamentals",
     "https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/cap-theorem.html",
