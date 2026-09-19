@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ANDESDB · Glosario de cierre S16</title>
+<style>
+@page{size:A4;margin:10mm}*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#17202a;font-family:Inter,Arial,sans-serif}
+.page{width:210mm;min-height:297mm;margin:12px auto;background:#fff;padding:12mm;box-shadow:0 8px 30px #0002}
+h1{margin:0;font-size:23px;line-height:1.08}h2{font-size:12px;margin:0 0 5px;text-transform:uppercase;letter-spacing:.07em;color:#124e78}
+.sub{margin:5px 0 10px;color:#5f6b76;font-size:10.5px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.box{border:1px solid #dce3e8;border-radius:9px;padding:7px 8px;break-inside:avoid}.box b{display:block;font-size:11px;margin-bottom:2px}.box p{margin:0;font-size:9.4px;line-height:1.3;color:#344054}
+.code{font-family:Consolas,ui-monospace,monospace;background:#f4f7fa;border-radius:4px;padding:1px 3px;color:#124e78}
+.band{margin:8px 0;padding:7px 9px;border-radius:8px;background:#101828;color:white;font-size:9.5px;line-height:1.35}
+.workbench{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px}.wb{border:1px solid #f2c94c;background:#fff9db;border-radius:8px;padding:6px;font-size:9px;line-height:1.25}.wb b{display:block;color:#7a4d00;font-size:10px}
+.azure{margin-top:7px;border:1px solid #b2ddff;background:#eff8ff;border-radius:8px;padding:7px;font-size:9.2px;line-height:1.3}.azure strong{color:#175cd3}
+.foot{margin-top:8px;display:flex;justify-content:space-between;gap:10px;color:#667085;font-size:8.7px;border-top:1px solid #e4e7ec;padding-top:5px}
+@media print{body{background:#fff}.page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:0}.no-print{display:none}}
+@media(max-width:800px){.page{width:auto;min-height:0;margin:0;padding:18px}.grid,.workbench{grid-template-columns:1fr}}
+</style></head><body><main class="page">
+<h1>Glosario de cierre · S16</h1>
+<p class="sub">Diseño y Gestión de Bases de Datos con SQL · una página para traducir el vocabulario del curso y del Workbench.</p>
+<div class="grid">
+<div class="box"><b>Grano</b><p>Qué representa exactamente una fila. Si cambia el grano, cambian conteos, promedios y joins.</p></div>
+<div class="box"><b>Partición</b><p>Divide físicamente/lógicamente los datos por una clave para reducir lectura o distribuir carga. En BigQuery suele basarse en fecha.</p></div>
+<div class="box"><b>Clustering</b><p>Organiza datos por columnas consultadas con frecuencia dentro de una partición. No reemplaza el filtro ni la partición.</p></div>
+<div class="box"><b><span class="code">UNNEST</span></b><p>Expande un arreglo anidado a filas. Antes: 1 fila = 1 entidad; después puede ser 1 fila = 1 elemento.</p></div>
+<div class="box"><b>OLTP</b><p>Carga transaccional: muchas operaciones pequeñas, actuales, con integridad y baja latencia.</p></div>
+<div class="box"><b>OLAP / analítica</b><p>Lectura y agregación de historia para comparar, resumir y decidir. Prioriza análisis sobre operación fila a fila.</p></div>
+<div class="box"><b>ETL</b><p>Extraer → transformar → cargar. La transformación ocurre antes de llegar al almacén analítico final.</p></div>
+<div class="box"><b>ELT</b><p>Extraer → cargar → transformar. Se aprovecha la capacidad del motor/plataforma destino para transformar.</p></div>
+<div class="box"><b>Parquet</b><p>Formato columnar. Conviene cuando analítica lee pocas columnas de archivos grandes y quiere reducir bytes leídos.</p></div>
+<div class="box"><b>CAP</b><p>En sistemas distribuidos, ayuda a razonar sobre consistencia, disponibilidad y tolerancia a particiones de red; no es una receta automática de producto.</p></div>
+<div class="box"><b>PK / FK / CHECK</b><p>PK identifica; FK protege referencias; CHECK protege reglas de dominio. Se validan por comportamiento: aceptar lo válido y rechazar lo inválido.</p></div>
+<div class="box"><b>Snapshot vs historial</b><p>Snapshot guarda el estado observado en un momento; historial conserva eventos. “Fila Cerrado” no implica “último estado Cerrado”.</p></div>
+</div>
+<div class="band"><b>Cadena de decisión:</b> problema → evidencia → grano → modelo → integridad → representación → almacenamiento → analítica → validación → decisión.</div>
+<h2>Traducción del Workbench S15</h2>
+<div class="workbench">
+<div class="wb"><b>SQL Arena</b>Consultas con un bug o un caso borde. La meta es que la consulta sobreviva cuando cambian los datos.</div>
+<div class="wb"><b>DDL Mutation</b>Un esquema defectuoso se usa como contraste para hacer visible qué restricción falta. “Mutation” = versión intencionalmente incorrecta.</div>
+<div class="wb"><b>Boss Transfer</b>Caso nuevo que cambia el contexto. “Boss” = transferencia: aplicar el razonamiento sin repetir exactamente la receta anterior.</div>
+</div>
+<div class="azure"><strong>Puente DP-900:</strong> Azure SQL Database = base SQL PaaS; Managed Instance = PaaS con alta compatibilidad de instancia; SQL Server on Azure VM = control de VM/SO; Blob = objetos; Files = archivos compartidos; Table = clave/atributo; Cosmos DB = NoSQL distribuido; Databricks = Spark/ingeniería; Fabric = plataforma analítica SaaS integrada; Power BI = modelo semántico y visualización.</div>
+<div class="foot"><span>ANDESDB · S16 · recurso de cierre</span><span>Tip: imprime o guarda esta página como PDF.</span></div>
+</main></body></html>
