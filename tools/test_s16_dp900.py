@@ -40,6 +40,8 @@ expected=[
 "Practice Assessment","Examen y voucher","Cheat sheet","Cierre"]
 assert titles==expected, titles
 assert len(titles)==29
+assert html.count('s16-mobile-flowviz')>=2, "Recorrido y modelado deben conservar SVG vertical en móvil"
+assert '.s16-mobile-flowviz' in html and 'display:block!important' in html
 
 # Shell tradicional + timer compartido actual de S15 v7.
 assert 'class="toolbar"' in html and 'class="progress"' in html
