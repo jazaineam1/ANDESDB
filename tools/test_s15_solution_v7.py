@@ -54,6 +54,12 @@ def main():
     assert "guided-tabs" in SOL_JS and "study-answer-open" in SOL_JS
     assert ".mission.study-answer-open" in CSS
     assert "Tu intento" in SOL_JS and "Solución" in SOL_JS and "Explicación" in SOL_JS
+    assert "function runReferenceQ" in SOL_JS
+    assert "solution-status-" in SOL_JS and "solution-result-" in SOL_JS
+    assert 'id="hints-' in SOL_JS and "attemptHints" in SOL_JS
+    assert "escenarios de la solución" in SOL_JS
+    assert "no modifica tu intento ni tu puntuación" in SOL_JS
+    assert ".sqltask.sql-reference-open .sqlbody" in CSS
     for token in (
         "WHERE prioridad = 'Alta'",
         "MAX(fecha_evento) AS fecha_evento",
@@ -92,7 +98,7 @@ def main():
         assert token in SOL_HTML, token
 
     # El espejo revision debe ser ejecutable y usar exactamente el mismo runtime.
-    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-tabs1' in REV_HTML
+    assert 'assets/learning/s15-autograder-v7-solution.js?v=s15v7-sol-run1' in REV_HTML
     assert SOL_JS==REV_JS
 
     print("OK · S15 solucionario guiado: estructura, 3 pistas, ejemplos, DDL, sesión y espejo revision")

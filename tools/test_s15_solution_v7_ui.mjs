@@ -55,40 +55,76 @@ async function boot({reset=false}={}){
   const q1sol=document.querySelector('[data-solution="q1"]');
   assert.equal(q1sol.disabled,false);
 
-  // Q2 empieza bloqueada y solo se desbloquea después de tres pistas.
+  // Q2: el intento puede fallar, pero la solución se ejecuta aparte y pasa 4/4.
   const q2=document.querySelector('#q2');
   assert.equal(q2.value,"SELECT 'BORRADOR ORIGINAL' AS marca;");
   const q2sol=document.querySelector('[data-solution="q2"]');
   const q2hint=document.querySelector('[data-hint="q2"]');
   assert.equal(q2sol.disabled,true);
+
+  click(window,document.querySelector('[data-run="q2"]'));
+  await waitFor(()=>document.querySelector('#status-q2')?.textContent.includes('0/4'),'resultado 0/4 del intento Q2');
+  const attemptStatusBefore=document.querySelector('#status-q2').textContent;
+  const attemptResultBefore=document.querySelector('#result-q2').textContent;
+  assert.match(attemptStatusBefore,/0\/4 escenarios visibles/);
+
   click(window,q2hint);
   assert.equal(q2sol.disabled,true);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 1\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 1\/3/);
   click(window,q2hint);
   assert.equal(q2sol.disabled,true);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 2\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 2\/3/);
   click(window,q2hint);
   assert.equal(q2sol.disabled,false);
-  assert.match(document.querySelector('#status-q2').textContent,/Pista 3\/3/);
+  assert.match(document.querySelector('#hints-q2').textContent,/Pista 3\/3/);
 
   const queryBefore=q2.value;
   const scoreBefore=document.querySelector('#score-sql').textContent;
   assert.equal(document.querySelector('[data-sql-tabs="q2"]').hidden,false,'Tras 3 pistas aparecen las pestañas dentro de la pregunta');
   await sleep(330);
   const sessionBefore=window.sessionStorage.getItem('andesdb.s15.solution.v7');
+
   click(window,q2sol);
+  await waitFor(()=>document.querySelector('#solution-status-q2')?.textContent.includes('4/4 escenarios de la solución'),'solución Q2 ejecutada 4/4');
   assert.equal(q2.value,queryBefore,'Ver solución no debe sobrescribir SQL');
-  assert.equal(document.querySelector('#score-sql').textContent,scoreBefore,'Ver solución no debe alterar puntuación');
+  assert.equal(document.querySelector('#score-sql').textContent,scoreBefore,'Ejecutar la solución no debe alterar puntuación');
   assert.equal(document.querySelector('#solution-q2').hidden,false);
   assert.equal(document.querySelector('[data-sql-pane="q2|attempt"]').hidden,true,'La solución ocupa el área del intento sin modificarlo');
+  assert.equal(document.querySelector('#status-q2').hidden,true,'El 0/4 del intento no debe mezclarse con la solución');
+  assert.equal(document.querySelector('#result-q2').hidden,true,'La tabla del intento no debe mezclarse con la solución');
+  assert.match(document.querySelector('#solution-status-q2').textContent,/4\/4 escenarios de la solución/);
+  assert.match(document.querySelector('#solution-status-q2').textContent,/no modifica tu intento ni tu puntuación/i);
+  assert.ok(document.querySelector('#solution-result-q2 table'),'La solución debe mostrar su tabla ejecutada');
+  assert.match(document.querySelector('#solution-result-q2').textContent,/caso_id/);
+  assert.match(document.querySelector('#solution-result-q2').textContent,/ultimo_estado/);
+
   click(window,document.querySelector('[data-sql-view="q2|explanation"]'));
   assert.equal(document.querySelector('#solution-q2').hidden,true);
   assert.equal(document.querySelector('#explanation-q2').hidden,false);
   assert.match(document.querySelector('#explanation-q2').textContent,/MAX\(estado\).*fecha/i);
   assert.equal(q2.value,queryBefore,'Abrir explicación tampoco modifica el SQL');
+
   click(window,document.querySelector('[data-sql-view="q2|attempt"]'));
   assert.equal(document.querySelector('[data-sql-pane="q2|attempt"]').hidden,false);
+  assert.equal(document.querySelector('#status-q2').hidden,false);
+  assert.equal(document.querySelector('#result-q2').hidden,false);
+  assert.equal(document.querySelector('#status-q2').textContent,attemptStatusBefore,'Al volver debe reaparecer el 0/4 del estudiante');
+  assert.equal(document.querySelector('#result-q2').textContent,attemptResultBefore,'Al volver debe reaparecer su resultado original');
   assert.equal(document.querySelector('#explanation-q2').hidden,true);
+
+  // Todas las soluciones SQL de referencia deben ejecutar y validar 4/4 sin sumar nota.
+  const scoreBeforeReferences=document.querySelector('#score-sql').textContent;
+  for(const id of ['q1','q3','q4','q5']){
+    const hintBtn=document.querySelector('[data-hint="'+id+'"]');
+    const solutionBtn=document.querySelector('[data-solution="'+id+'"]');
+    while(solutionBtn.disabled) click(window,hintBtn);
+    click(window,document.querySelector('[data-sql-view="'+id+'|solution"]'));
+    await waitFor(()=>document.querySelector('#solution-status-'+id)?.textContent.includes('4/4 escenarios de la solución'),'solución '+id+' 4/4');
+    assert.ok(document.querySelector('#solution-result-'+id+' table'),'La solución '+id+' debe mostrar resultado ejecutado');
+    click(window,document.querySelector('[data-sql-view="'+id+'|attempt"]'));
+  }
+  assert.equal(document.querySelector('#score-sql').textContent,scoreBeforeReferences,'Las soluciones de referencia no dan crédito');
+
   await sleep(330);
   assert.ok(window.sessionStorage.getItem('andesdb.s15.solution.v7'));
   assert.notEqual(window.sessionStorage.getItem('andesdb.s15.solution.v7'),sessionBefore);
