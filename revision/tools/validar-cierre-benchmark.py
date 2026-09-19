@@ -188,13 +188,21 @@ def main() -> int:
 
     s16 = read("Presentaciones/M6/sesion-16-cierre-dp900.html")
     require(s16, [
-        "Repite las cinco preguntas de S1", "25–30%", "20–25%", "15–20%",
-        "Dominio 1", "Dominio 2", "Dominio 3", "Dominio 4", "16 escenarios",
-        "Clasifica el error", "Concepto", "Transferencia", "Lectura",
-        "Practice Assessment", "Exam Sandbox", "Pausa · 15 minutos",
-        'href="sesion-16-cierre-dp900.html"', "presentation-timer.js"
+        "Cierre del curso +", "primer contacto DP-900", "Repite las cinco preguntas de S1",
+        "45 min", "65 min", "700+", "40–60", "Online o centro", "voucher",
+        "25–30%", "20–25%", "15–20%", "Dominio 1", "Dominio 2", "Dominio 3", "Dominio 4",
+        "24 escenarios", "7–6–4–7", "Clasifica el error", "Concepto", "Transferencia", "Lectura",
+        "Practice Assessment", "Exam Sandbox", "Programar", "Fecha objetivo", "Enviar diagnóstico al docente",
+        "Pausa · 15 minutos", 'href="sesion-16-cierre-dp900.html"', "presentation-timer.js"
     ], "S16")
-    forbid(s16, ["Escenarios 1–3", "Escenarios 4–6", "Escenarios 7–8", "Escenarios 9–11", "Escenarios 12–13", "0–15 min", "25 min", "35 min", "50 min"], "S16 residuos")
+    forbid(s16, [
+        "16 escenarios", "Microsoft Paint", "Azure DNS", "Escenarios 1–3", "Escenarios 4–6",
+        "Escenarios 7–8", "Escenarios 9–11", "Escenarios 12–13", "0–15 min", "25 min", "35 min", "50 min"
+    ], "S16 residuos")
+    if s16.count('data-qid="') != 0:
+        err("S16: las preguntas deben renderizarse desde el banco JS para conservar un único origen")
+    require(s16, ['"core":7', '"rel":6', '"nonrel":4', '"ana":7', "andesdb.s16.dp900.v2", "learning-track", "challenge_completed"], "S16 diagnóstico")
+
 
     course = json.loads(read("tools/curso.json") or "{}")
     m1 = next((m for m in course.get("modulos", []) if m.get("n") == 1), {})
@@ -214,7 +222,7 @@ def main() -> int:
             print("  ✗", e)
         return 1
     print("\n=== Curación benchmark: OK ===")
-    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 activa por cuatro dominios DP-900")
+    print("  ✓ S13-S14 verificadas; S15 basada en decisiones/validación; S16 cierra curso + 24 escenarios + plan de voucher DP-900")
     return 0
 
 
