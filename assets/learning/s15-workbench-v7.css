@@ -8,6 +8,10 @@ button,.tile,.chip,.tabs button{touch-action:manipulation}
 
 /* S15 práctica guiada · solución contextual */
 .guided-workspace{border:1px solid #dfe5ea;border-radius:12px;background:#fff;overflow:hidden}
+.sqltask.sql-reference-open .sqlbody{grid-template-columns:1fr}
+.sqltask.sql-reference-open>.sqlbody>.result{display:none!important}
+.solution-result{margin-top:10px;background:#fff}
+.solution-result .ptable{margin:0}
 .guided-tabs{display:flex;gap:4px;align-items:center;padding:7px;border-bottom:1px solid #e4e7ec;background:#f8fafc;overflow-x:auto}
 .guided-tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:8px;padding:7px 10px;font-size:.72rem;font-weight:900;white-space:nowrap;cursor:pointer}
 .guided-tab:hover{background:#eef2f6;color:var(--ink)}
