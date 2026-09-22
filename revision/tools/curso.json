@@ -596,32 +596,22 @@
           "recursos": [
             {
               "txt": "📘 Guía oficial de estudio DP-900",
-              "href": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
+              "href": "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
               "externo": true
             },
             {
-              "txt": "🧪 Practice Assessments de Microsoft",
-              "href": "https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications",
+              "txt": "🧪 Evaluaciones prácticas oficiales de Microsoft",
+              "href": "https://learn.microsoft.com/es-es/credentials/certifications/practice-assessments-for-microsoft-certifications",
               "externo": true
             },
             {
-              "txt": "🧭 Preparación oficial y Exam Sandbox",
-              "href": "https://learn.microsoft.com/en-us/credentials/certifications/prepare-exam",
+              "txt": "🧭 Sandbox del examen en español",
+              "href": "https://mscertdemo-es-es.starttest.com/",
               "externo": true
             },
             {
               "txt": "📅 Registrar y programar el examen",
-              "href": "https://learn.microsoft.com/en-us/credentials/certifications/register-schedule-exam",
-              "externo": true
-            },
-            {
-              "txt": "🎓 Ruta Beginner: Google Cloud Data Analytics Certificate",
-              "href": "https://www.skills.google/paths/420",
-              "externo": true
-            },
-            {
-              "txt": "🧩 HackerRank SQL Basic",
-              "href": "https://www.hackerrank.com/skills-verification/sql_basic",
+              "href": "https://learn.microsoft.com/es-es/credentials/certifications/register-schedule-exam",
               "externo": true
             },
             {

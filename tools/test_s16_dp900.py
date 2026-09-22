@@ -89,13 +89,16 @@ assert "lista cerrada de tipos de pregunta" in html
 assert "no representa necesariamente su longitud, complejidad" in html
 
 for url in [
-    "credentials/certifications/resources/study-guides/dp-900",
-    "practice-assessments-for-microsoft-certifications",
-    "credentials/certifications/azure-data-fundamentals",
-    "credentials/certifications/prepare-exam",
-    "credentials/certifications/register-schedule-exam"
+    "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
+    "https://learn.microsoft.com/es-es/credentials/certifications/practice-assessments-for-microsoft-certifications",
+    "https://learn.microsoft.com/es-es/credentials/certifications/azure-data-fundamentals/",
+    "https://learn.microsoft.com/es-es/credentials/certifications/register-schedule-exam",
+    "https://mscertdemo-es-es.starttest.com/"
 ]:
     assert url in html, url
+assert "learn.microsoft.com/en-us/credentials" not in html
+assert "Preparación oficial y Exam Sandbox" not in html
+assert "Sandbox del examen en español" in html
 
 # Cheat Sheet sigue siendo de cuatro páginas y ahora incluye blueprint + matriz Azure.
 assert len(re.findall(r'<section class="page"(?:\s|>)',sheet))==4
