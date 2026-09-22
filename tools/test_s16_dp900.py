@@ -91,14 +91,14 @@ assert "no confirma cuáles aparecerán específicamente" in html
 assert "no son preguntas reales" in html
 
 for url in [
-    "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
+    "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
     "https://learn.microsoft.com/es-es/credentials/certifications/practice-assessments-for-microsoft-certifications",
     "https://learn.microsoft.com/es-es/credentials/certifications/azure-data-fundamentals/",
     "https://learn.microsoft.com/es-es/credentials/certifications/register-schedule-exam",
     "https://mscertdemo-es-es.starttest.com/"
 ]:
     assert url in html, url
-assert "learn.microsoft.com/en-us/credentials" not in html
+assert "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900" not in html
 assert "Preparación oficial y Exam Sandbox" not in html
 assert "Sandbox del examen en español" in html
 
