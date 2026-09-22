@@ -8,7 +8,7 @@
     "Clases virtuales sincrónicas",
     "Actividad práctica cada 10–15 minutos"
   ],
-  "sesionActual": 15,
+  "sesionActual": 16,
   "totalSesiones": 16,
   "learningPlan": "assets/learning/learning-plan.json",
   "metodologia": {
@@ -394,7 +394,7 @@
     {
       "n": 5,
       "titulo": "Data warehouse, analítica y cloud",
-      "estado": "curso",
+      "estado": "completado",
       "desc": "Del OLTP a la analítica: hechos, dimensiones, batch/streaming y laboratorios cloud reales.",
       "recursos": [],
       "sesiones": [
@@ -507,7 +507,7 @@
     {
       "n": 6,
       "titulo": "Desafío final y consolidación",
-      "estado": "pendiente",
+      "estado": "curso",
       "desc": "Integrar el recorrido en un caso nuevo construyendo una solución ejecutable, sometiéndola a pruebas y cambios automáticos, y cerrar después con transferencia hacia DP-900.",
       "recursos": [],
       "sesiones": [
@@ -517,7 +517,7 @@
           "duracionUtil": 165,
           "modo": "workbench_integral_v7",
           "titulo": "Desafío final · Workbench integral v7",
-          "estado": "hoy",
+          "estado": "completado",
           "desc": "Evaluación integradora S2–S14 con práctica previa. En clase se valida el dominio con contratos ejecutables y soluciones cerradas; el Boss usa workload por estudiante. No se califican textos libres. 80 dominio + 20 transferencia, recalculados server-side.",
           "tags": [
             "evaluación automática",
@@ -575,7 +575,7 @@
           "duracionUtil": 165,
           "modo": "consolidacion",
           "titulo": "Cierre del curso + preparación DP-900",
-          "estado": "pendiente",
+          "estado": "hoy",
           "desc": "Cierre de 180 min: ~65 min para consolidar el diplomado, 15 min de pausa y ~100 min orientados a DP-900: blueprint vigente 21-jul-2026, cuatro dominios, familia Azure SQL, Azure Storage/Cosmos DB, Databricks/Fabric/Power BI, práctica oficial, voucher y Cheat Sheet.",
           "tags": [
             "cierre del curso",
