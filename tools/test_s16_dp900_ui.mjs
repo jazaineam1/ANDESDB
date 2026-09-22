@@ -19,9 +19,9 @@ w.eval(inline[0]);
 w.eval(timerJs);
 
 const slides=[...d.querySelectorAll('.slide')];
-assert.equal(slides.length,18);
+assert.equal(slides.length,16);
 assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
-assert.equal(d.querySelector('#count').textContent,'1 / 18');
+assert.equal(d.querySelector('#count').textContent,'1 / 16');
 assert.ok(d.querySelector('.toolbar'));
 assert.ok(d.querySelector('.progress #bar'));
 
@@ -52,7 +52,7 @@ d.querySelector('#prev').click();
 assert.equal(d.querySelector('.slide.active').dataset.title,'Portada');
 
 let guard=0;
-while(d.querySelector('#count').textContent!=='18 / 18' && guard<100){d.querySelector('#next').click();guard++}
+while(d.querySelector('#count').textContent!=='16 / 16' && guard<100){d.querySelector('#next').click();guard++}
 assert.ok(guard<100);
 assert.equal(d.querySelector('.slide.active').dataset.title,'Cierre');
 
@@ -65,15 +65,22 @@ assert.equal(d.querySelector('.apt-pause-time').textContent,'15:00');
 assert.match(d.querySelector('.apt-pause-start').textContent,/Iniciar los 15 minutos/);
 
 // DP-900 visible y condensado.
-for(const title of ['Blueprint DP900','Cómo es el examen','Interfaz y estrategia','Practice Assessment','Registro y voucher']){
+for(const title of ['Blueprint DP900','Cómo es el examen','Preguntas y estrategia','Práctica y voucher']){
   assert.ok(slides.some(s=>s.dataset.title===title),title);
+}
+for(const title of ['Interfaz y estrategia','Practice Assessment','Registro y voucher','Cheat sheet']){
+  assert.equal(slides.some(s=>s.dataset.title===title),false,title);
 }
 for(const title of ['DP900 dominio1 datos','Familia Azure SQL','Azure Storage','Cosmos DB','Databricks Fabric PowerBI','Casos analítica Azure']){
   assert.equal(slides.some(s=>s.dataset.title===title),false,title);
 }
 assert.match(d.querySelector('[data-title="Cómo es el examen"]').textContent,/45 min/);
 assert.match(d.querySelector('[data-title="Cómo es el examen"]').textContent,/700\+/);
-assert.match(d.querySelector('[data-title="Practice Assessment"]').textContent,/8–10/);
+assert.match(d.querySelector('[data-title="Cómo es el examen"]').textContent,/NO puedes abrir Microsoft Learn/);
+assert.match(d.querySelector('[data-title="Cómo es el examen"]').textContent,/40–60/);
+assert.match(d.querySelector('[data-title="Preguntas y estrategia"]').textContent,/drag & drop/);
+assert.match(d.querySelector('[data-title="Práctica y voucher"]').textContent,/8–10/);
+assert.match(d.querySelector('[data-title="Práctica y voucher"]').textContent,/14 días/);
 
 dom.window.close();
-console.log('OK · S16 v5 UI: 18 slides + timer S15 v7 + examen DP-900 + práctica oficial');
+console.log('OK · S16 v6 UI: 16 slides + timer S15 v7 + examen DP-900 vigente + práctica/voucher');
