@@ -68,7 +68,7 @@ for token in [
     "25–30%","20–25%","15–20%",
     "Core data concepts","Relational on Azure","Non-relational","Analytics",
     "45 min","65 min","700+","nivel <b>Beginner</b>","proctorizado",
-    "español está entre los idiomas ofrecidos",
+    "DP-900 se ofrece en español",
     "Microsoft <b>no fija un número exacto</b>",
     "40–60","35–50","NO puedes abrir Microsoft Learn durante el examen",
     "multiple choice","drag &amp; drop","build list","hot area","case study","active screen",
