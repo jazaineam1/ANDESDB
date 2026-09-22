@@ -34,9 +34,9 @@ expected=[
 "Portada","Recorrido","SQL que escribes","Pensamiento SQL","De reglas a modelo",
 "Mapa consolidado","S15 integró","Caso puente","Caso resuelto",
 "DP900 empieza","Blueprint DP900","Cómo es el examen","Pausa",
-"Interfaz y estrategia","Practice Assessment","Registro y voucher","Cheat sheet","Cierre"]
+"Preguntas y estrategia","Práctica y voucher","Cierre"]
 assert titles==expected, titles
-assert len(titles)==18
+assert len(titles)==16
 assert html.count('s16-mobile-flowviz')>=2, "Recorrido y modelado deben conservar SVG vertical en móvil"
 assert '.s16-mobile-flowviz' in html and 'display:block!important' in html
 
@@ -69,10 +69,12 @@ for token in [
     "Core data concepts","Relational on Azure","Non-relational","Analytics",
     "45 min","65 min","700+","nivel <b>Beginner</b>","proctorizado",
     "español está entre los idiomas ofrecidos",
-    "Microsoft no fija públicamente",
-    "Exam Sandbox","8–10 preguntas razonadas juntos",
+    "Microsoft <b>no fija un número exacto</b>",
+    "40–60","35–50","NO puedes abrir Microsoft Learn durante el examen",
+    "multiple choice","drag &amp; drop","build list","hot area","case study","active screen",
+    "Exam Sandbox","8–10 preguntas oficiales",
     "cuenta Microsoft personal (MSA)","Pearson VUE","Certiport",
-    "después de 24 horas"
+    "24 h","14 días","5 intentos en 12 meses"
 ]:
     assert token in html, token
 
@@ -84,9 +86,9 @@ for removed in [
     "Tiempo real y PowerBI","Casos analítica Azure"
 ]:
     assert removed not in titles, removed
-assert "número exacto de preguntas" in html
-assert "lista cerrada de tipos de pregunta" in html
-assert "no representa necesariamente su longitud, complejidad" in html
+assert "número exacto" in html
+assert "no confirma cuáles aparecerán específicamente" in html
+assert "no son preguntas reales" in html
 
 for url in [
     "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
@@ -117,6 +119,11 @@ s=plan["sesiones"]["16"]
 assert s["titulo"]=="Cierre del curso + preparación DP-900"
 assert s["actividad"]["distribucion"]["cierre_diplomado"]==60
 assert s["actividad"]["distribucion"]["total_dp900_y_continuidad"]==105
+assert s["dp900"]["examen"]["microsoft_learn_durante_examen"] is False
+assert "40–60" in s["dp900"]["examen"]["numero_preguntas"]
+assert "35–50" in s["dp900"]["examen"]["numero_preguntas"]
+assert s["dp900"]["reintentos"]["segundo_intento_espera"]=="24 horas"
+assert s["dp900"]["reintentos"]["posteriores_espera"]=="14 días"
 assert s["dp900"]["version_blueprint"]=="2026-07-21"
 assert [d["peso"] for d in s["dp900"]["dominios"]]==["25–30%","20–25%","15–20%","25–30%"]
 assert s["diagnostico"]["en_clase"] is False
@@ -132,13 +139,18 @@ for token in [
     "180 minutos = 165 útiles + 15 de pausa",
     "0–60 · Cierre del diplomado",
     "60–95 · Qué es DP-900 y cómo es hoy",
-    "110–165 · Interfaz + práctica oficial",
+    "110–130 · Tipos de pregunta + estrategia",
+    "130–170 · Practice Assessment + voucher",
     "July 21, 2026",
     "8–10 preguntas oficiales",
     "45 minutos",
-    "65 minutos de seat duration",
+    "65 minutos",
     "700 o más",
-    "Microsoft no publica de antemano un número fijo",
+    "40–60",
+    "35–50",
+    "Microsoft Learn NO está disponible dentro del examen",
+    "24 horas",
+    "14 días",
     "temporizador es el componente compartido de S15 v7"
 ]:
     assert token in guide, token
@@ -149,4 +161,4 @@ legacy=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
 assert "s16-analytics.html" not in dash
 assert "Analítica histórica (versión anterior)" in legacy
 
-print("OK · S16 v5: 18 slides + examen DP-900 vigente + Practice Assessment + timer S15 v7")
+print("OK · S16 v6: 16 slides + examen DP-900 vigente + formatos Sandbox + Practice/voucher + timer S15 v7")
