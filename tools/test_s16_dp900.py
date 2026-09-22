@@ -93,7 +93,7 @@ for url in [
     "https://learn.microsoft.com/es-es/credentials/certifications/practice-assessments-for-microsoft-certifications",
     "https://learn.microsoft.com/es-es/credentials/certifications/azure-data-fundamentals/",
     "https://learn.microsoft.com/es-es/credentials/certifications/register-schedule-exam",
-    "https://aka.ms/GHExamDemo-esn"
+    "https://mscertdemo-es-es.starttest.com/"
 ]:
     assert url in html, url
 assert "learn.microsoft.com/en-us/credentials" not in html
