@@ -613,7 +613,7 @@
       "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a comprender el examen DP-900 vigente, practicar su interfaz y resolver preguntas oficiales antes de usar el voucher.",
       "dp900": {
         "version_blueprint": "2026-07-21",
-        "fuente": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
+        "fuente": "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
         "dominios": [
           {
             "dominio": "Core data concepts",
@@ -646,7 +646,7 @@
           "proctorizado": true,
           "idioma_espanol": true,
           "tipos_pregunta": "Microsoft no publica de antemano una lista cerrada; usar Exam Sandbox",
-          "fuente_experiencia": "https://learn.microsoft.com/en-us/credentials/support/exam-duration-exam-experience"
+          "fuente_experiencia": "https://learn.microsoft.com/es-es/credentials/support/exam-duration-exam-experience"
         }
       },
       "solucion": {
