@@ -33,13 +33,10 @@ titles=re.findall(r'<section class="slide[^"]*" data-title="([^"]+)"',html)
 expected=[
 "Portada","Recorrido","SQL que escribes","Pensamiento SQL","De reglas a modelo",
 "Mapa consolidado","S15 integró","Caso puente","Caso resuelto",
-"DP900 empieza","Blueprint DP900","Razonar DP900","DP900 dominio1 datos","DP900 dominio1 roles",
-"Pausa","DP900 relacional conceptos","Familia Azure SQL","Caso Azure SQL",
-"Azure Storage","Cosmos DB","Caso NoSQL Azure","Pipeline analítico Microsoft",
-"Databricks Fabric PowerBI","Tiempo real y PowerBI","Casos analítica Azure",
-"Practice Assessment","Examen y voucher","Cheat sheet","Cierre"]
+"DP900 empieza","Blueprint DP900","Cómo es el examen","Pausa",
+"Interfaz y estrategia","Practice Assessment","Registro y voucher","Cheat sheet","Cierre"]
 assert titles==expected, titles
-assert len(titles)==29
+assert len(titles)==18
 assert html.count('s16-mobile-flowviz')>=2, "Recorrido y modelado deben conservar SVG vertical en móvil"
 assert '.s16-mobile-flowviz' in html and 'display:block!important' in html
 
@@ -65,27 +62,31 @@ for token in [
     assert token in html, token
 assert "Tres casos" not in titles and "Resolución casos" not in titles
 
-# DP-900 ocupa la segunda mitad y usa blueprint vigente.
+# DP-900 ocupa la segunda mitad, pero sin un catálogo de 10+ slides.
 for token in [
-    "100 min de preparación guiada","21 de julio de 2026",
+    "preparación guiada + práctica oficial","21 de julio de 2026",
     "25–30%","20–25%","15–20%",
     "Core data concepts","Relational on Azure","Non-relational","Analytics",
-    "DBA","Data Engineer","Data Analyst",
-    "Azure SQL Database","Azure SQL Managed Instance","SQL Server on Azure VM","Azure Database for PostgreSQL",
-    "Blob Storage","Azure Files","Table Storage","Cosmos DB",
-    "Azure Databricks","Microsoft Fabric","Power BI",
-    "Batch","Streaming / real time","Línea","Barras","Card/KPI",
-    "5–6 preguntas oficiales"
+    "45 min","65 min","700+","nivel <b>Beginner</b>","proctorizado",
+    "español está entre los idiomas ofrecidos",
+    "Microsoft no fija públicamente",
+    "Exam Sandbox","8–10 preguntas razonadas juntos",
+    "cuenta Microsoft personal (MSA)","Pearson VUE","Certiport",
+    "después de 24 horas"
 ]:
     assert token in html, token
 
-# Diferenciación por requisito, no memorización de nombres.
-for token in [
-    "condición que manda","compatibilidad de instancia","no quiere administrar una máquina virtual",
-    "Storage y base NoSQL no son lo mismo","casos de uso y APIs de Cosmos DB",
-    "Databricks, Fabric y Power BI no son sinónimos"
+# Las slides detalladas 13–14 y 16–25 de la versión anterior desaparecen.
+for removed in [
+    "DP900 dominio1 datos","DP900 dominio1 roles","DP900 relacional conceptos",
+    "Familia Azure SQL","Caso Azure SQL","Azure Storage","Cosmos DB",
+    "Caso NoSQL Azure","Pipeline analítico Microsoft","Databricks Fabric PowerBI",
+    "Tiempo real y PowerBI","Casos analítica Azure"
 ]:
-    assert token in html, token
+    assert removed not in titles, removed
+assert "número exacto de preguntas" in html
+assert "lista cerrada de tipos de pregunta" in html
+assert "no representa necesariamente su longitud, complejidad" in html
 
 for url in [
     "credentials/certifications/resources/study-guides/dp-900",
@@ -111,8 +112,8 @@ for token in [
 # Manifiestos y tiempos.
 s=plan["sesiones"]["16"]
 assert s["titulo"]=="Cierre del curso + preparación DP-900"
-assert s["actividad"]["distribucion"]["cierre_diplomado"]==65
-assert s["actividad"]["distribucion"]["total_dp900_y_continuidad"]==100
+assert s["actividad"]["distribucion"]["cierre_diplomado"]==60
+assert s["actividad"]["distribucion"]["total_dp900_y_continuidad"]==105
 assert s["dp900"]["version_blueprint"]=="2026-07-21"
 assert [d["peso"] for d in s["dp900"]["dominios"]]==["25–30%","20–25%","15–20%","25–30%"]
 assert s["diagnostico"]["en_clase"] is False
@@ -120,18 +121,22 @@ assert s["cierre"]["temporizador"]=="assets/learning/presentation-timer.js"
 
 cs=next(x for m in course["modulos"] for x in m.get("sesiones",[]) if x["n"]==16)
 assert cs["titulo"]=="Cierre del curso + preparación DP-900"
-assert "~65 min" in cs["desc"] and "~100 min" in cs["desc"]
-assert "blueprint 2026" in cs["tags"]
+assert "~60 min" in cs["desc"] and "~105 min" in cs["desc"]
+assert "blueprint 2026" in cs["tags"] and "formato del examen" in cs["tags"]
 
 # Guía docente: la nueva intención debe quedar protegida.
 for token in [
     "180 minutos = 165 útiles + 15 de pausa",
-    "0–65 · Cierre del diplomado",
-    "65–95 · DP-900",
-    "110–175 · DP-900",
+    "0–60 · Cierre del diplomado",
+    "60–95 · Qué es DP-900 y cómo es hoy",
+    "110–165 · Interfaz + práctica oficial",
     "July 21, 2026",
-    "5–6 preguntas oficiales",
-    "temporizador de la presentación es el componente compartido de S15 v7"
+    "8–10 preguntas oficiales",
+    "45 minutos",
+    "65 minutos de seat duration",
+    "700 o más",
+    "Microsoft no publica de antemano un número fijo",
+    "temporizador es el componente compartido de S15 v7"
 ]:
     assert token in guide, token
 
@@ -141,4 +146,4 @@ legacy=(ROOT/"s16-analytics.html").read_text(encoding="utf-8")
 assert "s16-analytics.html" not in dash
 assert "Analítica histórica (versión anterior)" in legacy
 
-print("OK · S16 v4: 65 min cierre + ~100 min DP-900 + timer S15 v7 + blueprint 2026")
+print("OK · S16 v5: 18 slides + examen DP-900 vigente + Practice Assessment + timer S15 v7")
