@@ -138,7 +138,7 @@ assert "blueprint 2026" in cs["tags"] and "formato del examen" in cs["tags"]
 for token in [
     "180 minutos = 165 útiles + 15 de pausa",
     "0–60 · Cierre del diplomado",
-    "60–95 · Qué es DP-900 y cómo es hoy",
+    "60–95 · DP-900: blueprint + examen real",
     "110–130 · Tipos de pregunta + estrategia",
     "130–170 · Practice Assessment + voucher",
     "July 21, 2026",
