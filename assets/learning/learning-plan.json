@@ -610,7 +610,7 @@
       "titulo": "Cierre del curso + preparación DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a una preparación inicial real de DP-900: blueprint vigente, cuatro dominios, selección por requisito, práctica oficial y plan de voucher.",
+      "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a comprender el examen DP-900 vigente, practicar su interfaz y resolver preguntas oficiales antes de usar el voucher.",
       "dp900": {
         "version_blueprint": "2026-07-21",
         "fuente": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
@@ -636,8 +636,18 @@
             "foco": "ingesta/procesamiento, Databricks, Fabric, real time, Power BI"
           }
         ],
-        "practice_assessment_en_vivo": "5–6 preguntas oficiales razonadas",
-        "regla": "requisito → concepto → servicio Azure → descartar distractores"
+        "practice_assessment_en_vivo": "8–10 preguntas oficiales razonadas",
+        "regla": "blueprint → requisito → descarte → respuesta → explicación oficial",
+        "examen": {
+          "nivel": "Beginner",
+          "examen_min": 45,
+          "seat_min": 65,
+          "aprobacion": "700+",
+          "proctorizado": true,
+          "idioma_espanol": true,
+          "tipos_pregunta": "Microsoft no publica de antemano una lista cerrada; usar Exam Sandbox",
+          "fuente_experiencia": "https://learn.microsoft.com/en-us/credentials/support/exam-duration-exam-experience"
+        }
       },
       "solucion": {
         "modo": "discusion_guiada"
@@ -646,24 +656,23 @@
         "titulo": "Cierre integrador + preparación DP-900",
         "minutos": 165,
         "distribucion": {
-          "cierre_diplomado": 65,
-          "dp900_antes_pausa": 30,
-          "dp900_despues_pausa": 65,
-          "cierre_voucher": 5,
-          "total_dp900_y_continuidad": 100
+          "cierre_diplomado": 60,
+          "dp900_blueprint_y_examen": 35,
+          "dp900_interfaz_y_practica": 55,
+          "voucher_recursos_cierre": 15,
+          "total_dp900_y_continuidad": 105
         },
-        "instrucciones": "Condensa S2–S15 en 65 min; usa un solo caso puente; enseña el blueprint DP-900 vigente; recorre los cuatro dominios con escenarios de selección de servicios; resuelve 5–6 preguntas del Practice Assessment oficial; cierra con voucher y recursos.",
+        "instrucciones": "Condensa S2–S15 en 60 min; explica blueprint y experiencia vigente del examen; usa Exam Sandbox; dedica ~35 min a 8–10 preguntas del Practice Assessment; cierra con cuenta, voucher, agenda y recursos.",
         "criterios": [
           "no repite la evaluación S15",
-          "dedica aproximadamente 100 minutos a DP-900 y continuidad",
+          "dedica aproximadamente 105 minutos a DP-900 y continuidad",
           "muestra los cuatro pesos oficiales del blueprint vigente al 21-jul-2026",
-          "enseña requisito → concepto → servicio → descarte de distractores",
-          "distingue Azure SQL Database, Managed Instance, SQL Server on Azure VM y PostgreSQL",
-          "distingue Blob, Files, Table Storage y Cosmos DB",
-          "incluye casos de uso/APIs de Cosmos DB al nivel Fundamentals",
-          "incluye Databricks, Fabric, real-time analytics y Power BI",
-          "incluye roles DBA, Data Engineer y Data Analyst",
-          "usa 5–6 preguntas del Practice Assessment oficial",
+          "explica 45 min de examen, 65 min de seat time, 700+, proctoring y disponibilidad en español",
+          "no promete un número fijo ni tipos exactos de preguntas",
+          "usa Exam Sandbox como referencia de interfaz",
+          "usa 8–10 preguntas del Practice Assessment oficial",
+          "explica registro con cuenta Microsoft personal y agenda por Pearson VUE/Certiport cuando aplique",
+          "mantiene el mapa detallado de servicios en Cheat Sheet, no en 10+ diapositivas",
           "usa el temporizador compartido de S15 v7"
         ]
       },
@@ -672,7 +681,7 @@
         "motivo": "S15 ya es la evaluación integradora; S16 usa práctica oficial de DP-900 sin calificación."
       },
       "cierre": {
-        "sintesis": "curso cerrado → blueprint → cuatro dominios → práctica oficial → voucher",
+        "sintesis": "curso cerrado → blueprint → experiencia de examen → Sandbox → práctica oficial → voucher",
         "cheat_sheet": "Presentaciones/M6/glosario-cierre-s16.html",
         "encuesta": "institucional después de la diapositiva final",
         "temporizador": "assets/learning/presentation-timer.js",
