@@ -610,7 +610,7 @@
       "titulo": "Cierre del curso + preparación DP-900",
       "duracion_util": 165,
       "modo": "consolidacion",
-      "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a comprender el examen DP-900 vigente, practicar su interfaz y resolver preguntas oficiales antes de usar el voucher.",
+      "objetivo": "Cerrar el diplomado sin repetir S15 y dedicar la segunda mitad a comprender el blueprint DP-900 vigente, la experiencia real del examen, los formatos que muestra el Sandbox, la práctica oficial y el uso del voucher.",
       "dp900": {
         "version_blueprint": "2026-07-21",
         "fuente": "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900",
@@ -642,11 +642,22 @@
           "nivel": "Beginner",
           "examen_min": 45,
           "seat_min": 65,
-          "aprobacion": "700+",
-          "proctorizado": true,
+          "aprobacion": "700+ en escala 1–1000; no equivale necesariamente a 70%",
           "idioma_espanol": true,
-          "tipos_pregunta": "Microsoft no publica de antemano una lista cerrada; usar Exam Sandbox",
+          "programacion": [
+            "Pearson VUE",
+            "Certiport cuando corresponda"
+          ],
+          "numero_preguntas": "variable; Microsoft no publica un número exacto. Guía general: normalmente 40–60; material reciente de Fundamentals: con frecuencia 35–50",
+          "tipos_pregunta": "no se garantizan para DP-900; el Sandbox muestra multiple choice, drag & drop, build list, hot area, case study y active screen",
+          "microsoft_learn_durante_examen": false,
+          "pausas": "permitidas; el reloj continúa y no se puede volver a preguntas ya vistas después de iniciar la pausa",
           "fuente_experiencia": "https://learn.microsoft.com/es-es/credentials/support/exam-duration-exam-experience"
+        },
+        "reintentos": {
+          "segundo_intento_espera": "24 horas",
+          "posteriores_espera": "14 días",
+          "maximo": "5 intentos en 12 meses"
         }
       },
       "solucion": {
@@ -658,21 +669,24 @@
         "distribucion": {
           "cierre_diplomado": 60,
           "dp900_blueprint_y_examen": 35,
-          "dp900_interfaz_y_practica": 55,
-          "voucher_recursos_cierre": 15,
+          "pausa": 15,
+          "dp900_formatos_estrategia": 20,
+          "dp900_practica_voucher": 40,
+          "cierre": 10,
           "total_dp900_y_continuidad": 105
         },
-        "instrucciones": "Condensa S2–S15 en 60 min; explica blueprint y experiencia vigente del examen; usa Exam Sandbox; dedica ~35 min a 8–10 preguntas del Practice Assessment; cierra con cuenta, voucher, agenda y recursos.",
+        "instrucciones": "Condensa S2–S15 en 60 min; explica blueprint y experiencia vigente del examen; usa Exam Sandbox para formatos posibles; dedica 30–35 min a 8–10 preguntas del Practice Assessment; integra voucher y recursos sin crear diapositivas administrativas separadas.",
         "criterios": [
           "no repite la evaluación S15",
           "dedica aproximadamente 105 minutos a DP-900 y continuidad",
           "muestra los cuatro pesos oficiales del blueprint vigente al 21-jul-2026",
-          "explica 45 min de examen, 65 min de seat time, 700+, proctoring y disponibilidad en español",
-          "no promete un número fijo ni tipos exactos de preguntas",
-          "usa Exam Sandbox como referencia de interfaz",
+          "explica 45 min de examen, 65 min de seat time y 700+ como puntaje escalado",
+          "explica que el número de preguntas es variable y no se debe enseñar una cifra fija",
+          "explica que Microsoft no confirma de antemano los tipos exactos que tendrá DP-900",
+          "muestra los tipos de ejemplo del Exam Sandbox",
+          "explica que Microsoft Learn no está disponible durante Fundamentals",
           "usa 8–10 preguntas del Practice Assessment oficial",
-          "explica registro con cuenta Microsoft personal y agenda por Pearson VUE/Certiport cuando aplique",
-          "mantiene el mapa detallado de servicios en Cheat Sheet, no en 10+ diapositivas",
+          "explica MSA personal, voucher, Pearson VUE/Certiport y política básica de reintentos",
           "usa el temporizador compartido de S15 v7"
         ]
       },
