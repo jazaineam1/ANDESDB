@@ -100,7 +100,7 @@ for url in [
     assert url in html, url
 assert "https://learn.microsoft.com/es-es/credentials/certifications/resources/study-guides/dp-900" not in html
 assert "Preparación oficial y Exam Sandbox" not in html
-assert "Sandbox del examen en español" in html
+assert "Exam Sandbox en español" in html
 
 # Cheat Sheet sigue siendo de cuatro páginas y ahora incluye blueprint + matriz Azure.
 assert len(re.findall(r'<section class="page"(?:\s|>)',sheet))==4
